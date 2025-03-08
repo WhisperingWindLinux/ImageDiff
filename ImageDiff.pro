@@ -11,15 +11,19 @@ CONFIG += c++17
 SOURCES += \
     imagecomparator.cpp \
     imageviewer.cpp \
+    interactors/imageviewinteractor.cpp \
     main.cpp \
     mainwindow.cpp \
-    pixeldifferencecalc.cpp
+    pixeldifferencecalc.cpp \
+    pixelsbrightnesscomparator.cpp
 
 HEADERS += \
     imagecomparator.h \
     imageviewer.h \
+    interactors/imageviewinteractor.h \
     mainwindow.h \
-    pixeldifferencecalc.h
+    pixeldifferencecalc.h \
+    pixelsbrightnesscomparator.h
 
 FORMS += \
     mainwindow.ui

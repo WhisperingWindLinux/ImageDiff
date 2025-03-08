@@ -4,12 +4,15 @@
 #include <MainWindow.h>
 #include <qgraphicsview.h>
 
+#include <interactors/imageviewinteractor.h>
+
 
 class ImageViewer : public QGraphicsView {
     Q_OBJECT
 
 public:
     explicit ImageViewer(MainWindow *parent = nullptr);
+    virtual ~ImageViewer();
 
 protected:
     void keyPressEvent(QKeyEvent *event) override;
@@ -17,27 +20,23 @@ protected:
 
 private:
     QGraphicsScene *scene;
-    QGraphicsPixmapItem *pixmapItem1 = nullptr;
-    QGraphicsPixmapItem *pixmapItem2 = nullptr;
-    QGraphicsPixmapItem *pixmapItem3ComparisonResult = nullptr;
-    QPixmap images[3];
+    QGraphicsPixmapItem *firstImagePixmap = nullptr;
+    QGraphicsPixmapItem *secondImagePixmap = nullptr;
+    QGraphicsPixmapItem *comparisonImagePixmap = nullptr;
     int currentImageIndex;
-    bool isCompareResultImageShowing;
+    bool isComparisonImageShowing;
     qreal scaleFactor;
-    QString file1;
-    QString file2;
-    QString file3ComparisonResult;
     MainWindow *parent = nullptr;
-
+    ImageViewInteractor *imageViewInteractor = nullptr;
 
     void loadImages();
     void toggleImage();
     void showCompareResultImage();
+    void showPexelsBrightnessDiff();
     void zoomIn();
     void zoomOut();
     void showCalculatedImageDiff();
-    bool validateFilePath(const QString &filePath);
-    void showErrorAndExit(const QString &errorMessage);
+    void showError(const QString &errorMessage);
 };
 
 

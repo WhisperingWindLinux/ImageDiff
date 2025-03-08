@@ -10,31 +10,32 @@
 #include <ImageComparator.h>
 #include <qapplication.h>
 #include <qprocess.h>
+#include <PixelsBrightnessComparator.h>
 
 ImageViewer::ImageViewer(MainWindow *parent)
-    : QGraphicsView(parent), currentImageIndex(0), scaleFactor(1.0), parent(parent) {
+    : QGraphicsView(parent),
+    currentImageIndex(0),
+    isComparisonImageShowing(false),
+    scaleFactor(1.0),
+    parent(parent)
+{
     scene = new QGraphicsScene(this);
     setScene(scene);
-
-    isCompareResultImageShowing = false;
 
     try {
         loadImages();
     } catch (const  std::runtime_error &e) {
-        showErrorAndExit(e.what());
-    }
-
-    if (!images[0].isNull()) {
-        pixmapItem1 = scene->addPixmap(images[0]);
-        pixmapItem2 = scene->addPixmap(images[1]);
-        pixmapItem3ComparisonResult = scene->addPixmap(images[2]);
-        parent->showStatusMessage(file1);
-        pixmapItem2->setVisible(false);
-        pixmapItem3ComparisonResult->setVisible(false);
-        setSceneRect(pixmapItem1->boundingRect());
+        showError(e.what());
     }
 
     setDragMode(QGraphicsView::ScrollHandDrag);
+}
+
+ImageViewer::~ImageViewer() {
+    if (imageViewInteractor != nullptr) {
+        delete imageViewInteractor;
+        imageViewInteractor = nullptr;
+    }
 }
 
 void ImageViewer::keyPressEvent(QKeyEvent *event) {
@@ -44,6 +45,8 @@ void ImageViewer::keyPressEvent(QKeyEvent *event) {
         showCompareResultImage();
     } else if (event->key() == Qt::Key_D) {
         showCalculatedImageDiff();
+    }  else if (event->key() == Qt::Key_B) {
+        showPexelsBrightnessDiff();
     }
     else {
         QGraphicsView::keyPressEvent(event);
@@ -59,85 +62,77 @@ void ImageViewer::wheelEvent(QWheelEvent *event) {
 }
 
 void ImageViewer::loadImages() {
-    file1 = QFileDialog::getOpenFileName(nullptr, "Open First Image", "", "Images (*.png)");
-    file2 = QFileDialog::getOpenFileName(nullptr, "Open Second Image", "", "Images (*.png)");
+    QString firstImagePath = QFileDialog::getOpenFileName(nullptr, "Open First Image", "", "Images (*.png)");
+    QString secondImagePath = QFileDialog::getOpenFileName(nullptr, "Open Second Image", "", "Images (*.png)");
 
-    if (validateFilePath(file1) && validateFilePath(file2)) {
-        images[0].load(file1);
-        images[1].load(file2);
+    imageViewInteractor = new ImageViewInteractor(firstImagePath, secondImagePath);
+    imageViewInteractor->loadImages();
 
-        if (images[0].size() != images[1].size()) {
-            throw std::runtime_error("Error: Images must have the same resolution!");
-        }
-    } else {
-        throw std::runtime_error("Error: Both images must be selected!");
-    }
+    QPixmap pixmap1 = imageViewInteractor->getFirstImagePixmap();
+    QPixmap pixmap2 = imageViewInteractor->getSecondImagePixmap();
+    QPixmap pixmap3 = imageViewInteractor->getComparisonImagePixmap();
 
-    try {
-        ImageComparator comparator(file1, file2);
-        file3ComparisonResult = comparator.compareImagesAndSaveResultAsImage();
-        qDebug() << "Result saved at:" << file3ComparisonResult;
-    } catch (const std::exception &e) {
-        QString errorMsg = QString("Error:") + e.what();
-        throw std::runtime_error(errorMsg.toStdString());
-    }
+    QString file1Path = imageViewInteractor->getFirstImagePath();
 
-    if (file3ComparisonResult.isEmpty()) {
-        throw std::runtime_error("Error: Unable to compare images!");
-    } else {
-        images[2].load(file3ComparisonResult);
-    }
-}
-
-bool ImageViewer::validateFilePath(const QString &filePath) {
-    if (filePath.isEmpty()) {
-        return false;
-    }
-
-    QFileInfo fileInfo(filePath);
-    if (!fileInfo.exists() || !fileInfo.isFile()) {
-        return false;
-    }
-
-    return true;
+    firstImagePixmap = scene->addPixmap(pixmap1);
+    secondImagePixmap = scene->addPixmap(pixmap2);
+    comparisonImagePixmap = scene->addPixmap(pixmap3);
+    parent->showStatusMessage(file1Path);
+    secondImagePixmap->setVisible(false);
+    comparisonImagePixmap->setVisible(false);
+    setSceneRect(firstImagePixmap->boundingRect());
 }
 
 void ImageViewer::toggleImage() {
-    if (isCompareResultImageShowing) {
+
+    if (isComparisonImageShowing) {
         return;
     }
 
     QRectF viewRect = mapToScene(viewport()->geometry()).boundingRect();
 
     if (currentImageIndex == 0) {
-        pixmapItem1->setVisible(false);
-        pixmapItem2->setVisible(true);
+        firstImagePixmap->setVisible(false);
+        secondImagePixmap->setVisible(true);
         currentImageIndex = 1;
-        parent->showStatusMessage(file2);
+        QString file2Path = imageViewInteractor->getSecondImagePath();
+        parent->showStatusMessage(file2Path);
     } else {
-        pixmapItem1->setVisible(true);
-        pixmapItem2->setVisible(false);
+        firstImagePixmap->setVisible(true);
+        secondImagePixmap->setVisible(false);
         currentImageIndex = 0;
-        parent->showStatusMessage(file1);
+        QString file1Path = imageViewInteractor->getFirstImagePath();
+        parent->showStatusMessage(file1Path);
     }
 
     centerOn(viewRect.center());
 }
 
 void ImageViewer::showCompareResultImage() {
+
     QRectF viewRect = mapToScene(viewport()->geometry()).boundingRect();
 
-    if (isCompareResultImageShowing) {
-        currentImageIndex == 0 ? pixmapItem1->setVisible(true) : pixmapItem2->setVisible(true);
-        currentImageIndex == 0 ? parent->showStatusMessage(file1) : parent->showStatusMessage(file2);
-        pixmapItem3ComparisonResult->setVisible(false);
-        isCompareResultImageShowing = false;
+    if (isComparisonImageShowing) {
+        QString file1Path = imageViewInteractor->getFirstImagePath();
+        QString file2Path = imageViewInteractor->getSecondImagePath();
+
+        currentImageIndex == 0 ?
+            firstImagePixmap->setVisible(true)
+                               : secondImagePixmap->setVisible(true);
+
+        currentImageIndex == 0 ?
+            parent->showStatusMessage(file1Path)
+                               : parent->showStatusMessage(file2Path);
+
+        comparisonImagePixmap->setVisible(false);
+        isComparisonImageShowing = false;
     } else {
-        pixmapItem1->setVisible(false);
-        pixmapItem2->setVisible(false);
-        pixmapItem3ComparisonResult->setVisible(true);
-        parent->showStatusMessage(file3ComparisonResult);
-        isCompareResultImageShowing = true;
+        QString file3Path = imageViewInteractor->getComparisonImagePath();
+        firstImagePixmap->setVisible(false);
+        secondImagePixmap->setVisible(false);
+        comparisonImagePixmap->setVisible(true);
+        parent->showStatusMessage(file3Path);
+        isComparisonImageShowing = true;
     }
 
     centerOn(viewRect.center());
@@ -155,10 +150,12 @@ void ImageViewer::zoomOut() {
 
 void ImageViewer::showCalculatedImageDiff() {
     try {
-        auto differences = PixelDifferenceCalc::calculatePixelDifferences(file1, file2);
+        QString file1Path = imageViewInteractor->getFirstImagePath();
+        QString file2Path = imageViewInteractor->getSecondImagePath();
+        auto differences = PixelDifferenceCalc::calculatePixelDifferences(file1Path, file2Path);
 
         QString resultText;
-        resultText.append("<b>Pixel Differences by Range:</b><br><br>");
+        resultText.append("<b>Pixel Shade Differences by Range</b><br><br>");
 
         for (auto it = differences.begin(); it != differences.end(); ++it) {
             resultText.append(QString("Range <font color=\"green\">[%1-%2]</font>: %3 pixels (<font color=\"red\">%4%</font>)<br>")
@@ -174,22 +171,37 @@ void ImageViewer::showCalculatedImageDiff() {
         msgBox.setText(resultText);
         msgBox.setStandardButtons(QMessageBox::Ok);
         msgBox.exec();
-
     } catch (const std::runtime_error &e) {
-        showErrorAndExit(e.what());
+        showError(e.what());
     }
 }
 
-void ImageViewer::showErrorAndExit(const QString &errorMessage) {
+void ImageViewer::showPexelsBrightnessDiff() {
+    try {
+        QString file1Path = imageViewInteractor->getFirstImagePath();
+        QString file2Path = imageViewInteractor->getSecondImagePath();
+        auto differences = PixelsBrightnessComparator::compareImages(file1Path, file2Path);
+
+        QString resultText = PixelsBrightnessComparator::formatResultToHtml(differences);
+        QMessageBox msgBox;
+        msgBox.setWindowTitle("Pixel Difference Analysis");
+        msgBox.setTextFormat(Qt::RichText);
+        msgBox.setText(resultText);
+        msgBox.setStandardButtons(QMessageBox::Ok);
+        msgBox.exec();
+
+    } catch (const std::runtime_error &e) {
+        showError(e.what());
+    }
+}
+
+void ImageViewer::showError(const QString &errorMessage) {
+    qDebug() << errorMessage;
+
     QMessageBox msgBox;
     msgBox.setIcon(QMessageBox::Critical);
     msgBox.setText(errorMessage);
     msgBox.setStandardButtons(QMessageBox::Ok);
     msgBox.setDefaultButton(QMessageBox::Ok);
-
     msgBox.exec();
-
-    qDebug() << errorMessage;
-
-    throw std::runtime_error(errorMessage.toStdString());
 }
