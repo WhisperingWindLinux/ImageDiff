@@ -19,18 +19,25 @@ private:
     QGraphicsScene *scene;
     QGraphicsPixmapItem *pixmapItem1 = nullptr;
     QGraphicsPixmapItem *pixmapItem2 = nullptr;
-    QPixmap images[2];
+    QGraphicsPixmapItem *pixmapItem3ComparisonResult = nullptr;
+    QPixmap images[3];
     int currentImageIndex;
+    bool isCompareResultImageShowing;
     qreal scaleFactor;
     QString file1;
     QString file2;
+    QString file3ComparisonResult;
     MainWindow *parent = nullptr;
 
 
     void loadImages();
     void toggleImage();
+    void showCompareResultImage();
     void zoomIn();
     void zoomOut();
+    void showCalculatedImageDiff();
+    bool validateFilePath(const QString &filePath);
+    void showErrorAndExit(const QString &errorMessage);
 };
 
 
