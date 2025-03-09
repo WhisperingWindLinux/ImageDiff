@@ -33,6 +33,8 @@ private:
     void toggleImage();
     void showCompareResultImage();
     void showPexelsBrightnessDiff();
+    void showContrastDiff();
+    void showColorsSaturationDiff();
     void zoomIn();
     void zoomOut();
     void showCalculatedImageDiff();

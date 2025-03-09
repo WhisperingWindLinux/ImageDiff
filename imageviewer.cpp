@@ -11,6 +11,8 @@
 #include <qapplication.h>
 #include <qprocess.h>
 #include <PixelsBrightnessComparator.h>
+#include <ContrastComporator.h>
+#include <ColorsSaturationComporator.h>
 
 ImageViewer::ImageViewer(MainWindow *parent)
     : QGraphicsView(parent),
@@ -47,6 +49,10 @@ void ImageViewer::keyPressEvent(QKeyEvent *event) {
         showCalculatedImageDiff();
     }  else if (event->key() == Qt::Key_B) {
         showPexelsBrightnessDiff();
+    }   else if (event->key() == Qt::Key_K) {
+        showContrastDiff();
+    } else if (event->key() == Qt::Key_O) {
+        showColorsSaturationDiff();
     }
     else {
         QGraphicsView::keyPressEvent(event);
@@ -190,6 +196,45 @@ void ImageViewer::showPexelsBrightnessDiff() {
         msgBox.setStandardButtons(QMessageBox::Ok);
         msgBox.exec();
 
+    } catch (const std::runtime_error &e) {
+        showError(e.what());
+    }
+}
+
+void ImageViewer::showContrastDiff() {
+    try {
+        QString file1Path = imageViewInteractor->getFirstImagePath();
+        QString file2Path = imageViewInteractor->getSecondImagePath();
+        auto differences = ContrastComporator::compareImages(file1Path, file2Path);
+
+        QString resultText = ContrastComporator::formatResultToHtml(differences);
+        QMessageBox msgBox;
+        msgBox.setWindowTitle("Pixel Difference Analysis");
+        msgBox.setTextFormat(Qt::RichText);
+        msgBox.setText(resultText);
+        msgBox.setStandardButtons(QMessageBox::Ok);
+        msgBox.exec();
+
+    } catch (const std::runtime_error &e) {
+        showError(e.what());
+    }
+}
+
+void ImageViewer::showColorsSaturationDiff() {
+    try {
+        QString file1Path = imageViewInteractor->getFirstImagePath();
+        QString file2Path = imageViewInteractor->getSecondImagePath();
+
+        auto comparator = new ColorsSaturationComporator(file1Path, file2Path);
+        auto differences = comparator->compareImages();
+
+        QString resultText = ColorsSaturationComporator::formatResultToHtml(differences);
+        QMessageBox msgBox;
+        msgBox.setWindowTitle("Pixel Difference Analysis");
+        msgBox.setTextFormat(Qt::RichText);
+        msgBox.setText(resultText);
+        msgBox.setStandardButtons(QMessageBox::Ok);
+        msgBox.exec();
     } catch (const std::runtime_error &e) {
         showError(e.what());
     }

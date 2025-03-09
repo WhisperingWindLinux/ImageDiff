@@ -111,19 +111,27 @@ QString PixelsBrightnessComparator::formatResultToHtml(const ComparisonResult& r
                 .arg(result.darkerPercent, 0, 'f', 2);
     html += "</table>";
 
+    double dTotalBrightness1 = result.totalBrightness1;
+    double dTotalBrightness2 = result.totalBrightness2;
+
     // Add a line describing which image is brighter
-    if (result.totalBrightness1 > result.totalBrightness2) {
-        html += QString("<br><br>%1 is brighter than %2 because its total brightness (%3) is greater than the second's (%4).")
-            .arg(file1Name)
+    double brightnessDifferencePercentage = (std::abs(dTotalBrightness1 - dTotalBrightness2) /
+                                             std::max(dTotalBrightness1, dTotalBrightness2)) * 100;
+
+    if (dTotalBrightness1 > dTotalBrightness2) {
+        html += QString("<br><br>%1 is brighter than %2 because its total brightness (%3) is greater than the second's (%4) by %5%.")
+        .arg(file1Name)
             .arg(file2Name)
             .arg(result.totalBrightness1)
-            .arg(result.totalBrightness2);
-    } else if (result.totalBrightness1 < result.totalBrightness2) {
-        html += QString("<br><br>%1 is darker than %2 because its total brightness (%3) is less than the second's (%4).")
-            .arg(file1Name)
+            .arg(result.totalBrightness2)
+            .arg(QString::number(brightnessDifferencePercentage, 'f', 2)); // Форматируем до 2 знаков после запятой
+    } else if (dTotalBrightness1 < dTotalBrightness2) {
+        html += QString("<br><br>%1 is darker than %2 because its total brightness (%3) is less than the second's (%4) by %5%.")
+        .arg(file1Name)
             .arg(file2Name)
             .arg(result.totalBrightness1)
-            .arg(result.totalBrightness2);
+            .arg(result.totalBrightness2)
+            .arg(QString::number(brightnessDifferencePercentage, 'f', 2)); // Форматируем до 2 знаков после запятой
     } else {
         html += "<br><br>Both images have the same total brightness.";
     }
