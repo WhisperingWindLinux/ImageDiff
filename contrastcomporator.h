@@ -4,6 +4,8 @@
 #include <qstring.h>
 #include <qimage.h>
 
+#include <interfaces/acomporator.h>
+
 // Structure to store the comparison results
 struct ContrastComparisonResult {
     QString imagePath1;          // Path to the first image
@@ -17,14 +19,21 @@ struct ContrastComparisonResult {
  * The algorithm calculates the contrast of an image based on the statistical
  * analysis of pixel brightness (luminance).
  */
-class ContrastComporator
+class ContrastComporator : public AComparator
 {
 public:
-    static ContrastComparisonResult compareImages(const QString& path1, const QString& path2);
-    static QString formatResultToHtml(const ContrastComparisonResult& result);
+
+    // AComparator interface
+
+    virtual QString name();
+    virtual QString hotkey();
+    virtual QString description();
+    virtual std::shared_ptr<ComparisionResultVariant> compare(QList<QString> filesPath);
+    virtual ComporatorContentType contentType();
 
 private:
-    ContrastComporator() {}
+    ContrastComparisonResult compareImages(const QString path1, const QString path2);
+    static QString formatResultToHtml(const ContrastComparisonResult& result);
     static double calculateContrast(const QImage& image);
 };
 

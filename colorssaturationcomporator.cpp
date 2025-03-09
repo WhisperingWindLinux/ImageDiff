@@ -3,11 +3,12 @@
 #include <QFileInfo>
 #include <QDebug>
 
-ColorsSaturationComporator::ColorsSaturationComporator(const QString& path1, const QString& path2)
-    : imagePath1(path1), imagePath2(path2) {}
-
 // Compare the two images and return a structure with the results
-ColorsSaturationComparisonResult ColorsSaturationComporator::compareImages() {
+ColorsSaturationComparisonResult ColorsSaturationComporator::compareImages(
+    const QString imagePath1,
+    const QString imagePath2
+    )
+{
     QImage image1(imagePath1);
     QImage image2(imagePath2);
 
@@ -80,4 +81,31 @@ QString ColorsSaturationComporator::formatResultToHtml(const ColorsSaturationCom
     html += "</body></html>";
 
     return html;
+}
+
+QString ColorsSaturationComporator::name() {
+    return "Show pixels' saturation difference statistics";
+}
+
+QString ColorsSaturationComporator::hotkey() {
+    return "T";
+}
+
+QString ColorsSaturationComporator::description() {
+    return QString("This program loads images, calculates their average saturation based on ")
+    + "pixel HSV values, compares the results, and formats the comparison as "
+        + "an HTML table.";
+}
+
+std::shared_ptr<ComparisionResultVariant> ColorsSaturationComporator::compare(QList<QString> filesPath) {
+    if (filesPath.size() != 2) {
+        return std::make_shared<ComparisionResultVariant>();
+    }
+    auto result = compareImages(filesPath[0], filesPath[1]);
+    QString html = ColorsSaturationComporator::formatResultToHtml(result);
+    return std::make_shared<ComparisionResultVariant>(html);
+}
+
+ComporatorContentType ColorsSaturationComporator::contentType() {
+    return ComporatorContentType::Image;
 }

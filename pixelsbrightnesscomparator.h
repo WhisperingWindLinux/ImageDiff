@@ -3,6 +3,8 @@
 
 #include <qstring.h>
 
+#include <interfaces/acomporator.h>
+
 // Structure to store comparison results
 struct ComparisonResult {
     QString firstImagePath; // The image used as the basis for comparison
@@ -24,14 +26,22 @@ struct ComparisonResult {
 };
 
 
-class PixelsBrightnessComparator
+class PixelsBrightnessComparator : public AComparator
 {
 public:
-    static ComparisonResult compareImages(const QString& imagePath1, const QString& imagePath2);
-    static QString formatResultToHtml(const ComparisonResult& result);
+
+    // AComparator interface
+
+    QString name();
+    QString hotkey();
+    QString description();
+    std::shared_ptr<ComparisionResultVariant> compare(QList<QString> filesPath);
+    virtual ComporatorContentType contentType();
 
 private:
-    PixelsBrightnessComparator();
+    ComparisonResult compareImages(const QString imagePath1, const QString imagePath2);
+    QString formatResultToHtml(const ComparisonResult& result);
+
 };
 
 #endif // PIXELSBRIGHTNESSCOMPARATOR_H

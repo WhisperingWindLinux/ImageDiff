@@ -6,7 +6,8 @@
 
 #include "pixelsbrightnesscomparator.h"
 
-ComparisonResult PixelsBrightnessComparator::compareImages(const QString& imagePath1, const QString& imagePath2) {
+
+ComparisonResult PixelsBrightnessComparator::compareImages(const QString imagePath1, const QString imagePath2) {
     QImage image1(imagePath1);
     QImage image2(imagePath2);
 
@@ -137,3 +138,28 @@ QString PixelsBrightnessComparator::formatResultToHtml(const ComparisonResult& r
     return html;
 }
 
+QString PixelsBrightnessComparator::name() {
+    return "Show pixels' brigthness difference statistics";
+}
+
+QString PixelsBrightnessComparator::hotkey() {
+    return "B";
+}
+
+QString PixelsBrightnessComparator::description() {
+    return name() + '.';
+}
+
+std::shared_ptr<ComparisionResultVariant> PixelsBrightnessComparator::compare(QList<QString> filesPath) {
+    if (filesPath.size() != 2) {
+        return std::make_shared<ComparisionResultVariant>();
+    }
+    auto result = compareImages(filesPath[0], filesPath[1]);
+    QString html = PixelsBrightnessComparator::formatResultToHtml(result);
+    std::shared_ptr<ComparisionResultVariant> resultVariant = std::make_shared<ComparisionResultVariant>(html);
+    return resultVariant;
+}
+
+ComporatorContentType PixelsBrightnessComparator::contentType() {
+    return ComporatorContentType::Image;
+}

@@ -10,23 +10,29 @@ CONFIG += c++17
 
 SOURCES += \
     colorssaturationcomporator.cpp \
+    comparisionmanager.cpp \
+    comparisionresultvariant.cpp \
     contrastcomporator.cpp \
     imagecomparator.cpp \
     imageviewer.cpp \
-    interactors/imageviewinteractor.cpp \
+    interactors/comparisioninteractor.cpp \
     main.cpp \
     mainwindow.cpp \
-    pixeldifferencecalc.cpp \
+    pixelsabsolutevaluecomparator.cpp \
     pixelsbrightnesscomparator.cpp
 
 HEADERS += \
     colorssaturationcomporator.h \
+    comparisionmanager.h \
+    comparisionresultvariant.h \
     contrastcomporator.h \
     imagecomparator.h \
     imageviewer.h \
-    interactors/imageviewinteractor.h \
+    interactors/comparisioninteractor.h \
+    interfaces/acomporator.h \
+    interfaces/mainwindowcallbacks.h \
     mainwindow.h \
-    pixeldifferencecalc.h \
+    pixelsabsolutevaluecomparator.h \
     pixelsbrightnesscomparator.h
 
 FORMS += \

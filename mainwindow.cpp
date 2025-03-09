@@ -16,52 +16,69 @@
 #include <QScrollBar>
 #include <QDebug>
 #include <ImageViewer.h>
+#include <comparisionmanager.h>
+#include <qmessagebox.h>
 
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
-    , viewer(nullptr)
 {
     ui->setupUi(this);
 
+    comparisionInteractor = new ComparisionInteractor(this);
+    buildMenus();
+
+    ui->menuComparision->setDisabled(true);
     connect(ui->actionOpenImages, &QAction::triggered, this, &MainWindow::actionOpenImages_triggered);
     connect(ui->actionCloseImages, &QAction::triggered, this, &MainWindow::actionCloseImages_triggered);
     connect(ui->actionSwitchBetweenImages, &QAction::triggered, this, &MainWindow::actionSwitchBetweenImages_triggered);
-    connect(ui->actionShowAbsolutePixelsValueDifference, &QAction::triggered, this, &MainWindow::actionShowAbsolutePixelsValueDifference_triggered);
-    connect(ui->actionShowPixelsBrigthnessDifference, &QAction::triggered, this, &MainWindow::actionShowPixelsBrigthnessDifference_triggered);
-    connect(ui->actionShowPixelsSaturationDifference, &QAction::triggered, this, &MainWindow::actionShowPixelsSaturationDifference_triggered);
-    connect(ui->actionShowDifferenceAsImage, &QAction::triggered, this, &MainWindow::actionShowDifferenceAsImage_triggered);
-    connect(ui->actionShowPixeslContrastDifference, &QAction::triggered, this, &MainWindow::actionShowPixeslContrastDifference_triggered);
 
     setWindowTitle("Image Diff");
     resize(1380, 820);
-
-     ui->menuComparision->setDisabled(true);
 }
 
-
-MainWindow::~MainWindow()
-{
+MainWindow::~MainWindow() {
     delete ui;
 }
 
-void MainWindow::showStatusMessage(QString &message)
-{
+void MainWindow::buildMenus() {
+    ComparisionManager *manager = ComparisionManager::instance();
+    auto comporatorsInfo = manager->allComporatorsInfo();
+
+    // an image comporators
+    for (auto it = comporatorsInfo.begin(); it != comporatorsInfo.end(); ++it) {
+        if ((*it).contentType == ComporatorContentType::Image) {
+            QString name = (*it).name;
+            QString hotkey = (*it).hotkey;
+            QMenu *menu = ui->menuComparision;
+
+            QAction *newAction = menu->addAction(name);
+            newAction->setData(name);
+            newAction->setShortcut(QKeySequence(hotkey));
+
+            connect(newAction, &QAction::triggered, this, &MainWindow::actionImageComparatorsMenuItem_triggered);
+        }
+    }
+
+    // TBD a video comporators
+}
+
+void MainWindow::showStatusMessage(QString message) {
     statusBar()->showMessage(message);
 }
 
 void MainWindow::actionOpenImages_triggered() {
     actionCloseImages_triggered();
 
-    viewer = new ImageViewer(this);
-    bool isLoaded = viewer->loadImages();
+    bool isLoaded = loadImagesBeingCompared();
 
     if (isLoaded) {
-        setCentralWidget(viewer);
         ui->menuComparision->setDisabled(false);
     }
-    else {
+
+    if (!isLoaded && viewer != nullptr) {
+        setCentralWidget(nullptr);
         delete viewer;
         viewer = nullptr;
     }
@@ -74,41 +91,7 @@ void MainWindow::actionCloseImages_triggered() {
         viewer = nullptr;
     }
     ui->menuComparision->setDisabled(true);
-}
-
-void MainWindow::actionShowAbsolutePixelsValueDifference_triggered() {
-    if (viewer == nullptr) {
-        return;
-    }
-    viewer->showAbsolutePixelsValueDifference();
-}
-
-void MainWindow::actionShowDifferenceAsImage_triggered() {
-    if (viewer == nullptr) {
-        return;
-    }
-    viewer->showDifferenceAsImage();
-}
-
-void MainWindow::actionShowPixelsBrigthnessDifference_triggered() {
-    if (viewer == nullptr) {
-        return;
-    }
-    viewer->showPixelsBrigthnessDifference();
-}
-
-void MainWindow::actionShowPixelsSaturationDifference_triggered() {
-    if (viewer == nullptr) {
-        return;
-    }
-    viewer->showPixelsSaturationDifference();
-}
-
-void MainWindow::actionShowPixeslContrastDifference_triggered() {
-    if (viewer == nullptr) {
-        return;
-    }
-    viewer->showPixeslContrastDifference();
+    showStatusMessage("");
 }
 
 void MainWindow::actionSwitchBetweenImages_triggered() {
@@ -117,3 +100,76 @@ void MainWindow::actionSwitchBetweenImages_triggered() {
     }
     viewer->toggleImage();
 }
+
+void MainWindow::actionImageComparatorsMenuItem_triggered() {
+    QAction *action = qobject_cast<QAction*>(sender());
+    comparisionInteractor->onImageComporatorShouldBeCalled(action->data());
+}
+
+bool MainWindow::loadImagesBeingCompared() {
+    try {
+        QString firstImagePath = QFileDialog::getOpenFileName(nullptr, "Open First Image", "", "Images (*.png)");
+        QString secondImagePath = QFileDialog::getOpenFileName(nullptr, "Open Second Image", "", "Images (*.png)");
+        comparisionInteractor->loadImagesBeingCompared(firstImagePath, secondImagePath);
+        return true;
+    } catch (std::exception &e) {
+        showError(e.what());
+        return false;
+    }
+}
+
+void MainWindow::showError(const QString &errorMessage) {
+    qDebug() << errorMessage;
+
+    QMessageBox msgBox;
+    msgBox.setIcon(QMessageBox::Critical);
+    msgBox.setText(errorMessage);
+    msgBox.setStandardButtons(QMessageBox::Ok);
+    msgBox.setDefaultButton(QMessageBox::Ok);
+    msgBox.exec();
+}
+
+// AMainWindowCallbacks interface
+
+void MainWindow::onImagesBeingComparedLoaded(QPixmap& image1,
+                                             QString path1,
+                                             QPixmap& image2,
+                                             QString path2)
+{
+    viewer = new ImageViewer(this);
+    setCentralWidget(viewer);
+    viewer->showImagesBeingCompared(image1, path1, image2, path2);
+}
+
+void MainWindow::onComparisonImagesLoaded(QPixmap &image, QString description) {
+    if (viewer != nullptr) {
+        viewer->showComparisonImage(image, description);
+    }
+}
+
+void MainWindow::onComparisonTextLoaded(QString text) {
+    QMessageBox msgBox;
+    msgBox.setWindowTitle("Pixel Difference Analysis");
+    msgBox.setTextFormat(Qt::RichText);
+    msgBox.setText(text);
+    msgBox.setStandardButtons(QMessageBox::Ok);
+    msgBox.exec();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

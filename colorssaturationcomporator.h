@@ -5,6 +5,8 @@
 #include <QImage>
 #include <QColor>
 
+#include <interfaces/acomporator.h>
+
 // Structure to hold the comparison result
 struct ColorsSaturationComparisonResult {
     QString imagePath1;       // Full path to the first image
@@ -14,20 +16,23 @@ struct ColorsSaturationComparisonResult {
     QString moreSaturated;    // Which image is more saturated ("Image 1", "Image 2", or "Equal")
 };
 
-class ColorsSaturationComporator {
+class ColorsSaturationComporator : public AComparator {
 public:
-    // Constructor that accepts two image file paths
-    ColorsSaturationComporator(const QString& path1, const QString& path2);
 
+    // AComparator interface
+
+    virtual QString name();
+    virtual QString hotkey();
+    virtual QString description();
+    virtual std::shared_ptr<ComparisionResultVariant> compare(QList<QString> filePaths);
+    virtual ComporatorContentType contentType();
+
+private:
     // Function to compare the images and return the result
-    ColorsSaturationComparisonResult compareImages();
+    ColorsSaturationComparisonResult compareImages(const QString path1, const QString path2);
 
     // Function to format the comparison result as an HTML string
     static QString formatResultToHtml(const ColorsSaturationComparisonResult& result);
-
-private:
-    QString imagePath1;
-    QString imagePath2;
 
     // Helper function to calculate the average saturation of an image
     double calculateAverageSaturation(const QImage& image);

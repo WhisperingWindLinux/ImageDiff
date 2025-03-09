@@ -5,16 +5,12 @@
 
 #include "imagecomparator.h"
 
-ImageComparator::ImageComparator(const QString &image1Path, const QString &image2Path)
-        : image1Path(image1Path), image2Path(image2Path) {
-
-}
 
 // Method to compare images and save the result
-QString ImageComparator::compareImagesAndSaveResultAsImage() {
+QImage ImageComparator::compareImages(const QString imagePath1, const QString imagePath2) {
     // Load images
-    QImage img1(image1Path);
-    QImage img2(image2Path);
+    QImage img1(imagePath1);
+    QImage img2(imagePath2);
 
     if (img1.isNull() || img2.isNull()) {
         throw std::runtime_error("Failed to load one of the images.");
@@ -44,33 +40,31 @@ QString ImageComparator::compareImagesAndSaveResultAsImage() {
     }
 
     painter.end();
-
-    // Save the resulting image
-    QString resultPath = saveResultImage(resultImg);
-    return resultPath;
+    return resultImg;
 }
 
-// Method to save the resulting image
-QString ImageComparator::saveResultImage(const QImage &resultImg) {
-    QFileInfo fileInfo1(image1Path);
-    QFileInfo fileInfo2(image2Path);
+QString ImageComparator::name() {
+    return "Show the difference in pixel values as an image";
+}
 
-    // Get file names without extensions
-    QString image1Name = fileInfo1.completeBaseName();
-    QString image2Name = fileInfo2.completeBaseName();
+QString ImageComparator::hotkey() {
+    return "D";
+}
 
-    // Generate the name for the resulting file
-    QString resultFileName = QString("%1_vs_%2_comparison.png").arg(image1Name, image2Name);
+QString ImageComparator::description() {
+    return QString("Show the difference in pixel values as an image. "
+                   "Pixels that differ are marked with red dots.");
+}
 
-    // Path to save the result (in the folder of the first image)
-    QDir parentDir = fileInfo1.absoluteDir();
-    QString resultPath = parentDir.filePath(resultFileName);
-
-    // Save the image
-    if (!resultImg.save(resultPath)) {
-        throw std::runtime_error("Failed to save the resulting image.");
+std::shared_ptr<ComparisionResultVariant> ImageComparator::compare(QList<QString> filesPath) {
+    if (filesPath.size() != 2) {
+        return std::make_shared<ComparisionResultVariant>();
     }
+    QImage result = compareImages(filesPath[0], filesPath[1]);
+    std::shared_ptr<ComparisionResultVariant> resultVariant = std::make_shared<ComparisionResultVariant>(result);
+    return resultVariant;
+}
 
-    qDebug() << "Result saved at:" << resultPath;
-    return resultPath;
+ComporatorContentType ImageComparator::contentType() {
+    return ComporatorContentType::Image;
 }

@@ -4,18 +4,23 @@
 #include <qimage.h>
 #include <qstring.h>
 
+#include <interfaces/acomporator.h>
 
-class ImageComparator
+
+class ImageComparator : public AComparator
 {
 public:
-    ImageComparator(const QString &image1Path, const QString &image2Pat);
-    QString compareImagesAndSaveResultAsImage();
+
+    // AComparator interface
+
+    QString name();
+    QString hotkey();
+    QString description();
+    std::shared_ptr<ComparisionResultVariant> compare(QList<QString> filesPath);
+    virtual ComporatorContentType contentType();
 
 private:
-    QString image1Path;
-    QString image2Path;
-
-    QString saveResultImage(const QImage &resultImg);
+    QImage compareImages(const QString imagePath1, const QString imagePath2);
 };
 
 #endif // IMAGECOMPARATOR_H

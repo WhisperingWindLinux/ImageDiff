@@ -2,6 +2,9 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <interfaces/mainwindowcallbacks.h>
+#include <interactors/comparisioninteractor.h>
+
 
 class ImageViewer;
 
@@ -12,27 +15,34 @@ class MainWindow;
 }
 QT_END_NAMESPACE
 
-class MainWindow : public QMainWindow
+class MainWindow : public QMainWindow, public AMainWindowCallbacks
 {
     Q_OBJECT
 
 public slots:
     void actionCloseImages_triggered();
     void actionOpenImages_triggered();
-    void actionShowAbsolutePixelsValueDifference_triggered();
-    void actionShowDifferenceAsImage_triggered();
-    void actionShowPixelsBrigthnessDifference_triggered();
-    void actionShowPixelsSaturationDifference_triggered();
-    void actionShowPixeslContrastDifference_triggered();
     void actionSwitchBetweenImages_triggered();
+    void actionImageComparatorsMenuItem_triggered();
 
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-    void showStatusMessage(QString &message);
+    void showStatusMessage(QString message);
 
 private:
     Ui::MainWindow *ui;
-    ImageViewer *viewer;
+    ImageViewer *viewer = nullptr;
+    ComparisionInteractor *comparisionInteractor = nullptr;
+
+    void buildMenus();
+    bool loadImagesBeingCompared();
+    void showError(const QString &errorMessage);
+
+    // AMainWindowCallbacks interface
+public:
+    void onImagesBeingComparedLoaded(QPixmap& image1, QString path1, QPixmap& image2, QString path2);
+    void onComparisonImagesLoaded(QPixmap &image, QString description);
+    void onComparisonTextLoaded(QString text);
 };
 #endif // MAINWINDOW_H

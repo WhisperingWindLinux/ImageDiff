@@ -4,7 +4,7 @@
 #include "contrastcomporator.h"
 
 // Method to compare the contrast of two images
-ContrastComparisonResult ContrastComporator::compareImages(const QString& path1, const QString& path2) {
+ContrastComparisonResult ContrastComporator::compareImages(const QString path1, const QString path2) {
     QImage img1(path1);  // Load the first image
     QImage img2(path2);  // Load the second image
 
@@ -89,4 +89,32 @@ double ContrastComporator::calculateContrast(const QImage& image) {
 
     // Return the standard deviation of luminance as the contrast value
     return std::sqrt(variance);
+}
+
+QString ContrastComporator::name() {
+    return "Show pixels' contrast difference statistics";
+}
+
+QString ContrastComporator::hotkey() {
+    return "K";
+}
+
+QString ContrastComporator::description() {
+    return QString("The algorithm calculates the contrast of an image based on the statistical ")
+                + "analysis of pixel brightness (luminance).It does not compare brightness directly but "
+                + "uses it to determine the spread of values, allowing for the assessment of differences "
+                + "between light and dark areas of the image.";
+}
+
+std::shared_ptr<ComparisionResultVariant> ContrastComporator::compare(QList<QString> filesPath) {
+    if (filesPath.size() != 2) {
+        return std::make_shared<ComparisionResultVariant>();
+    }
+    auto result = compareImages(filesPath[0], filesPath[1]);
+    QString html = ContrastComporator::formatResultToHtml(result);
+    return std::make_shared<ComparisionResultVariant>(html);
+}
+
+ComporatorContentType ContrastComporator::contentType() {
+    return ComporatorContentType::Image;
 }

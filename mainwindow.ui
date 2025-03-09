@@ -35,12 +35,7 @@
      <string>Comparision</string>
     </property>
     <addaction name="actionSwitchBetweenImages"/>
-    <addaction name="actionShowDifferenceAsImage"/>
     <addaction name="separator"/>
-    <addaction name="actionShowAbsolutePixelsValueDifference"/>
-    <addaction name="actionShowPixelsBrigthnessDifference"/>
-    <addaction name="actionShowPixeslContrastDifference"/>
-    <addaction name="actionShowPixelsSaturationDifference"/>
    </widget>
    <addaction name="menu_File"/>
    <addaction name="menuComparision"/>
