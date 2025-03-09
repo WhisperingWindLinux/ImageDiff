@@ -3,7 +3,6 @@
 
 #include <QPair>
 
-
 class PixelDifferenceCalc
 {
 private:

@@ -1,4 +1,3 @@
-#include <QImage>
 #include <QFileInfo>
 #include <cmath>
 

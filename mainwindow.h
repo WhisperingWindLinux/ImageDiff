@@ -16,6 +16,16 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
+public slots:
+    void actionCloseImages_triggered();
+    void actionOpenImages_triggered();
+    void actionShowAbsolutePixelsValueDifference_triggered();
+    void actionShowDifferenceAsImage_triggered();
+    void actionShowPixelsBrigthnessDifference_triggered();
+    void actionShowPixelsSaturationDifference_triggered();
+    void actionShowPixeslContrastDifference_triggered();
+    void actionSwitchBetweenImages_triggered();
+
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();

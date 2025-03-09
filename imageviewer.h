@@ -14,6 +14,14 @@ public:
     explicit ImageViewer(MainWindow *parent = nullptr);
     virtual ~ImageViewer();
 
+    bool loadImages();
+    void toggleImage();
+    void showDifferenceAsImage();
+    void showPixelsBrigthnessDifference();
+    void showPixeslContrastDifference();
+    void showPixelsSaturationDifference();
+    void showAbsolutePixelsValueDifference();
+
 protected:
     void keyPressEvent(QKeyEvent *event) override;
     void wheelEvent(QWheelEvent *event) override;
@@ -29,15 +37,8 @@ private:
     MainWindow *parent = nullptr;
     ImageViewInteractor *imageViewInteractor = nullptr;
 
-    void loadImages();
-    void toggleImage();
-    void showCompareResultImage();
-    void showPexelsBrightnessDiff();
-    void showContrastDiff();
-    void showColorsSaturationDiff();
     void zoomIn();
     void zoomOut();
-    void showCalculatedImageDiff();
     void showError(const QString &errorMessage);
 };
 

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>883</width>
-    <height>644</height>
+    <width>896</width>
+    <height>652</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,15 +19,98 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>883</width>
+     <width>896</width>
      <height>24</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menu_File">
+    <property name="title">
+     <string>&amp;File</string>
+    </property>
+    <addaction name="actionOpenImages"/>
+    <addaction name="actionCloseImages"/>
+   </widget>
+   <widget class="QMenu" name="menuComparision">
+    <property name="title">
+     <string>Comparision</string>
+    </property>
+    <addaction name="actionSwitchBetweenImages"/>
+    <addaction name="actionShowDifferenceAsImage"/>
+    <addaction name="separator"/>
+    <addaction name="actionShowAbsolutePixelsValueDifference"/>
+    <addaction name="actionShowPixelsBrigthnessDifference"/>
+    <addaction name="actionShowPixeslContrastDifference"/>
+    <addaction name="actionShowPixelsSaturationDifference"/>
+   </widget>
+   <addaction name="menu_File"/>
+   <addaction name="menuComparision"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <action name="action_Open">
+  <action name="actionOpenImages">
    <property name="text">
-    <string>&amp;Open</string>
+    <string>&amp;Open images</string>
+   </property>
+   <property name="shortcut">
+    <string>O</string>
+   </property>
+  </action>
+  <action name="actionCloseImages">
+   <property name="text">
+    <string>&amp;Close images</string>
+   </property>
+   <property name="shortcut">
+    <string>C</string>
+   </property>
+  </action>
+  <action name="actionSwitchBetweenImages">
+   <property name="text">
+    <string>Switch between images being compared</string>
+   </property>
+   <property name="shortcut">
+    <string>S</string>
+   </property>
+   <property name="shortcutVisibleInContextMenu">
+    <bool>false</bool>
+   </property>
+  </action>
+  <action name="actionShowDifferenceAsImage">
+   <property name="text">
+    <string>Show the difference in pixel values as an image</string>
+   </property>
+   <property name="shortcut">
+    <string>D</string>
+   </property>
+  </action>
+  <action name="actionShowAbsolutePixelsValueDifference">
+   <property name="text">
+    <string>Show the absolute difference statistics for pixel values</string>
+   </property>
+   <property name="shortcut">
+    <string>A</string>
+   </property>
+  </action>
+  <action name="actionShowPixelsBrigthnessDifference">
+   <property name="text">
+    <string>Show pixels' brigthness difference statistics</string>
+   </property>
+   <property name="shortcut">
+    <string>B</string>
+   </property>
+  </action>
+  <action name="actionShowPixeslContrastDifference">
+   <property name="text">
+    <string>Show pixels' contrast difference statistics</string>
+   </property>
+   <property name="shortcut">
+    <string>K</string>
+   </property>
+  </action>
+  <action name="actionShowPixelsSaturationDifference">
+   <property name="text">
+    <string>Show pixels' saturation difference statistics</string>
+   </property>
+   <property name="shortcut">
+    <string>T</string>
    </property>
   </action>
  </widget>

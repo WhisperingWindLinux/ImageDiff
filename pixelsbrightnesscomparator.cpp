@@ -77,8 +77,6 @@ ComparisonResult PixelsBrightnessComparator::compareImages(const QString& imageP
     return result;
 }
 
-
-
 // Function to format comparison results as an HTML table
 QString PixelsBrightnessComparator::formatResultToHtml(const ComparisonResult& result) {
     QFileInfo file1(result.firstImagePath);
@@ -124,14 +122,14 @@ QString PixelsBrightnessComparator::formatResultToHtml(const ComparisonResult& r
             .arg(file2Name)
             .arg(result.totalBrightness1)
             .arg(result.totalBrightness2)
-            .arg(QString::number(brightnessDifferencePercentage, 'f', 2)); // Форматируем до 2 знаков после запятой
+            .arg(QString::number(brightnessDifferencePercentage, 'f', 2));
     } else if (dTotalBrightness1 < dTotalBrightness2) {
         html += QString("<br><br>%1 is darker than %2 because its total brightness (%3) is less than the second's (%4) by %5%.")
         .arg(file1Name)
             .arg(file2Name)
             .arg(result.totalBrightness1)
             .arg(result.totalBrightness2)
-            .arg(QString::number(brightnessDifferencePercentage, 'f', 2)); // Форматируем до 2 знаков после запятой
+            .arg(QString::number(brightnessDifferencePercentage, 'f', 2));
     } else {
         html += "<br><br>Both images have the same total brightness.";
     }
