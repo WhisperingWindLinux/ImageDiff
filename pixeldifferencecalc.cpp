@@ -4,7 +4,6 @@
 #include <QApplication>
 #include <QString>
 #include <QMap>
-#include <QPair>
 #include <QDebug>
 
 #include "pixeldifferencecalc.h"

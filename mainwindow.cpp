@@ -6,7 +6,6 @@
 #include <QVBoxLayout>
 #include <qgraphicsview.h>
 #include <QApplication>
-#include <QMainWindow>
 #include <QGraphicsView>
 #include <QGraphicsScene>
 #include <QGraphicsPixmapItem>

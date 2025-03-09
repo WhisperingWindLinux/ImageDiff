@@ -1,4 +1,3 @@
-#include <QImage>
 #include <QPainter>
 #include <QDir>
 #include <QFileInfo>

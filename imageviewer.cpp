@@ -1,7 +1,6 @@
 #include "imageviewer.h"
 #include <QtGui/qevent.h>
 #include <QtWidgets/qgraphicsitem.h>
-#include <MainWindow.h>
 #include <QtWidgets/qstatusbar.h>
 #include <qfiledialog.h>
 #include <qmainwindow.h>
