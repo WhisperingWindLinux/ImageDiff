@@ -55,7 +55,7 @@ void ComparisionInteractor::loadImagesBeingCompared(QString &Image1Path, QString
     firstImagePath = Image1Path;
     secondImagePath = Image2Path;
     firstImage = QPixmap();
-    secondImage= QPixmap();
+    secondImage = QPixmap();
 
     if (!validateFilePath(firstImagePath) || !validateFilePath(secondImagePath)) {
         clear();
@@ -141,19 +141,39 @@ void ComparisionInteractor::saveImage(SaveImageInfo info) {
 
 void ComparisionInteractor::onDisplayedRgbChannelsChanged(RgbChannels channels, ImageGeometry imageGeometry) {
 
+    QPixmap image1 = QPixmap();
+    QPixmap image2 = QPixmap();
+
+    if (!validateFilePath(firstImagePath) || !validateFilePath(secondImagePath)) {
+        return;
+    }
+
+    bool isLoaded1 = image1.load(firstImagePath);
+    bool isLoaded2 = image2.load(secondImagePath);
+
+    if (firstImage.size() != firstImage.size()) {
+        return;
+    }
+
+    if (!isLoaded1 || !isLoaded2) {
+        return;
+    }
+
     if (channels == RgbChannels::All) {
-            callbacks->onImagesBeingComparedLoaded(firstImage,
-                                                   firstImagePath,
-                                                   secondImage,
-                                                   secondImagePath,
-                                                   true,
-                                                   imageGeometry);
+        firstImage = image1;
+        secondImage = image2;
+        callbacks->onImagesBeingComparedLoaded(firstImage,
+                                                firstImagePath,
+                                                secondImage,
+                                                secondImagePath,
+                                                true,
+                                                imageGeometry);
     } else {
-        QPixmap oneChannelImage1 = extractChannel(firstImage, channels);
-        QPixmap oneChannelImage2 = extractChannel(secondImage, channels);
-        callbacks->onImagesBeingComparedLoaded(oneChannelImage1,
+        firstImage = extractChannel(image1, channels);
+        secondImage = extractChannel(image2, channels);
+        callbacks->onImagesBeingComparedLoaded(firstImage,
                                                firstImagePath,
-                                               oneChannelImage2,
+                                               secondImage,
                                                secondImagePath,
                                                true,
                                                imageGeometry);
