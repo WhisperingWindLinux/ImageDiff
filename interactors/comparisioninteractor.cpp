@@ -139,12 +139,3 @@ void ComparisionInteractor::saveImage(SaveImageInfo info) {
         break;
     }
 }
-
-
-
-
-
-
-
-
-

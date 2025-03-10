@@ -1,4 +1,5 @@
 #include "aboutdialog.h"
+#include "colorinfopanel.h"
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
@@ -20,6 +21,7 @@
 #include <comparisionmanager.h>
 #include <qmessagebox.h>
 #include <savefileinfo.h>
+#include <QDockWidget>
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -32,12 +34,18 @@ MainWindow::MainWindow(QWidget *parent)
     buildMenus();
 
     ui->menuComparision->setDisabled(true);
+    ui->menuImage_Analysis->setDisabled(true);
+
     connect(ui->actionOpenImages, &QAction::triggered, this, &MainWindow::actionOpenImages_triggered);
     connect(ui->actionCloseImages, &QAction::triggered, this, &MainWindow::actionCloseImages_triggered);
     connect(ui->actionSwitchBetweenImages, &QAction::triggered, this, &MainWindow::actionSwitchBetweenImages_triggered);
     connect(ui->actionSaveImageAs, &QAction::triggered, this, &MainWindow::actionSaveImageAs_triggered);
     connect(ui->actionSaveVisibleAreaAs, &QAction::triggered, this, &MainWindow::actionSaveVisibleAreaAs_triggered);
     connect(ui->actionAbout, &QAction::triggered, this, &MainWindow::actionAbout_triggered);
+    connect(ui->actionColor_Picker, &QAction::toggled, this, &MainWindow::actionColorPicker_triggered);
+
+    colorPanel = new ColorInfoPanel();
+    colorPanel->hide();
 
     setWindowTitle("Image Diff");
     resize(1380, 820);
@@ -73,6 +81,12 @@ void MainWindow::showStatusMessage(QString message) {
     statusBar()->showMessage(message);
 }
 
+void MainWindow::closeEvent(QCloseEvent *event) {
+    if (colorPanel != nullptr) {
+        colorPanel->close();
+    }
+}
+
 void MainWindow::actionOpenImages_triggered() {
     actionCloseImages_triggered();
 
@@ -80,6 +94,7 @@ void MainWindow::actionOpenImages_triggered() {
 
     if (isLoaded) {
         ui->menuComparision->setDisabled(false);
+        ui->menuImage_Analysis->setDisabled(false);
     }
 
     if (!isLoaded && viewer != nullptr) {
@@ -96,6 +111,7 @@ void MainWindow::actionCloseImages_triggered() {
         viewer = nullptr;
     }
     ui->menuComparision->setDisabled(true);
+    ui->menuImage_Analysis->setDisabled(true);
     showStatusMessage("");
 }
 
@@ -130,6 +146,19 @@ void MainWindow::actionSaveVisibleAreaAs_triggered() {
 void MainWindow::actionAbout_triggered() {
     AboutDialog aboutDialog(this);
     aboutDialog.exec();
+}
+
+void MainWindow::actionColorPicker_triggered(bool isTogled) {
+    if (viewer == nullptr) {
+        return;
+    }
+    if (isTogled) {
+        viewer->onColorPickerStatusChanged(true);
+        colorPanel->show();
+    } else {
+        viewer->onColorPickerStatusChanged(false);
+        colorPanel->hide();
+    }
 }
 
 void MainWindow::saveImageAs(QPixmap &image, QString defaultPath) {
@@ -172,6 +201,10 @@ void MainWindow::showError(const QString &errorMessage) {
     msgBox.setStandardButtons(QMessageBox::Ok);
     msgBox.setDefaultButton(QMessageBox::Ok);
     msgBox.exec();
+}
+
+void MainWindow::onRgbValueUnderCursonChanged(int r, int g, int b) {
+    colorPanel->updateColor(r, g, b);
 }
 
 // AMainWindowCallbacks interface

@@ -3,12 +3,14 @@
 
 #include <mainwindow.h>
 #include <qgraphicsview.h>
+#include <qlabel.h>
 
 class ImageViewer : public QGraphicsView {
     Q_OBJECT
 
 public:
     explicit ImageViewer(MainWindow *parent = nullptr);
+    virtual ~ImageViewer();
 
     void showImagesBeingCompared(QPixmap& image1,
                                  QString path1,
@@ -29,8 +31,11 @@ public:
 
     SaveImageInfo getImageShowedOnTheScreen();
 
+    void onColorPickerStatusChanged(bool isActivate);
+
 protected:
     void wheelEvent(QWheelEvent *event) override;
+    void mouseMoveEvent(QMouseEvent* event) override;
 
 private:
     QGraphicsScene *scene;
@@ -42,6 +47,9 @@ private:
     int currentImageIndex;
     qreal scaleFactor;
     MainWindow *parent = nullptr;
+    QMouseEvent* lastMousEvent = nullptr;
+    bool isRgbTrackingActive = false;
+
 
     void zoomIn();
     void zoomOut();

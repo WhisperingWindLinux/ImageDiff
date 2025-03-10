@@ -7,6 +7,7 @@
 
 
 class ImageViewer;
+class ColorInfoPanel;
 
 
 QT_BEGIN_NAMESPACE
@@ -27,16 +28,22 @@ public slots:
     void actionSaveImageAs_triggered();
     void actionSaveVisibleAreaAs_triggered();
     void actionAbout_triggered();
+    void actionColorPicker_triggered(bool isTogled);
 
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
     void showStatusMessage(QString message);
 
+protected:
+    void closeEvent(QCloseEvent *event) override;
+
 private:
     Ui::MainWindow *ui;
     ImageViewer *viewer = nullptr;
     ComparisionInteractor *comparisionInteractor = nullptr;
+    bool isColorPickerActive = false;
+    ColorInfoPanel* colorPanel = nullptr;
 
     void buildMenus();
     bool loadImagesBeingCompared();
@@ -44,10 +51,10 @@ private:
 
     // AMainWindowCallbacks interface
 public:
-    void onImagesBeingComparedLoaded(QPixmap& image1, QString path1, QPixmap& image2, QString path2);
-    void onComparisonImagesLoaded(QPixmap &image, QString description);
-    void onComparisonTextLoaded(QString text);
-    void saveImageAs(QPixmap &image, QString defaultPath);
-
+    void onImagesBeingComparedLoaded(QPixmap& image1, QString path1, QPixmap& image2, QString path2) override;
+    void onComparisonImagesLoaded(QPixmap &image, QString description) override;
+    void onComparisonTextLoaded(QString text) override;
+    void saveImageAs(QPixmap &image, QString defaultPath) override;
+    void onRgbValueUnderCursonChanged(int r, int g, int b) override;
 };
 #endif // MAINWINDOW_H

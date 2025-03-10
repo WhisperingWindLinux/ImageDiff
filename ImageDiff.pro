@@ -10,6 +10,7 @@ CONFIG += c++17
 
 SOURCES += \
     aboutdialog.cpp \
+    colorinfopanel.cpp \
     colorssaturationcomporator.cpp \
     comparisionmanager.cpp \
     comparisionresultvariant.cpp \
@@ -24,6 +25,7 @@ SOURCES += \
 
 HEADERS += \
     aboutdialog.h \
+    colorinfopanel.h \
     colorssaturationcomporator.h \
     comparisionmanager.h \
     comparisionresultvariant.h \

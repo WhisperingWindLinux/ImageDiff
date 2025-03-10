@@ -13,6 +13,7 @@
 #include <pixelsbrightnesscomparator.h>
 #include <contrastcomporator.h>
 #include <colorssaturationcomporator.h>
+#include <qlabel.h>
 
 
 ImageViewer::ImageViewer(MainWindow *parent)
@@ -24,7 +25,30 @@ ImageViewer::ImageViewer(MainWindow *parent)
     scene = new QGraphicsScene(this);
     setScene(scene);
 
+    setMouseTracking(true);
     setDragMode(QGraphicsView::ScrollHandDrag);
+}
+
+ImageViewer::~ImageViewer() {
+    if (firstImage != nullptr) {
+        scene->removeItem(firstImage);
+        delete firstImage;
+        firstImage = nullptr;
+    }
+    if (secondImage != nullptr) {
+        scene->removeItem(secondImage);
+        delete secondImage;
+        secondImage = nullptr;
+    }
+    if (comparisonImage != nullptr) {
+        scene->removeItem(comparisonImage);
+        delete comparisonImage;
+        comparisonImage = nullptr;
+    }
+    if (lastMousEvent != nullptr) {
+        delete lastMousEvent;
+        lastMousEvent = nullptr;
+    }
 }
 
 void ImageViewer::wheelEvent(QWheelEvent *event) {
@@ -33,6 +57,16 @@ void ImageViewer::wheelEvent(QWheelEvent *event) {
     } else {
         zoomOut();
     }
+}
+
+void ImageViewer::zoomIn() {
+    scale(1.25, 1.25);
+    scaleFactor *= 1.25;
+}
+
+void ImageViewer::zoomOut() {
+    scale(0.8, 0.8);
+    scaleFactor *= 0.8;
 }
 
 void ImageViewer::showImagesBeingCompared(QPixmap& image1,
@@ -90,16 +124,8 @@ void ImageViewer::toggleImage() {
     }
 
     centerOn(viewRect.center());
-}
 
-void ImageViewer::zoomIn() {
-    scale(1.25, 1.25);
-    scaleFactor *= 1.25;
-}
-
-void ImageViewer::zoomOut() {
-    scale(0.8, 0.8);
-    scaleFactor *= 0.8;
+    mouseMoveEvent(lastMousEvent);
 }
 
 /*
@@ -140,6 +166,14 @@ SaveImageInfo ImageViewer::getImageShowedOnTheScreen() {
         return SaveImageInfo(SaveImageInfoType::SecondImage, secondImage->pixmap());
     }
     return {};
+}
+
+void ImageViewer::onColorPickerStatusChanged(bool isActivate) {
+    if (isActivate) {
+        isRgbTrackingActive = true;
+    } else {
+        isRgbTrackingActive = false;
+    }
 }
 
 // Function to get the visible portion of the image in QGraphicsView
@@ -202,12 +236,40 @@ QPixmap ImageViewer::getVisiblePixmap(QGraphicsView* view) {
     return result;
 }
 
+void ImageViewer::mouseMoveEvent(QMouseEvent* event) {
 
+    QGraphicsView::mouseMoveEvent(event);
 
+    lastMousEvent = event->clone();
 
+    if (!isRgbTrackingActive) {
+        return;
+    }
 
+    // Convert mouse position to scene coordinates
+    QPointF scenePos = mapToScene(event->pos());
 
+    // Get the item under the cursor (if any)
+    QGraphicsItem* item = scene->itemAt(scenePos, transform());
+    if (item) {
+        // Check if the item is a pixmap (image)
+        QGraphicsPixmapItem* pixmapItem = dynamic_cast<QGraphicsPixmapItem*>(item);
+        if (pixmapItem) {
+            // Get the pixmap (image) from the item
+            const QPixmap pixmap = pixmapItem->pixmap();
+            const QImage image = pixmap.toImage();
 
+            // Convert scene coordinates to image coordinates
+            QPointF itemPos = pixmapItem->mapFromScene(scenePos);
+            int x = static_cast<int>(itemPos.x());
+            int y = static_cast<int>(itemPos.y());
 
-
-
+            // Ensure the coordinates are within the image bounds
+            if (x >= 0 && x < image.width() && y >= 0 && y < image.height()) {
+                // Get the color of the pixel
+                QColor color = image.pixelColor(x, y);
+                parent->onRgbValueUnderCursonChanged(color.red(), color.green(), color.blue());
+            }
+        }
+    }
+}
