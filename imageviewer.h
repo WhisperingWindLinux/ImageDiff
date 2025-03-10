@@ -15,7 +15,9 @@ public:
     void showImagesBeingCompared(QPixmap& image1,
                                  QString path1,
                                  QPixmap& image2,
-                                 QString path2);
+                                 QString path2,
+                                 bool useCustomImageGeometry,
+                                 ImageGeometry imageGeometry);
 
     void showComparisonImage(QPixmap &image, QString description);
 
@@ -33,6 +35,7 @@ public:
 
     void onColorPickerStatusChanged(bool isActivate);
 
+    ImageGeometry getImageGometry();
 protected:
     void wheelEvent(QWheelEvent *event) override;
     void mouseMoveEvent(QMouseEvent* event) override;

@@ -30,6 +30,11 @@ public slots:
     void actionAbout_triggered();
     void actionColorPicker_triggered(bool isTogled);
 
+    void actionShowRGB_triggered();
+    void actionShowRChannel_triggered();
+    void actionShowGChannel_triggered();
+    void actionShowBChannel_triggered();
+
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
@@ -51,10 +56,17 @@ private:
 
     // AMainWindowCallbacks interface
 public:
-    void onImagesBeingComparedLoaded(QPixmap& image1, QString path1, QPixmap& image2, QString path2) override;
+    void onImagesBeingComparedLoaded(QPixmap& image1,
+                                     QString path1,
+                                     QPixmap& image2,
+                                     QString path2,
+                                     bool useCustomImagesGeometry,
+                                     ImageGeometry imageRect) override;
+
     void onComparisonImagesLoaded(QPixmap &image, QString description) override;
     void onComparisonTextLoaded(QString text) override;
     void saveImageAs(QPixmap &image, QString defaultPath) override;
     void onRgbValueUnderCursonChanged(QString imageName, int r, int g, int b) override;
 };
 #endif // MAINWINDOW_H
+

@@ -72,7 +72,9 @@ void ImageViewer::zoomOut() {
 void ImageViewer::showImagesBeingCompared(QPixmap& image1,
                                           QString path1,
                                           QPixmap& image2,
-                                          QString path2)
+                                          QString path2,
+                                          bool useCustomImagesGeometry,
+                                          ImageGeometry imageGeometry)
 {
     firstImagePath = path1;
     secondImagePath = path2;
@@ -82,7 +84,13 @@ void ImageViewer::showImagesBeingCompared(QPixmap& image1,
     secondImage = scene->addPixmap(image2);
     parent->showStatusMessage(path1);
     secondImage->setVisible(false);
-    setSceneRect(firstImage->boundingRect());
+    if (useCustomImagesGeometry) {
+        centerOn(imageGeometry.rect.center());
+        scale(imageGeometry.scaleFactor, imageGeometry.scaleFactor);
+        scaleFactor = imageGeometry.scaleFactor;
+    } else {
+        setSceneRect(firstImage->boundingRect());
+    }
 }
 
 void ImageViewer::showComparisonImage(QPixmap &image, QString description) {
@@ -128,6 +136,11 @@ void ImageViewer::toggleImage() {
     centerOn(viewRect.center());
 
     mouseMoveEvent(lastMousEvent);
+}
+
+ImageGeometry ImageViewer::getImageGometry() {
+    QRectF rect = mapToScene(viewport()->geometry()).boundingRect();
+    return ImageGeometry(rect, scaleFactor);
 }
 
 /*
@@ -239,6 +252,10 @@ QPixmap ImageViewer::getVisiblePixmap(QGraphicsView* view) {
 }
 
 void ImageViewer::mouseMoveEvent(QMouseEvent* event) {
+
+    if (event == nullptr) {
+        return;
+    }
 
     QGraphicsView::mouseMoveEvent(event);
 

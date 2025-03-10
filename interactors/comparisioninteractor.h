@@ -8,7 +8,6 @@
 
 #include <interfaces/mainwindowcallbacks.h>
 
-
 class ComparisionInteractor
 {
 public:
@@ -20,6 +19,8 @@ public:
 
     void saveImage(SaveImageInfo info);
 
+    void onDisplayedRgbChannelsChanged(RgbChannels channels, ImageGeometry imageGeometry);
+
 private:
     AMainWindowCallbacks *callbacks;
     QString firstImagePath;
@@ -30,6 +31,7 @@ private:
 
     void clear();
     bool validateFilePath(const QString &filePath);
+    QPixmap extractChannel(const QPixmap& pixmap, RgbChannels channels);
 };
 
 #endif // COMPARISIONINTERACTOR_H

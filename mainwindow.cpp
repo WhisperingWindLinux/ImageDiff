@@ -43,6 +43,10 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->actionSaveVisibleAreaAs, &QAction::triggered, this, &MainWindow::actionSaveVisibleAreaAs_triggered);
     connect(ui->actionAbout, &QAction::triggered, this, &MainWindow::actionAbout_triggered);
     connect(ui->actionColor_Picker, &QAction::toggled, this, &MainWindow::actionColorPicker_triggered);
+    connect(ui->actionShow_RGB, &QAction::triggered, this, &MainWindow::actionShowRGB_triggered);
+    connect(ui->actionShow_R_channel, &QAction::triggered, this, &MainWindow::actionShowRChannel_triggered);
+    connect(ui->actionShow_G_channel, &QAction::triggered, this, &MainWindow::actionShowGChannel_triggered);
+    connect(ui->actionShow_B_channel, &QAction::triggered, this, &MainWindow::actionShowBChannel_triggered);
 
     colorPanel = new ColorInfoPanel();
     colorPanel->hide();
@@ -161,6 +165,38 @@ void MainWindow::actionColorPicker_triggered(bool isTogled) {
     }
 }
 
+void MainWindow::actionShowRGB_triggered() {
+    if (viewer == nullptr) {
+        return;
+    }
+    ImageGeometry imageGeometry = viewer->getImageGometry();
+    comparisionInteractor->onDisplayedRgbChannelsChanged(RgbChannels::All, imageGeometry);
+}
+
+void MainWindow::actionShowRChannel_triggered() {
+    if (viewer == nullptr) {
+        return;
+    }
+    ImageGeometry imageGeometry = viewer->getImageGometry();
+    comparisionInteractor->onDisplayedRgbChannelsChanged(RgbChannels::R, imageGeometry);
+}
+
+void MainWindow::actionShowGChannel_triggered() {
+    if (viewer == nullptr) {
+        return;
+    }
+    ImageGeometry imageGeometry = viewer->getImageGometry();
+    comparisionInteractor->onDisplayedRgbChannelsChanged(RgbChannels::G, imageGeometry);
+}
+
+void MainWindow::actionShowBChannel_triggered() {
+    if (viewer == nullptr) {
+        return;
+    }
+    ImageGeometry imageGeometry = viewer->getImageGometry();
+    comparisionInteractor->onDisplayedRgbChannelsChanged(RgbChannels::B, imageGeometry);
+}
+
 void MainWindow::saveImageAs(QPixmap &image, QString defaultPath) {
     QString filePath = QFileDialog::getSaveFileName(
         this,
@@ -212,11 +248,13 @@ void MainWindow::onRgbValueUnderCursonChanged(QString imageName, int r, int g, i
 void MainWindow::onImagesBeingComparedLoaded(QPixmap& image1,
                                              QString path1,
                                              QPixmap& image2,
-                                             QString path2)
+                                             QString path2,
+                                             bool useCustomImageGeometry,
+                                             ImageGeometry imageGeometry)
 {
     viewer = new ImageViewer(this);
     setCentralWidget(viewer);
-    viewer->showImagesBeingCompared(image1, path1, image2, path2);
+    viewer->showImagesBeingCompared(image1, path1, image2, path2, useCustomImageGeometry, imageGeometry);
 }
 
 void MainWindow::onComparisonImagesLoaded(QPixmap &image, QString description) {

@@ -42,14 +42,22 @@ Switch between images being compared                                       S
 
 Show the difference in pixel values as an image                            D
 
-Show the absolute difference statistics for pixel values                   A
+Show the absolute difference statistics for pixel values                   V
 
-Show pixels' brigthness difference statistics                              B
+Show pixels' brigthness difference statistics                              N
 
 Show pixels' contrast difference statistics                                K
 
 Show pixels' saturation difference statistics                              T
 
 Color picker                                                               P
+
+Show RGB (all 3 channels)                                                  A
+
+Show Red channel only                                                      R
+
+Show Green channel only                                                    G
+
+Show Blue channel only                                                     B
 
 */

@@ -100,7 +100,7 @@ QString PixelsAbsoluteValueComparator::name() {
 }
 
 QString PixelsAbsoluteValueComparator::hotkey() {
-    return "A";
+    return "V";
 }
 
 QString PixelsAbsoluteValueComparator::description() {

@@ -75,7 +75,7 @@ void ComparisionInteractor::loadImagesBeingCompared(QString &Image1Path, QString
         throw std::runtime_error("Error: Unable to load images!");
     }
 
-    callbacks->onImagesBeingComparedLoaded(firstImage, firstImagePath, secondImage, secondImagePath);
+    callbacks->onImagesBeingComparedLoaded(firstImage, firstImagePath, secondImage, secondImagePath, false, {});
 }
 
 bool ComparisionInteractor::validateFilePath(const QString &filePath) {
@@ -138,3 +138,66 @@ void ComparisionInteractor::saveImage(SaveImageInfo info) {
         break;
     }
 }
+
+void ComparisionInteractor::onDisplayedRgbChannelsChanged(RgbChannels channels, ImageGeometry imageGeometry) {
+
+    if (channels == RgbChannels::All) {
+            callbacks->onImagesBeingComparedLoaded(firstImage,
+                                                   firstImagePath,
+                                                   secondImage,
+                                                   secondImagePath,
+                                                   true,
+                                                   imageGeometry);
+    } else {
+        QPixmap oneChannelImage1 = extractChannel(firstImage, channels);
+        QPixmap oneChannelImage2 = extractChannel(secondImage, channels);
+        callbacks->onImagesBeingComparedLoaded(oneChannelImage1,
+                                               firstImagePath,
+                                               oneChannelImage2,
+                                               secondImagePath,
+                                               true,
+                                               imageGeometry);
+    }
+}
+
+
+QPixmap ComparisionInteractor::extractChannel(const QPixmap& pixmap, RgbChannels channels) {
+    // Convert QPixmap to QImage for pixel manipulation
+    QImage image = pixmap.toImage();
+
+    // Create a new QImage to store the red channel
+    QImage oneChannelImage(image.size(), QImage::Format_ARGB32);
+
+    // Iterate over each pixel
+    for (int y = 0; y < image.height(); ++y) {
+        for (int x = 0; x < image.width(); ++x) {
+            // Extract the original pixel
+            QRgb pixel = image.pixel(x, y);
+
+            if (channels == RgbChannels::R) {
+                int red = qRed(pixel);
+                QRgb newPixel = qRgba(red, 0, 0, qAlpha(pixel));
+                oneChannelImage.setPixel(x, y, newPixel);
+            } else if (channels == RgbChannels::G) {
+                int green = qGreen(pixel);
+                QRgb newPixel = qRgba(0, green, 0, qAlpha(pixel));
+                oneChannelImage.setPixel(x, y, newPixel);
+            } else if (channels == RgbChannels::B) {
+                int blue = qBlue(pixel);
+                QRgb newPixel = qRgba(0, 0, blue, qAlpha(pixel));
+                oneChannelImage.setPixel(x, y, newPixel);
+            } else {
+                throw new std::runtime_error("Error: An incorrect RGB channel was requested.");
+            }
+        }
+    }
+
+    // Convert the modified QImage back to QPixmap
+    return QPixmap::fromImage(oneChannelImage);
+}
+
+
+
+
+
+

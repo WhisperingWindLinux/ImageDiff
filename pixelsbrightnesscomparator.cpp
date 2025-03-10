@@ -143,7 +143,7 @@ QString PixelsBrightnessComparator::name() {
 }
 
 QString PixelsBrightnessComparator::hotkey() {
-    return "B";
+    return "N";
 }
 
 QString PixelsBrightnessComparator::description() {
