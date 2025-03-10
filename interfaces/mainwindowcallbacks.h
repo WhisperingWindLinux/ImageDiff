@@ -15,6 +15,8 @@ public:
                                           QString description) = 0;
 
     virtual void onComparisonTextLoaded(QString text) = 0;
+
+    virtual void saveImageAs(QPixmap &image, QString defaultPath) = 0;
 };
 
 

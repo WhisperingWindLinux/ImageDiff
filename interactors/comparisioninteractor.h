@@ -4,8 +4,11 @@
 #include <QtCore/qvariant.h>
 
 #include <qpixmap.h>
+#include <savefileinfo.h>
 
 #include <interfaces/mainwindowcallbacks.h>
+
+
 class ComparisionInteractor
 {
 public:
@@ -14,6 +17,8 @@ public:
     void loadImagesBeingCompared(QString &Image1Path, QString &Image2Path);
 
     void onImageComporatorShouldBeCalled(QVariant callerData);
+
+    void saveImage(SaveImageInfo info);
 
 private:
     AMainWindowCallbacks *callbacks;

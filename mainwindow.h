@@ -24,6 +24,8 @@ public slots:
     void actionOpenImages_triggered();
     void actionSwitchBetweenImages_triggered();
     void actionImageComparatorsMenuItem_triggered();
+    void actionSaveImageAs_triggered();
+    void actionSaveVisibleAreaAs_triggered();
 
 public:
     MainWindow(QWidget *parent = nullptr);
@@ -44,5 +46,7 @@ public:
     void onImagesBeingComparedLoaded(QPixmap& image1, QString path1, QPixmap& image2, QString path2);
     void onComparisonImagesLoaded(QPixmap &image, QString description);
     void onComparisonTextLoaded(QString text);
+    void saveImageAs(QPixmap &image, QString defaultPath);
+
 };
 #endif // MAINWINDOW_H

@@ -4,7 +4,6 @@
 #include <mainwindow.h>
 #include <qgraphicsview.h>
 
-
 class ImageViewer : public QGraphicsView {
     Q_OBJECT
 
@@ -19,6 +18,16 @@ public:
     void showComparisonImage(QPixmap &image, QString description);
 
     void toggleImage();
+
+    /*
+     Implementation of a method to capture the image displayed
+     in QGraphicsView, taking into account the current scale (zoom)
+     and visible area. In other words, everything outside the
+     currently visible area will be cropped.
+    */
+    SaveImageInfo getCurrentVisiableArea();
+
+    SaveImageInfo getImageShowedOnTheScreen();
 
 protected:
     void wheelEvent(QWheelEvent *event) override;
@@ -36,6 +45,7 @@ private:
 
     void zoomIn();
     void zoomOut();
+    static QPixmap getVisiblePixmap(QGraphicsView* view);
 };
 
 

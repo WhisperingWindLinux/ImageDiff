@@ -33,7 +33,8 @@ HEADERS += \
     interfaces/mainwindowcallbacks.h \
     mainwindow.h \
     pixelsabsolutevaluecomparator.h \
-    pixelsbrightnesscomparator.h
+    pixelsbrightnesscomparator.h \
+    savefileinfo.h
 
 FORMS += \
     mainwindow.ui

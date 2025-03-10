@@ -18,6 +18,7 @@
 #include <ImageViewer.h>
 #include <comparisionmanager.h>
 #include <qmessagebox.h>
+#include <savefileinfo.h>
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -33,6 +34,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->actionOpenImages, &QAction::triggered, this, &MainWindow::actionOpenImages_triggered);
     connect(ui->actionCloseImages, &QAction::triggered, this, &MainWindow::actionCloseImages_triggered);
     connect(ui->actionSwitchBetweenImages, &QAction::triggered, this, &MainWindow::actionSwitchBetweenImages_triggered);
+    connect(ui->actionSaveImageAs, &QAction::triggered, this, &MainWindow::actionSaveImageAs_triggered);
+    connect(ui->actionSaveVisibleAreaAs, &QAction::triggered, this, &MainWindow::actionSaveVisibleAreaAs_triggered);
 
     setWindowTitle("Image Diff");
     resize(1380, 820);
@@ -106,6 +109,41 @@ void MainWindow::actionImageComparatorsMenuItem_triggered() {
     comparisionInteractor->onImageComporatorShouldBeCalled(action->data());
 }
 
+void MainWindow::actionSaveImageAs_triggered() {
+    if (viewer == nullptr) {
+        return;
+    }
+    SaveImageInfo info = viewer->getImageShowedOnTheScreen();
+    comparisionInteractor->saveImage(info);
+}
+
+void MainWindow::actionSaveVisibleAreaAs_triggered() {
+    if (viewer == nullptr) {
+        return;
+    }
+    SaveImageInfo info = viewer->getCurrentVisiableArea();
+    comparisionInteractor->saveImage(info);
+}
+
+void MainWindow::saveImageAs(QPixmap &image, QString defaultPath) {
+    QString filePath = QFileDialog::getSaveFileName(
+        this,
+        "Save Image",                  // Dialog title
+        defaultPath,                   // Default directory
+        "Images (*.png)"               // File filters
+        );
+
+    if (filePath.isEmpty()) {
+        return;
+    }
+
+    if (!image.save(filePath)) {
+        QMessageBox::warning(this, "Error", "Failed to save the image.");
+    } else {
+        // QMessageBox::information(this, "Success", "Image saved successfully.");
+    }
+}
+
 bool MainWindow::loadImagesBeingCompared() {
     try {
         QString firstImagePath = QFileDialog::getOpenFileName(nullptr, "Open First Image", "", "Images (*.png)");
@@ -155,21 +193,3 @@ void MainWindow::onComparisonTextLoaded(QString text) {
     msgBox.setStandardButtons(QMessageBox::Ok);
     msgBox.exec();
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

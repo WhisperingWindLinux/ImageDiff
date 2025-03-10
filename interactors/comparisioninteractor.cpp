@@ -1,5 +1,7 @@
 #include "comparisioninteractor.h"
 
+#include <QtCore/qdir.h>
+#include <SaveFileInfo.h>
 #include <comparisionmanager.h>
 #include <qfileinfo.h>
 
@@ -90,4 +92,59 @@ bool ComparisionInteractor::validateFilePath(const QString &filePath) {
 
     return true;
 }
+
+void ComparisionInteractor::saveImage(SaveImageInfo info) {
+    if (info.saveImageInfoType == SaveImageInfoType::None || info.image.isNull()) {
+        return;
+    }
+
+    QFileInfo file1 = QFileInfo(firstImagePath);
+    QFileInfo file2 = QFileInfo(secondImagePath);
+    QString file1Name = file1.baseName();
+    QString file2Name = file2.baseName();
+    QDir defaultDir = file1.absoluteDir();
+    QString defaultExtention = QString(".") + file1.suffix();
+    QString fileName, fullPath;
+
+    switch (info.saveImageInfoType) {
+    case SaveImageInfoType::FirstImage:
+        callbacks->saveImageAs(info.image, firstImagePath);
+        break;
+    case SaveImageInfoType::SecondImage:
+        callbacks->saveImageAs(info.image, secondImagePath);
+        break;
+    case SaveImageInfoType::FirstImageArea:
+        fileName = file1Name + "_area" + defaultExtention;
+        fullPath = defaultDir.filePath(fileName);
+        callbacks->saveImageAs(info.image, fullPath);
+        break;
+    case SaveImageInfoType::SecondImageArea:
+        fileName = file2Name + "_area" + defaultExtention;
+        fullPath = defaultDir.filePath(fileName);
+        callbacks->saveImageAs(info.image, fullPath);
+        break;
+    case SaveImageInfoType::ComparisonImage:
+        fileName = QString("%1_vs_%2_comparison%3")
+                       .arg(file1Name, file2Name, defaultExtention);
+        fullPath = defaultDir.filePath(fileName);
+        callbacks->saveImageAs(info.image, fullPath);
+        break;
+    case SaveImageInfoType::ComparisonImageArea:
+        fileName = QString("%1_vs_%2_areas_comparison%3")
+                       .arg(file1Name, file2Name, defaultExtention);
+        fullPath = defaultDir.filePath(fileName);
+        callbacks->saveImageAs(info.image, fullPath);
+        break;
+    default:
+        break;
+    }
+}
+
+
+
+
+
+
+
+
 
