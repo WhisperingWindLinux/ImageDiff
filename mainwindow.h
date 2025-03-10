@@ -26,6 +26,7 @@ public slots:
     void actionImageComparatorsMenuItem_triggered();
     void actionSaveImageAs_triggered();
     void actionSaveVisibleAreaAs_triggered();
+    void actionAbout_triggered();
 
 public:
     MainWindow(QWidget *parent = nullptr);

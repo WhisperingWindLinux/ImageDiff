@@ -1,3 +1,4 @@
+#include "aboutdialog.h"
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
@@ -36,6 +37,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->actionSwitchBetweenImages, &QAction::triggered, this, &MainWindow::actionSwitchBetweenImages_triggered);
     connect(ui->actionSaveImageAs, &QAction::triggered, this, &MainWindow::actionSaveImageAs_triggered);
     connect(ui->actionSaveVisibleAreaAs, &QAction::triggered, this, &MainWindow::actionSaveVisibleAreaAs_triggered);
+    connect(ui->actionAbout, &QAction::triggered, this, &MainWindow::actionAbout_triggered);
 
     setWindowTitle("Image Diff");
     resize(1380, 820);
@@ -123,6 +125,11 @@ void MainWindow::actionSaveVisibleAreaAs_triggered() {
     }
     SaveImageInfo info = viewer->getCurrentVisiableArea();
     comparisionInteractor->saveImage(info);
+}
+
+void MainWindow::actionAbout_triggered() {
+    AboutDialog aboutDialog(this);
+    aboutDialog.exec();
 }
 
 void MainWindow::saveImageAs(QPixmap &image, QString defaultPath) {

@@ -40,8 +40,21 @@
     <addaction name="actionSwitchBetweenImages"/>
     <addaction name="separator"/>
    </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionAbout"/>
+   </widget>
+   <widget class="QMenu" name="menutyjtytj">
+    <property name="title">
+     <string>tyjtytj</string>
+    </property>
+   </widget>
    <addaction name="menu_File"/>
    <addaction name="menuComparision"/>
+   <addaction name="menuHelp"/>
+   <addaction name="menutyjtytj"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionOpenImages">
@@ -125,6 +138,11 @@
    </property>
    <property name="shortcut">
     <string>Meta+Shift+S</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>About</string>
    </property>
   </action>
  </widget>
