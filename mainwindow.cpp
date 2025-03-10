@@ -203,8 +203,8 @@ void MainWindow::showError(const QString &errorMessage) {
     msgBox.exec();
 }
 
-void MainWindow::onRgbValueUnderCursonChanged(int r, int g, int b) {
-    colorPanel->updateColor(r, g, b);
+void MainWindow::onRgbValueUnderCursonChanged(QString imageName, int r, int g, int b) {
+    colorPanel->updateColor(imageName, r, g, b);
 }
 
 // AMainWindowCallbacks interface

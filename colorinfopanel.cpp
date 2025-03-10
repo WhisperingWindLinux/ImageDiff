@@ -49,10 +49,14 @@ ColorInfoPanel::ColorInfoPanel(QWidget *parent)
 }
 
 
-void ColorInfoPanel::updateColor(int r, int g, int b) {
+void ColorInfoPanel::updateColor(QString imageName, int r, int g, int b) {
+    if (imageName.isEmpty()) {
+        setWindowTitle("");
+    } else {
+        setWindowTitle(imageName);
+    }
     QString style = QString("background-color: rgb(%1, %2, %3);").arg(r).arg(g).arg(b);
     colorSquare->setStyleSheet(style); // Update the background color of the square
-
     rLabel->setText(QString("R: %1").arg(r));
     gLabel->setText(QString("G: %1").arg(g));
     bLabel->setText(QString("B: %1").arg(b));

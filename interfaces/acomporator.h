@@ -50,4 +50,6 @@ Show pixels' contrast difference statistics                                K
 
 Show pixels' saturation difference statistics                              T
 
+Color picker                                                               P
+
 */

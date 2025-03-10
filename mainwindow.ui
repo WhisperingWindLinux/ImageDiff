@@ -63,7 +63,7 @@
     <string>&amp;Open Images</string>
    </property>
    <property name="shortcut">
-    <string>O</string>
+    <string>Ctrl+O</string>
    </property>
   </action>
   <action name="actionCloseImages">
@@ -71,7 +71,7 @@
     <string>&amp;Close Images</string>
    </property>
    <property name="shortcut">
-    <string>C</string>
+    <string>Ctrl+C</string>
    </property>
   </action>
   <action name="actionSwitchBetweenImages">
@@ -90,7 +90,7 @@
     <string>Save Image As...</string>
    </property>
    <property name="shortcut">
-    <string>Meta+S</string>
+    <string>Ctrl+S</string>
    </property>
   </action>
   <action name="actionSaveVisibleAreaAs">
@@ -98,7 +98,7 @@
     <string>Save Visible Area As... </string>
    </property>
    <property name="shortcut">
-    <string>Meta+Shift+S</string>
+    <string>Ctrl+Shift+S</string>
    </property>
   </action>
   <action name="actionAbout">

@@ -1,7 +1,7 @@
 #include "comparisioninteractor.h"
 
 #include <QtCore/qdir.h>
-#include <SaveFileInfo.h>
+#include <savefileinfo.h>
 #include <comparisionmanager.h>
 #include <qfileinfo.h>
 
@@ -10,7 +10,6 @@ ComparisionInteractor::ComparisionInteractor(AMainWindowCallbacks *callbacks) :
 {
 
 }
-
 
 void ComparisionInteractor::onImageComporatorShouldBeCalled(QVariant callerData) {
     if (!callerData.isValid() || callerData.isNull()) {

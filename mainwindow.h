@@ -55,6 +55,6 @@ public:
     void onComparisonImagesLoaded(QPixmap &image, QString description) override;
     void onComparisonTextLoaded(QString text) override;
     void saveImageAs(QPixmap &image, QString defaultPath) override;
-    void onRgbValueUnderCursonChanged(int r, int g, int b) override;
+    void onRgbValueUnderCursonChanged(QString imageName, int r, int g, int b) override;
 };
 #endif // MAINWINDOW_H

@@ -41,6 +41,8 @@ private:
     QGraphicsScene *scene;
     QString firstImagePath;
     QString secondImagePath;
+    QString firstImageName;
+    QString secondImageName;
     QGraphicsPixmapItem *firstImage = nullptr;
     QGraphicsPixmapItem *secondImage = nullptr;
     QGraphicsPixmapItem *comparisonImage = nullptr;

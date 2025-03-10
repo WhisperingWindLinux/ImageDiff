@@ -13,7 +13,7 @@ class ColorInfoPanel : public QWidget
 public:
     explicit ColorInfoPanel(QWidget *parent = nullptr);
 
-    void updateColor(int r, int g, int b);
+    void updateColor(QString imageName, int r, int g, int b);
 
 private:
     QFrame* colorSquare;       // The square that shows the color

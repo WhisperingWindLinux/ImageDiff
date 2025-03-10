@@ -18,7 +18,7 @@ public:
 
     virtual void saveImageAs(QPixmap &image, QString defaultPath) = 0;
 
-    virtual void onRgbValueUnderCursonChanged(int r, int g, int b) = 0;
+    virtual void onRgbValueUnderCursonChanged(QString imageName, int r, int g, int b) = 0;
 };
 
 

@@ -76,6 +76,8 @@ void ImageViewer::showImagesBeingCompared(QPixmap& image1,
 {
     firstImagePath = path1;
     secondImagePath = path2;
+    firstImageName = QFileInfo(path1).baseName();
+    secondImageName = QFileInfo(path2).baseName();
     firstImage = scene->addPixmap(image1);
     secondImage = scene->addPixmap(image2);
     parent->showStatusMessage(path1);
@@ -246,6 +248,15 @@ void ImageViewer::mouseMoveEvent(QMouseEvent* event) {
         return;
     }
 
+    QString imageName = "error: unknown image";
+    if (comparisonImage != nullptr) {
+        imageName = "comparison result image";
+    } else if (currentImageIndex == 0) {
+        imageName = firstImageName;
+    } else if (currentImageIndex == 1) {
+        imageName = secondImageName;
+    }
+
     // Convert mouse position to scene coordinates
     QPointF scenePos = mapToScene(event->pos());
 
@@ -268,7 +279,7 @@ void ImageViewer::mouseMoveEvent(QMouseEvent* event) {
             if (x >= 0 && x < image.width() && y >= 0 && y < image.height()) {
                 // Get the color of the pixel
                 QColor color = image.pixelColor(x, y);
-                parent->onRgbValueUnderCursonChanged(color.red(), color.green(), color.blue());
+                parent->onRgbValueUnderCursonChanged(imageName, color.red(), color.green(), color.blue());
             }
         }
     }
