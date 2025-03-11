@@ -23,6 +23,7 @@
 #include <QDebug>
 #include <qmessagebox.h>
 #include <QDockWidget>
+#include <QMimeData>
 
 #include <gui/imagegeometry.h>
 #include <gui/propertyeditordialog.h>
@@ -55,6 +56,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     setWindowTitle("Image Diff");
     resize(1380, 820);
+
+    setAcceptDrops(true);
 }
 
 MainWindow::~MainWindow() {
@@ -96,6 +99,27 @@ void MainWindow::showStatusMessage(QString message) {
 void MainWindow::closeEvent(QCloseEvent *event) {
     if (colorPanel != nullptr) {
         colorPanel->close();
+    }
+}
+
+void MainWindow::dragEnterEvent(QDragEnterEvent *event) {
+    if (event->mimeData()->hasFormat("text/uri-list")) {
+        event->acceptProposedAction();
+    } else {
+        event->ignore();
+    }
+}
+
+void MainWindow::dropEvent(QDropEvent *event) {
+    try {
+        event->acceptProposedAction();
+        QList<QUrl> urls = event->mimeData()->urls();
+        comparisionInteractor->loadImagesBeingCompared(urls);
+        ui->menuComparators->setDisabled(false);
+        ui->menuTransftomers->setDisabled(false);
+        ui->menuImageAnalysis->setDisabled(false);
+    } catch (std::runtime_error &e) {
+        showError(e.what());
     }
 }
 
@@ -211,7 +235,7 @@ bool MainWindow::loadImagesBeingCompared() {
         QString secondImagePath = QFileDialog::getOpenFileName(nullptr, "Open Second Image", "", "Images (*.png)");
         comparisionInteractor->loadImagesBeingCompared(firstImagePath, secondImagePath);
         return true;
-    } catch (std::exception &e) {
+    } catch (std::runtime_error &e) {
         showError(e.what());
         return false;
     }
@@ -292,14 +316,3 @@ QList<Property> MainWindow::getUpdatedPropertiesFromUser(QList<Property> default
         throw new std::exception();
     }
 }
-
-
-
-
-
-
-
-
-
-
-

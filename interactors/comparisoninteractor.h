@@ -14,7 +14,8 @@ class ComparisonInteractor
 public:
     ComparisonInteractor(AMainWindowCallbacks *callbacks);
 
-    void loadImagesBeingCompared(QString &Image1Path, QString &Image2Path, bool usePreviousImageGeometry = false);
+    void loadImagesBeingCompared(QString& Image1Path, QString& Image2Path, bool usePreviousImageGeometry = false);
+    void loadImagesBeingCompared(QList<QUrl> urls);
     void onImageProcessorShouldBeCalled(QVariant callerData);
     void saveImage(SaveImageInfo info);
     void realoadImagesFromDisk();
@@ -28,7 +29,7 @@ private:
     QPixmap comparisionImage;
 
     void clear();
-    bool validateFilePath(const QString &filePath);
+    bool validateFile(const QString &filePath);
     void callComparator(AComparator *comparator);
     void callTransformer(ATransformer *transformer);
     void handleProcessorPropertiesIfNeed(AImageProcessor *processor);

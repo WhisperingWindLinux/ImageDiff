@@ -2,6 +2,7 @@
 
 #include "imagegeometry.h"
 
+#include <QtCore/qmimedata.h>
 #include <QtGui/qevent.h>
 #include <QtWidgets/qgraphicsitem.h>
 #include <QtWidgets/qstatusbar.h>

@@ -4,6 +4,7 @@
 #include "setpropertiesinteractor.h"
 #include "../imageprocessorsmanager/imageprocessorsmanager.h"
 #include <QtCore/qdir.h>
+#include <QtCore/qurl.h>
 #include <qfileinfo.h>
 
 ComparisonInteractor::ComparisonInteractor(AMainWindowCallbacks *callbacks)
@@ -108,8 +109,19 @@ void ComparisonInteractor::realoadImagesFromDisk() {
     loadImagesBeingCompared(firstImagePath, secondImagePath, true);
 }
 
-void ComparisonInteractor::loadImagesBeingCompared(QString &Image1Path,
-                                                   QString &Image2Path,
+void ComparisonInteractor::loadImagesBeingCompared(QList<QUrl> urls) {
+    if (urls.size() != 2) {
+        return;
+    }
+
+    QString file1 = urls[0].toLocalFile();
+    QString file2 = urls[1].toLocalFile();
+
+    loadImagesBeingCompared(file1, file2, false);
+}
+
+void ComparisonInteractor::loadImagesBeingCompared(QString& Image1Path,
+                                                   QString& Image2Path,
                                                    bool usePreviousImageGeometry
                                                    )
 {
@@ -119,7 +131,7 @@ void ComparisonInteractor::loadImagesBeingCompared(QString &Image1Path,
     firstPixmap = QPixmap();
     secondPixmap = QPixmap();
 
-    if (!validateFilePath(firstImagePath) || !validateFilePath(secondImagePath)) {
+    if (!validateFile(firstImagePath) || !validateFile(secondImagePath)) {
         clear();
         throw std::runtime_error("Error: Both images must be selected!");
     }
@@ -145,7 +157,7 @@ void ComparisonInteractor::loadImagesBeingCompared(QString &Image1Path,
                                            );
 }
 
-bool ComparisonInteractor::validateFilePath(const QString &filePath) {
+bool ComparisonInteractor::validateFile(const QString &filePath) {
 
     if (filePath.isEmpty()) {
         return false;
@@ -153,6 +165,11 @@ bool ComparisonInteractor::validateFilePath(const QString &filePath) {
 
     QFileInfo fileInfo(filePath);
     if (!fileInfo.exists() || !fileInfo.isFile()) {
+        return false;
+    }
+
+    QString fileName = fileInfo.fileName();
+    if(!fileName.contains(".png", Qt::CaseInsensitive)) {
         return false;
     }
 
