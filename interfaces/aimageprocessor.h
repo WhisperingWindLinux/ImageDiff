@@ -49,6 +49,8 @@ Dummy comparator (Comparator; For Testing Purposes Only)                       Z
 
 Color picker                                                                   P
 
+Advanced Color Picker                                                          A
+
 Show Original Image (Transformer)                                              C
 
 Show Grayscale Image (Transformer)                                             L

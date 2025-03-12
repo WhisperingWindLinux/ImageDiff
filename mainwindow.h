@@ -29,7 +29,7 @@ public slots:
     void actionSaveVisibleAreaAs_triggered();
     void actionAbout_triggered();
     void actionColorPicker_triggered();
-    void actionShowDoubleColorPicker_triggered();
+    void actionShowAdvancedColorPicker_triggered();
     void actionShowOriginalImage_triggered();
 
 public:

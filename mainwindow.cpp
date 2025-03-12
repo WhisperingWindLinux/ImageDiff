@@ -50,7 +50,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->actionAbout, &QAction::triggered, this, &MainWindow::actionAbout_triggered);
     connect(ui->actionColorPicker, &QAction::triggered, this, &MainWindow::actionColorPicker_triggered);
     connect(ui->actionShowOriginalImage, &QAction::triggered, this, &MainWindow::actionShowOriginalImage_triggered);
-    connect(ui->actionDoubleColorPicker, &QAction::triggered, this, &MainWindow::actionShowDoubleColorPicker_triggered);
+    connect(ui->actionAdvancedColorPicker, &QAction::triggered, this, &MainWindow::actionShowAdvancedColorPicker_triggered);
 
     setWindowTitle("Image Diff");
     resize(1380, 820);
@@ -222,7 +222,7 @@ void MainWindow::actionColorPicker_triggered() {
     openColorPickerDialog(true);
 }
 
-void MainWindow::actionShowDoubleColorPicker_triggered() {
+void MainWindow::actionShowAdvancedColorPicker_triggered() {
     openColorPickerDialog(false);
 }
 
