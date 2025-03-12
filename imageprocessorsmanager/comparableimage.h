@@ -11,6 +11,8 @@ public:
     QImage getImage() const;
     QString getName() const;
 
+    friend class ComparableImageTests;
+
 private:
     QImage image;
     QString name;

@@ -78,7 +78,7 @@ void MainWindow::buildMenus() {
         ImageProcessorType type = (*it).type;
         QAction *newAction;
 
-        if (type == ImageProcessorType::Comporator) {
+        if (type == ImageProcessorType::Comparator) {
             newAction = comparatorsMenu->addAction(name);
         } else if (type == ImageProcessorType::Transformer) {
             newAction = transformersMenu->addAction(name);

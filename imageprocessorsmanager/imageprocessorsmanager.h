@@ -11,6 +11,8 @@ public:
     AImageProcessor *findProcessor(QString name);
     QList<ImageProcessorInfo> allProcessorsInfo();
 
+    friend class ImageProcessorsManagerTests;
+
 private:
     QList<AImageProcessor*> processors;
 

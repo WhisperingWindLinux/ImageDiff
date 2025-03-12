@@ -27,7 +27,7 @@ void ComparisonInteractor::onImageProcessorShouldBeCalled(QVariant callerData) {
 
     handleProcessorPropertiesIfNeed(processor);
 
-    if (processor->getType() == ImageProcessorType::Comporator) {
+    if (processor->getType() == ImageProcessorType::Comparator) {
         callComparator((AComparator*)processor);
     } else if (processor->getType() == ImageProcessorType::Transformer) {
         callTransformer((ATransformer*)processor);
@@ -139,7 +139,7 @@ void ComparisonInteractor::loadImagesBeingCompared(QString& Image1Path,
     bool isLoaded1 = firstPixmap.load(firstImagePath);
     bool isLoaded2 = secondPixmap.load(secondImagePath);
 
-    if (firstPixmap.size() != firstPixmap.size()) {
+    if (firstPixmap.size() != secondPixmap.size()) {
         clear();
         throw std::runtime_error("Error: Images must have the same resolution!");
     }
@@ -168,8 +168,9 @@ bool ComparisonInteractor::validateFile(const QString &filePath) {
         return false;
     }
 
-    QString fileName = fileInfo.fileName();
-    if(!fileName.contains(".png", Qt::CaseInsensitive)) {
+    static const QStringList supportedFormats = {".png"};
+    QString suffix = fileInfo.suffix().toLower();
+    if (!supportedFormats.contains("." + suffix)) {
         return false;
     }
 
@@ -213,7 +214,7 @@ void ComparisonInteractor::saveImage(SaveImageInfo info) {
         callbacks->saveImageAs(info.image, fullPath);
         break;
     case SaveImageInfoType::ComparisonImageArea:
-        fileName = QString("%1_vs_%2_areas_comparison%3")
+        fileName = QString("%1_vs_%2_area_comparison%3")
                        .arg(file1Name, file2Name, defaultExtention);
         fullPath = defaultDir.filePath(fileName);
         callbacks->saveImageAs(info.image, fullPath);

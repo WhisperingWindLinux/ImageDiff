@@ -86,6 +86,9 @@ void ImageViewer::showImagesBeingCompared(QPixmap& image1,
         centerOn(imageGeometry.get()->rect.center());
         scale(imageGeometry.get()->scaleFactor, imageGeometry.get()->scaleFactor);
         scaleFactor = imageGeometry.get()->scaleFactor;
+        if (currentImageIndex != imageGeometry.get()->imageIndex) {
+            toggleImage();
+        }
     } else {
         setSceneRect(firstImage->boundingRect());
     }
@@ -138,7 +141,7 @@ void ImageViewer::toggleImage() {
 
 ImageGeometry ImageViewer::getImageGometry() {
     QRectF rect = mapToScene(viewport()->geometry()).boundingRect();
-    return ImageGeometry(rect, scaleFactor);
+    return ImageGeometry(rect, scaleFactor, currentImageIndex);
 }
 
 /*

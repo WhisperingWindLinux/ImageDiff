@@ -19,7 +19,7 @@ public:
 
     virtual void setProperties(QList<Property>) override { };
 
-    ImageProcessorType getType() const override { return ImageProcessorType::Comporator; }
+    ImageProcessorType getType() const override { return ImageProcessorType::Comparator; }
 };
 
 #endif // ACOMPORATOR_H

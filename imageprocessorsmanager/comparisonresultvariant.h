@@ -17,6 +17,8 @@ public:
 
     ComparisonResultVariantType type();
 
+    friend class TestComparisonResultVariant;
+
 private:
     ComparisonResultVariantType _type { ComparisonResultVariantType::None };
     QImage image;

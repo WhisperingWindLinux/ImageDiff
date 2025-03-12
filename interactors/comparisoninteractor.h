@@ -20,6 +20,8 @@ public:
     void saveImage(SaveImageInfo info);
     void realoadImagesFromDisk();
 
+    friend class ComparisonInteractorTests;
+
 private:
     AMainWindowCallbacks *callbacks;
     QString firstImagePath;

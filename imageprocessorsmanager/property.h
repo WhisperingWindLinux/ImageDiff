@@ -51,6 +51,8 @@ public:
 
     QString toString() const;
 
+    friend class PropertyTests;
+
 private:
     Type propertyType;
     QString propertyName;

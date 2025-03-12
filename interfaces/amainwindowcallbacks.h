@@ -6,7 +6,7 @@
 #include <imageprocessorsmanager/property.h>
 
 class AMainWindowCallbacks {
-public:
+public:    
     virtual void onImagesBeingComparedLoaded(QPixmap &image1,
                                              QString path1,
                                              QPixmap &image2,

@@ -1,4 +1,4 @@
-QT       += core gui
+QT       += core gui testlib
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -27,6 +27,13 @@ SOURCES += \
     mainwindow.cpp \
     comporators/pixelsabsolutevaluecomparator.cpp \
     comporators/pixelsbrightnesscomparator.cpp \
+    tests/comparableimagetests.cpp \
+    tests/comparisoninteractortests.cpp \
+    tests/comparisonresultvarianttests.cpp \
+    tests/imageprocessorsmanagertests.cpp \
+    tests/propertytests.cpp \
+    tests/saveimageinfotests.cpp \
+    tests/setpropertiesinteractortests.cpp \
     transformers/grayscaletransformer.cpp \
     transformers/rgbtransformer.cpp
 
@@ -55,6 +62,16 @@ HEADERS += \
     comporators/pixelsabsolutevaluecomparator.h \
     comporators/pixelsbrightnesscomparator.h \
     interactors/savefileinfo.h \
+    tests/comparableimagetests.h \
+    tests/comparisoninteractortests.h \
+    tests/comparisonresultvarianttests.h \
+    tests/imageprocessorsmanagertests.h \
+    tests/mocks/MockImageProcessor.h \
+    tests/mocks/mockmainwindowcallbacks.h \
+    tests/propertytests.h \
+    tests/saveimageinfotests.h \
+    tests/setpropertiesinteractortests.h \
+    tests/testutils.h \
     transformers/grayscaletransformer.h \
     transformers/rgbtransformer.h
 
