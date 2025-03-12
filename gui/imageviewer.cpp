@@ -1,6 +1,6 @@
 #include "imageviewer.h"
 
-#include "imagegeometry.h"
+#include "imageviewstate.h"
 
 #include <QtCore/qmimedata.h>
 #include <QtGui/qevent.h>
@@ -71,7 +71,7 @@ void ImageViewer::showImagesBeingCompared(QPixmap& image1,
                                           QString path1,
                                           QPixmap& image2,
                                           QString path2,
-                                          std::shared_ptr<ImageGeometry> imageGeometry
+                                          std::shared_ptr<ImageViewState> imageViewState
                                           )
 {
     firstImagePath = path1;
@@ -82,13 +82,14 @@ void ImageViewer::showImagesBeingCompared(QPixmap& image1,
     secondImage = scene->addPixmap(image2);
     parent->showStatusMessage(path1);
     secondImage->setVisible(false);
-    if (imageGeometry != nullptr) {
-        centerOn(imageGeometry.get()->rect.center());
-        scale(imageGeometry.get()->scaleFactor, imageGeometry.get()->scaleFactor);
-        scaleFactor = imageGeometry.get()->scaleFactor;
-        if (currentImageIndex != imageGeometry.get()->imageIndex) {
+    if (imageViewState != nullptr) {
+        centerOn(imageViewState.get()->rect.center());
+        scale(imageViewState.get()->scaleFactor, imageViewState.get()->scaleFactor);
+        scaleFactor = imageViewState.get()->scaleFactor;
+        if (currentImageIndex != imageViewState.get()->imageIndex) {
             toggleImage();
         }
+        onColorPickerStatusChanged(imageViewState->isRgbTrackingActive);
     } else {
         setSceneRect(firstImage->boundingRect());
     }
@@ -139,9 +140,9 @@ void ImageViewer::toggleImage() {
     mouseMoveEvent(lastMousEvent);
 }
 
-ImageGeometry ImageViewer::getImageGometry() {
+ImageViewState ImageViewer::getCurrentState() {
     QRectF rect = mapToScene(viewport()->geometry()).boundingRect();
-    return ImageGeometry(rect, scaleFactor, currentImageIndex);
+    return ImageViewState(rect, scaleFactor, currentImageIndex, isRgbTrackingActive);
 }
 
 /*
@@ -187,6 +188,8 @@ SaveImageInfo ImageViewer::getImageShowedOnTheScreen() {
 void ImageViewer::onColorPickerStatusChanged(bool isActivate) {
     if (isActivate) {
         isRgbTrackingActive = true;
+        // Display file names in the ColorPicker dialog
+        parent->onRgbValueUnderCursonChanged({firstImageName, -1, -1, -1}, {secondImageName, -1, -1, -1});
     } else {
         isRgbTrackingActive = false;
     }
@@ -266,6 +269,10 @@ void ImageViewer::mouseMoveEvent(QMouseEvent* event) {
         return;
     }
 
+    if (comparisonImage != nullptr) {
+        return;
+    }
+
     QString imageName = "error: unknown image";
     if (comparisonImage != nullptr) {
         imageName = "comparison result image";
@@ -286,7 +293,7 @@ void ImageViewer::mouseMoveEvent(QMouseEvent* event) {
         if (pixmapItem) {
             // Get the pixmap (image) from the item
             const QPixmap pixmap = pixmapItem->pixmap();
-            const QImage image = pixmap.toImage();
+            const QImage visibleImage = pixmap.toImage();
 
             // Convert scene coordinates to image coordinates
             QPointF itemPos = pixmapItem->mapFromScene(scenePos);
@@ -294,15 +301,40 @@ void ImageViewer::mouseMoveEvent(QMouseEvent* event) {
             int y = static_cast<int>(itemPos.y());
 
             // Ensure the coordinates are within the image bounds
-            if (x >= 0 && x < image.width() && y >= 0 && y < image.height()) {
+            if (x >= 0 && x < visibleImage.width() && y >= 0 && y < visibleImage.height()) {
                 // Get the color of the pixel
-                QColor color = image.pixelColor(x, y);
-                parent->onRgbValueUnderCursonChanged(imageName,
-                                                     color.red(),
-                                                     color.green(),
-                                                     color.blue()
-                                                     );
+                QColor colorOfVisibleImage = visibleImage.pixelColor(x, y);
+                QColor colorOfHiddenImage;
+                QString visibleImageName, hiddenImageName;
+                if (currentImageIndex == 0) {
+                    colorOfHiddenImage = secondImage->pixmap().toImage().pixelColor(x, y);
+                    visibleImageName = firstImageName;
+                    hiddenImageName = secondImageName;
+                } else {
+                    colorOfHiddenImage = firstImage->pixmap().toImage().pixelColor(x, y);
+                    visibleImageName = secondImageName;
+                    hiddenImageName = firstImageName;
+                }
+
+                RgbValue rgbValueOfVisibleImage = { visibleImageName,
+                                                    colorOfVisibleImage.red(),
+                                                    colorOfVisibleImage.green(),
+                                                    colorOfVisibleImage.blue()
+                };
+                RgbValue rgbValueOfHiddenImage = { hiddenImageName,
+                                                   colorOfHiddenImage.red(),
+                                                   colorOfHiddenImage.green(),
+                                                   colorOfHiddenImage.blue()
+                };
+                parent->onRgbValueUnderCursonChanged(rgbValueOfVisibleImage, rgbValueOfHiddenImage);
             }
         }
     }
 }
+
+
+
+
+
+
+

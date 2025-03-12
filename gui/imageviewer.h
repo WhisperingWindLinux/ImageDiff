@@ -1,7 +1,7 @@
 #ifndef IMAGEVIEWER_H
 #define IMAGEVIEWER_H
 
-#include "imagegeometry.h"
+#include "imageviewstate.h"
 
 #include <mainwindow.h>
 #include <qgraphicsview.h>
@@ -18,7 +18,7 @@ public:
                                  QString path1,
                                  QPixmap& image2,
                                  QString path2,
-                                 std::shared_ptr<ImageGeometry> imageGeometry);
+                                 std::shared_ptr<ImageViewState> imageGeometry);
 
     void showComparisonImage(QPixmap &image, QString description);
 
@@ -36,7 +36,7 @@ public:
 
     void onColorPickerStatusChanged(bool isActivate);
 
-    ImageGeometry getImageGometry();
+    ImageViewState getCurrentState();
 protected:
     void wheelEvent(QWheelEvent *event) override;
     void mouseMoveEvent(QMouseEvent* event) override;

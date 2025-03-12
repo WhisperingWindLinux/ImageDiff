@@ -25,7 +25,7 @@
 #include <QDockWidget>
 #include <QMimeData>
 
-#include <gui/imagegeometry.h>
+#include <gui/imageviewstate.h>
 #include <gui/propertyeditordialog.h>
 
 
@@ -48,11 +48,9 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->actionSaveImageAs, &QAction::triggered, this, &MainWindow::actionSaveImageAs_triggered);
     connect(ui->actionSaveVisibleAreaAs, &QAction::triggered, this, &MainWindow::actionSaveVisibleAreaAs_triggered);
     connect(ui->actionAbout, &QAction::triggered, this, &MainWindow::actionAbout_triggered);
-    connect(ui->actionColorPicker, &QAction::toggled, this, &MainWindow::actionColorPicker_triggered);
+    connect(ui->actionColorPicker, &QAction::triggered, this, &MainWindow::actionColorPicker_triggered);
     connect(ui->actionShowOriginalImage, &QAction::triggered, this, &MainWindow::actionShowOriginalImage_triggered);
-
-    colorPanel = new ColorInfoPanel();
-    colorPanel->hide();
+    connect(ui->actionAdvancedColorPicker, &QAction::triggered, this, &MainWindow::actionShowAdvancedColorPicker_triggered);
 
     setWindowTitle("Image Diff");
     resize(1380, 820);
@@ -96,11 +94,33 @@ void MainWindow::showStatusMessage(QString message) {
     statusBar()->showMessage(message);
 }
 
-void MainWindow::closeEvent(QCloseEvent *event) {
+void MainWindow::closeColorPickerDialog() {
     if (colorPanel != nullptr) {
         colorPanel->close();
+        delete colorPanel;
+        colorPanel = nullptr;
+    }
+    if (viewer != nullptr) {
+        viewer->onColorPickerStatusChanged(false);
     }
 }
+
+void MainWindow::openColorPickerDialog(bool isForVisibleImageOnly) {
+    if (viewer == nullptr) {
+        return;
+    }
+    if (colorPanel != nullptr) {
+        colorPanel->close();
+        delete colorPanel;
+        colorPanel = nullptr;
+    }
+    colorPanel = new ColorInfoPanel(nullptr, isForVisibleImageOnly);
+    colorPanel->show();
+    viewer->onColorPickerStatusChanged(true);
+}
+
+
+void MainWindow::closeEvent(QCloseEvent *event) { closeColorPickerDialog(); }
 
 void MainWindow::dragEnterEvent(QDragEnterEvent *event) {
     if (event->mimeData()->hasFormat("text/uri-list")) {
@@ -142,18 +162,17 @@ void MainWindow::actionOpenImages_triggered() {
 }
 
 void MainWindow::actionCloseImages_triggered() {
-    if (colorPanel->isVisible()) {
-        ui->actionColorPicker->trigger();
-    }
     if (viewer != nullptr) {
         setCentralWidget(nullptr);
         delete viewer;
         viewer = nullptr;
     }
+    closeColorPickerDialog();
+    showStatusMessage("");
+
     ui->menuComparators->setDisabled(true);
     ui->menuTransftomers->setDisabled(true);
     ui->menuImageAnalysis->setDisabled(true);
-    showStatusMessage("");
 }
 
 void MainWindow::actionSwitchBetweenImages_triggered() {
@@ -195,21 +214,16 @@ void MainWindow::actionAbout_triggered() {
     aboutDialog.exec();
 }
 
-void MainWindow::actionColorPicker_triggered(bool isTogled) {
-    if (viewer == nullptr) {
-        return;
-    }
-    if (isTogled) {
-        viewer->onColorPickerStatusChanged(true);
-        colorPanel->show();
-    } else {
-        viewer->onColorPickerStatusChanged(false);
-        colorPanel->hide();
-    }
-}
-
 void MainWindow::actionShowOriginalImage_triggered() {
     comparisionInteractor->realoadImagesFromDisk();
+}
+
+void MainWindow::actionColorPicker_triggered() {
+    openColorPickerDialog(true);
+}
+
+void MainWindow::actionShowAdvancedColorPicker_triggered() {
+    openColorPickerDialog(false);
 }
 
 void MainWindow::saveImageAs(QPixmap &image, QString defaultPath) {
@@ -252,8 +266,13 @@ void MainWindow::showError(const QString &errorMessage) {
     msgBox.exec();
 }
 
-void MainWindow::onRgbValueUnderCursonChanged(QString imageName, int r, int g, int b) {
-    colorPanel->updateColor(imageName, r, g, b);
+void MainWindow::onRgbValueUnderCursonChanged(RgbValue visibleImageRgbValue, RgbValue hiddenImageRgbValue) {
+    if (colorPanel == nullptr || viewer == nullptr) {
+        return;
+    }
+    if (colorPanel->isVisible()) {
+        colorPanel->updateBothPanelsAndHighlightDifferences(visibleImageRgbValue, hiddenImageRgbValue);
+    }
 }
 
 // AMainWindowCallbacks interface
@@ -262,12 +281,12 @@ void MainWindow::onImagesBeingComparedLoaded(QPixmap& image1,
                                              QString path1,
                                              QPixmap& image2,
                                              QString path2,
-                                             bool usePreviousImageGeometry
+                                             bool useSavedImageViewState
                                              )
 {
-    std::shared_ptr<ImageGeometry> imageGeometry = nullptr;
-    if (usePreviousImageGeometry && viewer) {
-        imageGeometry = std::make_shared<ImageGeometry>(viewer->getImageGometry());
+    std::shared_ptr<ImageViewState> imageViewState = nullptr;
+    if (useSavedImageViewState && viewer) {
+        imageViewState = std::make_shared<ImageViewState>(viewer->getCurrentState());
     }
     if (viewer != nullptr) {
         setCentralWidget(nullptr);
@@ -276,7 +295,7 @@ void MainWindow::onImagesBeingComparedLoaded(QPixmap& image1,
     }
     viewer = new ImageViewer(this);
     setCentralWidget(viewer);
-    viewer->showImagesBeingCompared(image1, path1, image2, path2, imageGeometry);
+    viewer->showImagesBeingCompared(image1, path1, image2, path2, imageViewState);
 }
 
 void MainWindow::onComparisonImagesLoaded(QPixmap &image, QString description) {

@@ -3,6 +3,7 @@
 
 #include <interfaces/amainwindowcallbacks.h>
 #include <interactors/comparisoninteractor.h>
+#include <gui/RgbValue.h>
 
 #include <QMainWindow>
 
@@ -27,7 +28,8 @@ public slots:
     void actionSaveImageAs_triggered();
     void actionSaveVisibleAreaAs_triggered();
     void actionAbout_triggered();
-    void actionColorPicker_triggered(bool isTogled);
+    void actionColorPicker_triggered();
+    void actionShowAdvancedColorPicker_triggered();
     void actionShowOriginalImage_triggered();
 
 public:
@@ -50,8 +52,9 @@ private:
     void buildMenus();
     bool loadImagesBeingCompared();
     void showError(const QString &errorMessage);
+    void openColorPickerDialog(bool isForVisibleImageOnly);
+    void closeColorPickerDialog();
 
-    // AMainWindowCallbacks interface
 public:
     void onImagesBeingComparedLoaded(QPixmap& image1,
                                      QString path1,
@@ -62,7 +65,7 @@ public:
     void onComparisonImagesLoaded(QPixmap &image, QString description) override;
     void onComparisonTextLoaded(QString text) override;
     void saveImageAs(QPixmap &image, QString defaultPath) override;
-    void onRgbValueUnderCursonChanged(QString imageName, int r, int g, int b) override;
+    void onRgbValueUnderCursonChanged(RgbValue firstImageRgbValue, RgbValue secondImageRgbValue) override;
     QList<Property> getUpdatedPropertiesFromUser(QList<Property> defaultProperties) override;
 };
 #endif // MAINWINDOW_H
