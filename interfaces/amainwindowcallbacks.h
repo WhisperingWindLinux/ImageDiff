@@ -5,6 +5,8 @@
 
 #include <imageprocessorsmanager/property.h>
 
+#include <gui/RgbValue.h>
+
 class AMainWindowCallbacks {
 public:    
     virtual void onImagesBeingComparedLoaded(QPixmap &image1,
@@ -20,7 +22,7 @@ public:
 
     virtual void saveImageAs(QPixmap &image, QString defaultPath) = 0;
 
-    virtual void onRgbValueUnderCursonChanged(QString imageName, int r, int g, int b) = 0;
+    virtual void onRgbValueUnderCursonChanged(RgbValue firstImageRgbValue, RgbValue secondImageRgbValue) = 0;
 
     virtual QList<Property> getUpdatedPropertiesFromUser(QList<Property> defaultProperties) = 0;
 };

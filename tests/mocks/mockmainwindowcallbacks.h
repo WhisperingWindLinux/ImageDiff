@@ -27,7 +27,7 @@ public:
             lastSavedFilePath = path;
         }
     }
-    void onRgbValueUnderCursonChanged(QString, int, int, int) override {}
+    void onRgbValueUnderCursonChanged(RgbValue firstImageRgbValue, RgbValue secondImageRgbValue) override {}
 
     QList<Property> getUpdatedPropertiesFromUser(QList<Property> defaultProperties) override {
         return updatedPropertiesFromUser;

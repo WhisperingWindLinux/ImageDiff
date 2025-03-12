@@ -39,7 +39,8 @@ SOURCES += \
 
 HEADERS += \
     comporators/dummycomparator.h \
-    gui/imagegeometry.h \
+    gui/RgbValue.h \
+    gui/imageviewstate.h \
     imageprocessorsmanager/imageprocessorsinfo.h \
     imageprocessorsmanager/imageprocessorsmanager.h \
     imageprocessorsmanager/property.h \

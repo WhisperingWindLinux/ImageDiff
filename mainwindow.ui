@@ -52,6 +52,7 @@
     <addaction name="actionSwitchBetweenImages"/>
     <addaction name="separator"/>
     <addaction name="actionColorPicker"/>
+    <addaction name="actionDoubleColorPicker"/>
    </widget>
    <widget class="QMenu" name="menuTransftomers">
     <property name="title">
@@ -128,7 +129,7 @@
   </action>
   <action name="actionColorPicker">
    <property name="checkable">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <property name="text">
     <string>Color Picker</string>
@@ -183,6 +184,14 @@
    </property>
    <property name="shortcut">
     <string>C</string>
+   </property>
+  </action>
+  <action name="actionDoubleColorPicker">
+   <property name="text">
+    <string>Double Color Picker</string>
+   </property>
+   <property name="shortcut">
+    <string>J</string>
    </property>
   </action>
  </widget>
