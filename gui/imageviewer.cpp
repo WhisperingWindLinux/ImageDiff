@@ -67,6 +67,11 @@ void ImageViewer::zoomOut() {
     scaleFactor *= 0.8;
 }
 
+void ImageViewer::actualSize() {
+    resetTransform();
+    scaleFactor = 1.0;
+}
+
 void ImageViewer::showImagesBeingCompared(QPixmap& image1,
                                           QString path1,
                                           QPixmap& image2,
@@ -265,6 +270,13 @@ void ImageViewer::mouseMoveEvent(QMouseEvent* event) {
 
     lastMousEvent = event->clone();
 
+    if (selecting) {
+        // Update the selection rectangle as the user drags the mouse
+        QPoint currentPoint = event->pos();
+        selectionRect = QRect(selectionStart, currentPoint).normalized(); // Create a normalized rectangle
+        viewport()->update(); // Request a repaint of the view
+    }
+
     if (!isRgbTrackingActive) {
         return;
     }
@@ -331,6 +343,52 @@ void ImageViewer::mouseMoveEvent(QMouseEvent* event) {
         }
     }
 }
+
+// Implement zoom to selection
+void ImageViewer::mousePressEvent(QMouseEvent *event) {
+    if (event->button() == Qt::LeftButton && event->modifiers() & Qt::ShiftModifier) {
+        selecting = true;
+        selectionStart = event->pos(); // Save the starting point of the selection in view coordinates
+        selectionRect = QRect();       // Reset the selection rectangle
+        setDragMode(NoDrag);
+    }
+    QGraphicsView::mousePressEvent(event);
+}
+
+// Implement zoom to selection
+void ImageViewer::mouseReleaseEvent(QMouseEvent *event) {
+    if (selecting && event->button() == Qt::LeftButton) {
+        selecting = false;
+
+        // Convert the selection rectangle from view coordinates to scene coordinates
+        QRectF sceneSelectionRect = mapToScene(selectionRect).boundingRect();
+
+        // Zoom into the selected area
+        if (!sceneSelectionRect.isEmpty() && sceneSelectionRect.isValid() && event->modifiers() & Qt::ShiftModifier) {
+            fitInView(sceneSelectionRect, Qt::KeepAspectRatio); // Adjust view to fit the selected area
+        }
+
+        selectionRect = QRect(); // Clear the selection rectangle
+        viewport()->update();    // Request a repaint of the view
+        setDragMode(ScrollHandDrag);
+    }
+    QGraphicsView::mouseReleaseEvent(event);
+}
+
+// Implement zoom to selection
+void ImageViewer::paintEvent(QPaintEvent *event) {
+    // Call base class paint event first
+    QGraphicsView::paintEvent(event);
+
+    // Draw the selection rectangle if it exists
+    if (!selectionRect.isNull()) {
+        QPainter painter(viewport());
+        painter.setPen(QPen(Qt::blue, 1, Qt::DashLine)); // Dashed blue border for selection rectangle
+        painter.setBrush(QBrush(Qt::transparent));      // Transparent fill
+        painter.drawRect(selectionRect);
+    }
+}
+
 
 
 

@@ -38,9 +38,7 @@ MainWindow::MainWindow(QWidget *parent)
     comparisionInteractor = new ComparisonInteractor(this);
     buildMenus();
 
-    ui->menuComparators->setDisabled(true);
-    ui->menuTransftomers->setDisabled(true);
-    ui->menuImageAnalysis->setDisabled(true);
+    disabledMenusIfImagesNotOpened();
 
     connect(ui->actionOpenImages, &QAction::triggered, this, &MainWindow::actionOpenImages_triggered);
     connect(ui->actionCloseImages, &QAction::triggered, this, &MainWindow::actionCloseImages_triggered);
@@ -51,11 +49,16 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->actionColorPicker, &QAction::triggered, this, &MainWindow::actionColorPicker_triggered);
     connect(ui->actionShowOriginalImage, &QAction::triggered, this, &MainWindow::actionShowOriginalImage_triggered);
     connect(ui->actionAdvancedColorPicker, &QAction::triggered, this, &MainWindow::actionShowAdvancedColorPicker_triggered);
+    connect(ui->actionActualSize, &QAction::triggered, this, &MainWindow::actionActualSize_triggered);
+    connect(ui->actionZoomIn, &QAction::triggered, this, &MainWindow::actionZoomIn_triggered);
+    connect(ui->actionZoomOut, &QAction::triggered, this, &MainWindow::actionZoomAout_triggered);
 
     setWindowTitle("Image Diff");
     resize(1380, 820);
 
     setAcceptDrops(true);
+
+    showNormal();
 }
 
 MainWindow::~MainWindow() {
@@ -105,6 +108,53 @@ void MainWindow::closeColorPickerDialog() {
     }
 }
 
+void MainWindow::disabledMenusIfImagesNotOpened() {
+    ui->menuComparators->setDisabled(true);
+    ui->menuTransftomers->setDisabled(true);
+    ui->menuImageAnalysis->setDisabled(true);
+    ui->actionSaveImageAs->setDisabled(true);
+    ui->actionSaveVisibleAreaAs->setDisabled(true);
+    ui->actionCloseImages->setDisabled(true);
+    ui->actionActualSize->setDisabled(true);
+    ui->actionZoomIn->setDisabled(true);
+    ui->actionZoomOut->setDisabled(true);
+    ui->actionShowOriginalImage->setDisabled(true);
+    ui->actionSwitchBetweenImages->setDisabled(true);
+}
+
+void MainWindow::enabledMenusIfImagesOpened() {
+    ui->menuComparators->setDisabled(false);
+    ui->menuTransftomers->setDisabled(false);
+    ui->menuImageAnalysis->setDisabled(false);
+    ui->actionSaveImageAs->setDisabled(false);
+    ui->actionSaveVisibleAreaAs->setDisabled(false);
+    ui->actionCloseImages->setDisabled(false);
+    ui->actionActualSize->setDisabled(false);
+    ui->actionZoomIn->setDisabled(false);
+    ui->actionZoomOut->setDisabled(false);
+    ui->actionShowOriginalImage->setDisabled(false);
+    ui->actionSwitchBetweenImages->setDisabled(false);
+}
+
+void MainWindow::actionActualSize_triggered() {
+    if (viewer != nullptr) {
+        viewer->actualSize();
+    }
+}
+
+void MainWindow::actionZoomIn_triggered() {
+    if (viewer != nullptr) {
+        viewer->zoomIn();
+    }
+
+}
+
+void MainWindow::actionZoomAout_triggered() {
+    if (viewer != nullptr) {
+        viewer->zoomOut();
+    }
+}
+
 void MainWindow::openColorPickerDialog(bool isForVisibleImageOnly) {
     if (viewer == nullptr) {
         return;
@@ -120,7 +170,9 @@ void MainWindow::openColorPickerDialog(bool isForVisibleImageOnly) {
 }
 
 
-void MainWindow::closeEvent(QCloseEvent *event) { closeColorPickerDialog(); }
+void MainWindow::closeEvent(QCloseEvent *event) {
+    closeColorPickerDialog();
+}
 
 void MainWindow::dragEnterEvent(QDragEnterEvent *event) {
     if (event->mimeData()->hasFormat("text/uri-list")) {
@@ -135,9 +187,7 @@ void MainWindow::dropEvent(QDropEvent *event) {
         event->acceptProposedAction();
         QList<QUrl> urls = event->mimeData()->urls();
         comparisionInteractor->loadImagesBeingCompared(urls);
-        ui->menuComparators->setDisabled(false);
-        ui->menuTransftomers->setDisabled(false);
-        ui->menuImageAnalysis->setDisabled(false);
+        enabledMenusIfImagesOpened();
     } catch (std::runtime_error &e) {
         showError(e.what());
     }
@@ -149,9 +199,7 @@ void MainWindow::actionOpenImages_triggered() {
     bool isLoaded = loadImagesBeingCompared();
 
     if (isLoaded) {
-        ui->menuComparators->setDisabled(false);
-        ui->menuTransftomers->setDisabled(false);
-        ui->menuImageAnalysis->setDisabled(false);
+        enabledMenusIfImagesOpened();
     }
 
     if (!isLoaded && viewer != nullptr) {
@@ -169,10 +217,7 @@ void MainWindow::actionCloseImages_triggered() {
     }
     closeColorPickerDialog();
     showStatusMessage("");
-
-    ui->menuComparators->setDisabled(true);
-    ui->menuTransftomers->setDisabled(true);
-    ui->menuImageAnalysis->setDisabled(true);
+    disabledMenusIfImagesNotOpened();
 }
 
 void MainWindow::actionSwitchBetweenImages_triggered() {
@@ -215,6 +260,9 @@ void MainWindow::actionAbout_triggered() {
 }
 
 void MainWindow::actionShowOriginalImage_triggered() {
+    if (viewer == nullptr) {
+        return;
+    }
     comparisionInteractor->realoadImagesFromDisk();
 }
 

@@ -10,6 +10,7 @@ CONFIG += c++17
 
 SOURCES += \
     comporators/dummycomparator.cpp \
+    comporators/sharpnesscomparator.cpp \
     imageprocessorsmanager/property.cpp \
     gui/aboutdialog.cpp \
     gui/colorinfopanel.cpp \
@@ -39,6 +40,7 @@ SOURCES += \
 
 HEADERS += \
     comporators/dummycomparator.h \
+    comporators/sharpnesscomparator.h \
     gui/RgbValue.h \
     gui/imageviewstate.h \
     imageprocessorsmanager/imageprocessorsinfo.h \

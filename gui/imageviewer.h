@@ -37,9 +37,18 @@ public:
     void onColorPickerStatusChanged(bool isActivate);
 
     ImageViewState getCurrentState();
+
+    void zoomIn();
+    void zoomOut();
+    void actualSize();
 protected:
     void wheelEvent(QWheelEvent *event) override;
     void mouseMoveEvent(QMouseEvent* event) override;
+    void mousePressEvent(QMouseEvent *event) override ;
+    void mouseReleaseEvent(QMouseEvent *event) override ;
+    void paintEvent(QPaintEvent *event) override;
+    /*void keyPressEvent(QKeyEvent *event) override;
+    void keyReleaseEvent(QKeyEvent *event) override;*/
 
 private:
     QGraphicsScene *scene;
@@ -56,9 +65,12 @@ private:
     QMouseEvent* lastMousEvent = nullptr;
     bool isRgbTrackingActive = false;
 
+    // Zoom to selection
+    bool selecting;                         // Whether the user is currently selecting an area
+    bool isZoomToSelectionEnabled = false;
+    QPoint selectionStart;                  // Start point of the selection (in view coordinates)
+    QRect selectionRect;                    // Rectangle being selected (in view coordinates)
 
-    void zoomIn();
-    void zoomOut();
     static QPixmap getVisiblePixmap(QGraphicsView* view);
 };
 

@@ -61,6 +61,10 @@ Show Green channel only (Transformer)                                          G
 
 Show Blue channel only (Transformer)                                           B
 
+Sharpness comporator                                                           H
+
+Enter Full Screen                                                              F
+
 
 */
 

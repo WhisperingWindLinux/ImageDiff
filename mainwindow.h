@@ -54,6 +54,12 @@ private:
     void showError(const QString &errorMessage);
     void openColorPickerDialog(bool isForVisibleImageOnly);
     void closeColorPickerDialog();
+    void disabledMenusIfImagesNotOpened();
+    void enabledMenusIfImagesOpened();
+
+    void actionActualSize_triggered();
+    void actionZoomIn_triggered();
+    void actionZoomAout_triggered();
 
 public:
     void onImagesBeingComparedLoaded(QPixmap& image1,
