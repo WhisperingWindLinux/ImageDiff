@@ -14,7 +14,10 @@ void SetPropertiesInteractor::allowUserToSetPropertiesIfNeed() {
     if (properties.empty()) {
         return;
     }
-    auto newProperties = callback->getUpdatedPropertiesFromUser(properties);
+    auto newProperties = callback->getUpdatedPropertiesFromUser(processor->name(),
+                                                                processor->description(),
+                                                                properties
+                                                                );
     if (!newProperties.empty()) {
         processor->setProperties(newProperties);
     }

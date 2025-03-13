@@ -6,6 +6,7 @@
 #include "comporators/pixelsabsolutevaluecomparator.h"
 #include "comporators/pixelsbrightnesscomparator.h"
 #include <comporators/dummycomparator.h>
+#include <comporators/imageproximitytoorigincomparator.h>
 #include <comporators/sharpnesscomparator.h>
 #include <filters/grayscalefilter.h>
 #include <filters/rgbfilter.h>
@@ -26,6 +27,7 @@ ImageProcessorsManager::ImageProcessorsManager() {
     auto imagePixelsAbsoluteValueComparator = new PixelsAbsoluteValueComparator();
     auto imagePixelsBrightnessComparator = new PixelsBrightnessComparator();
     auto sharpnessComparator = new SharpnessComparator();
+    auto imageProximityComparator = new ImageProximityToOriginComparator();
 
     addProcessor(imageComparator);
     addProcessor(imageSaturationComporator);
@@ -33,6 +35,7 @@ ImageProcessorsManager::ImageProcessorsManager() {
     addProcessor(imagePixelsAbsoluteValueComparator);
     addProcessor(imagePixelsBrightnessComparator);
     addProcessor(sharpnessComparator);
+    addProcessor(imageProximityComparator);
 
     #ifdef QT_DEBUG
         auto dummyComparator = new DummyComporator();

@@ -31,6 +31,8 @@ void ComparisonInteractor::onImageProcessorShouldBeCalled(QVariant callerData) {
         throw std::runtime_error("Error: Unable to find the requested image processor.");
     }
 
+    processor->reset();
+
     handleProcessorPropertiesIfNeed(processor);
 
     if (processor->getType() == ImageProcessorType::Comparator) {

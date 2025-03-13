@@ -8,7 +8,7 @@ using namespace std;
 
 class Property {
 public:
-    enum class Type { Integer, Real, Alternatives };
+    enum class Type { Integer, Real, Alternatives, FilePath };
 
     static Property createIntProperty(QString propertyName,
                                       QString propertyDescription,
@@ -34,22 +34,27 @@ public:
                                        double maxValue
                                        );
 
-    static Property createStringProperty(QString propertyName,
+    static Property createAlternativesProperty(QString propertyName,
                                          QString propertyDescription,
                                          QStringList alternatives,
                                          int deafultValueIndex
                                          );
 
+    static Property createFilePathProperty(QString propertyName,
+                                           QString propertyDescription,
+                                           QString defaultValue
+                                          );
+
 
     Type getPropertyType() const;
-    QString getPoropertyName() const;
+    QString getPropertyName() const;
     QString getPropertyDescription() const;
     double getValue() const;
     QStringList getAlternatives() const;
     double getMinValue() const;
     double getMaxValue() const;
-
     QString toString() const;
+    QString getFilePath() const;
 
     friend class PropertyTests;
 
@@ -57,8 +62,9 @@ private:
     Type propertyType;
     QString propertyName;
     QString propertyDescription;
-    double defaultValue;
-    QStringList alternatives;
+    double doubleValue;
+    QStringList alternativesValue;
+    QString filePathValue;
     double max, min;
 
     Property(QString propertyName,
@@ -73,6 +79,11 @@ private:
              int defaultValue,
              int minValue,
              int maxValue
+             );
+
+    Property(QString propertyName,
+             QString propertyDescription,
+             QString defaultValue
              );
 };
 

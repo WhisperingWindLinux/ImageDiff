@@ -24,7 +24,9 @@ public:
 
     virtual void onRgbValueUnderCursonChanged(RgbValue firstImageRgbValue, RgbValue secondImageRgbValue) = 0;
 
-    virtual QList<Property> getUpdatedPropertiesFromUser(QList<Property> defaultProperties) = 0;
+    virtual QList<Property> getUpdatedPropertiesFromUser(QString processorName,
+                                                         QString processorDescription,
+                                                         QList<Property> defaultProperties) = 0;
 
     virtual void updateRecentFilesMenu() = 0;
 };

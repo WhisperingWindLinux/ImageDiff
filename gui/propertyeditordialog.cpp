@@ -1,11 +1,23 @@
 #include "propertyeditordialog.h"
 
-PropertyEditorDialog::PropertyEditorDialog(QList<Property> properties, QWidget *parent)
+#include <qfiledialog.h>
+
+PropertyEditorDialog::PropertyEditorDialog(QString processorName,
+                                           QString processorDescription,
+                                           QList<Property> properties,
+                                           QWidget *parent)
+
     : QDialog(parent), deafultProperties(properties) {
 
-    setWindowTitle("Edit Properties");
+    setWindowTitle(processorName);
 
     mainLayout = new QVBoxLayout(this);
+
+    QLabel *descriptionLbl = new QLabel(this);
+    descriptionLbl->setWordWrap(true);
+    descriptionLbl->setText(processorDescription);
+    mainLayout->addWidget(descriptionLbl);
+    mainLayout->addWidget(new QLabel());
 
     // Dynamically create controls for each property
     for (auto it = this->deafultProperties.begin(); it != this->deafultProperties.end(); ++it) {
@@ -16,7 +28,7 @@ PropertyEditorDialog::PropertyEditorDialog(QList<Property> properties, QWidget *
         QHBoxLayout *propertyLayout = new QHBoxLayout;
 
         // QLabel for property name
-        QLabel *label = new QLabel(property.getPoropertyName(), this);
+        QLabel *label = new QLabel(property.getPropertyName(), this);
         label->setToolTip(property.getPropertyDescription()); // Set tooltip with description
         propertyLayout->addWidget(label);
 
@@ -47,6 +59,28 @@ PropertyEditorDialog::PropertyEditorDialog(QList<Property> properties, QWidget *
             comboBox->setCurrentIndex(static_cast<int>(property.getValue()));
             editor = comboBox;
             break;
+        }
+
+        case Property::Type::FilePath: {
+            QHBoxLayout *fileLayout = new QHBoxLayout;
+            QLineEdit *filePathEdit = new QLineEdit(this);
+            filePathEdit->setText(property.getFilePath());
+            filePathEdit->setReadOnly(true);
+            fileLayout->addWidget(filePathEdit);
+
+            QPushButton *fileButton = new QPushButton("...", this);
+            fileLayout->addWidget(fileButton);
+
+            connect(fileButton, &QPushButton::clicked, this, [this, filePathEdit]() {
+                QString filePath = QFileDialog::getOpenFileName(this, "Select File");
+                if (!filePath.isEmpty()) {
+                    filePathEdit->setText(filePath);
+                }
+            });
+
+            propertyLayout->addLayout(fileLayout);
+
+            editors.append(filePathEdit);
         }
         }
 
@@ -85,7 +119,7 @@ void PropertyEditorDialog::onRun() {
             QSpinBox *spinBox = qobject_cast<QSpinBox*>(editor);
             if (spinBox) {
                 Property prop = Property::createIntProperty(
-                    property.getPoropertyName(),
+                    property.getPropertyName(),
                     property.getPropertyDescription(),
                     spinBox->value(),
                     static_cast<int>(property.getMinValue()),
@@ -99,7 +133,7 @@ void PropertyEditorDialog::onRun() {
             QDoubleSpinBox *doubleSpinBox = qobject_cast<QDoubleSpinBox*>(editor);
             if (doubleSpinBox) {
                 Property prop = Property::createRealProperty(
-                    property.getPoropertyName(),
+                    property.getPropertyName(),
                     property.getPropertyDescription(),
                     doubleSpinBox->value(),
                     property.getMinValue(),
@@ -112,11 +146,23 @@ void PropertyEditorDialog::onRun() {
         case Property::Type::Alternatives: {
             QComboBox *comboBox = qobject_cast<QComboBox*>(editor);
             if (comboBox) {
-                Property prop = Property::createStringProperty(
-                    property.getPoropertyName(),
+                Property prop = Property::createAlternativesProperty(
+                    property.getPropertyName(),
                     property.getPropertyDescription(),
                     property.getAlternatives(),
                     comboBox->currentIndex()
+                    );
+                updatedProperties.append(prop);
+            }
+            break;
+        }
+        case Property::Type::FilePath: {
+            QLineEdit *filePathEdit = qobject_cast<QLineEdit *>(editor);
+            if (filePathEdit) {
+                Property prop = Property::createFilePathProperty(
+                    property.getPropertyName(),
+                    property.getPropertyDescription(),
+                    filePathEdit->text()
                     );
                 updatedProperties.append(prop);
             }

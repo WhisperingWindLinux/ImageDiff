@@ -29,7 +29,9 @@ public:
     }
     void onRgbValueUnderCursonChanged(RgbValue firstImageRgbValue, RgbValue secondImageRgbValue) override { }
 
-    QList<Property> getUpdatedPropertiesFromUser(QList<Property> defaultProperties) override {
+    QList<Property> getUpdatedPropertiesFromUser(QString processorName,
+                                                 QString processorDescription,
+                                                 QList<Property> properties) override {
         return updatedPropertiesFromUser;
     }
 

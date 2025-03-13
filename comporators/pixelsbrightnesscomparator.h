@@ -6,7 +6,7 @@
 #include <interfaces/comporator.h>
 
 // Structure to store comparison results
-struct ComparisonResult {
+struct PixelsBrightnessComparisonResult {
 
     QString name1;            // The name of the first image
     QString name2;            // The name of the second image
@@ -39,13 +39,13 @@ public:
     std::shared_ptr<ComparisonResultVariant> compare(ComparableImage first, ComparableImage second) override;
 
 private:
-    ComparisonResult compareImages(QImage image1,
-                                   QString name1,
-                                   QImage image2,
-                                   QString name2
-                                   );
+    PixelsBrightnessComparisonResult compareImages(QImage image1,
+                                                   QString name1,
+                                                   QImage image2,
+                                                   QString name2
+                                                   );
 
-    QString formatResultToHtml(const ComparisonResult& result);
+    QString formatResultToHtml(const PixelsBrightnessComparisonResult& result);
 
 };
 

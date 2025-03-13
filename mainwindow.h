@@ -75,7 +75,9 @@ public:
     void onTextResultFromComparatorReceived(QString text) override;
     void saveImage(QPixmap &image, QString defaultPath) override;
     void onRgbValueUnderCursonChanged(RgbValue firstImageRgbValue, RgbValue secondImageRgbValue) override;
-    QList<Property> getUpdatedPropertiesFromUser(QList<Property> defaultProperties) override;
+    QList<Property> getUpdatedPropertiesFromUser(QString processorName,
+                                                 QString processorDescription,
+                                                 QList<Property> defaultProperties) override;
     void updateRecentFilesMenu() override;    
 };
 #endif // MAINWINDOW_H

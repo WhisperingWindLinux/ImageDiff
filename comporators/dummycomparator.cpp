@@ -7,11 +7,13 @@ QString DummyComporator::name() {
 }
 
 QString DummyComporator::hotkey() {
-    return "z";
+    return "x";
 }
 
 QString DummyComporator::description() {
-    return "Dummy comparator";
+    return QString("It's very simple and useless dummy comparator. It is used for testing purposes only. ") +
+           "It's very simple and useless dummy comparator. It is used for testing purposes only. " +
+           "It's very simple and useless dummy comparator. It is used for testing purposes only.";
 }
 
 std::shared_ptr<ComparisonResultVariant> DummyComporator::compare(ComparableImage first, ComparableImage second) {
@@ -25,9 +27,11 @@ QList<Property> DummyComporator::getDefaultProperties() const {
 
     QList<QString> alternatives = { "First", "Second", "Third", "Fourth" };
 
-    auto prop3 = Property::createStringProperty("Real property", "Real property description.", alternatives, 1);
+    auto prop3 = Property::createAlternativesProperty("Real property", "Real property description.", alternatives, 1);
 
-    QList<Property> properties = { prop1, prop2, prop3 };
+    auto prop4 = Property::createFilePathProperty("File path property", "This property represents a file path", "");
+
+    QList<Property> properties = { prop1, prop2, prop3, prop4 };
 
     return properties;
 

@@ -18,7 +18,11 @@ class PropertyEditorDialog : public QDialog {
     Q_OBJECT
 
 public:
-    explicit PropertyEditorDialog(QList<Property> properties, QWidget *parent = nullptr);
+    explicit PropertyEditorDialog(QString processorName,
+                                  QString processorDescription,
+                                  QList<Property> properties,
+                                  QWidget *parent = nullptr
+                                  );
 
     // Returns the updated list of properties
     QList<Property> getUpdatedProperties() const;

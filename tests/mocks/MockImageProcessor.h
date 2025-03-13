@@ -31,6 +31,12 @@ public:
         defaultProperties = properties;
     }
 
+    void reset() override {
+        wasSetPropertiesCalled = false;
+        updatedProperties.clear();
+        defaultProperties.clear();
+    }
+
     bool wasSetPropertiesCalled = false;
     QList<Property> updatedProperties;
     QList<Property> defaultProperties;

@@ -12,7 +12,7 @@ Property::Property(QString propertyName,
     : propertyType(Type::Real),
     propertyName(propertyName),
     propertyDescription(propertyDescription),
-    defaultValue(defaultValue),
+    doubleValue(defaultValue),
     max(maxValue),
     min(minValue) {}
 
@@ -25,9 +25,17 @@ Property::Property(QString propertyName,
     : propertyType(Type::Integer),
     propertyName(propertyName),
     propertyDescription(propertyDescription),
-    defaultValue(static_cast<double>(defaultValue)),
+    doubleValue(static_cast<double>(defaultValue)),
     max(static_cast<double>(maxValue)),
     min(static_cast<double>(minValue)) {}
+
+Property::Property(QString propertyName,
+                   QString propertyDescription,
+                   QString defaultValue)
+    : propertyType(Type::FilePath),
+     propertyName(propertyName),
+     propertyDescription(propertyDescription),
+     filePathValue(defaultValue) {}
 
 
 // Static method to create an integer property without min/max constraints
@@ -93,8 +101,8 @@ Property Property::createRealProperty(QString propertyName,
                     );
 }
 
-// Static method to create a string property with alternatives
-Property Property::createStringProperty(QString propertyName,
+// Static method to create a string property with alternativesValue
+Property Property::createAlternativesProperty(QString propertyName,
                                         QString propertyDescription,
                                         QStringList alternatives,
                                         int defaultValueIndex
@@ -110,10 +118,18 @@ Property Property::createStringProperty(QString propertyName,
 
     Property prop(std::move(propertyName), std::move(propertyDescription), 0.0, 0.0, 0.0);
     prop.propertyType = Type::Alternatives;
-    prop.alternatives = alternatives;
-    prop.defaultValue = static_cast<double>(defaultValueIndex);
+    prop.alternativesValue = alternatives;
+    prop.doubleValue = static_cast<double>(defaultValueIndex);
 
     return prop;
+}
+
+Property Property::createFilePathProperty(QString propertyName,
+                                          QString propertyDescription,
+                                          QString defaultValue
+                                          )
+{
+    return Property(propertyName, propertyDescription, defaultValue);
 }
 
 // Getters
@@ -121,7 +137,7 @@ Property::Type Property::getPropertyType() const {
     return propertyType;
 }
 
-QString Property::getPoropertyName() const {
+QString Property::getPropertyName() const {
     return propertyName;
 }
 
@@ -130,14 +146,18 @@ QString Property::getPropertyDescription() const {
 }
 
 double Property::getValue() const {
-    return defaultValue;
+    return doubleValue;
+}
+
+QString Property::getFilePath() const {
+    return filePathValue;
 }
 
 QStringList Property::getAlternatives() const {
     if (propertyType != Type::Alternatives) {
         throw std::logic_error("This property type does not have alternatives");
     }
-    return alternatives;
+    return alternativesValue;
 }
 
 double Property::getMinValue() const {
@@ -156,28 +176,33 @@ double Property::getMaxValue() const {
 
 QString Property::toString() const {
     QString result = "Property: \n";
-    result += "  Name: " + getPoropertyName() + "\n";
+    result += "  Name: " + getPropertyName() + "\n";
     result += "  Description: " + getPropertyDescription() + "\n";
 
     switch (getPropertyType()) {
     case Type::Integer:
         result += "  Type: Integer\n";
-        result += "  Default Value: " + QString::number(static_cast<int>(getValue())) + "\n";
+        result += "  Value: " + QString::number(static_cast<int>(getValue())) + "\n";
         result += "  Min Value: " + QString::number(static_cast<int>(getMinValue())) + "\n";
         result += "  Max Value: " + QString::number(static_cast<int>(getMaxValue())) + "\n";
         break;
 
     case Type::Real:
         result += "  Type: Real\n";
-        result += "  Default Value: " + QString::number(getValue(), 'f', 2) + "\n";
+        result += "  Value: " + QString::number(getValue(), 'f', 2) + "\n";
         result += "  Min Value: " + QString::number(getMinValue(), 'f', 2) + "\n";
         result += "  Max Value: " + QString::number(getMaxValue(), 'f', 2) + "\n";
         break;
 
     case Type::Alternatives:
         result += "  Type: Alternatives\n";
-        result += "  Default Value Index: " + QString::number(static_cast<int>(getValue())) + "\n";
+        result += "  Value Index: " + QString::number(static_cast<int>(getValue())) + "\n";
         result += "  Alternatives: [" + getAlternatives().join(", ") + "]\n";
+        break;
+
+    case Type::FilePath:
+        result += "  Type: FilePath\n";
+        result += "  Value: " + filePathValue + "\n";
         break;
     }
 

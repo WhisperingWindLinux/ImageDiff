@@ -379,8 +379,12 @@ void MainWindow::onTextResultFromComparatorReceived(QString text) {
  * The user can change the values. The function returns the new properties
  * or the default ones if nothing was changed.
  */
-QList<Property> MainWindow::getUpdatedPropertiesFromUser(QList<Property> defaultProperties) {
-    PropertyEditorDialog dialog(defaultProperties, this);
+QList<Property> MainWindow::getUpdatedPropertiesFromUser(QString processorName,
+                                                         QString processorDescription,
+                                                         QList<Property> defaultProperties
+                                                         )
+{
+    PropertyEditorDialog dialog(processorName, processorDescription, defaultProperties, this);
     dialog.setWindowTitle("Properties");
     dialog.setModal(true);
     dialog.exec();
@@ -393,7 +397,7 @@ QList<Property> MainWindow::getUpdatedPropertiesFromUser(QList<Property> default
          * TBD: Implement proper interruption when the properties dialog
          * is closed, if the user clicks Cancel.
          */
-        throw new std::exception();
+        throw std::exception();
     }
 }
 

@@ -10,6 +10,7 @@ CONFIG += c++17
 
 SOURCES += \
     comporators/dummycomparator.cpp \
+    comporators/imageproximitytoorigincomparator.cpp \
     comporators/sharpnesscomparator.cpp \
     gui/formattors/recentfilespathformater.cpp \
     imageprocessorsmanager/property.cpp \
@@ -44,6 +45,7 @@ SOURCES += \
 
 HEADERS += \
     comporators/dummycomparator.h \
+    comporators/imageproximitytoorigincomparator.h \
     comporators/sharpnesscomparator.h \
     gui/RgbValue.h \
     gui/formattors/recentfilespathformater.h \

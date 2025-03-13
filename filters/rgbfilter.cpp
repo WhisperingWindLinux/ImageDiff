@@ -90,7 +90,7 @@ QList<Property> GenericRgbFilter::getDefaultProperties() const {
 
     QString description = "Represents the choice between colored and grayscale image in an R/G/B mode.";
 
-    Property colorModeProperty = Property::createStringProperty("Color mode", description, alternatives, 0);
+    Property colorModeProperty = Property::createAlternativesProperty("Color mode", description, alternatives, 0);
 
     QList<Property> properties = { colorModeProperty };
 
@@ -104,7 +104,7 @@ void GenericRgbFilter::setProperties(QList<Property> properties) {
     }
     Property colorModeProperty = properties[0];
 
-    if (colorModeProperty.getPoropertyName() != "Color mode"
+    if (colorModeProperty.getPropertyName() != "Color mode"
         || colorModeProperty.getPropertyType() != Property::Type::Alternatives)
     {
         return;

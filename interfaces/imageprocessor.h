@@ -23,6 +23,8 @@ public:
     virtual QList<Property> getDefaultProperties() const = 0;
 
     virtual void setProperties(QList<Property>) = 0;
+
+    virtual void reset() = 0;
 };
 
 /*
@@ -45,7 +47,7 @@ Show pixels' contrast difference statistics (Comparator)                        
 
 Show pixels' saturation difference statistics (Comparator)                         T
 
-Dummy comparator (Comparator; For Testing Purposes Only)                           Z
+Dummy comparator (Comparator; For Testing Purposes Only)                           X
 
 Color picker                                                                       P
 
@@ -63,7 +65,7 @@ Show Blue channel only (Filter)                                                 
 
 Sharpness comporator                                                               H
 
-Enter Full Screen                                                                  F
+Compare the proximity of two images to an original image                           Y                                                                    F
 
 
 */

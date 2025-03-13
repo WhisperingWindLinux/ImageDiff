@@ -7,7 +7,7 @@
 #include "pixelsbrightnesscomparator.h"
 
 
-ComparisonResult PixelsBrightnessComparator::compareImages(QImage image1,
+PixelsBrightnessComparisonResult PixelsBrightnessComparator::compareImages(QImage image1,
                                                            QString name1,
                                                            QImage image2,
                                                            QString name2
@@ -48,7 +48,7 @@ ComparisonResult PixelsBrightnessComparator::compareImages(QImage image1,
     }
 
     // Populate the result structure
-    ComparisonResult result;
+    PixelsBrightnessComparisonResult result;
 
     result.name1 = name1;
     result.name2 = name2;
@@ -71,7 +71,7 @@ ComparisonResult PixelsBrightnessComparator::compareImages(QImage image1,
 }
 
 // Function to format comparison results as an HTML table
-QString PixelsBrightnessComparator::formatResultToHtml(const ComparisonResult& result) {
+QString PixelsBrightnessComparator::formatResultToHtml(const PixelsBrightnessComparisonResult& result) {
 
     QString html;
     html += QString("<b>Pixel Brightness Difference Analysis for %1</b><br>")
