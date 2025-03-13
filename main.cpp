@@ -44,7 +44,7 @@ int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
 
     QStringList arguments = QCoreApplication::arguments();
-    if (arguments.contains("--run-tests") || true) {
+    if (arguments.contains("--run-tests") || !true) {
         return runTests(argc, argv);
     }
 

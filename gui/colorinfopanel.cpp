@@ -4,8 +4,8 @@
 #include <qboxlayout.h>
 #include <qlineedit.h>
 
-ColorInfoPanel::ColorInfoPanel(QWidget *parent, bool isForVisibleImageOnly)
-    : QWidget{parent},
+ColorInfoPanel::ColorInfoPanel(bool isForVisibleImageOnly)
+    : QWidget{nullptr},
     isForVisibleImageOnly(isForVisibleImageOnly)
 {
     setWindowTitle("Color Picker");
@@ -24,12 +24,12 @@ ColorInfoPanel::ColorInfoPanel(QWidget *parent, bool isForVisibleImageOnly)
     firstGLabel = rgbWidgets.gLabel;
     firstBLabel = rgbWidgets.bLabel;
 
-    // If isForVisibleImageOnly is false, create a duplicate panel
+    // If isForVisibleImageOnly is false, create a advanced color picker' panel
     if (!isForVisibleImageOnly) {
         // Add some spacing before the second panel
         mainLayout->addSpacing(20);
 
-        // Create the second (duplicate) panel
+        // Create the second panel
         auto rgbWidgets = createPanel();
 
         mainLayout->addLayout(rgbWidgets.panelLayout);

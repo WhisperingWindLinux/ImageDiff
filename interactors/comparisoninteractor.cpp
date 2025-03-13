@@ -230,32 +230,32 @@ void ComparisonInteractor::saveImage(SaveImageInfo info) {
 
     switch (info.saveImageInfoType) {
     case SaveImageInfoType::FirstImage:
-        callbacks->saveImageAs(info.image, firstImagePath);
+        callbacks->saveImage(info.image, firstImagePath);
         break;
     case SaveImageInfoType::SecondImage:
-        callbacks->saveImageAs(info.image, secondImagePath);
+        callbacks->saveImage(info.image, secondImagePath);
         break;
     case SaveImageInfoType::FirstImageArea:
         fileName = file1Name + "_area" + defaultExtention;
         fullPath = defaultDir.filePath(fileName);
-        callbacks->saveImageAs(info.image, fullPath);
+        callbacks->saveImage(info.image, fullPath);
         break;
     case SaveImageInfoType::SecondImageArea:
         fileName = file2Name + "_area" + defaultExtention;
         fullPath = defaultDir.filePath(fileName);
-        callbacks->saveImageAs(info.image, fullPath);
+        callbacks->saveImage(info.image, fullPath);
         break;
     case SaveImageInfoType::ComparisonImage:
         fileName = QString("%1_vs_%2_comparison%3")
                        .arg(file1Name, file2Name, defaultExtention);
         fullPath = defaultDir.filePath(fileName);
-        callbacks->saveImageAs(info.image, fullPath);
+        callbacks->saveImage(info.image, fullPath);
         break;
     case SaveImageInfoType::ComparisonImageArea:
         fileName = QString("%1_vs_%2_area_comparison%3")
                        .arg(file1Name, file2Name, defaultExtention);
         fullPath = defaultDir.filePath(fileName);
-        callbacks->saveImageAs(info.image, fullPath);
+        callbacks->saveImage(info.image, fullPath);
         break;
     default:
         break;

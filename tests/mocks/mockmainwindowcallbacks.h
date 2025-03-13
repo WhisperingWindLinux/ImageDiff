@@ -21,7 +21,7 @@ public:
     }
     void onComparisonImagesLoaded(QPixmap &, QString) override {}
     void onComparisonTextLoaded(QString) override {}
-    void saveImageAs(QPixmap &pixmap, QString path) override {
+    void saveImage(QPixmap &pixmap, QString path) override {
         lastSavedFilePath = "";
         if (!pixmap.isNull()) {
             lastSavedFilePath = path;

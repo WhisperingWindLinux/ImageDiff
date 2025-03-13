@@ -24,7 +24,9 @@ class ColorInfoPanel : public QWidget
 {
     Q_OBJECT
 public:
-    explicit ColorInfoPanel(QWidget *parent = nullptr, bool isForVisibleImageOnly = true);
+    // One panel displays the RGB values only for the visible image.
+    // The second panel is for the second (hidden) image.
+    explicit ColorInfoPanel(bool isOnePanelMode = true);
 
     void updateTopPanel(RgbValue rgbValue);
     void updateBottomPanel(RgbValue rgbValue);

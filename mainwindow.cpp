@@ -6,7 +6,6 @@
 #include "imageprocessorsmanager/imageprocessorsmanager.h"
 #include "interactors/savefileinfo.h"
 
-
 #include <QLabel>
 #include <QSplitter>
 #include <QVBoxLayout>
@@ -38,41 +37,46 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 
     comparisionInteractor = new ComparisonInteractor(this);
-    buildMenus();
+    populateComparatorsAndFiltersMenus();
 
-    disabledMenusIfImagesNotOpened();
+    connect(ui->actionOpenImages, &QAction::triggered, this, &MainWindow::openImages);
+    connect(ui->actionCloseImages, &QAction::triggered, this, &MainWindow::closeImages);
+    connect(ui->actionSwitchBetweenImages, &QAction::triggered, this, &MainWindow::switchBetweenImages);
+    connect(ui->actionSaveVisibleAreaAs, &QAction::triggered, this, &MainWindow::saveVisibleAreaAs);
+    connect(ui->actionAbout, &QAction::triggered, this, &MainWindow::showAboutDialog);
+    connect(ui->actionColorPicker, &QAction::triggered, this, &MainWindow::showColorPicker);
+    connect(ui->actionShowOriginalImage, &QAction::triggered, this, &MainWindow::showOriginalImages);
+    connect(ui->actionAdvancedColorPicker, &QAction::triggered, this, &MainWindow::showAdvancedColorPicker);
+    connect(ui->actionActualSize, &QAction::triggered, this, &MainWindow::imageZoomedToActualSize);
+    connect(ui->actionZoomIn, &QAction::triggered, this, &MainWindow::zoomIn);
+    connect(ui->actionZoomOut, &QAction::triggered, this, &MainWindow::zoomOut);
+    this->connect(ui->actionSaveImageAs, &QAction::triggered, this, &MainWindow::saveImageAs);
 
-    connect(ui->actionOpenImages, &QAction::triggered, this, &MainWindow::actionOpenImages_triggered);
-    connect(ui->actionCloseImages, &QAction::triggered, this, &MainWindow::actionCloseImages_triggered);
-    connect(ui->actionSwitchBetweenImages, &QAction::triggered, this, &MainWindow::actionSwitchBetweenImages_triggered);
-    connect(ui->actionSaveImageAs, &QAction::triggered, this, &MainWindow::actionSaveImageAs_triggered);
-    connect(ui->actionSaveVisibleAreaAs, &QAction::triggered, this, &MainWindow::actionSaveVisibleAreaAs_triggered);
-    connect(ui->actionAbout, &QAction::triggered, this, &MainWindow::actionAbout_triggered);
-    connect(ui->actionColorPicker, &QAction::triggered, this, &MainWindow::actionColorPicker_triggered);
-    connect(ui->actionShowOriginalImage, &QAction::triggered, this, &MainWindow::actionShowOriginalImage_triggered);
-    connect(ui->actionAdvancedColorPicker, &QAction::triggered, this, &MainWindow::actionShowAdvancedColorPicker_triggered);
-    connect(ui->actionActualSize, &QAction::triggered, this, &MainWindow::actionActualSize_triggered);
-    connect(ui->actionZoomIn, &QAction::triggered, this, &MainWindow::actionZoomIn_triggered);
-    connect(ui->actionZoomOut, &QAction::triggered, this, &MainWindow::actionZoomAout_triggered);
 
     setWindowTitle("Image Diff");
     resize(1380, 820);
 
     setAcceptDrops(true);
-
     showNormal();
 }
 
 MainWindow::~MainWindow() {
     delete ui;
+    delete comparisionInteractor;
 }
 
+/*  Application menu settings { */
+
+// Populate the recent files menu when the main window is displayed on the screen.
 void MainWindow::showEvent(QShowEvent* event) {
     QWidget::showEvent(event);
     updateRecentFilesMenu();
 }
 
-void MainWindow::buildMenus() {
+// The application can run comparators and filters - custom image processors classes
+// that can be easily added to the application. For more information see the constructor'
+// imageprocessormanager/imageprocessormanager.cpp
+void MainWindow::populateComparatorsAndFiltersMenus() {
     ImageProcessorsManager *manager = ImageProcessorsManager::instance();
     auto comporatorsInfo = manager->allProcessorsInfo();
 
@@ -96,23 +100,9 @@ void MainWindow::buildMenus() {
         newAction->setData(name);
         newAction->setShortcut(QKeySequence(hotkey));
 
-        connect(newAction, &QAction::triggered, this, &MainWindow::actionImageComparatorsMenuItem_triggered);
+        connect(newAction, &QAction::triggered, this, &MainWindow::callImageComparator);
     }
-}
-
-void MainWindow::showStatusMessage(QString message) {
-    statusBar()->showMessage(message);
-}
-
-void MainWindow::closeColorPickerDialog() {
-    if (colorPanel != nullptr) {
-        colorPanel->close();
-        delete colorPanel;
-        colorPanel = nullptr;
-    }
-    if (viewer != nullptr) {
-        viewer->onColorPickerStatusChanged(false);
-    }
+    disabledMenusIfImagesNotOpened();
 }
 
 void MainWindow::disabledMenusIfImagesNotOpened() {
@@ -143,26 +133,31 @@ void MainWindow::enabledMenusIfImagesOpened() {
     ui->actionSwitchBetweenImages->setDisabled(false);
 }
 
-void MainWindow::actionActualSize_triggered() {
+/* } =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
+
+/* Event handlers for application menu interactions { */
+
+
+void MainWindow::imageZoomedToActualSize() {
     if (viewer != nullptr) {
         viewer->actualSize();
     }
 }
 
-void MainWindow::actionZoomIn_triggered() {
+void MainWindow::zoomIn() {
     if (viewer != nullptr) {
         viewer->zoomIn();
     }
 
 }
 
-void MainWindow::actionZoomAout_triggered() {
+void MainWindow::zoomOut() {
     if (viewer != nullptr) {
         viewer->zoomOut();
     }
 }
 
-void MainWindow::actionOpenRecentFile_triggered() {
+void MainWindow::openRecentFile() {
     QAction *action = qobject_cast<QAction*>(sender());
     if (action == nullptr) {
         return;
@@ -182,24 +177,102 @@ void MainWindow::actionOpenRecentFile_triggered() {
     }
 }
 
-void MainWindow::openColorPickerDialog(bool isForVisibleImageOnly) {
+void MainWindow::openImages() {
+    closeImages();
+    loadImagesBeingCompared();
+}
+
+void MainWindow::closeImages() {
+    closeColorPickerDialog();
+    disabledMenusIfImagesNotOpened();
+    deleteImageView();
+}
+
+void MainWindow::switchBetweenImages() {
     if (viewer == nullptr) {
         return;
     }
+    viewer->toggleImage();
+}
+
+void MainWindow::callImageComparator() {
+    if (viewer == nullptr) {
+        return;
+    }
+    QAction *action = qobject_cast<QAction*>(sender());
+    try {
+        comparisionInteractor->onImageProcessorShouldBeCalled(action->data());
+    } catch (std::runtime_error &e) {
+        showError(e.what());
+    } catch (std::exception &e) {
+        qDebug() << e.what();
+    }
+}
+
+void MainWindow::saveImageAs() {
+    if (viewer == nullptr) {
+        return;
+    }
+    SaveImageInfo info = viewer->getImageShowedOnTheScreen();
+    comparisionInteractor->saveImage(info);
+}
+
+void MainWindow::saveVisibleAreaAs() {
+    if (viewer == nullptr) {
+        return;
+    }
+    SaveImageInfo info = viewer->getCurrentVisiableArea();
+    comparisionInteractor->saveImage(info);
+}
+
+void MainWindow::showAboutDialog() {
+    AboutDialog aboutDialog(this);
+    aboutDialog.exec();
+}
+
+void MainWindow::showOriginalImages() {
+    if (viewer == nullptr) {
+        return;
+    }
+    comparisionInteractor->realoadImagesFromDisk();
+}
+
+void MainWindow::showColorPicker() {
+    openColorPickerDialog(true);
+}
+
+void MainWindow::showAdvancedColorPicker() {
+    openColorPickerDialog(false);
+}
+
+/* } =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
+
+/* Color Picker dialog { */
+
+void MainWindow::openColorPickerDialog(bool isOnePanelMode) {
+    if (viewer == nullptr) {
+        return;
+    }
+    closeColorPickerDialog();
+    colorPanel = new ColorInfoPanel(isOnePanelMode);
+    colorPanel->show();
+    viewer->onColorPickerStatusChanged(true);
+}
+
+void MainWindow::closeColorPickerDialog() {
     if (colorPanel != nullptr) {
         colorPanel->close();
         delete colorPanel;
         colorPanel = nullptr;
     }
-    colorPanel = new ColorInfoPanel(nullptr, isForVisibleImageOnly);
-    colorPanel->show();
-    viewer->onColorPickerStatusChanged(true);
+    if (viewer != nullptr) {
+        viewer->onColorPickerStatusChanged(false);
+    }
 }
 
+/* } */
 
-void MainWindow::closeEvent(QCloseEvent *event) {
-    closeColorPickerDialog();
-}
+/* Drag and drop support to simplify file opening { */
 
 void MainWindow::dragEnterEvent(QDragEnterEvent *event) {
     if (event->mimeData()->hasFormat("text/uri-list")) {
@@ -219,77 +292,20 @@ void MainWindow::dropEvent(QDropEvent *event) {
     }
 }
 
-void MainWindow::actionOpenImages_triggered() {
-    actionCloseImages_triggered();
-    loadImagesBeingCompared();
-}
+/* } =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
-void MainWindow::actionCloseImages_triggered() {
-    if (viewer != nullptr) {
-        setCentralWidget(nullptr);
-        delete viewer;
-        viewer = nullptr;
-    }
+/* MainWindow' close event { */
+
+void MainWindow::closeEvent(QCloseEvent *event) {
     closeColorPickerDialog();
-    showStatusMessage("");
-    disabledMenusIfImagesNotOpened();
 }
+/* } =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
-void MainWindow::actionSwitchBetweenImages_triggered() {
-    if (viewer == nullptr) {
-        return;
-    }
-    viewer->toggleImage();
-}
+/* Methods of the abstract class AMainWindowCallbacks { */
 
-void MainWindow::actionImageComparatorsMenuItem_triggered() {
-    QAction *action = qobject_cast<QAction*>(sender());
-    try {
-        comparisionInteractor->onImageProcessorShouldBeCalled(action->data());
-    } catch (std::runtime_error &e) {
-        showError(e.what());
-    } catch (std::exception &e) {
-        qDebug() << e.what();
-    }
-}
+// These methods are called from ComparisonInteractor
 
-void MainWindow::actionSaveImageAs_triggered() {
-    if (viewer == nullptr) {
-        return;
-    }
-    SaveImageInfo info = viewer->getImageShowedOnTheScreen();
-    comparisionInteractor->saveImage(info);
-}
-
-void MainWindow::actionSaveVisibleAreaAs_triggered() {
-    if (viewer == nullptr) {
-        return;
-    }
-    SaveImageInfo info = viewer->getCurrentVisiableArea();
-    comparisionInteractor->saveImage(info);
-}
-
-void MainWindow::actionAbout_triggered() {
-    AboutDialog aboutDialog(this);
-    aboutDialog.exec();
-}
-
-void MainWindow::actionShowOriginalImage_triggered() {
-    if (viewer == nullptr) {
-        return;
-    }
-    comparisionInteractor->realoadImagesFromDisk();
-}
-
-void MainWindow::actionColorPicker_triggered() {
-    openColorPickerDialog(true);
-}
-
-void MainWindow::actionShowAdvancedColorPicker_triggered() {
-    openColorPickerDialog(false);
-}
-
-void MainWindow::saveImageAs(QPixmap &image, QString defaultPath) {
+void MainWindow::saveImage(QPixmap &image, QString defaultPath) {
     QString filePath = QFileDialog::getSaveFileName(
         this,
         "Save Image",                  // Dialog title
@@ -312,29 +328,10 @@ void MainWindow::loadImagesBeingCompared() {
         QString secondImagePath = QFileDialog::getOpenFileName(nullptr, "Open Second Image", "", "Images (*.png)");
         comparisionInteractor->loadImagesBeingCompared(firstImagePath, secondImagePath);
     } catch (std::runtime_error &e) {
-
-        if (viewer != nullptr) {
-            setCentralWidget(nullptr);
-            delete viewer;
-            viewer = nullptr;
-        }
-
+        deleteImageView();
         showError(e.what());
     }
 }
-
-void MainWindow::showError(const QString &errorMessage) {
-    qDebug() << errorMessage;
-
-    QMessageBox msgBox;
-    msgBox.setIcon(QMessageBox::Critical);
-    msgBox.setText(errorMessage);
-    msgBox.setStandardButtons(QMessageBox::Ok);
-    msgBox.setDefaultButton(QMessageBox::Ok);
-    msgBox.exec();
-}
-
-// AMainWindowCallbacks interface
 
 void MainWindow::onRgbValueUnderCursonChanged(RgbValue visibleImageRgbValue, RgbValue hiddenImageRgbValue) {
     if (colorPanel == nullptr || viewer == nullptr) {
@@ -356,9 +353,8 @@ void MainWindow::onImagesBeingComparedLoadedSuccessfully(QPixmap& image1,
     if (useSavedImageViewState && viewer) {
         imageViewState = std::make_shared<ImageViewState>(viewer->getCurrentState());
     }
-    actionCloseImages_triggered();
-    viewer = new ImageViewer(this);
-    setCentralWidget(viewer);
+    closeImages();
+    createImageView();
     viewer->showImagesBeingCompared(image1, path1, image2, path2, imageViewState);
     enabledMenusIfImagesOpened();
 }
@@ -409,7 +405,7 @@ void MainWindow::updateRecentFilesMenu() {
     foreach (auto pair, pairsfilesPath) {
         QAction *action = new QAction(pair, this);
         action->setData(pair);
-        connect(action, &QAction::triggered, this, &MainWindow::actionOpenRecentFile_triggered);
+        connect(action, &QAction::triggered, this, &MainWindow::openRecentFile);
        ui->menuRecentFiles->addAction(action);
     }
 
@@ -417,3 +413,55 @@ void MainWindow::updateRecentFilesMenu() {
         ui->menuRecentFiles->addAction("No Recent Files")->setEnabled(false);
     }
 }
+
+/* } =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
+
+/* Show error dialog { */
+
+void MainWindow::showError(const QString &errorMessage) {
+    qDebug() << errorMessage;
+
+    QMessageBox msgBox;
+    msgBox.setIcon(QMessageBox::Critical);
+    msgBox.setText(errorMessage);
+    msgBox.setStandardButtons(QMessageBox::Ok);
+    msgBox.setDefaultButton(QMessageBox::Ok);
+    msgBox.exec();
+}
+
+/* } =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
+
+/* Add or remove the ImageView instance to/form MainWindow  { */
+
+void MainWindow::deleteImageView() {
+    if (viewer != nullptr) {
+        viewer->close();
+        setCentralWidget(nullptr);
+        delete viewer;
+        viewer = nullptr;
+    }
+    showStatusMessage("");
+}
+
+void MainWindow::createImageView() {
+    if (viewer != nullptr) {
+        viewer->close();
+        setCentralWidget(nullptr);
+        delete viewer;
+    }
+    viewer = new ImageViewer(this);
+    setCentralWidget(viewer);
+}
+
+void MainWindow::showStatusMessage(QString message) {
+    statusBar()->showMessage(message);
+}
+
+/* } =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
+
+
+
+
+
+
+

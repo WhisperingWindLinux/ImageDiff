@@ -20,7 +20,7 @@ public:
 
     virtual void onComparisonTextLoaded(QString text) = 0;
 
-    virtual void saveImageAs(QPixmap &image, QString defaultPath) = 0;
+    virtual void saveImage(QPixmap &image, QString defaultPath) = 0;
 
     virtual void onRgbValueUnderCursonChanged(RgbValue firstImageRgbValue, RgbValue secondImageRgbValue) = 0;
 

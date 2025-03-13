@@ -22,20 +22,20 @@ class MainWindow : public QMainWindow, public AMainWindowCallbacks
     Q_OBJECT
 
 public slots:
-    void actionCloseImages_triggered();
-    void actionOpenImages_triggered();
-    void actionSwitchBetweenImages_triggered();
-    void actionImageComparatorsMenuItem_triggered();
-    void actionSaveImageAs_triggered();
-    void actionSaveVisibleAreaAs_triggered();
-    void actionAbout_triggered();
-    void actionColorPicker_triggered();
-    void actionShowAdvancedColorPicker_triggered();
-    void actionShowOriginalImage_triggered();
-    void actionActualSize_triggered();
-    void actionZoomIn_triggered();
-    void actionZoomAout_triggered();
-    void actionOpenRecentFile_triggered();
+    void closeImages();
+    void openImages();
+    void switchBetweenImages();
+    void callImageComparator();
+    void saveImageAs();
+    void saveVisibleAreaAs();
+    void showAboutDialog();
+    void showColorPicker();
+    void showAdvancedColorPicker();
+    void showOriginalImages();
+    void imageZoomedToActualSize();
+    void zoomIn();
+    void zoomOut();
+    void openRecentFile();
 
 public:
     MainWindow(QWidget *parent = nullptr);
@@ -51,17 +51,18 @@ protected:
 private:
     Ui::MainWindow *ui;
     ImageViewer *viewer = nullptr;
-    ComparisonInteractor *comparisionInteractor = nullptr;
-    bool isColorPickerActive = false;
+    ComparisonInteractor* comparisionInteractor = nullptr;
     ColorInfoPanel* colorPanel = nullptr;
 
-    void buildMenus();
+    void populateComparatorsAndFiltersMenus();
     void loadImagesBeingCompared();
     void showError(const QString &errorMessage);
-    void openColorPickerDialog(bool isForVisibleImageOnly);
+    void openColorPickerDialog(bool isOnePanelMode);
     void closeColorPickerDialog();
     void disabledMenusIfImagesNotOpened();
     void enabledMenusIfImagesOpened();
+    void deleteImageView();
+    void createImageView();
 
 public:
     void onImagesBeingComparedLoadedSuccessfully(QPixmap& image1,
@@ -72,10 +73,10 @@ public:
 
     void onComparisonImagesLoaded(QPixmap &image, QString description) override;
     void onComparisonTextLoaded(QString text) override;
-    void saveImageAs(QPixmap &image, QString defaultPath) override;
+    void saveImage(QPixmap &image, QString defaultPath) override;
     void onRgbValueUnderCursonChanged(RgbValue firstImageRgbValue, RgbValue secondImageRgbValue) override;
     QList<Property> getUpdatedPropertiesFromUser(QList<Property> defaultProperties) override;
-    void updateRecentFilesMenu() override;
+    void updateRecentFilesMenu() override;    
 };
 #endif // MAINWINDOW_H
 
