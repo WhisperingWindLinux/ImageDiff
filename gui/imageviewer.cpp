@@ -91,7 +91,7 @@ void ImageViewer::actualSize() {
 
 /* Show images in QGraphicsView { */
 
-void ImageViewer::showImagesBeingCompared(QPixmap& image1,
+void ImageViewer::showTwoImagesBeingCompared(QPixmap& image1,
                                           QString path1,
                                           QPixmap& image2,
                                           QString path2,
@@ -119,7 +119,7 @@ void ImageViewer::showImagesBeingCompared(QPixmap& image1,
     }
 }
 
-void ImageViewer::showComparisonImage(QPixmap &image, QString description) {
+void ImageViewer::showImageFromComparator(QPixmap &image, QString description) {
     if (comparisonImage != nullptr) {
         scene->removeItem(comparisonImage);
         comparisonImage = nullptr;

@@ -15,8 +15,8 @@ class ComparisonInteractor
 public:
     ComparisonInteractor(AMainWindowCallbacks *callbacks);
 
-    void loadImagesBeingCompared(QString& Image1Path, QString& Image2Path, bool usePreviousImageGeometry = false);
-    void loadImagesBeingCompared(QList<QUrl> urls);
+    void loadTwoImagesBeingCompared(QString& Image1Path, QString& Image2Path, bool usePreviousImageGeometry = false);
+    void loadTwoImagesBeingCompared(QList<QUrl> urls);
     void onImageProcessorShouldBeCalled(QVariant callerData);
     void saveImage(SaveImageInfo info);
     void realoadImagesFromDisk();
@@ -24,7 +24,7 @@ public:
 
     friend class ComparisonInteractorTests;
 
-    void loadImagesBeingCompared(QString recentFileMenuRecord);
+    void loadTwoImagesBeingCompared(QString recentFileMenuRecord);
 private:
     AMainWindowCallbacks *callbacks;
     RecentFilesManager *recentFilesManager;

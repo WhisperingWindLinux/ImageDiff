@@ -7,7 +7,7 @@
 class MockMainWindowCallbacks : public AMainWindowCallbacks {
 public:
     virtual ~MockMainWindowCallbacks() {};
-    void onImagesBeingComparedLoadedSuccessfully(QPixmap &pixmap1,
+    void onTwoImagesBeingComparedLoadedSuccessfully(QPixmap &pixmap1,
                                      QString path1,
                                      QPixmap &pixmap2,
                                      QString path2,
@@ -19,8 +19,8 @@ public:
         m_path2 = path2;
         m_usePreviousImageGeometry = usePreviousImageGeometry;
     }
-    void onComparisonImagesLoaded(QPixmap &, QString) override {}
-    void onComparisonTextLoaded(QString) override {}
+    void onImageResultFromComparatorReceived(QPixmap &, QString) override {}
+    void onTextResultFromComparatorReceived(QString) override {}
     void saveImage(QPixmap &pixmap, QString path) override {
         lastSavedFilePath = "";
         if (!pixmap.isNull()) {

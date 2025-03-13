@@ -62,7 +62,7 @@ void ComparisonInteractor::callComparator(AComparator *comparator) {
         QImage imageResult = result->imageResult();
         QPixmap pixmap = QPixmap::fromImage(imageResult);
         if (!pixmap.isNull()) {
-            callbacks->onComparisonImagesLoaded(pixmap, comparator->name());
+            callbacks->onImageResultFromComparatorReceived(pixmap, comparator->name());
         }
     }
     else if (result->type() == ComparisonResultVariantType::String) {
@@ -70,7 +70,7 @@ void ComparisonInteractor::callComparator(AComparator *comparator) {
         if (stringResult.isNull() || stringResult.isEmpty()) {
             throw std::runtime_error("Error: The comparator returns the empty string.");
         }
-        callbacks->onComparisonTextLoaded(stringResult);
+        callbacks->onTextResultFromComparatorReceived(stringResult);
     }
 }
 
@@ -100,7 +100,7 @@ void ComparisonInteractor::callFilter(AFilter *filter) {
     firstPixmap = pixmap1;
     secondPixmap = pixmap2;
 
-    callbacks->onImagesBeingComparedLoadedSuccessfully(firstPixmap, firstImagePath, secondPixmap, secondImagePath, true);
+    callbacks->onTwoImagesBeingComparedLoadedSuccessfully(firstPixmap, firstImagePath, secondPixmap, secondImagePath, true);
 }
 
 void ComparisonInteractor::clear() {
@@ -112,7 +112,7 @@ void ComparisonInteractor::clear() {
 }
 
 void ComparisonInteractor::realoadImagesFromDisk() {
-    loadImagesBeingCompared(firstImagePath, secondImagePath, true);
+    loadTwoImagesBeingCompared(firstImagePath, secondImagePath, true);
 }
 
 QStringList ComparisonInteractor::getRecentFiles() {
@@ -135,27 +135,27 @@ QStringList ComparisonInteractor::getRecentFiles() {
 
 // Open images from the recent files menu.
 // The menu item is formatted as "path to file 1 -> path to file 2".
-void ComparisonInteractor::loadImagesBeingCompared(QString recentFileMenuRecord) {
+void ComparisonInteractor::loadTwoImagesBeingCompared(QString recentFileMenuRecord) {
     auto formatter = make_unique<RecentFilesPathFormater>();
     std::optional<QPair<QString, QString>> pair = formatter->stringToPair(recentFileMenuRecord);
     if (!pair) {
         throw std::runtime_error("Error: Unable to load images!");
     }
-    loadImagesBeingCompared(pair->first, pair->second, false);
+    loadTwoImagesBeingCompared(pair->first, pair->second, false);
 }
 
-void ComparisonInteractor::loadImagesBeingCompared(QList<QUrl> urls) {
+void ComparisonInteractor::loadTwoImagesBeingCompared(QList<QUrl> urls) {
     if (urls.size() != 2) {
         return;
     }
     if (urls[0].isLocalFile() && urls[1].isLocalFile()) {
         QString file1 = urls[0].toLocalFile();
         QString file2 = urls[1].toLocalFile();
-        loadImagesBeingCompared(file1, file2, false);
+        loadTwoImagesBeingCompared(file1, file2, false);
     }
 }
 
-void ComparisonInteractor::loadImagesBeingCompared(QString& Image1Path,
+void ComparisonInteractor::loadTwoImagesBeingCompared(QString& Image1Path,
                                                    QString& Image2Path,
                                                    bool usePreviousImageGeometry
                                                    )
@@ -184,7 +184,7 @@ void ComparisonInteractor::loadImagesBeingCompared(QString& Image1Path,
         throw std::runtime_error("Error: Unable to load images!");
     }
 
-    callbacks->onImagesBeingComparedLoadedSuccessfully(firstPixmap,
+    callbacks->onTwoImagesBeingComparedLoadedSuccessfully(firstPixmap,
                                            firstImagePath,
                                            secondPixmap,
                                            secondImagePath,

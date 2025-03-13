@@ -171,7 +171,7 @@ void MainWindow::openRecentFile() {
         return;
     }
     try {
-        comparisionInteractor->loadImagesBeingCompared(recentMenuRecord);
+        comparisionInteractor->loadTwoImagesBeingCompared(recentMenuRecord);
     } catch (std::runtime_error &e) {
         showError(e.what());
     }
@@ -179,7 +179,7 @@ void MainWindow::openRecentFile() {
 
 void MainWindow::openImages() {
     closeImages();
-    loadImagesBeingCompared();
+    loadTwoImagesBeingCompared();
 }
 
 void MainWindow::closeImages() {
@@ -286,7 +286,7 @@ void MainWindow::dropEvent(QDropEvent *event) {
     try {
         event->acceptProposedAction();
         QList<QUrl> urls = event->mimeData()->urls();
-        comparisionInteractor->loadImagesBeingCompared(urls);
+        comparisionInteractor->loadTwoImagesBeingCompared(urls);
     } catch (std::runtime_error &e) {
         showError(e.what());
     }
@@ -322,11 +322,11 @@ void MainWindow::saveImage(QPixmap &image, QString defaultPath) {
     }
 }
 
-void MainWindow::loadImagesBeingCompared() {
+void MainWindow::loadTwoImagesBeingCompared() {
     try {
         QString firstImagePath = QFileDialog::getOpenFileName(nullptr, "Open First Image", "", "Images (*.png)");
         QString secondImagePath = QFileDialog::getOpenFileName(nullptr, "Open Second Image", "", "Images (*.png)");
-        comparisionInteractor->loadImagesBeingCompared(firstImagePath, secondImagePath);
+        comparisionInteractor->loadTwoImagesBeingCompared(firstImagePath, secondImagePath);
     } catch (std::runtime_error &e) {
         deleteImageView();
         showError(e.what());
@@ -342,7 +342,7 @@ void MainWindow::onRgbValueUnderCursonChanged(RgbValue visibleImageRgbValue, Rgb
     }
 }
 
-void MainWindow::onImagesBeingComparedLoadedSuccessfully(QPixmap& image1,
+void MainWindow::onTwoImagesBeingComparedLoadedSuccessfully(QPixmap& image1,
                                                          QString path1,
                                                          QPixmap& image2,
                                                          QString path2,
@@ -355,17 +355,17 @@ void MainWindow::onImagesBeingComparedLoadedSuccessfully(QPixmap& image1,
     }
     closeImages();
     createImageView();
-    viewer->showImagesBeingCompared(image1, path1, image2, path2, imageViewState);
+    viewer->showTwoImagesBeingCompared(image1, path1, image2, path2, imageViewState);
     enabledMenusIfImagesOpened();
 }
 
-void MainWindow::onComparisonImagesLoaded(QPixmap &image, QString description) {
+void MainWindow::onImageResultFromComparatorReceived(QPixmap &image, QString description) {
     if (viewer != nullptr) {
-        viewer->showComparisonImage(image, description);
+        viewer->showImageFromComparator(image, description);
     }
 }
 
-void MainWindow::onComparisonTextLoaded(QString text) {
+void MainWindow::onTextResultFromComparatorReceived(QString text) {
     QMessageBox msgBox;
     msgBox.setWindowTitle("Pixel Difference Analysis");
     msgBox.setTextFormat(Qt::RichText);

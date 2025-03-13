@@ -8,17 +8,17 @@
 #include <gui/RgbValue.h>
 
 class AMainWindowCallbacks {
-public:    
-    virtual void onImagesBeingComparedLoadedSuccessfully(QPixmap &image1,
+public:
+    virtual void onTwoImagesBeingComparedLoadedSuccessfully(QPixmap &image1,
                                              QString path1,
                                              QPixmap &image2,
                                              QString path2,
                                              bool usePreviousImageGeometry) = 0;
 
-    virtual void onComparisonImagesLoaded(QPixmap &image,
+    virtual void onImageResultFromComparatorReceived(QPixmap &image,
                                           QString description) = 0;
 
-    virtual void onComparisonTextLoaded(QString text) = 0;
+    virtual void onTextResultFromComparatorReceived(QString text) = 0;
 
     virtual void saveImage(QPixmap &image, QString defaultPath) = 0;
 

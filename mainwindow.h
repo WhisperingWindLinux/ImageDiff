@@ -55,7 +55,7 @@ private:
     ColorInfoPanel* colorPanel = nullptr;
 
     void populateComparatorsAndFiltersMenus();
-    void loadImagesBeingCompared();
+    void loadTwoImagesBeingCompared();
     void showError(const QString &errorMessage);
     void openColorPickerDialog(bool isOnePanelMode);
     void closeColorPickerDialog();
@@ -65,14 +65,14 @@ private:
     void createImageView();
 
 public:
-    void onImagesBeingComparedLoadedSuccessfully(QPixmap& image1,
+    void onTwoImagesBeingComparedLoadedSuccessfully(QPixmap& image1,
                                      QString path1,
                                      QPixmap& image2,
                                      QString path2,
                                      bool usePreviousImageGeometry) override;
 
-    void onComparisonImagesLoaded(QPixmap &image, QString description) override;
-    void onComparisonTextLoaded(QString text) override;
+    void onImageResultFromComparatorReceived(QPixmap &image, QString description) override;
+    void onTextResultFromComparatorReceived(QString text) override;
     void saveImage(QPixmap &image, QString defaultPath) override;
     void onRgbValueUnderCursonChanged(RgbValue firstImageRgbValue, RgbValue secondImageRgbValue) override;
     QList<Property> getUpdatedPropertiesFromUser(QList<Property> defaultProperties) override;

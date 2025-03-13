@@ -14,13 +14,13 @@ public:
     explicit ImageViewer(MainWindow *parent = nullptr);
     virtual ~ImageViewer();
     
-    void showImagesBeingCompared(QPixmap& image1,
+    void showTwoImagesBeingCompared(QPixmap& image1,
                                  QString path1,
                                  QPixmap& image2,
                                  QString path2,
                                  std::shared_ptr<ImageViewState> imageGeometry);
 
-    void showComparisonImage(QPixmap &image, QString description);
+    void showImageFromComparator(QPixmap &image, QString description);
 
     void toggleImage();
 
