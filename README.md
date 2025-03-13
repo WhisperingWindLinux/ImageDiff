@@ -1,4 +1,4 @@
-# User Guide for the Application
+# Inage Diff
 
 Warning. This is an alpha version of the application, which is actively under development, and bugs may be present!
 
