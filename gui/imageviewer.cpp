@@ -49,6 +49,21 @@ ImageViewer::~ImageViewer() {
     }
 }
 
+/* Color Picker is run { */
+
+void ImageViewer::onColorPickerStatusChanged(bool isActivate) {
+    if (isActivate) {
+        isRgbTrackingActive = true;
+        parent->onRgbValueUnderCursonChanged({firstImageName, -1, -1, -1}, {secondImageName, -1, -1, -1});
+    } else {
+        isRgbTrackingActive = false;
+    }
+}
+
+/* } =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
+
+/* Zoom { */
+
 void ImageViewer::wheelEvent(QWheelEvent *event) {
     if (event->angleDelta().y() > 0) {
         zoomIn();
@@ -71,6 +86,10 @@ void ImageViewer::actualSize() {
     resetTransform();
     scaleFactor = 1.0;
 }
+
+/* } =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
+
+/* Show images in QGraphicsView { */
 
 void ImageViewer::showImagesBeingCompared(QPixmap& image1,
                                           QString path1,
@@ -112,6 +131,19 @@ void ImageViewer::showComparisonImage(QPixmap &image, QString description) {
     parent->showStatusMessage(description);
 }
 
+/* } =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
+
+/*  Switching between images displayed in QGraphicsView.
+ *  There are two images that the user compares,
+ *  and the switching occurs between them.
+ *  The result of the comparator's work is a third image,
+ *  which can also be displayed in QGraphicsView
+ *  but is not involved in the switching.
+ *  It can only be displayed by running the corresponding
+ *  comparator, which will compare the two images
+ *  and return the comparison result as an image.
+ *  {   */
+
 void ImageViewer::toggleImage() {
 
     if (firstImage == nullptr || secondImage == nullptr) {
@@ -145,17 +177,31 @@ void ImageViewer::toggleImage() {
     mouseMoveEvent(lastMousEvent);
 }
 
+/* } =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
+
+/*  If a filter is applied to the two images being compared and displayed in QGraphicsView,
+ *  they can change. For example, the Red Channel filter removes the blue and green channels.
+ *  Filters are applied directly to the compared images. If the user selects
+ *  "Show original images" from the menu, the effects of the filters will be discarded.
+ *  To achieve this, the original images will be reloaded from disk. To preserve
+ *  the scrolling parameters, zoom level, and current image index (0 or 1), we save them
+ *  in a structure so they can be reapplied after loading the original images from the disk.
+ *  {  */
+
 ImageViewState ImageViewer::getCurrentState() {
     QRectF rect = mapToScene(viewport()->geometry()).boundingRect();
     return ImageViewState(rect, scaleFactor, currentImageIndex, isRgbTrackingActive);
 }
 
-/*
-   Implementation of a method to capture the image displayed
-   in QGraphicsView, taking into account the current scale (zoom)
-   and visible area. In other words, everything outside the
-   currently visible area will be cropped.
-  */
+/* } =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
+
+/* Saving an image (or an area of the image) to disk { */
+
+
+// Implementation of a method to capture the image displayed
+// in QGraphicsView, taking into account the current scale (zoom)
+// and visible area. In other words, everything outside the
+// currently visible area will be cropped.
 SaveImageInfo ImageViewer::getCurrentVisiableArea() {
     if (scene == nullptr) {
         return {};
@@ -188,16 +234,6 @@ SaveImageInfo ImageViewer::getImageShowedOnTheScreen() {
         return SaveImageInfo(SaveImageInfoType::SecondImage, secondImage->pixmap());
     }
     return {};
-}
-
-void ImageViewer::onColorPickerStatusChanged(bool isActivate) {
-    if (isActivate) {
-        isRgbTrackingActive = true;
-        // Display file names in the ColorPicker dialog
-        parent->onRgbValueUnderCursonChanged({firstImageName, -1, -1, -1}, {secondImageName, -1, -1, -1});
-    } else {
-        isRgbTrackingActive = false;
-    }
 }
 
 // Function to get the visible portion of the image in QGraphicsView
@@ -260,6 +296,10 @@ QPixmap ImageViewer::getVisiblePixmap(QGraphicsView* view) {
     return result;
 }
 
+/* } =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
+
+/* Events { */
+
 void ImageViewer::mouseMoveEvent(QMouseEvent* event) {
 
     if (event == nullptr) {
@@ -271,6 +311,7 @@ void ImageViewer::mouseMoveEvent(QMouseEvent* event) {
     lastMousEvent = event->clone();
 
     if (selecting) {
+        // Zoom to selection.
         // Update the selection rectangle as the user drags the mouse
         QPoint currentPoint = event->pos();
         selectionRect = QRect(selectionStart, currentPoint).normalized(); // Create a normalized rectangle
@@ -284,6 +325,9 @@ void ImageViewer::mouseMoveEvent(QMouseEvent* event) {
     if (comparisonImage != nullptr) {
         return;
     }
+
+    // Implement RGB values tracking under the mouse cursor.
+    // It needs for Color Picker.
 
     QString imageName = "error: unknown image";
     if (comparisonImage != nullptr) {
@@ -389,10 +433,4 @@ void ImageViewer::paintEvent(QPaintEvent *event) {
     }
 }
 
-
-
-
-
-
-
-
+/* } =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
