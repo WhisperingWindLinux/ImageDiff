@@ -3,7 +3,7 @@
 
 #include <QPair>
 
-#include <interfaces/acomporator.h>
+#include <interfaces/comporator.h>
 
 class PixelsAbsoluteValueComparator : public AComparator
 {

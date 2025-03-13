@@ -27,7 +27,14 @@
     <property name="title">
      <string>&amp;File</string>
     </property>
+    <widget class="QMenu" name="menuRecentFiles">
+     <property name="title">
+      <string>Recent Files</string>
+     </property>
+    </widget>
     <addaction name="actionOpenImages"/>
+    <addaction name="menuRecentFiles"/>
+    <addaction name="separator"/>
     <addaction name="actionCloseImages"/>
     <addaction name="separator"/>
     <addaction name="actionSaveImageAs"/>
@@ -227,6 +234,11 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+-</string>
+   </property>
+  </action>
+  <action name="actionNo_Files">
+   <property name="text">
+    <string>No Files</string>
    </property>
   </action>
  </widget>

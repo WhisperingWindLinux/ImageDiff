@@ -7,8 +7,8 @@
 #include "comporators/pixelsbrightnesscomparator.h"
 #include <comporators/dummycomparator.h>
 #include <comporators/sharpnesscomparator.h>
-#include <transformers/grayscaletransformer.h>
-#include <transformers/rgbtransformer.h>
+#include <filters/grayscalefilter.h>
+#include <filters/rgbfilter.h>
 
 ImageProcessorsManager *ImageProcessorsManager::manager = new ImageProcessorsManager();
 
@@ -41,16 +41,15 @@ ImageProcessorsManager::ImageProcessorsManager() {
 
     // add transformers
 
-    auto redChannelTransformer = new RedChannelTransformer();
-    auto greenChannelTransformer = new GreenChannelTransformer();
-    auto blueChannelTransformer = new BlueChannelTransformer();
-    auto grayscaleTransformer = new GrayscaleTransformer();
+    auto redChannelFilter = new RedChannelFilter();
+    auto greenChannelFilter = new GreenChannelFilter();
+    auto blueChannelFilter = new BlueChannelFilter();
+    auto grayscaleFilter = new GrayscaleFilter();
 
-    addProcessor(redChannelTransformer);
-    addProcessor(greenChannelTransformer);
-    addProcessor(blueChannelTransformer);
-    addProcessor(grayscaleTransformer);
-
+    addProcessor(redChannelFilter);
+    addProcessor(greenChannelFilter);
+    addProcessor(blueChannelFilter);
+    addProcessor(grayscaleFilter);
 }
 
 void ImageProcessorsManager::addProcessor(AImageProcessor *comporator) {

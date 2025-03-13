@@ -1,13 +1,13 @@
 #ifndef MOCKMAINWINDOWCALLBACKS_H
 #define MOCKMAINWINDOWCALLBACKS_H
 
-#include <interfaces/amainwindowcallbacks.h>
+#include <interfaces/mainwindowcallbacks.h>
 
 // Mock for AMainWindowCallbacks
 class MockMainWindowCallbacks : public AMainWindowCallbacks {
 public:
     virtual ~MockMainWindowCallbacks() {};
-    void onImagesBeingComparedLoaded(QPixmap &pixmap1,
+    void onImagesBeingComparedLoadedSuccessfully(QPixmap &pixmap1,
                                      QString path1,
                                      QPixmap &pixmap2,
                                      QString path2,
@@ -27,10 +27,14 @@ public:
             lastSavedFilePath = path;
         }
     }
-    void onRgbValueUnderCursonChanged(RgbValue firstImageRgbValue, RgbValue secondImageRgbValue) override {}
+    void onRgbValueUnderCursonChanged(RgbValue firstImageRgbValue, RgbValue secondImageRgbValue) override { }
 
     QList<Property> getUpdatedPropertiesFromUser(QList<Property> defaultProperties) override {
         return updatedPropertiesFromUser;
+    }
+
+    void updateRecentFilesMenu() override {
+        m_isUpdateRecentFilesMenuCalled = true;
     }
 
     QList<Property> updatedPropertiesFromUser;
@@ -41,6 +45,9 @@ public:
     QPixmap m_pixmap2;
     QString m_path2;
     bool m_usePreviousImageGeometry;
+    bool m_isUpdateRecentFilesMenuCalled = false;
+
+    // AMainWindowCallbacks interface
 };
 
 #endif // MOCKMAINWINDOWCALLBACKS_H

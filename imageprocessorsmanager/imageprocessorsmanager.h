@@ -2,7 +2,7 @@
 #define IMAGEPROCESSORSMANAGER_H
 
 #include "imageprocessorsinfo.h"
-#include <interfaces/acomporator.h>
+#include <interfaces/comporator.h>
 
 class ImageProcessorsManager
 {

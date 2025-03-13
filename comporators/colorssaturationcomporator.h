@@ -5,7 +5,7 @@
 #include <QImage>
 #include <QColor>
 
-#include <interfaces/acomporator.h>
+#include <interfaces/comporator.h>
 
 // Structure to hold the comparison result
 struct ColorsSaturationComparisonResult {

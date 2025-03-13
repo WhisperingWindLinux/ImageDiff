@@ -3,7 +3,7 @@
 
 #include <qstring.h>
 
-#include <interfaces/acomporator.h>
+#include <interfaces/comporator.h>
 
 // Structure to store comparison results
 struct ComparisonResult {

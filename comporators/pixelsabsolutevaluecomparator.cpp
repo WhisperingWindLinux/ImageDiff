@@ -13,17 +13,6 @@ QMap<QPair<int, int>, QPair<int, double>> PixelsAbsoluteValueComparator::compare
                                                                                        QImage image2
                                                                                        )
 {
-
-    // Check if images were successfully loaded
-    if (image1.isNull() || image2.isNull()) {
-        throw std::runtime_error("One or both images could not be loaded!");
-    }
-
-    // Check if the sizes of the images match
-    if (image1.size() != image2.size()) {
-        throw std::runtime_error("The sizes of the images do not match!");
-    }
-
     // General image parameters
     int width = image1.width();
     int height = image1.height();

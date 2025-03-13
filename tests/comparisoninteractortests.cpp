@@ -7,6 +7,8 @@
 #include "comparisoninteractortests.h"
 #include "testutils.h"
 
+#include <gui/formattors/recentfilespathformater.h>
+
 void ComparisonInteractorTests::init() {
     // Set up mock callbacks and interactor before each test
     mockCallbacks = new MockMainWindowCallbacks();
@@ -235,6 +237,67 @@ void ComparisonInteractorTests::testSaveImage_ComparisonImageArea() {
     QVERIFY(!mockCallbacks->lastSavedFilePath.isNull());
 }
 
+void ComparisonInteractorTests::testCallUpdateRecentFilesMenu() {
+    // Arrange: Prepare test images and load them into the interactor
+    QString image1Path = createTempImage("image1.png", QSize(20, 20), Qt::white);
+    QString image2Path = createTempImage("image2.png", QSize(20, 20), Qt::white);
+
+    interactor->loadImagesBeingCompared(image1Path, image2Path, false);
+
+    // Initial state verification
+    verifyLoadedImages(image1Path, image2Path, false);
+
+    QVERIFY(mockCallbacks->m_isUpdateRecentFilesMenuCalled);
+}
+
+void ComparisonInteractorTests::testLoadImagesBeingCompared_OpenFilesFromDrop() {
+
+    // Arrange: Prepare test images and load them into the interactor
+    QString image1Path = createTempImage("image1.png", QSize(20, 20), Qt::white);
+    QString image2Path = createTempImage("image2.png", QSize(20, 20), Qt::white);
+
+    QList<QUrl> urls = { QUrl("file://"+image1Path),  QUrl("file://"+image2Path) };
+    interactor->loadImagesBeingCompared(urls);
+
+    QCOMPARE(image1Path, mockCallbacks->m_path1);
+    QCOMPARE(image2Path, mockCallbacks->m_path2);
+}
+
+void ComparisonInteractorTests::testLoadImagesBeingCompared_OpenFilesFromDropIncorrectUrl() {
+
+    // Arrange: Prepare test images and load them into the interactor
+    QString image1Path = createTempImage("image1.png", QSize(20, 20), Qt::white);
+    QString image2Path = createTempImage("image2.png", QSize(20, 20), Qt::white);
+
+    QList<QUrl> urls = { QUrl(image1Path),  QUrl(image2Path) };
+    interactor->loadImagesBeingCompared(urls);
+
+    QCOMPARE("", mockCallbacks->m_path1);
+    QCOMPARE("", mockCallbacks->m_path2);
+}
+
+// Test the function that opens images from the recent files menu.
+// The menu item is formatted as "path to file 1 -> path to file 2".
+void ComparisonInteractorTests::testLoadImagesBeingCompared_RecentFiles() {
+
+    // Arrange: Prepare test images and load them into the interactor
+    QString image1Path = createTempImage("image1.png", QSize(20, 20), Qt::white);
+    QString image2Path = createTempImage("image2.png", QSize(20, 20), Qt::white);
+
+    RecentFilesPathFormater formater;
+    QString pair1 = formater.pairToString({image1Path, image2Path});
+    interactor->loadImagesBeingCompared(pair1);
+
+    QCOMPARE(image1Path, mockCallbacks->m_path1);
+    QCOMPARE(image2Path, mockCallbacks->m_path2);
+
+    QString pair2 = formater.pairToString({"", ""});
+
+    QVERIFY_EXCEPTION_THROWN(interactor->loadImagesBeingCompared(pair2), std::runtime_error);
+
+    QCOMPARE(image1Path, mockCallbacks->m_path1);
+    QCOMPARE(image2Path, mockCallbacks->m_path2);
+}
 
 
 

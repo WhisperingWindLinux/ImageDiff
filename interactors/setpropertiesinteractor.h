@@ -1,8 +1,8 @@
 #ifndef SETPROPERTIESINTERACTOR_H
 #define SETPROPERTIESINTERACTOR_H
 
-#include <interfaces/aimageprocessor.h>
-#include <interfaces/amainwindowcallbacks.h>
+#include <interfaces/imageprocessor.h>
+#include <interfaces/mainwindowcallbacks.h>
 
 
 class SetPropertiesInteractor

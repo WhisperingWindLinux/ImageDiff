@@ -1,7 +1,7 @@
 #ifndef SHARPNESSCOMPARATOR_H
 #define SHARPNESSCOMPARATOR_H
 
-#include <interfaces/acomporator.h>
+#include <interfaces/comporator.h>
 
 struct SharpnessComparisonResult {
 

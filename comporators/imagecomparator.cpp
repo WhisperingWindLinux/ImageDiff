@@ -8,15 +8,6 @@
 
 // Method to compare images and save the result
 QImage ImageComparator::compareImages(QImage image1, QImage image2) {
-    if (image1.isNull() || image2.isNull()) {
-        throw std::runtime_error("Failed to load one of the images.");
-    }
-
-    // Check if image sizes match
-    if (image1.size() != image2.size()) {
-        throw std::runtime_error("Image sizes do not match!");
-    }
-
     // Create a resulting image (copy of the first image)
     QImage resultImg = image1.copy();
     QPainter painter(&resultImg);

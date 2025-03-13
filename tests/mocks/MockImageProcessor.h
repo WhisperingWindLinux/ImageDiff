@@ -3,7 +3,7 @@
 
 #include <qstring.h>
 
-#include <interfaces/aimageprocessor.h>
+#include <interfaces/imageprocessor.h>
 
 
 // Mock class for AImageProcessor to simulate processors

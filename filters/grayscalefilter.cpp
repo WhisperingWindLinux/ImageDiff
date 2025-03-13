@@ -1,27 +1,27 @@
-#include "grayscaletransformer.h"
+#include "grayscalefilter.h"
 
 #include <QtCore/qdebug.h>
 
 #include <imageprocessorsmanager/property.h>
 
 
-GrayscaleTransformer::GrayscaleTransformer() {
+GrayscaleFilter::GrayscaleFilter() {
 
 }
 
-QString GrayscaleTransformer::name() {
+QString GrayscaleFilter::name() {
     return "Make Grayscale";
 }
 
-QString GrayscaleTransformer::hotkey() {
+QString GrayscaleFilter::hotkey() {
     return "l";
 }
 
-QString GrayscaleTransformer::description() {
+QString GrayscaleFilter::description() {
     return "Convert an image to grayscale.";
 }
 
-QImage GrayscaleTransformer::transform(QImage image) {
+QImage GrayscaleFilter::filter(QImage image) {
     // Create a copy of the input image to modify
     QImage grayImage = image;
 

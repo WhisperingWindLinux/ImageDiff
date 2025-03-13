@@ -10,10 +10,6 @@ ContrastComparisonResult ContrastComporator::compareImages(QImage image1,
                                                            QString name2
                                                            )
 {
-    if (image1.isNull() || image2.isNull()) {
-        throw std::runtime_error("Failed to load one or both images.");
-    }
-
     // Calculate contrast for both images
     double contrast1 = calculateContrast(image1);
     double contrast2 = calculateContrast(image2);

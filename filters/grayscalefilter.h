@@ -4,13 +4,13 @@
 
 #include <imageprocessorsmanager/property.h>
 
-#include <interfaces/ATransformer.h>
+#include <interfaces/filter.h>
 
 
-class GrayscaleTransformer : public ATransformer
+class GrayscaleFilter : public AFilter
 {
 public:
-    GrayscaleTransformer();
+    GrayscaleFilter();
 
 // ATransformer interface
 
@@ -18,5 +18,5 @@ public:
     QString name() override;
     QString hotkey() override;
     QString description() override;
-    QImage transform(QImage image) override;
+    QImage filter(QImage image) override;
 };

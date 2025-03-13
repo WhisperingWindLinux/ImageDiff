@@ -11,6 +11,7 @@ CONFIG += c++17
 SOURCES += \
     comporators/dummycomparator.cpp \
     comporators/sharpnesscomparator.cpp \
+    gui/formattors/recentfilespathformater.cpp \
     imageprocessorsmanager/property.cpp \
     gui/aboutdialog.cpp \
     gui/colorinfopanel.cpp \
@@ -23,6 +24,7 @@ SOURCES += \
     gui/propertyeditordialog.cpp \
     imageprocessorsmanager/imageprocessorsmanager.cpp \
     interactors/comparisoninteractor.cpp \
+    interactors/recentfilesmanager.cpp \
     interactors/setpropertiesinteractor.cpp \
     main.cpp \
     mainwindow.cpp \
@@ -33,15 +35,18 @@ SOURCES += \
     tests/comparisonresultvarianttests.cpp \
     tests/imageprocessorsmanagertests.cpp \
     tests/propertytests.cpp \
+    tests/recentfilemanagertest.cpp \
+    tests/recentfilespathformatertest.cpp \
     tests/saveimageinfotests.cpp \
     tests/setpropertiesinteractortests.cpp \
-    transformers/grayscaletransformer.cpp \
-    transformers/rgbtransformer.cpp
+    filters/grayscalefilter.cpp \
+    filters/rgbfilter.cpp
 
 HEADERS += \
     comporators/dummycomparator.h \
     comporators/sharpnesscomparator.h \
     gui/RgbValue.h \
+    gui/formattors/recentfilespathformater.h \
     gui/imageviewstate.h \
     imageprocessorsmanager/imageprocessorsinfo.h \
     imageprocessorsmanager/imageprocessorsmanager.h \
@@ -56,11 +61,12 @@ HEADERS += \
     gui/imageviewer.h \
     gui/propertyeditordialog.h \
     interactors/comparisoninteractor.h \
+    interactors/recentfilesmanager.h \
     interactors/setpropertiesinteractor.h \
-    interfaces/aImageprocessor.h \
-    interfaces/acomporator.h \
-    interfaces/amainwindowcallbacks.h \
-    interfaces/atransformer.h \
+    interfaces/comporator.h \
+    interfaces/filter.h \
+    interfaces/imageprocessor.h \
+    interfaces/mainwindowcallbacks.h \
     mainwindow.h \
     comporators/pixelsabsolutevaluecomparator.h \
     comporators/pixelsbrightnesscomparator.h \
@@ -72,11 +78,13 @@ HEADERS += \
     tests/mocks/MockImageProcessor.h \
     tests/mocks/mockmainwindowcallbacks.h \
     tests/propertytests.h \
+    tests/recentfilemanagertest.h \
+    tests/recentfilespathformatertest.h \
     tests/saveimageinfotests.h \
     tests/setpropertiesinteractortests.h \
     tests/testutils.h \
-    transformers/grayscaletransformer.h \
-    transformers/rgbtransformer.h
+    filters/grayscalefilter.h \
+    filters/rgbfilter.h
 
 FORMS += \
     mainwindow.ui

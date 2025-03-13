@@ -1,8 +1,9 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <interfaces/amainwindowcallbacks.h>
+#include <interfaces/mainwindowcallbacks.h>
 #include <interactors/comparisoninteractor.h>
+#include <interactors/recentfilesmanager.h>
 #include <gui/RgbValue.h>
 
 #include <QMainWindow>
@@ -31,6 +32,10 @@ public slots:
     void actionColorPicker_triggered();
     void actionShowAdvancedColorPicker_triggered();
     void actionShowOriginalImage_triggered();
+    void actionActualSize_triggered();
+    void actionZoomIn_triggered();
+    void actionZoomAout_triggered();
+    void actionOpenRecentFile_triggered();
 
 public:
     MainWindow(QWidget *parent = nullptr);
@@ -41,6 +46,7 @@ protected:
     void closeEvent(QCloseEvent *event) override;
     void dragEnterEvent(QDragEnterEvent *event) override;
     void dropEvent(QDropEvent *event) override;
+    void showEvent(QShowEvent *event) override;
 
 private:
     Ui::MainWindow *ui;
@@ -50,19 +56,15 @@ private:
     ColorInfoPanel* colorPanel = nullptr;
 
     void buildMenus();
-    bool loadImagesBeingCompared();
+    void loadImagesBeingCompared();
     void showError(const QString &errorMessage);
     void openColorPickerDialog(bool isForVisibleImageOnly);
     void closeColorPickerDialog();
     void disabledMenusIfImagesNotOpened();
     void enabledMenusIfImagesOpened();
 
-    void actionActualSize_triggered();
-    void actionZoomIn_triggered();
-    void actionZoomAout_triggered();
-
 public:
-    void onImagesBeingComparedLoaded(QPixmap& image1,
+    void onImagesBeingComparedLoadedSuccessfully(QPixmap& image1,
                                      QString path1,
                                      QPixmap& image2,
                                      QString path2,
@@ -73,6 +75,7 @@ public:
     void saveImageAs(QPixmap &image, QString defaultPath) override;
     void onRgbValueUnderCursonChanged(RgbValue firstImageRgbValue, RgbValue secondImageRgbValue) override;
     QList<Property> getUpdatedPropertiesFromUser(QList<Property> defaultProperties) override;
+    void updateRecentFilesMenu() override;
 };
 #endif // MAINWINDOW_H
 

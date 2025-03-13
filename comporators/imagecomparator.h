@@ -4,7 +4,7 @@
 #include <qimage.h>
 #include <qstring.h>
 
-#include <interfaces/acomporator.h>
+#include <interfaces/comporator.h>
 
 
 class ImageComparator : public AComparator

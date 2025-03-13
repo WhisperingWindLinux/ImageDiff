@@ -1,7 +1,7 @@
 #ifndef DUMMYCOMPARATOR_H
 #define DUMMYCOMPARATOR_H
 
-#include <interfaces/acomporator.h>
+#include <interfaces/comporator.h>
 
 
 class DummyComporator : public AComparator

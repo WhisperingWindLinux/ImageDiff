@@ -4,7 +4,7 @@
 #include <qstring.h>
 #include <qimage.h>
 
-#include <interfaces/acomporator.h>
+#include <interfaces/comporator.h>
 
 // Structure to store the comparison results
 struct ContrastComparisonResult {

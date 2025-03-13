@@ -27,7 +27,7 @@ void ImageProcessorsManagerTests::testFindProcessor() {
 
 void ImageProcessorsManagerTests::testAddProcessor() {
     // Add a new processor
-    auto processor = new MockImageProcessor("NewProcessor", "Ctrl+N", "A new image processor", ImageProcessorType::Transformer);
+    auto processor = new MockImageProcessor("NewProcessor", "Ctrl+N", "A new image processor", ImageProcessorType::Filter);
     manager->addProcessor(processor);
 
     // Verify that the processor was added successfully
@@ -55,7 +55,7 @@ void ImageProcessorsManagerTests::testRemoveProcessor() {
 void ImageProcessorsManagerTests::testAllProcessorsInfo() {
     // Add some processors
     auto processor1 = new MockImageProcessor("InfoProcessor1", "Ctrl+1", "Description 1", ImageProcessorType::Comparator);
-    auto processor2 = new MockImageProcessor("InfoProcessor2", "Ctrl+2", "Description 2", ImageProcessorType::Transformer);
+    auto processor2 = new MockImageProcessor("InfoProcessor2", "Ctrl+2", "Description 2", ImageProcessorType::Filter);
     manager->addProcessor(processor1);
     manager->addProcessor(processor2);
 

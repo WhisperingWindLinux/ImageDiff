@@ -12,11 +12,6 @@ SharpnessComparisonResult SharpnessComparator::compareImages(QImage image1,
                                                              QImage image2,
                                                              QString name2)
 {
-    if (image1.isNull() || image2.isNull()) {
-        qWarning() << "Error: Unable to load one or both images.";
-        return {};
-    }
-
     double sharpness1 = calculateSharpness(image1);
     double sharpness2 = calculateSharpness(image2);
 

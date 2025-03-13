@@ -34,6 +34,10 @@ private slots:
     void testSaveImage_FirstImageArea();
     void testSaveImage_SecondImageArea();
     void testSaveImage_ComparisonImageArea();
+    void testCallUpdateRecentFilesMenu();
+    void testLoadImagesBeingCompared_OpenFilesFromDrop();
+    void testLoadImagesBeingCompared_RecentFiles();
+    void testLoadImagesBeingCompared_OpenFilesFromDropIncorrectUrl();
 };
 
 

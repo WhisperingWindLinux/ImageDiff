@@ -1,7 +1,7 @@
 #ifndef IMAGEPROCESSORSINFO_H
 #define IMAGEPROCESSORSINFO_H
 
-#include "interfaces/aimageprocessor.h"
+#include "interfaces/imageprocessor.h"
 #include <qstring.h>
 
 

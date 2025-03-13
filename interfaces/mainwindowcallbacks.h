@@ -1,5 +1,5 @@
-#ifndef AMAINWINDOWCALLBACKS_H
-#define AMAINWINDOWCALLBACKS_H
+#ifndef MAINWINDOWCALLBACKS_H
+#define MAINWINDOWCALLBACKS_H
 
 #include <qpixmap.h>
 
@@ -9,7 +9,7 @@
 
 class AMainWindowCallbacks {
 public:    
-    virtual void onImagesBeingComparedLoaded(QPixmap &image1,
+    virtual void onImagesBeingComparedLoadedSuccessfully(QPixmap &image1,
                                              QString path1,
                                              QPixmap &image2,
                                              QString path2,
@@ -25,7 +25,9 @@ public:
     virtual void onRgbValueUnderCursonChanged(RgbValue firstImageRgbValue, RgbValue secondImageRgbValue) = 0;
 
     virtual QList<Property> getUpdatedPropertiesFromUser(QList<Property> defaultProperties) = 0;
+
+    virtual void updateRecentFilesMenu() = 0;
 };
 
 
-#endif // AMAINWINDOWCALLBACKS_H
+#endif // MAINWINDOWCALLBACKS_H

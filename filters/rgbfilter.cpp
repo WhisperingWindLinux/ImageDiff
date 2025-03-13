@@ -1,13 +1,13 @@
-#include "rgbtransformer.h"
+#include "rgbfilter.h"
 
-GenericRgbTransformer::GenericRgbTransformer(RgbChannel channel)
+GenericRgbFilter::GenericRgbFilter(RgbChannel channel)
     : channel(channel),
       isOutputImageColored(true)
 {
 
 }
 
-QString GenericRgbTransformer::name() {
+QString GenericRgbFilter::name() {
     switch(channel) {
     case RgbChannel::R:
         return "Show Red channel";
@@ -16,10 +16,10 @@ QString GenericRgbTransformer::name() {
     case RgbChannel::B:
         return "Show Blue channel";
     }
-    throw new std::runtime_error("Error: an incorrect RGB chnannel in GenericRgbTransformer.");
+    throw std::runtime_error("Error: an incorrect RGB chnannel in GenericRgbTransformer.");
 }
 
-QString GenericRgbTransformer::hotkey() {
+QString GenericRgbFilter::hotkey() {
     switch(channel) {
     case RgbChannel::R:
         return "R";
@@ -28,10 +28,10 @@ QString GenericRgbTransformer::hotkey() {
     case RgbChannel::B:
         return "B";
     }
-    throw new std::runtime_error("Error: an incorrect RGB chnannel in GenericRgbTransformer.");
+    throw std::runtime_error("Error: an incorrect RGB chnannel in GenericRgbTransformer.");
 }
 
-QString GenericRgbTransformer::description() {
+QString GenericRgbFilter::description() {
     QString channelName;
     if (channel == RgbChannel::R) {
         channelName = "Red";
@@ -40,18 +40,18 @@ QString GenericRgbTransformer::description() {
     } else if (channel == RgbChannel::B) {
         channelName = "Blue";
     } else {
-        throw new std::runtime_error("Error: an incorrect RGB chnannel in GenericRgbTransformer.");
+        throw std::runtime_error("Error: an incorrect RGB chnannel in GenericRgbTransformer.");
     }
 
     QString description = QString("Leaves only the %1 channel on the RGB image.").arg(channelName);
     return description;
 }
 
-QImage GenericRgbTransformer::transform(QImage image) {
+QImage GenericRgbFilter::filter(QImage image) {
     return extractChannel(image, isOutputImageColored, channel);
 }
 
-QImage GenericRgbTransformer::extractChannel(const QImage& image, bool isImageColored, RgbChannel channel) {
+QImage GenericRgbFilter::extractChannel(const QImage& image, bool isImageColored, RgbChannel channel) {
 
     QImage oneChannelImage(image.size(),
                            isImageColored ?
@@ -77,14 +77,14 @@ QImage GenericRgbTransformer::extractChannel(const QImage& image, bool isImageCo
                 QRgb newPixel = qRgba(0, 0, blue, qAlpha(pixel));
                 oneChannelImage.setPixel(x, y, newPixel);
             } else {
-                throw new std::runtime_error("Error: An incorrect RGB channel was requested.");
+                throw std::runtime_error("Error: An incorrect RGB channel was requested.");
             }
         }
     }
     return oneChannelImage;
 }
 
-QList<Property> GenericRgbTransformer::getDefaultProperties() const {
+QList<Property> GenericRgbFilter::getDefaultProperties() const {
 
     QList<QString> alternatives = { "Colored", "Grayscale" };
 
@@ -98,7 +98,7 @@ QList<Property> GenericRgbTransformer::getDefaultProperties() const {
 
 }
 
-void GenericRgbTransformer::setProperties(QList<Property> properties) {
+void GenericRgbFilter::setProperties(QList<Property> properties) {
     if (properties.size() != 1) {
         return;
     }

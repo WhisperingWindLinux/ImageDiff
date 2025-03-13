@@ -1,11 +1,11 @@
-#ifndef ACOMPORATOR_H
-#define ACOMPORATOR_H
+#ifndef COMPORATOR_H
+#define COMPORATOR_H
 
 #include <qstring.h>
 
 #include <imageprocessorsmanager/comparableimage.h>
 #include <imageprocessorsmanager/comparisonresultvariant.h>
-#include <interfaces/aimageprocessor.h>
+#include <interfaces/imageprocessor.h>
 
 /*
  * A base class for all comparators' interfaces in the app
@@ -22,6 +22,6 @@ public:
     ImageProcessorType getType() const override { return ImageProcessorType::Comparator; }
 };
 
-#endif // ACOMPORATOR_H
+#endif // COMPORATOR_H
 
 
