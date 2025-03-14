@@ -12,6 +12,7 @@
 #include <qapplication.h>
 #include <qprocess.h>
 #include <qlabel.h>
+#include <tests/testutils.h>
 
 
 ImageViewer::ImageViewer(MainWindow *parent)
@@ -25,6 +26,8 @@ ImageViewer::ImageViewer(MainWindow *parent)
 
     setMouseTracking(true);
     setDragMode(QGraphicsView::ScrollHandDrag);
+    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 }
 
 ImageViewer::~ImageViewer() {
@@ -38,10 +41,10 @@ ImageViewer::~ImageViewer() {
         delete secondImage;
         secondImage = nullptr;
     }
-    if (comparisonImage != nullptr) {
-        scene->removeItem(comparisonImage);
-        delete comparisonImage;
-        comparisonImage = nullptr;
+    if (comparatorResultImage != nullptr) {
+        scene->removeItem(comparatorResultImage);
+        delete comparatorResultImage;
+        comparatorResultImage = nullptr;
     }
     if (lastMousEvent != nullptr) {
         delete lastMousEvent;
@@ -87,6 +90,13 @@ void ImageViewer::actualSize() {
     scaleFactor = 1.0;
 }
 
+void ImageViewer::fitImageInView() {
+    fitInView(firstImage, Qt::KeepAspectRatio);
+    fitInView(secondImage, Qt::KeepAspectRatio);
+    if (comparatorResultImage != nullptr) {
+        fitInView(comparatorResultImage, Qt::KeepAspectRatio);
+    }
+}
 /* } =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
 /* Show images in QGraphicsView { */
@@ -120,14 +130,14 @@ void ImageViewer::showTwoImagesBeingCompared(QPixmap& image1,
 }
 
 void ImageViewer::showImageFromComparator(QPixmap &image, QString description) {
-    if (comparisonImage != nullptr) {
-        scene->removeItem(comparisonImage);
-        comparisonImage = nullptr;
+    if (comparatorResultImage != nullptr) {
+        scene->removeItem(comparatorResultImage);
+        comparatorResultImage = nullptr;
     }
-    comparisonImage = scene->addPixmap(image);
+    comparatorResultImage = scene->addPixmap(image);
     firstImage->setVisible(false);
     secondImage->setVisible(false);
-    comparisonImage->setVisible(true);
+    comparatorResultImage->setVisible(true);
     parent->showStatusMessage(description);
 }
 
@@ -152,9 +162,9 @@ void ImageViewer::toggleImage() {
 
     QRectF viewRect = mapToScene(viewport()->geometry()).boundingRect();
 
-    if (comparisonImage != nullptr) {
-        scene->removeItem(comparisonImage);
-        comparisonImage = nullptr;
+    if (comparatorResultImage != nullptr) {
+        scene->removeItem(comparatorResultImage);
+        comparatorResultImage = nullptr;
         currentImageIndex == 1 ?
             currentImageIndex = 0 :
             currentImageIndex = 1;
@@ -211,7 +221,7 @@ SaveImageInfo ImageViewer::getCurrentVisiableArea() {
 
 
     SaveImageInfoType contentType = SaveImageInfoType::None;
-    bool isComparisonImageShowing = (comparisonImage != nullptr);
+    bool isComparisonImageShowing = (comparatorResultImage != nullptr);
     if (isComparisonImageShowing) {
         contentType = SaveImageInfoType::ComparisonImageArea;
     } else if (currentImageIndex == 0) {
@@ -225,9 +235,9 @@ SaveImageInfo ImageViewer::getCurrentVisiableArea() {
 
 SaveImageInfo ImageViewer::getImageShowedOnTheScreen() {
 
-    bool isComparisonImageShowing = (comparisonImage != nullptr);
+    bool isComparisonImageShowing = (comparatorResultImage != nullptr);
     if (isComparisonImageShowing) {
-        return SaveImageInfo(SaveImageInfoType::ComparisonImage, comparisonImage->pixmap());
+        return SaveImageInfo(SaveImageInfoType::ComparisonImage, comparatorResultImage->pixmap());
     } else if (currentImageIndex == 0) {
         return SaveImageInfo(SaveImageInfoType::FirstImage, firstImage->pixmap());
     } else if (currentImageIndex == 1) {
@@ -245,7 +255,6 @@ QPixmap ImageViewer::getVisiblePixmap(QGraphicsView* view) {
     // Get the visible area in scene coordinates
     QRectF visibleSceneRect = view->mapToScene(view->viewport()->geometry()).boundingRect();
 
-    // Assume the image is added as a QGraphicsPixmapItem
     auto items = view->scene()->items(visibleSceneRect);
     QGraphicsPixmapItem* pixmapItem = nullptr;
 
@@ -296,6 +305,22 @@ QPixmap ImageViewer::getVisiblePixmap(QGraphicsView* view) {
     return result;
 }
 
+void ImageViewer::passCropedImageToOtherAppInstance(QRectF rect) {
+    QRect selectionRect = rect.toAlignedRect();
+
+    auto firstPixmap = firstImage->pixmap();
+    auto secondPixmap = secondImage->pixmap();
+    QRect boundedRect1 = selectionRect.intersected(firstPixmap.rect());
+    QPixmap croppedPixmap1 = firstPixmap.copy(boundedRect1);
+    QRect boundedRect2 = selectionRect.intersected(secondPixmap.rect());
+    QPixmap croppedPixmap2 = secondPixmap.copy(boundedRect2);
+
+    QString path1 = FileUtils::savePixmapToTempDir(croppedPixmap1, firstImageName);
+    QString path2 = FileUtils::savePixmapToTempDir(croppedPixmap2, secondImageName);
+
+    parent->passTwoImagesBeingComparedToOtherAppInstance(path1, path2);
+}
+
 /* } =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
 /* Events { */
@@ -322,7 +347,7 @@ void ImageViewer::mouseMoveEvent(QMouseEvent* event) {
         return;
     }
 
-    if (comparisonImage != nullptr) {
+    if (comparatorResultImage != nullptr) {
         return;
     }
 
@@ -330,7 +355,7 @@ void ImageViewer::mouseMoveEvent(QMouseEvent* event) {
     // It needs for Color Picker.
 
     QString imageName = "error: unknown image";
-    if (comparisonImage != nullptr) {
+    if (comparatorResultImage != nullptr) {
         imageName = "comparison result image";
     } else if (currentImageIndex == 0) {
         imageName = firstImageName;
@@ -390,7 +415,9 @@ void ImageViewer::mouseMoveEvent(QMouseEvent* event) {
 
 // Implement zoom to selection
 void ImageViewer::mousePressEvent(QMouseEvent *event) {
-    if (event->button() == Qt::LeftButton && event->modifiers() & Qt::ShiftModifier) {
+    auto shiftModifier = event->modifiers() & Qt::ShiftModifier;
+    auto controlModifier = event->modifiers() & Qt::ControlModifier;
+    if (event->button() == Qt::LeftButton && (shiftModifier || controlModifier)) {
         selecting = true;
         selectionStart = event->pos(); // Save the starting point of the selection in view coordinates
         selectionRect = QRect();       // Reset the selection rectangle
@@ -408,10 +435,20 @@ void ImageViewer::mouseReleaseEvent(QMouseEvent *event) {
         QRectF sceneSelectionRect = mapToScene(selectionRect).boundingRect();
 
         // Zoom into the selected area
-        if (!sceneSelectionRect.isEmpty() && sceneSelectionRect.isValid() && event->modifiers() & Qt::ShiftModifier) {
+        if (!sceneSelectionRect.isEmpty() &&
+            sceneSelectionRect.isValid() &&
+            event->modifiers() & Qt::ShiftModifier
+            )
+        {
             fitInView(sceneSelectionRect, Qt::KeepAspectRatio); // Adjust view to fit the selected area
         }
-
+        else if (!sceneSelectionRect.isEmpty() &&
+                 sceneSelectionRect.isValid() &&
+                 event->modifiers() & Qt::ControlModifier
+                 )
+        {
+            passCropedImageToOtherAppInstance(sceneSelectionRect);
+        }
         selectionRect = QRect(); // Clear the selection rectangle
         viewport()->update();    // Request a repaint of the view
         setDragMode(ScrollHandDrag);

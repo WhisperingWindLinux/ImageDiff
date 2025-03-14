@@ -7,6 +7,7 @@
 #include <gui/RgbValue.h>
 
 #include <QMainWindow>
+#include <QProcess>
 
 class ImageViewer;
 class ColorInfoPanel;
@@ -33,16 +34,19 @@ public slots:
     void showAdvancedColorPicker();
     void showOriginalImages();
     void imageZoomedToActualSize();
-    void zoomIn();
-    void zoomOut();
+    void imageZoomIn();
+    void imageZoomOut();
     void openRecentFile();
     void placeColorPickerOnRight();
     void placeColorPickerOnLeft();
+    void imagFitInView();
 
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
     void showStatusMessage(QString message);
+    void passTwoImagesBeingComparedToOtherAppInstance(QString firstFilePath, QString secondFilePath);
+    void onReceiveTwoImagesBeingComparedViaCommandline(QString firstFilePath, QString secondFilePath);
 
 protected:
     void closeEvent(QCloseEvent *event) override;
@@ -56,6 +60,7 @@ private:
     ImageViewer *viewer = nullptr;
     ComparisonInteractor* comparisionInteractor = nullptr;
     ColorInfoPanel* colorPanel = nullptr;
+    QList<QProcess*> instances;
 
     // A value of 50% places the color picker window centered
     // relative to the vertical axis of the main window.
@@ -73,6 +78,7 @@ private:
     void saveMainWindowPosition();
     void restoreMainWindowPosition();
 
+    // AMainWindowCallback interface
 public:
     void onTwoImagesBeingComparedLoadedSuccessfully(QPixmap& image1,
                                      QString path1,

@@ -23,6 +23,7 @@
 #include <qmessagebox.h>
 #include <QDockWidget>
 #include <QMimeData>
+#include <qprocess.h>
 
 #include <gui/imageviewstate.h>
 #include <gui/propertyeditordialog.h>
@@ -48,8 +49,9 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->actionShowOriginalImage, &QAction::triggered, this, &MainWindow::showOriginalImages);
     connect(ui->actionAdvancedColorPicker, &QAction::triggered, this, &MainWindow::showAdvancedColorPicker);
     connect(ui->actionActualSize, &QAction::triggered, this, &MainWindow::imageZoomedToActualSize);
-    connect(ui->actionZoomIn, &QAction::triggered, this, &MainWindow::zoomIn);
-    connect(ui->actionZoomOut, &QAction::triggered, this, &MainWindow::zoomOut);
+    connect(ui->actionFitInView, &QAction::triggered, this, &MainWindow::imagFitInView);
+    connect(ui->actionZoomIn, &QAction::triggered, this, &MainWindow::imageZoomIn);
+    connect(ui->actionZoomOut, &QAction::triggered, this, &MainWindow::imageZoomOut);
     connect(ui->actionSaveImageAs, &QAction::triggered, this, &MainWindow::saveImageAs);
     connect(ui->actionPlaceColorPickerOnRight, &QAction::triggered, this, &MainWindow::placeColorPickerOnRight);
     connect(ui->actionPlaceColorPickerOnLeft, &QAction::triggered, this, &MainWindow::placeColorPickerOnLeft);
@@ -122,6 +124,7 @@ void MainWindow::enabledImageOperationMenuItems(bool isEnabled) {
     ui->actionSwitchBetweenImages->setDisabled(!isEnabled);
     ui->actionPlaceColorPickerOnLeft->setDisabled(!isEnabled);
     ui->actionPlaceColorPickerOnRight->setDisabled(!isEnabled);
+    ui->actionFitInView->setDisabled(!isEnabled);
 }
 
 /* } =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
@@ -135,14 +138,20 @@ void MainWindow::imageZoomedToActualSize() {
     }
 }
 
-void MainWindow::zoomIn() {
+void MainWindow::imagFitInView() {
+    if (viewer != nullptr) {
+        viewer->fitImageInView();
+    }
+}
+
+void MainWindow::imageZoomIn() {
     if (viewer != nullptr) {
         viewer->zoomIn();
     }
 
 }
 
-void MainWindow::zoomOut() {
+void MainWindow::imageZoomOut() {
     if (viewer != nullptr) {
         viewer->zoomOut();
     }
@@ -237,7 +246,7 @@ void MainWindow::showAdvancedColorPicker() {
 }
 
 void MainWindow::placeColorPickerOnRight() {
-    if (colorPanel != nullptr) {
+    if (colorPanel != nullptr && colorPanel->isVisible()) {
         positionColorPickerWindow(colorPanel, colorPickerAlignmentPercent, true);
     } else {
         openColorPickerDialog(false);
@@ -246,7 +255,7 @@ void MainWindow::placeColorPickerOnRight() {
 }
 
 void MainWindow::placeColorPickerOnLeft() {
-    if (colorPanel != nullptr) {
+    if (colorPanel != nullptr && colorPanel->isVisible()) {
         positionColorPickerWindow(colorPanel, colorPickerAlignmentPercent, false);
     } else {
         openColorPickerDialog(false);
@@ -283,9 +292,9 @@ void MainWindow::closeColorPickerDialog() {
 bool MainWindow::event(QEvent *event) {
     if (event->type() == QEvent::WindowStateChange) {
         if (this->windowState() & Qt::WindowMinimized) {
-            colorPanel->hide();
+            if (colorPanel != nullptr) { colorPanel->hide(); }
         } else {
-            colorPanel->show();
+            if (colorPanel != nullptr) { colorPanel->show(); }
         }
     }
     return QMainWindow::event(event);
@@ -576,3 +585,38 @@ void MainWindow::showStatusMessage(QString message) {
 }
 
 /* } =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
+
+/* If the user selects a part of the image while holding down Control,
+ * we copy the selected part and open it in a new instance of the application
+ * for further analysis. Parts from both images are copied.
+ *  {   */
+
+void MainWindow::passTwoImagesBeingComparedToOtherAppInstance(QString firstFilePath,
+                                                              QString secondFilePath
+                                                              )
+{
+    QProcess *process = new QProcess();
+    instances.append(process);              // FIXME delete unused instances
+
+    QString program = QCoreApplication::applicationFilePath();
+    QStringList arguments;
+    arguments << firstFilePath << secondFilePath;
+
+    if (process->startDetached(program, arguments)) {
+        showMinimized();
+    } else {
+        showError("Failed to start process: " + process->errorString());
+    }
+}
+
+void MainWindow::onReceiveTwoImagesBeingComparedViaCommandline(QString firstFilePath,
+                                                               QString secondFilePath
+                                                               )
+{
+    comparisionInteractor->loadTwoImagesBeingCompared(firstFilePath, secondFilePath, false, true);
+}
+
+/* } =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
+
+
+

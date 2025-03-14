@@ -51,5 +51,12 @@ int main(int argc, char *argv[]) {
     MainWindow w;
     w.setWindowTitle("Image Diff");
     w.show();
+
+    if (argc == 3) {
+        QString firstFilePath = argv[1];
+        QString SecondFilePath = argv[2];
+        w.onReceiveTwoImagesBeingComparedViaCommandline(firstFilePath, SecondFilePath);
+    }
+
     return a.exec();
 }
