@@ -36,6 +36,8 @@ public slots:
     void zoomIn();
     void zoomOut();
     void openRecentFile();
+    void placeColorPickerOnRight();
+    void placeColorPickerOnLeft();
 
 public:
     MainWindow(QWidget *parent = nullptr);
@@ -47,6 +49,7 @@ protected:
     void dragEnterEvent(QDragEnterEvent *event) override;
     void dropEvent(QDropEvent *event) override;
     void showEvent(QShowEvent *event) override;
+    bool event(QEvent *event) override;
 
 private:
     Ui::MainWindow *ui;
@@ -54,15 +57,21 @@ private:
     ComparisonInteractor* comparisionInteractor = nullptr;
     ColorInfoPanel* colorPanel = nullptr;
 
+    // A value of 50% places the color picker window centered
+    // relative to the vertical axis of the main window.
+    int colorPickerAlignmentPercent = 80;
+
     void populateComparatorsAndFiltersMenus();
     void loadTwoImagesBeingCompared();
     void showError(const QString &errorMessage);
     void openColorPickerDialog(bool isOnePanelMode);
     void closeColorPickerDialog();
-    void disabledMenusIfImagesNotOpened();
-    void enabledMenusIfImagesOpened();
+    void enabledImageOperationMenuItems(bool isEnabled);
     void deleteImageView();
     void createImageView();
+    void positionColorPickerWindow(QWidget *colorPickerWindow, int alignmentPercent, bool placeOnRight);
+    void saveMainWindowPosition();
+    void restoreMainWindowPosition();
 
 public:
     void onTwoImagesBeingComparedLoadedSuccessfully(QPixmap& image1,
@@ -78,7 +87,7 @@ public:
     QList<Property> getUpdatedPropertiesFromUser(QString processorName,
                                                  QString processorDescription,
                                                  QList<Property> defaultProperties) override;
-    void updateRecentFilesMenu() override;    
+    void updateRecentFilesMenu() override;
 };
 #endif // MAINWINDOW_H
 

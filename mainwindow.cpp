@@ -50,14 +50,17 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->actionActualSize, &QAction::triggered, this, &MainWindow::imageZoomedToActualSize);
     connect(ui->actionZoomIn, &QAction::triggered, this, &MainWindow::zoomIn);
     connect(ui->actionZoomOut, &QAction::triggered, this, &MainWindow::zoomOut);
-    this->connect(ui->actionSaveImageAs, &QAction::triggered, this, &MainWindow::saveImageAs);
-
+    connect(ui->actionSaveImageAs, &QAction::triggered, this, &MainWindow::saveImageAs);
+    connect(ui->actionPlaceColorPickerOnRight, &QAction::triggered, this, &MainWindow::placeColorPickerOnRight);
+    connect(ui->actionPlaceColorPickerOnLeft, &QAction::triggered, this, &MainWindow::placeColorPickerOnLeft);
 
     setWindowTitle("Image Diff");
     resize(1380, 820);
 
     setAcceptDrops(true);
     showNormal();
+
+    restoreMainWindowPosition();
 }
 
 MainWindow::~MainWindow() {
@@ -102,35 +105,23 @@ void MainWindow::populateComparatorsAndFiltersMenus() {
 
         connect(newAction, &QAction::triggered, this, &MainWindow::callImageComparator);
     }
-    disabledMenusIfImagesNotOpened();
+    enabledImageOperationMenuItems(false);
 }
 
-void MainWindow::disabledMenusIfImagesNotOpened() {
-    ui->menuComparators->setDisabled(true);
-    ui->menuTransftomers->setDisabled(true);
-    ui->menuImageAnalysis->setDisabled(true);
-    ui->actionSaveImageAs->setDisabled(true);
-    ui->actionSaveVisibleAreaAs->setDisabled(true);
-    ui->actionCloseImages->setDisabled(true);
-    ui->actionActualSize->setDisabled(true);
-    ui->actionZoomIn->setDisabled(true);
-    ui->actionZoomOut->setDisabled(true);
-    ui->actionShowOriginalImage->setDisabled(true);
-    ui->actionSwitchBetweenImages->setDisabled(true);
-}
-
-void MainWindow::enabledMenusIfImagesOpened() {
-    ui->menuComparators->setDisabled(false);
-    ui->menuTransftomers->setDisabled(false);
-    ui->menuImageAnalysis->setDisabled(false);
-    ui->actionSaveImageAs->setDisabled(false);
-    ui->actionSaveVisibleAreaAs->setDisabled(false);
-    ui->actionCloseImages->setDisabled(false);
-    ui->actionActualSize->setDisabled(false);
-    ui->actionZoomIn->setDisabled(false);
-    ui->actionZoomOut->setDisabled(false);
-    ui->actionShowOriginalImage->setDisabled(false);
-    ui->actionSwitchBetweenImages->setDisabled(false);
+void MainWindow::enabledImageOperationMenuItems(bool isEnabled) {
+    ui->menuComparators->setDisabled(!isEnabled);
+    ui->menuTransftomers->setDisabled(!isEnabled);
+    ui->menuImageAnalysis->setDisabled(!isEnabled);
+    ui->actionSaveImageAs->setDisabled(!isEnabled);
+    ui->actionSaveVisibleAreaAs->setDisabled(!isEnabled);
+    ui->actionCloseImages->setDisabled(!isEnabled);
+    ui->actionActualSize->setDisabled(!isEnabled);
+    ui->actionZoomIn->setDisabled(!isEnabled);
+    ui->actionZoomOut->setDisabled(!isEnabled);
+    ui->actionShowOriginalImage->setDisabled(!isEnabled);
+    ui->actionSwitchBetweenImages->setDisabled(!isEnabled);
+    ui->actionPlaceColorPickerOnLeft->setDisabled(!isEnabled);
+    ui->actionPlaceColorPickerOnRight->setDisabled(!isEnabled);
 }
 
 /* } =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
@@ -184,7 +175,7 @@ void MainWindow::openImages() {
 
 void MainWindow::closeImages() {
     closeColorPickerDialog();
-    disabledMenusIfImagesNotOpened();
+    enabledImageOperationMenuItems(false);
     deleteImageView();
 }
 
@@ -245,6 +236,24 @@ void MainWindow::showAdvancedColorPicker() {
     openColorPickerDialog(false);
 }
 
+void MainWindow::placeColorPickerOnRight() {
+    if (colorPanel != nullptr) {
+        positionColorPickerWindow(colorPanel, colorPickerAlignmentPercent, true);
+    } else {
+        openColorPickerDialog(false);
+        positionColorPickerWindow(colorPanel, colorPickerAlignmentPercent, true);
+    }
+}
+
+void MainWindow::placeColorPickerOnLeft() {
+    if (colorPanel != nullptr) {
+        positionColorPickerWindow(colorPanel, colorPickerAlignmentPercent, false);
+    } else {
+        openColorPickerDialog(false);
+        positionColorPickerWindow(colorPanel, colorPickerAlignmentPercent, true);
+    }
+}
+
 /* } =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
 /* Color Picker dialog { */
@@ -257,6 +266,7 @@ void MainWindow::openColorPickerDialog(bool isOnePanelMode) {
     colorPanel = new ColorInfoPanel(isOnePanelMode);
     colorPanel->show();
     viewer->onColorPickerStatusChanged(true);
+    placeColorPickerOnRight();
 }
 
 void MainWindow::closeColorPickerDialog() {
@@ -270,7 +280,110 @@ void MainWindow::closeColorPickerDialog() {
     }
 }
 
-/* } */
+bool MainWindow::event(QEvent *event) {
+    if (event->type() == QEvent::WindowStateChange) {
+        if (this->windowState() & Qt::WindowMinimized) {
+            colorPanel->hide();
+        } else {
+            colorPanel->show();
+        }
+    }
+    return QMainWindow::event(event);
+}
+
+// Calculates the position of the color picker window relative to the main window (QMainWindow).
+// Checks if the color picker window fits on the screen.
+// If necessary, shifts the main window to the left or adjusts its size. The position of the second
+// window vertically is set as a percentage (alignmentPercent) of the height of the main window.
+// A value of 50% places the second window centered relative to the vertical axis of the main window.
+void MainWindow::positionColorPickerWindow(QWidget *colorPickerWindow, int alignmentPercent, bool placeOnRight) {
+    // Ensure alignmentPercent is within valid range
+    alignmentPercent = qBound(0, alignmentPercent, 100);
+
+    // Get screen geometry
+    QScreen *screen = QGuiApplication::primaryScreen();
+    QRect screenGeometry = screen->availableGeometry(); // Excludes taskbar/Dock area
+
+    // Get main window geometry
+    QRect mainGeometry = geometry();
+
+    // Calculate target position for the second window
+    int secondWindowX;
+    if (placeOnRight) {
+        // Place the color picker to the right of the main window
+        secondWindowX = mainGeometry.right() + 1; // Start just to the right of the main window
+    } else {
+        // Place the color picker to the left of the main window
+        secondWindowX = mainGeometry.left() - colorPickerWindow->width() - 1; // Start just to the left of the main window
+    }
+
+    int secondWindowY = mainGeometry.y() +
+                        (mainGeometry.height() - colorPickerWindow->height()) * (100 - alignmentPercent) / 100;
+
+    // Adjust position if placing on the right and the second window goes off-screen horizontally
+    if (placeOnRight && secondWindowX + colorPickerWindow->width() > screenGeometry.right()) {
+        // Second window goes off-screen; adjust the main window
+        int requiredShift = (secondWindowX + colorPickerWindow->width()) - screenGeometry.right();
+        if (mainGeometry.x() - requiredShift >= screenGeometry.left()) {
+            // Move the main window to the left without resizing
+            mainGeometry.moveLeft(mainGeometry.x() - requiredShift);
+        } else {
+            // Move the main window as far left as possible and resize it
+            int maxShift = mainGeometry.x() - screenGeometry.left();
+            mainGeometry.moveLeft(screenGeometry.left());
+            mainGeometry.setWidth(mainGeometry.width() - (requiredShift - maxShift));
+        }
+        setGeometry(mainGeometry);
+        // Recalculate the second window's position after adjusting the main window
+        secondWindowX = mainGeometry.right() + 1;
+    }
+
+    // Adjust position if placing on the left and the second window goes off-screen horizontally
+    if (!placeOnRight && secondWindowX < screenGeometry.left()) {
+        // Second window goes off-screen; adjust the main window
+        int requiredShift = screenGeometry.left() - secondWindowX;
+        if (mainGeometry.right() + requiredShift <= screenGeometry.right()) {
+            // Move the main window to the right without resizing
+            mainGeometry.moveLeft(mainGeometry.x() + requiredShift);
+        } else {
+            // Move the main window as far right as possible and resize it
+            int maxShift = screenGeometry.right() - mainGeometry.right();
+            mainGeometry.moveLeft(mainGeometry.x() + maxShift);
+            mainGeometry.setWidth(mainGeometry.width() - (requiredShift - maxShift));
+        }
+        setGeometry(mainGeometry);
+        // Recalculate the second window's position after adjusting the main window
+        secondWindowX = mainGeometry.left() - colorPickerWindow->width() - 1;
+    }
+
+    // Ensure the second window stays within vertical bounds of the screen
+    if (secondWindowY < screenGeometry.top()) {
+        secondWindowY = screenGeometry.top();
+    } else if (secondWindowY + colorPickerWindow->height() > screenGeometry.bottom()) {
+        secondWindowY = screenGeometry.bottom() - colorPickerWindow->height();
+    }
+
+    // Set the final position of the second window
+    colorPickerWindow->move(secondWindowX, secondWindowY);
+}
+
+/* } =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
+
+/* Save and restore the main widow position { */
+
+void MainWindow::saveMainWindowPosition() {
+    QSettings settings("com.WhisperingWind", "ImageDiff");
+    settings.setValue("mainWindow/geometry", saveGeometry());
+    settings.setValue("mainWindow/state", saveState());
+}
+
+void MainWindow::restoreMainWindowPosition() {
+    QSettings settings("com.WhisperingWind", "ImageDiff");
+    restoreGeometry(settings.value("mainWindow/geometry").toByteArray());
+    restoreState(settings.value("mainWindow/state").toByteArray());
+}
+
+/* } =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
 /* Drag and drop support to simplify file opening { */
 
@@ -297,6 +410,7 @@ void MainWindow::dropEvent(QDropEvent *event) {
 /* MainWindow' close event { */
 
 void MainWindow::closeEvent(QCloseEvent *event) {
+    saveMainWindowPosition();
     closeColorPickerDialog();
 }
 /* } =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
@@ -356,7 +470,7 @@ void MainWindow::onTwoImagesBeingComparedLoadedSuccessfully(QPixmap& image1,
     closeImages();
     createImageView();
     viewer->showTwoImagesBeingCompared(image1, path1, image2, path2, imageViewState);
-    enabledMenusIfImagesOpened();
+    enabledImageOperationMenuItems(true);
 }
 
 void MainWindow::onImageResultFromComparatorReceived(QPixmap &image, QString description) {
@@ -462,10 +576,3 @@ void MainWindow::showStatusMessage(QString message) {
 }
 
 /* } =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
-
-
-
-
-
-
-

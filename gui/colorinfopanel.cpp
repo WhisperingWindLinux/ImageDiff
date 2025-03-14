@@ -44,6 +44,14 @@ ColorInfoPanel::ColorInfoPanel(bool isForVisibleImageOnly)
 
     // Add a spacer to push everything to the top of the panel
     mainLayout->addStretch();
+
+    setWindowFlags(Qt::Window |
+                   Qt::WindowStaysOnTopHint |
+                   Qt::WindowDoesNotAcceptFocus |
+                   Qt::WindowTitleHint |
+                   Qt::CustomizeWindowHint |
+                   Qt::WindowCloseButtonHint
+                   );
 }
 
 RgbWidgets ColorInfoPanel::createPanel() {

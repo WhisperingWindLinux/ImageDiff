@@ -65,7 +65,7 @@ Show Blue channel only (Filter)                                                 
 
 Sharpness comporator                                                               H
 
-Compare the proximity of two images to an original image                           Y                                                                    F
+Compare the proximity of two images to an original image                           Y
 
 
 */
