@@ -16,8 +16,11 @@ struct ColorsSaturationComparisonResult {
     QString moreSaturatedImage; // The name of the image with higher saturation
 };
 
-class ColorsSaturationComporator : public AComparator {
+class ColorsSaturationComporator : public IComparator {
 public:
+
+    ColorsSaturationComporator() = default;
+    virtual ~ColorsSaturationComporator() = default;
 
     // AComparator interface
 

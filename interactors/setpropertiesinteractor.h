@@ -8,13 +8,13 @@
 class SetPropertiesInteractor
 {
 public:
-    SetPropertiesInteractor(AImageProcessor *processor, AMainWindowCallbacks *callback);
+    SetPropertiesInteractor(shared_ptr<IImageProcessor> processor, IMainWindowCallbacks *callback);
 
     void allowUserToSetPropertiesIfNeed();
 
 private:
-    AImageProcessor *processor;
-    AMainWindowCallbacks *callback;
+    shared_ptr<IImageProcessor> processor;
+    IMainWindowCallbacks *callback;        // long live object
 };
 
 #endif // SETPROPERTIESINTERACTOR_H

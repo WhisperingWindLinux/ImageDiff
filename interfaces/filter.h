@@ -10,7 +10,7 @@
  * A base class for all filters' interfaces in the app
  */
 
-class AFilter : public AImageProcessor {
+class IFilter : public IImageProcessor {
 public:
     virtual QImage filter(QImage image) = 0;
 

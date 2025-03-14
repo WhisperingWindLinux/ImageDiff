@@ -19,15 +19,17 @@ ImageProcessorsManager *ImageProcessorsManager::instance() {
 
 ImageProcessorsManager::ImageProcessorsManager() {
 
+    pluginInteractor = make_unique<PluginInteractor>();
+
     // add comporators
 
-    auto imageComparator = new ImageComparator();
-    auto imageSaturationComporator = new ColorsSaturationComporator();
-    auto imageContrastComporator = new ContrastComporator();
-    auto imagePixelsAbsoluteValueComparator = new PixelsAbsoluteValueComparator();
-    auto imagePixelsBrightnessComparator = new PixelsBrightnessComparator();
-    auto sharpnessComparator = new SharpnessComparator();
-    auto imageProximityComparator = new ImageProximityToOriginComparator();
+    auto imageComparator = make_shared<ImageComparator>();
+    auto imageSaturationComporator = make_shared<ColorsSaturationComporator>();
+    auto imageContrastComporator = make_shared<ContrastComporator>();
+    auto imagePixelsAbsoluteValueComparator = make_shared<PixelsAbsoluteValueComparator>();
+    auto imagePixelsBrightnessComparator = make_shared<PixelsBrightnessComparator>();
+    auto sharpnessComparator = make_shared<SharpnessComparator>();
+    auto imageProximityComparator = make_shared<ImageProximityToOriginComparator>();
 
     addProcessor(imageComparator);
     addProcessor(imageSaturationComporator);
@@ -38,24 +40,29 @@ ImageProcessorsManager::ImageProcessorsManager() {
     addProcessor(imageProximityComparator);
 
     #ifdef QT_DEBUG
-        auto dummyComparator = new DummyComporator();
+        auto dummyComparator = make_shared<DummyComporator>();
         addProcessor(dummyComparator);
     #endif
 
     // add transformers
 
-    auto redChannelFilter = new RedChannelFilter();
-    auto greenChannelFilter = new GreenChannelFilter();
-    auto blueChannelFilter = new BlueChannelFilter();
-    auto grayscaleFilter = new GrayscaleFilter();
+    auto redChannelFilter = make_shared<RedChannelFilter>();
+    auto greenChannelFilter = make_shared<GreenChannelFilter>();
+    auto blueChannelFilter = make_shared<BlueChannelFilter>();
+    auto grayscaleFilter = make_shared<GrayscaleFilter>();
 
     addProcessor(redChannelFilter);
     addProcessor(greenChannelFilter);
     addProcessor(blueChannelFilter);
     addProcessor(grayscaleFilter);
+
+    auto processorsFromPlugins = pluginInteractor->getProcessors();
+    foreach (auto processor, processorsFromPlugins) {
+        addProcessor(processor);
+    }
 }
 
-void ImageProcessorsManager::addProcessor(AImageProcessor *comporator) {
+void ImageProcessorsManager::addProcessor(shared_ptr<IImageProcessor> comporator) {
     if (comporator != nullptr) {
         processors.append(comporator);
     }
@@ -70,7 +77,7 @@ void ImageProcessorsManager::removeProcessor(QString name) {
     }
 }
 
-AImageProcessor *ImageProcessorsManager::findProcessor(QString name) {
+shared_ptr<IImageProcessor> ImageProcessorsManager::findProcessor(QString name) {
     for (auto it = processors.begin(); it != processors.end(); ++it) {
         if ((*it)->name() == name) {
             return *it;

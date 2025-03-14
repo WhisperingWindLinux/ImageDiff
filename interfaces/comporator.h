@@ -11,7 +11,7 @@
  * A base class for all comparators' interfaces in the app
  */
 
-class AComparator : public AImageProcessor {
+class IComparator : public IImageProcessor {
 public:
     virtual std::shared_ptr<ComparisonResultVariant> compare(ComparableImage first, ComparableImage second) = 0;
 

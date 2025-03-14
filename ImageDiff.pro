@@ -25,12 +25,14 @@ SOURCES += \
     gui/propertyeditordialog.cpp \
     imageprocessorsmanager/imageprocessorsmanager.cpp \
     interactors/comparisoninteractor.cpp \
+    interactors/plugininteractor.cpp \
     interactors/recentfilesmanager.cpp \
     interactors/setpropertiesinteractor.cpp \
     main.cpp \
     mainwindow.cpp \
     comporators/pixelsabsolutevaluecomparator.cpp \
     comporators/pixelsbrightnesscomparator.cpp \
+    plugins/pluginmanager.cpp \
     tests/comparableimagetests.cpp \
     tests/comparisoninteractortests.cpp \
     tests/comparisonresultvarianttests.cpp \
@@ -63,16 +65,19 @@ HEADERS += \
     gui/imageviewer.h \
     gui/propertyeditordialog.h \
     interactors/comparisoninteractor.h \
+    interactors/plugininteractor.h \
     interactors/recentfilesmanager.h \
     interactors/setpropertiesinteractor.h \
     interfaces/comporator.h \
     interfaces/filter.h \
     interfaces/imageprocessor.h \
+    interfaces/iplugininterface.h \
     interfaces/mainwindowcallbacks.h \
     mainwindow.h \
     comporators/pixelsabsolutevaluecomparator.h \
     comporators/pixelsbrightnesscomparator.h \
     interactors/savefileinfo.h \
+    plugins/pluginmanager.h \
     tests/comparableimagetests.h \
     tests/comparisoninteractortests.h \
     tests/comparisonresultvarianttests.h \

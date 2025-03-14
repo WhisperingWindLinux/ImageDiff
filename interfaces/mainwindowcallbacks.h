@@ -7,7 +7,7 @@
 
 #include <gui/RgbValue.h>
 
-class AMainWindowCallbacks {
+class IMainWindowCallbacks {
 public:
     virtual void onTwoImagesBeingComparedLoadedSuccessfully(QPixmap &image1,
                                              QString path1,

@@ -5,9 +5,11 @@
 
 #include <interfaces/comporator.h>
 
-class PixelsAbsoluteValueComparator : public AComparator
+class PixelsAbsoluteValueComparator : public IComparator
 {
 public:
+    PixelsAbsoluteValueComparator() = default;
+    virtual ~PixelsAbsoluteValueComparator() = default;
 
     // AComparator interface
 

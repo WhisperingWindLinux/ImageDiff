@@ -4,11 +4,6 @@
 
 #include <imageprocessorsmanager/property.h>
 
-
-GrayscaleFilter::GrayscaleFilter() {
-
-}
-
 QString GrayscaleFilter::name() {
     return "Make Grayscale";
 }

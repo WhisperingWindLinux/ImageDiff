@@ -595,8 +595,9 @@ void MainWindow::passTwoImagesBeingComparedToOtherAppInstance(QString firstFileP
                                                               QString secondFilePath
                                                               )
 {
-    QProcess *process = new QProcess();
-    instances.append(process);              // FIXME delete unused instances
+    // FIXME find the finished processes and remove these from the collection
+    auto process = make_shared<QProcess>();
+    instances.append(process);
 
     QString program = QCoreApplication::applicationFilePath();
     QStringList arguments;

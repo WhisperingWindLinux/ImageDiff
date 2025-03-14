@@ -4,9 +4,12 @@
 #include <interfaces/comporator.h>
 
 
-class DummyComporator : public AComparator
+class DummyComporator : public IComparator
 {
 public:
+
+    DummyComporator() = default;
+    virtual ~DummyComporator() = default;
 
     // AComparator interface
 

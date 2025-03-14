@@ -15,10 +15,12 @@ struct SharpnessComparisonResult {
 };
 
 
-class SharpnessComparator : public AComparator
+class SharpnessComparator : public IComparator
 {
 public:
     SharpnessComparator() = default;
+    virtual ~SharpnessComparator() = default;
+
     QString name();
     QString hotkey();
     QString description();

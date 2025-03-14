@@ -27,9 +27,11 @@ struct PixelsBrightnessComparisonResult {
 };
 
 
-class PixelsBrightnessComparator : public AComparator
+class PixelsBrightnessComparator : public IComparator
 {
 public:
+    PixelsBrightnessComparator() = default;
+    virtual ~PixelsBrightnessComparator() = default;
 
     // AComparator interface
 

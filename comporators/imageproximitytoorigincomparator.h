@@ -19,10 +19,12 @@ struct ImageProximityToOriginResult {
     QString resultDescription;
 };
 
-class ImageProximityToOriginComparator : public AComparator
+class ImageProximityToOriginComparator : public IComparator
 {
 public:
     ImageProximityToOriginComparator() = default;
+    virtual ~ImageProximityToOriginComparator() = default;
+
     QString name() override;
     QString hotkey() override;
     QString description() override;

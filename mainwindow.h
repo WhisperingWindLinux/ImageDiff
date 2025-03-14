@@ -18,7 +18,7 @@ class MainWindow;
 }
 QT_END_NAMESPACE
 
-class MainWindow : public QMainWindow, public AMainWindowCallbacks
+class MainWindow : public QMainWindow, public IMainWindowCallbacks
 {
     Q_OBJECT
 
@@ -57,10 +57,10 @@ protected:
 
 private:
     Ui::MainWindow *ui;
-    ImageViewer *viewer = nullptr;
-    ComparisonInteractor* comparisionInteractor = nullptr;
-    ColorInfoPanel* colorPanel = nullptr;
-    QList<QProcess*> instances;
+    ImageViewer *viewer = nullptr;                          // memory managed manualy
+    ComparisonInteractor* comparisionInteractor = nullptr;  // long live object
+    ColorInfoPanel* colorPanel = nullptr;                   // memory managed manualy
+    QList<shared_ptr<QProcess>> instances;
 
     // A value of 50% places the color picker window centered
     // relative to the vertical axis of the main window.

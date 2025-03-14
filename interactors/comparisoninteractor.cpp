@@ -9,7 +9,7 @@
 #include <qfileinfo.h>
 #include <tests/testutils.h>
 
-ComparisonInteractor::ComparisonInteractor(AMainWindowCallbacks *callbacks)
+ComparisonInteractor::ComparisonInteractor(IMainWindowCallbacks *callbacks)
     : callbacks(callbacks)
 {
     recentFilesManager = new RecentFilesManager("com.whisperingwind", "ImageDiff");
@@ -35,6 +35,8 @@ void ComparisonInteractor::onImageProcessorShouldBeCalled(QVariant callerData) {
     QString processorName = callerData.toString();
 
     auto processor = ImageProcessorsManager::instance()->findProcessor(processorName);
+
+
     if (processor == nullptr) {
         throw std::runtime_error("Error: Unable to find the requested image processor.");
     }
@@ -44,20 +46,20 @@ void ComparisonInteractor::onImageProcessorShouldBeCalled(QVariant callerData) {
     handleProcessorPropertiesIfNeed(processor);
 
     if (processor->getType() == ImageProcessorType::Comparator) {
-        callComparator((AComparator*)processor);
+        callComparator(dynamic_pointer_cast<IComparator>(processor));
     } else if (processor->getType() == ImageProcessorType::Filter) {
-        callFilter((AFilter*)processor);
+        callFilter(dynamic_pointer_cast<IFilter>(processor));
     } else {
         throw std::runtime_error("Error: An unknown image processor type.");
     }
 }
 
-void ComparisonInteractor::handleProcessorPropertiesIfNeed(AImageProcessor *processor) {
+void ComparisonInteractor::handleProcessorPropertiesIfNeed(shared_ptr<IImageProcessor> processor) {
     SetPropertiesInteractor setPropsInteractor(processor, callbacks);
     setPropsInteractor.allowUserToSetPropertiesIfNeed();
 }
 
-void ComparisonInteractor::callComparator(AComparator *comparator) {
+void ComparisonInteractor::callComparator(shared_ptr<IComparator> comparator) {
 
     ComparableImage comapableImage1{firstPixmap, firstImagePath};
     ComparableImage comapableImage2{secondPixmap, secondImagePath};
@@ -84,7 +86,7 @@ void ComparisonInteractor::callComparator(AComparator *comparator) {
     }
 }
 
-void ComparisonInteractor::callFilter(AFilter *filter) {
+void ComparisonInteractor::callFilter(shared_ptr<IFilter> filter) {
 
     QImage image1 = firstPixmap.toImage();
     QImage image2 = secondPixmap.toImage();
@@ -110,7 +112,12 @@ void ComparisonInteractor::callFilter(AFilter *filter) {
     firstPixmap = pixmap1;
     secondPixmap = pixmap2;
 
-    callbacks->onTwoImagesBeingComparedLoadedSuccessfully(firstPixmap, firstImagePath, secondPixmap, secondImagePath, true);
+    callbacks->onTwoImagesBeingComparedLoadedSuccessfully(firstPixmap,
+                                                          firstImagePath,
+                                                          secondPixmap,
+                                                          secondImagePath,
+                                                          true
+                                                          );
 }
 
 void ComparisonInteractor::clear() {

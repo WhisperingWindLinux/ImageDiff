@@ -7,10 +7,11 @@
 #include <interfaces/filter.h>
 
 
-class GrayscaleFilter : public AFilter
+class GrayscaleFilter : public IFilter
 {
 public:
-    GrayscaleFilter();
+    GrayscaleFilter() = default;
+    virtual ~GrayscaleFilter() = default;
 
 // ATransformer interface
 

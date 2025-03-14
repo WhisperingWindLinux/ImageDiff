@@ -16,8 +16,14 @@ QString DummyComporator::description() {
            "It's very simple and useless dummy comparator. It is used for testing purposes only.";
 }
 
-std::shared_ptr<ComparisonResultVariant> DummyComporator::compare(ComparableImage first, ComparableImage second) {
-    return {};
+std::shared_ptr<ComparisonResultVariant> DummyComporator::compare(ComparableImage first,
+                                                                  ComparableImage second
+                                                                  )
+{
+    qDebug() << first.getName();
+    qDebug() << second.getName();
+
+    return make_shared<ComparisonResultVariant>("Dummy responce");
 }
 
 QList<Property> DummyComporator::getDefaultProperties() const {

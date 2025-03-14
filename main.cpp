@@ -4,7 +4,7 @@
 #include <QtTest>
 #include <qfiledialog.h>
 
-#include <tests/PropertyTests.h>
+#include <tests/propertytests.h>
 #include <tests/comparableimagetests.h>
 #include <tests/comparisoninteractortests.h>
 #include <tests/comparisonresultvarianttests.h>

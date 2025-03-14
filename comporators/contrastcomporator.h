@@ -19,9 +19,12 @@ struct ContrastComparisonResult {
  * The algorithm calculates the contrast of an image based on the statistical
  * analysis of pixel brightness (luminance).
  */
-class ContrastComporator : public AComparator
+class ContrastComporator : public IComparator
 {
 public:
+
+    ContrastComporator() = default;
+    virtual ~ContrastComporator() = default;
 
     // AComparator interface
 

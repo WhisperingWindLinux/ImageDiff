@@ -1,7 +1,7 @@
 #include "setpropertiesinteractor.h"
 
-SetPropertiesInteractor::SetPropertiesInteractor(AImageProcessor *processor,
-                                                 AMainWindowCallbacks *callback
+SetPropertiesInteractor::SetPropertiesInteractor(shared_ptr<IImageProcessor> processor,
+                                                 IMainWindowCallbacks *callback
                                                  )
     : processor(processor),
       callback(callback)

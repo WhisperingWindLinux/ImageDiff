@@ -6,8 +6,8 @@
 #include <interfaces/imageprocessor.h>
 
 
-// Mock class for AImageProcessor to simulate processors
-class MockImageProcessor : public AImageProcessor {
+// Mock class for IImageProcessor to simulate processors
+class MockImageProcessor : public IImageProcessor {
 public:
     MockImageProcessor() {}
     MockImageProcessor(QString name, QString hotkey, QString description, ImageProcessorType type)

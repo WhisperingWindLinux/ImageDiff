@@ -3,8 +3,8 @@
 
 #include <interfaces/mainwindowcallbacks.h>
 
-// Mock for AMainWindowCallbacks
-class MockMainWindowCallbacks : public AMainWindowCallbacks {
+// Mock for IMainWindowCallbacks
+class MockMainWindowCallbacks : public IMainWindowCallbacks {
 public:
     virtual ~MockMainWindowCallbacks() {};
     void onTwoImagesBeingComparedLoadedSuccessfully(QPixmap &pixmap1,

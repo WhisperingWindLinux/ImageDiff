@@ -13,7 +13,7 @@
 class ComparisonInteractor
 {
 public:
-    ComparisonInteractor(AMainWindowCallbacks *callbacks);
+    ComparisonInteractor(IMainWindowCallbacks *callbacks);
     ~ComparisonInteractor();
 
     void loadTwoImagesBeingCompared(QString& Image1Path,
@@ -31,7 +31,7 @@ public:
 
     void loadTwoImagesBeingCompared(QString recentFileMenuRecord);
 private:
-    AMainWindowCallbacks *callbacks;
+    IMainWindowCallbacks *callbacks;
     RecentFilesManager *recentFilesManager;
     QString firstImagePath;
     QString secondImagePath;
@@ -42,9 +42,9 @@ private:
 
     void clear();
     bool validateFile(const QString &filePath);
-    void callComparator(AComparator *comparator);
-    void callFilter(AFilter *transformer);
-    void handleProcessorPropertiesIfNeed(AImageProcessor *processor);
+    void callComparator(shared_ptr<IComparator> comparator);
+    void callFilter(shared_ptr<IFilter> transformer);
+    void handleProcessorPropertiesIfNeed(shared_ptr<IImageProcessor>processor);
 };
 
 #endif // COMPARISONINTERACTOR_H

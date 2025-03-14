@@ -5,7 +5,7 @@
 
 enum class ImageProcessorType { Comparator, Filter };
 
-class AImageProcessor {
+class IImageProcessor {
 public:    
     // It must be unique; displayed in the menu.
     virtual QString name() = 0;

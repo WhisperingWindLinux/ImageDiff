@@ -7,9 +7,12 @@
 #include <interfaces/comporator.h>
 
 
-class ImageComparator : public AComparator
+class ImageComparator : public IComparator
 {
 public:
+
+    ImageComparator() = default;
+    virtual ~ImageComparator() = default;
 
     // AComparator interface
 
