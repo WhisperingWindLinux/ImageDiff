@@ -72,6 +72,16 @@ private:
 
     static QPixmap getVisiblePixmap(QGraphicsView* view);
     void passCropedImageToOtherAppInstance(QRectF rect);
+
+    void extracted(int &x, int &y, QColor &colorOfHiddenImage,
+                   QString &visibleImageName, QString &hiddenImageName);
+    void trackPixelColor(QMouseEvent *event);
+
+    void fillRgbValues(QString visibleImageName,
+                                       QColor colorOfVisibleImage,
+                                       QString hiddenImageName,
+                                       QColor colorOfHiddenImage
+                                       );
 };
 
 

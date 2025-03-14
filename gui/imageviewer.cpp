@@ -139,6 +139,7 @@ void ImageViewer::showImageFromComparator(QPixmap &image, QString description) {
     secondImage->setVisible(false);
     comparatorResultImage->setVisible(true);
     parent->showStatusMessage(description);
+    parent->onRgbValueUnderCursonChanged({"", -1, -1, -1}, {"", -1, -1, -1});
 }
 
 /* } =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
@@ -184,7 +185,7 @@ void ImageViewer::toggleImage() {
 
     centerOn(viewRect.center());
 
-    mouseMoveEvent(lastMousEvent);
+    trackPixelColor(lastMousEvent);
 }
 
 /* } =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
@@ -346,24 +347,15 @@ void ImageViewer::mouseMoveEvent(QMouseEvent* event) {
         viewport()->update(); // Request a repaint of the view
     }
 
-    if (!isRgbTrackingActive) {
-        return;
-    }
-
-    if (comparatorResultImage != nullptr) {
-        return;
-    }
-
     // Implement RGB values tracking under the mouse cursor.
     // It needs for Color Picker.
+    trackPixelColor(event);
+}
 
-    QString imageName = "error: unknown image";
-    if (comparatorResultImage != nullptr) {
-        imageName = "comparison result image";
-    } else if (currentImageIndex == 0) {
-        imageName = firstImageName;
-    } else if (currentImageIndex == 1) {
-        imageName = secondImageName;
+void ImageViewer::trackPixelColor(QMouseEvent* event) {
+
+    if (!isRgbTrackingActive || comparatorResultImage != nullptr) {
+        return;
     }
 
     // Convert mouse position to scene coordinates
@@ -390,7 +382,9 @@ void ImageViewer::mouseMoveEvent(QMouseEvent* event) {
                 QColor colorOfVisibleImage = visibleImage.pixelColor(x, y);
                 QColor colorOfHiddenImage;
                 QString visibleImageName, hiddenImageName;
-                if (currentImageIndex == 0) {
+                if (comparatorResultImage != nullptr) {
+                    visibleImageName = "comparison result";
+                } else if (currentImageIndex == 0) {
                     colorOfHiddenImage = secondImage->pixmap().toImage().pixelColor(x, y);
                     visibleImageName = firstImageName;
                     hiddenImageName = secondImageName;
@@ -400,20 +394,32 @@ void ImageViewer::mouseMoveEvent(QMouseEvent* event) {
                     hiddenImageName = firstImageName;
                 }
 
-                RgbValue rgbValueOfVisibleImage = { visibleImageName,
-                                                    colorOfVisibleImage.red(),
-                                                    colorOfVisibleImage.green(),
-                                                    colorOfVisibleImage.blue()
-                };
-                RgbValue rgbValueOfHiddenImage = { hiddenImageName,
-                                                   colorOfHiddenImage.red(),
-                                                   colorOfHiddenImage.green(),
-                                                   colorOfHiddenImage.blue()
-                };
-                parent->onRgbValueUnderCursonChanged(rgbValueOfVisibleImage, rgbValueOfHiddenImage);
+                fillRgbValues(visibleImageName, colorOfVisibleImage, hiddenImageName, colorOfHiddenImage);
             }
         }
     }
+}
+
+void ImageViewer::fillRgbValues(QString visibleImageName,
+                               QColor colorOfVisibleImage,
+                               QString hiddenImageName,
+                               QColor colorOfHiddenImage
+                               )
+{
+    RgbValue rgbValueOfVisibleImage = {
+        visibleImageName,
+        colorOfVisibleImage.red(),
+        colorOfVisibleImage.green(),
+        colorOfVisibleImage.blue()
+    };
+
+    RgbValue rgbValueOfHiddenImage = {
+            hiddenImageName,
+            colorOfHiddenImage.red(),
+            colorOfHiddenImage.green(),
+            colorOfHiddenImage.blue()
+    };
+    parent->onRgbValueUnderCursonChanged(rgbValueOfVisibleImage, rgbValueOfHiddenImage);
 }
 
 // Implement zoom to selection
