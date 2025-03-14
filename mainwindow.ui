@@ -74,6 +74,7 @@
     <addaction name="actionShowOriginalImage"/>
     <addaction name="separator"/>
     <addaction name="actionActualSize"/>
+    <addaction name="actionFitInView"/>
     <addaction name="actionZoomIn"/>
     <addaction name="actionZoomOut"/>
     <addaction name="separator"/>
@@ -263,6 +264,14 @@
    </property>
    <property name="shortcut">
     <string>1</string>
+   </property>
+  </action>
+  <action name="actionFitInView">
+   <property name="text">
+    <string>Fit In View</string>
+   </property>
+   <property name="shortcut">
+    <string>F</string>
    </property>
   </action>
  </widget>

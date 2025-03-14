@@ -7,6 +7,7 @@
 #include <QtCore/qurl.h>
 #include <gui/formattors/recentfilespathformater.h>
 #include <qfileinfo.h>
+#include <tests/testutils.h>
 
 ComparisonInteractor::ComparisonInteractor(AMainWindowCallbacks *callbacks)
     : callbacks(callbacks)
@@ -17,6 +18,13 @@ ComparisonInteractor::ComparisonInteractor(AMainWindowCallbacks *callbacks)
         recentFilesManager->addPair("/Users/Shared/Pictures/arc1.png", "/Users/Shared/Pictures/arc3.png");
         recentFilesManager->addPair("/Users/Shared/Pictures/arc-1.png", "/Users/Shared/Pictures/amd-1.png");
     #endif
+}
+
+ComparisonInteractor::~ComparisonInteractor() {
+    if (cleanUpImageFilesAtExit) {
+        FileUtils::deleteFile(firstImagePath);
+        FileUtils::deleteFile(secondImagePath);
+    }
 }
 
 void ComparisonInteractor::onImageProcessorShouldBeCalled(QVariant callerData) {
@@ -158,13 +166,15 @@ void ComparisonInteractor::loadTwoImagesBeingCompared(QList<QUrl> urls) {
 }
 
 void ComparisonInteractor::loadTwoImagesBeingCompared(QString& Image1Path,
-                                                   QString& Image2Path,
-                                                   bool usePreviousImageGeometry
-                                                   )
+                                                      QString& Image2Path,
+                                                      bool usePreviousImageGeometry,
+                                                      bool removeImageFilesAtExit
+                                                      )
 {
 
     firstImagePath = Image1Path;
     secondImagePath = Image2Path;
+    cleanUpImageFilesAtExit = removeImageFilesAtExit;
     firstPixmap = QPixmap();
     secondPixmap = QPixmap();
 

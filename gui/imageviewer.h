@@ -41,14 +41,13 @@ public:
     void zoomIn();
     void zoomOut();
     void actualSize();
+    void fitImageInView();
 protected:
     void wheelEvent(QWheelEvent *event) override;
     void mouseMoveEvent(QMouseEvent* event) override;
     void mousePressEvent(QMouseEvent *event) override ;
     void mouseReleaseEvent(QMouseEvent *event) override ;
     void paintEvent(QPaintEvent *event) override;
-    /*void keyPressEvent(QKeyEvent *event) override;
-    void keyReleaseEvent(QKeyEvent *event) override;*/
 
 private:
     QGraphicsScene *scene;
@@ -58,7 +57,7 @@ private:
     QString secondImageName;
     QGraphicsPixmapItem *firstImage = nullptr;
     QGraphicsPixmapItem *secondImage = nullptr;
-    QGraphicsPixmapItem *comparisonImage = nullptr;
+    QGraphicsPixmapItem *comparatorResultImage = nullptr;
     int currentImageIndex;
     qreal scaleFactor;
     MainWindow *parent = nullptr;
@@ -72,6 +71,7 @@ private:
     QRect selectionRect;                    // Rectangle being selected (in view coordinates)
 
     static QPixmap getVisiblePixmap(QGraphicsView* view);
+    void passCropedImageToOtherAppInstance(QRectF rect);
 };
 
 

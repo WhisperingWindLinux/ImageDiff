@@ -6,12 +6,12 @@
 #include <qpixmap.h>
 
 
-class TestUtils {
+class FileUtils {
 public:
     static QString savePixmapToTempDir(const QPixmap &pixmap, const QString &fileName) {
         QString tempDir = QDir::tempPath();
 
-        QString filePath = tempDir + QDir::separator() + fileName;
+        QString filePath = QDir(tempDir).filePath(QString(fileName) + ".png");
 
         if (pixmap.save(filePath)) {
             return filePath;

@@ -88,7 +88,7 @@ void ComparisonInteractorTests::testLoadImagesBeingComparedNotSameSize_Failed() 
 QString ComparisonInteractorTests::createTempImage(const QString& fileName, const QSize& size, const QColor& color) {
     QPixmap pixmap(size);
     pixmap.fill(color);
-    QString resultPath = TestUtils::savePixmapToTempDir(pixmap, fileName);
+    QString resultPath = FileUtils::savePixmapToTempDir(pixmap, fileName);
     createdFilesPath.append(resultPath);
     return resultPath;
 }
@@ -111,7 +111,7 @@ void ComparisonInteractorTests::verifyLoadedImages(const QString& image1Path, co
 
 void ComparisonInteractorTests::testSaveImage_FirstImage() {
     // Arrange;
-    QString path = TestUtils::generateRandomPngFileNameInTempDir();
+    QString path = FileUtils::generateRandomPngFileNameInTempDir();
     interactor->firstImagePath = path;
     SaveImageInfo info;
     info.saveImageInfoType = SaveImageInfoType::FirstImage;
@@ -127,7 +127,7 @@ void ComparisonInteractorTests::testSaveImage_FirstImage() {
 
 void ComparisonInteractorTests::testSaveImage_SecondImage() {
     // Arrange;
-    QString path = TestUtils::generateRandomPngFileNameInTempDir();
+    QString path = FileUtils::generateRandomPngFileNameInTempDir();
     interactor->secondImagePath = path;
     SaveImageInfo info;
     info.saveImageInfoType = SaveImageInfoType::SecondImage;
@@ -143,8 +143,8 @@ void ComparisonInteractorTests::testSaveImage_SecondImage() {
 
 void ComparisonInteractorTests::testSaveImage_ComparisonImage() {
     // Arrange;
-    QString path1 = TestUtils::generateRandomPngFileNameInTempDir();
-    QString path2 = TestUtils::generateRandomPngFileNameInTempDir();
+    QString path1 = FileUtils::generateRandomPngFileNameInTempDir();
+    QString path2 = FileUtils::generateRandomPngFileNameInTempDir();
     interactor->firstImagePath = path1;
     interactor->secondImagePath = path2;
     SaveImageInfo info;
@@ -168,8 +168,8 @@ void ComparisonInteractorTests::testSaveImage_ComparisonImage() {
 
 void ComparisonInteractorTests::testSaveImage_FirstImageArea() {
     // Arrange;
-    QString path1 = TestUtils::generateRandomPngFileNameInTempDir();
-    QString path2 = TestUtils::generateRandomPngFileNameInTempDir();
+    QString path1 = FileUtils::generateRandomPngFileNameInTempDir();
+    QString path2 = FileUtils::generateRandomPngFileNameInTempDir();
     interactor->firstImagePath = path1;
     interactor->secondImagePath = path2;
     SaveImageInfo info;
@@ -191,8 +191,8 @@ void ComparisonInteractorTests::testSaveImage_FirstImageArea() {
 
 void ComparisonInteractorTests::testSaveImage_SecondImageArea() {
     // Arrange;
-    QString path1 = TestUtils::generateRandomPngFileNameInTempDir();
-    QString path2 = TestUtils::generateRandomPngFileNameInTempDir();
+    QString path1 = FileUtils::generateRandomPngFileNameInTempDir();
+    QString path2 = FileUtils::generateRandomPngFileNameInTempDir();
     interactor->firstImagePath = path1;
     interactor->secondImagePath = path2;
     SaveImageInfo info;
@@ -214,8 +214,8 @@ void ComparisonInteractorTests::testSaveImage_SecondImageArea() {
 
 void ComparisonInteractorTests::testSaveImage_ComparisonImageArea() {
     // Arrange;
-    QString path1 = TestUtils::generateRandomPngFileNameInTempDir();
-    QString path2 = TestUtils::generateRandomPngFileNameInTempDir();
+    QString path1 = FileUtils::generateRandomPngFileNameInTempDir();
+    QString path2 = FileUtils::generateRandomPngFileNameInTempDir();
     interactor->firstImagePath = path1;
     interactor->secondImagePath = path2;
     SaveImageInfo info;
