@@ -15,6 +15,7 @@ private slots:
     void testAddProcessor();
     void testRemoveProcessor();
     void testAllProcessorsInfo();
+    void testAllProcessorsInfoTheSameHotkeys();
 
 private:
     ImageProcessorsManager *manager;

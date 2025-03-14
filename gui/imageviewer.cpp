@@ -333,6 +333,9 @@ void ImageViewer::mouseMoveEvent(QMouseEvent* event) {
 
     QGraphicsView::mouseMoveEvent(event);
 
+    if (lastMousEvent != nullptr) {
+        delete lastMousEvent;
+    }
     lastMousEvent = event->clone();
 
     if (selecting) {

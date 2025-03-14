@@ -16,12 +16,12 @@ void ImageProcessorsManagerTests::testFindProcessor() {
     manager->addProcessor(processor);
 
     // Verify that the processor can be found by name
-    auto found = manager->findProcessor("MockProcessor");
+    auto found = manager->findProcessorByName("MockProcessor");
     QVERIFY(found != nullptr);
     QCOMPARE(found->name(), QString("MockProcessor"));
 
     // Verify that searching for a non-existent processor returns nullptr
-    auto notFound = manager->findProcessor("NonExistentProcessor");
+    auto notFound = manager->findProcessorByName("NonExistentProcessor");
     QVERIFY(notFound == nullptr);
 }
 
@@ -31,7 +31,7 @@ void ImageProcessorsManagerTests::testAddProcessor() {
     manager->addProcessor(processor);
 
     // Verify that the processor was added successfully
-    auto found = manager->findProcessor("NewProcessor");
+    auto found = manager->findProcessorByName("NewProcessor");
     QVERIFY(found != nullptr);
     QCOMPARE(found->name(), QString("NewProcessor"));
 }
@@ -42,13 +42,13 @@ void ImageProcessorsManagerTests::testRemoveProcessor() {
     manager->addProcessor(processor);
 
     // Verify that the processor exists initially
-    auto found = manager->findProcessor("RemovableProcessor");
+    auto found = manager->findProcessorByName("RemovableProcessor");
     QVERIFY(found != nullptr);
 
     manager->removeProcessor("RemovableProcessor");
 
     // Verify that the processor was removed successfully
-    auto notFound = manager->findProcessor("RemovableProcessor");
+    auto notFound = manager->findProcessorByName("RemovableProcessor");
     QVERIFY(notFound == nullptr);
 }
 
@@ -75,3 +75,91 @@ void ImageProcessorsManagerTests::testAllProcessorsInfo() {
     QVERIFY(found1);
     QVERIFY(found2);
 }
+
+void ImageProcessorsManagerTests::testAllProcessorsInfoTheSameHotkeys() {
+    {
+    auto processor1 = make_shared<MockImageProcessor>("Processor1", "Ctrl+A", "Description 1", ImageProcessorType::Comparator);
+    auto processor2 = make_shared<MockImageProcessor>("Processor2", "Ctrl+B", "Description 2", ImageProcessorType::Comparator);
+    auto processor3 = make_shared<MockImageProcessor>("Processor3", "Ctrl+A", "Description 3", ImageProcessorType::Comparator);
+    auto processor4 = make_shared<MockImageProcessor>("Processor4", "Ctrl+C", "Description 4", ImageProcessorType::Comparator);
+
+    manager->addProcessor(processor1);
+    manager->addProcessor(processor2);
+    manager->addProcessor(processor3);
+    manager->addProcessor(processor4);
+
+    QList<ImageProcessorInfo> result = manager->allProcessorsInfo();
+
+    QCOMPARE(result.size(), 4);
+
+    QCOMPARE(result[0].hotkey, QString(""));
+    QCOMPARE(result[1].hotkey, QString("Ctrl+B"));
+    QCOMPARE(result[2].hotkey, QString(""));
+    QCOMPARE(result[3].hotkey, QString("Ctrl+C"));
+    }
+
+    {
+        auto processor1 = make_shared<MockImageProcessor>("Processor1", "Ctrl+A", "Description 1", ImageProcessorType::Comparator);
+        auto processor2 = make_shared<MockImageProcessor>("Processor2", "Ctrl+B", "Description 2", ImageProcessorType::Comparator);
+        auto processor3 = make_shared<MockImageProcessor>("Processor3", "Ctrl+a", "Description 3", ImageProcessorType::Comparator);
+        auto processor4 = make_shared<MockImageProcessor>("Processor4", "Ctrl+C", "Description 4", ImageProcessorType::Comparator);
+
+        manager->addProcessor(processor1);
+        manager->addProcessor(processor2);
+        manager->addProcessor(processor3);
+        manager->addProcessor(processor4);
+
+        QList<ImageProcessorInfo> result = manager->allProcessorsInfo();
+
+        QCOMPARE(result.size(), 4);
+
+        QCOMPARE(result[0].hotkey, QString(""));
+        QCOMPARE(result[1].hotkey, QString("Ctrl+B"));
+        QCOMPARE(result[2].hotkey, QString(""));
+        QCOMPARE(result[3].hotkey, QString("Ctrl+C"));
+    }
+
+    {
+        auto processor1 = make_shared<MockImageProcessor>("Processor1", "Ctrl+A", "Description 1", ImageProcessorType::Filter);
+        auto processor2 = make_shared<MockImageProcessor>("Processor2", "Ctrl+B", "Description 2", ImageProcessorType::Filter);
+        auto processor3 = make_shared<MockImageProcessor>("Processor3", "Ctrl+A", "Description 3", ImageProcessorType::Filter);
+        auto processor4 = make_shared<MockImageProcessor>("Processor4", "Ctrl+C", "Description 4", ImageProcessorType::Filter);
+
+        manager->addProcessor(processor1);
+        manager->addProcessor(processor2);
+        manager->addProcessor(processor3);
+        manager->addProcessor(processor4);
+
+        QList<ImageProcessorInfo> result = manager->allProcessorsInfo();
+
+        QCOMPARE(result.size(), 4);
+
+        QCOMPARE(result[0].hotkey, QString(""));
+        QCOMPARE(result[1].hotkey, QString("Ctrl+B"));
+        QCOMPARE(result[2].hotkey, QString(""));
+        QCOMPARE(result[3].hotkey, QString("Ctrl+C"));
+    }
+
+    {
+        auto processor1 = make_shared<MockImageProcessor>("Processor1", "Ctrl+A", "Description 1", ImageProcessorType::Filter);
+        auto processor2 = make_shared<MockImageProcessor>("Processor2", "Ctrl+B", "Description 2", ImageProcessorType::Filter);
+        auto processor3 = make_shared<MockImageProcessor>("Processor3", "Ctrl+A", "Description 3", ImageProcessorType::Comparator);
+        auto processor4 = make_shared<MockImageProcessor>("Processor4", "Ctrl+C", "Description 4", ImageProcessorType::Comparator);
+
+        manager->addProcessor(processor1);
+        manager->addProcessor(processor2);
+        manager->addProcessor(processor3);
+        manager->addProcessor(processor4);
+
+        QList<ImageProcessorInfo> result = manager->allProcessorsInfo();
+
+        QCOMPARE(result.size(), 4);
+
+        QCOMPARE(result[0].hotkey, QString(""));
+        QCOMPARE(result[1].hotkey, QString("Ctrl+B"));
+        QCOMPARE(result[2].hotkey, QString(""));
+        QCOMPARE(result[3].hotkey, QString("Ctrl+C"));
+    }
+}
+
+

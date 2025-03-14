@@ -34,7 +34,7 @@ void ComparisonInteractor::onImageProcessorShouldBeCalled(QVariant callerData) {
 
     QString processorName = callerData.toString();
 
-    auto processor = ImageProcessorsManager::instance()->findProcessor(processorName);
+    auto processor = ImageProcessorsManager::instance()->findProcessorByName(processorName);
 
 
     if (processor == nullptr) {

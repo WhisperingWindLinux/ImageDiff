@@ -88,6 +88,8 @@ void MainWindow::populateComparatorsAndFiltersMenus() {
     QMenu *comparatorsMenu = ui->menuComparators;
     QMenu *transformersMenu = ui->menuTransftomers;
 
+    bool isEmptyHotkeysFound = false;
+
     // an image comporators
     for (auto it = comporatorsInfo.begin(); it != comporatorsInfo.end(); ++it) {
         QString name = (*it).name;
@@ -103,10 +105,22 @@ void MainWindow::populateComparatorsAndFiltersMenus() {
             continue;
         }
         newAction->setData(name);
-        newAction->setShortcut(QKeySequence(hotkey));
+
+        if (!hotkey.isEmpty()) {
+            newAction->setShortcut(QKeySequence(hotkey));
+        } else {
+            isEmptyHotkeysFound = true;
+        }
 
         connect(newAction, &QAction::triggered, this, &MainWindow::callImageComparator);
     }
+
+    if (isEmptyHotkeysFound) {
+        showStatusMessage(QString("For some Filters/Comparators, ") +
+                                  "the use of hotkeys is disabled " +
+                                  "because they use the same hotkeys");
+    }
+
     enabledImageOperationMenuItems(false);
 }
 

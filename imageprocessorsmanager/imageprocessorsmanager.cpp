@@ -10,6 +10,7 @@
 #include <comporators/sharpnesscomparator.h>
 #include <filters/grayscalefilter.h>
 #include <filters/rgbfilter.h>
+#include <qhash.h>
 
 ImageProcessorsManager *ImageProcessorsManager::manager = new ImageProcessorsManager();
 
@@ -18,8 +19,6 @@ ImageProcessorsManager *ImageProcessorsManager::instance() {
 }
 
 ImageProcessorsManager::ImageProcessorsManager() {
-
-    pluginInteractor = make_unique<PluginInteractor>();
 
     // add comporators
 
@@ -44,7 +43,7 @@ ImageProcessorsManager::ImageProcessorsManager() {
         addProcessor(dummyComparator);
     #endif
 
-    // add transformers
+    // add filters
 
     auto redChannelFilter = make_shared<RedChannelFilter>();
     auto greenChannelFilter = make_shared<GreenChannelFilter>();
@@ -55,11 +54,6 @@ ImageProcessorsManager::ImageProcessorsManager() {
     addProcessor(greenChannelFilter);
     addProcessor(blueChannelFilter);
     addProcessor(grayscaleFilter);
-
-    auto processorsFromPlugins = pluginInteractor->getProcessors();
-    foreach (auto processor, processorsFromPlugins) {
-        addProcessor(processor);
-    }
 }
 
 void ImageProcessorsManager::addProcessor(shared_ptr<IImageProcessor> comporator) {
@@ -77,7 +71,7 @@ void ImageProcessorsManager::removeProcessor(QString name) {
     }
 }
 
-shared_ptr<IImageProcessor> ImageProcessorsManager::findProcessor(QString name) {
+shared_ptr<IImageProcessor> ImageProcessorsManager::findProcessorByName(QString name) {
     for (auto it = processors.begin(); it != processors.end(); ++it) {
         if ((*it)->name() == name) {
             return *it;
@@ -86,11 +80,36 @@ shared_ptr<IImageProcessor> ImageProcessorsManager::findProcessor(QString name) 
     return nullptr;
 }
 
+shared_ptr<IImageProcessor> ImageProcessorsManager::findProcessorByHotkey(QString hotkey) {
+    for (auto it = processors.begin(); it != processors.end(); ++it) {
+        if ((*it)->hotkey() == hotkey) {
+            return *it;
+        }
+    }
+    return nullptr;
+}
+
 QList<ImageProcessorInfo> ImageProcessorsManager::allProcessorsInfo() {
     QList<ImageProcessorInfo> processorsInfo;
+    QHash<QString, int> hotkeyCount;
+
     for (auto it = processors.begin(); it != processors.end(); ++it) {
-        ImageProcessorInfo processorInfo((*it)->name(), (*it)->description(), (*it)->hotkey(), (*it)->getType());
+        QString hotkey = (*it)->hotkey().toLower();
+        ImageProcessorInfo processorInfo((*it)->name(),
+                                         (*it)->description(),
+                                         hotkey,
+                                         (*it)->getType()
+                                         );
+
+        hotkeyCount[hotkey]++;
         processorsInfo.append(processorInfo);
     }
+
+    for (auto& processor : processorsInfo) {
+        if (hotkeyCount[processor.hotkey] > 1) {
+            processor.hotkey = "";
+        }
+    }
+
     return processorsInfo;
 }

@@ -2,27 +2,26 @@
 #define IMAGEPROCESSORSMANAGER_H
 
 #include "imageprocessorsinfo.h"
-#include <interactors/plugininteractor.h>
 #include <interfaces/comporator.h>
-#include <plugins/pluginmanager.h>
 
 class ImageProcessorsManager
 {
 public:
     static ImageProcessorsManager *instance();
-    shared_ptr<IImageProcessor> findProcessor(QString name);
+    shared_ptr<IImageProcessor> findProcessorByName(QString name);
     QList<ImageProcessorInfo> allProcessorsInfo();
 
     friend class ImageProcessorsManagerTests;
 
+    shared_ptr<IImageProcessor> findProcessorByHotkey(QString hotkey);
 private:
     QList<shared_ptr<IImageProcessor>> processors;
-    unique_ptr<PluginInteractor> pluginInteractor;
 
     static ImageProcessorsManager *manager;
     ImageProcessorsManager();
     void addProcessor(shared_ptr<IImageProcessor> comporator);
-    void removeProcessor(QString name);    
+    void removeProcessor(QString name);
+    void addProcessors(QList<shared_ptr<IImageProcessor>> processors);
 };
 
 #endif // IMAGEPROCESSORSMANAGER_H
