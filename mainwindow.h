@@ -41,6 +41,7 @@ public slots:
     void placeColorPickerOnRight();
     void placeColorPickerOnLeft();
     void imagFitInView();
+    void grabImagesFromVideos();
 
 public:
     MainWindow(QWidget *parent = nullptr);

@@ -1,4 +1,4 @@
-QT       += core gui testlib
+QT       += core gui testlib multimedia multimediawidgets
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -13,6 +13,8 @@ SOURCES += \
     comporators/imageproximitytoorigincomparator.cpp \
     comporators/sharpnesscomparator.cpp \
     gui/formattors/recentfilespathformater.cpp \
+    gui/getimagesfromvideosdialog.cpp \
+    gui/videoplayerwidget.cpp \
     imageprocessorsmanager/property.cpp \
     gui/aboutdialog.cpp \
     gui/colorinfopanel.cpp \
@@ -25,6 +27,7 @@ SOURCES += \
     gui/propertyeditordialog.cpp \
     imageprocessorsmanager/imageprocessorsmanager.cpp \
     interactors/comparisoninteractor.cpp \
+    interactors/getimagesfromvideosinteractor.cpp \
     interactors/recentfilesmanager.cpp \
     interactors/rgbtrackinginteractor.cpp \
     interactors/setpropertiesinteractor.cpp \
@@ -50,7 +53,9 @@ HEADERS += \
     comporators/sharpnesscomparator.h \
     gui/RgbValue.h \
     gui/formattors/recentfilespathformater.h \
+    gui/getimagesfromvideosdialog.h \
     gui/imageviewstate.h \
+    gui/videoplayerwidget.h \
     imageprocessorsmanager/imageprocessorsinfo.h \
     imageprocessorsmanager/imageprocessorsmanager.h \
     imageprocessorsmanager/property.h \
@@ -64,6 +69,7 @@ HEADERS += \
     gui/imageviewer.h \
     gui/propertyeditordialog.h \
     interactors/comparisoninteractor.h \
+    interactors/getimagesfromvideosinteractor.h \
     interactors/recentfilesmanager.h \
     interactors/rgbtrackinginteractor.h \
     interactors/setpropertiesinteractor.h \

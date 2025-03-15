@@ -67,6 +67,9 @@ void RgbTrackingInteractor::placeColorPickerOnLeft() {
 }
 
 void RgbTrackingInteractor::openColorPickerDialog(bool isOnePanelMode) {
+    if (mainWindow->isMaximized() || mainWindow->isFullScreen()) {
+        return;
+    }
     closeColorPickerDialog();
     colorPanel = new ColorInfoPanel(isOnePanelMode);
     colorPanel->show();

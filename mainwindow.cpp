@@ -23,11 +23,10 @@
 #include <QDockWidget>
 #include <QMimeData>
 #include <qprocess.h>
-
 #include <gui/imageviewstate.h>
 #include <gui/propertyeditordialog.h>
-
 #include <gui/formattors/recentfilespathformater.h>
+#include <interactors/getimagesfromvideosinteractor.h>
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -110,6 +109,7 @@ void MainWindow::makeConnections() {
     connect(ui->actionSaveImageAs, &QAction::triggered, this, &MainWindow::saveImageAs);
     connect(ui->actionPlaceColorPickerOnRight, &QAction::triggered, this, &MainWindow::placeColorPickerOnRight);
     connect(ui->actionPlaceColorPickerOnLeft, &QAction::triggered, this, &MainWindow::placeColorPickerOnLeft);
+    connect(ui->actionGrabImagesFromVideos, &QAction::triggered, this, &MainWindow::grabImagesFromVideos);
 }
 
 void MainWindow::enabledImageOperationMenuItems(bool isEnabled) {
@@ -133,6 +133,23 @@ void MainWindow::enabledImageOperationMenuItems(bool isEnabled) {
 
 /* Event handlers for application menu interactions { */
 
+void MainWindow::grabImagesFromVideos() {
+    try {
+        GetImagesFromVideosInteractor grabImagesFromVideosInteractor{};
+        auto imagesPath = grabImagesFromVideosInteractor.grabImagesFromVideos();
+        if (!imagesPath) {
+            return;
+        }
+        comparisionInteractor->loadTwoImagesBeingCompared(imagesPath->first,
+                                                          imagesPath->second,
+                                                          false,
+                                                          false,
+                                                          true
+                                                          );
+    } catch (std::runtime_error &e) {
+        showError(e.what());
+    }
+}
 
 void MainWindow::imageZoomedToActualSize() {
     viewer->actualSize();

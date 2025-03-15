@@ -29,16 +29,19 @@
     </property>
     <widget class="QMenu" name="menuRecentFiles">
      <property name="title">
-      <string>Recent Files</string>
+      <string>Recent Images</string>
      </property>
     </widget>
     <addaction name="actionOpenImages"/>
     <addaction name="menuRecentFiles"/>
     <addaction name="separator"/>
+    <addaction name="actionGrabImagesFromVideos"/>
+    <addaction name="separator"/>
     <addaction name="actionCloseImages"/>
     <addaction name="separator"/>
     <addaction name="actionSaveImageAs"/>
     <addaction name="actionSaveVisibleAreaAs"/>
+    <addaction name="separator"/>
    </widget>
    <widget class="QMenu" name="menuComparators">
     <property name="title">
@@ -58,6 +61,7 @@
     </property>
     <addaction name="actionColorPicker"/>
     <addaction name="actionAdvancedColorPicker"/>
+    <addaction name="separator"/>
    </widget>
    <widget class="QMenu" name="menuTransftomers">
     <property name="title">
@@ -272,6 +276,19 @@
    </property>
    <property name="shortcut">
     <string>F</string>
+   </property>
+  </action>
+  <action name="actionOpen_Videos">
+   <property name="text">
+    <string>Open Videos</string>
+   </property>
+  </action>
+  <action name="actionGrabImagesFromVideos">
+   <property name="text">
+    <string>Get Images From Videos</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+O</string>
    </property>
   </action>
  </widget>
