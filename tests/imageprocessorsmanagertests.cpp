@@ -16,12 +16,12 @@ void ImageProcessorsManagerTests::testFindProcessor() {
     manager->addProcessor(processor);
 
     // Verify that the processor can be found by name
-    auto found = manager->findProcessorByName("MockProcessor");
+    auto found = manager->findProcessor("MockProcessor");
     QVERIFY(found != nullptr);
     QCOMPARE(found->name(), QString("MockProcessor"));
 
     // Verify that searching for a non-existent processor returns nullptr
-    auto notFound = manager->findProcessorByName("NonExistentProcessor");
+    auto notFound = manager->findProcessor("NonExistentProcessor");
     QVERIFY(notFound == nullptr);
 }
 
@@ -31,7 +31,7 @@ void ImageProcessorsManagerTests::testAddProcessor() {
     manager->addProcessor(processor);
 
     // Verify that the processor was added successfully
-    auto found = manager->findProcessorByName("NewProcessor");
+    auto found = manager->findProcessor("NewProcessor");
     QVERIFY(found != nullptr);
     QCOMPARE(found->name(), QString("NewProcessor"));
 }
@@ -42,13 +42,13 @@ void ImageProcessorsManagerTests::testRemoveProcessor() {
     manager->addProcessor(processor);
 
     // Verify that the processor exists initially
-    auto found = manager->findProcessorByName("RemovableProcessor");
+    auto found = manager->findProcessor("RemovableProcessor");
     QVERIFY(found != nullptr);
 
     manager->removeProcessor("RemovableProcessor");
 
     // Verify that the processor was removed successfully
-    auto notFound = manager->findProcessorByName("RemovableProcessor");
+    auto notFound = manager->findProcessor("RemovableProcessor");
     QVERIFY(notFound == nullptr);
 }
 

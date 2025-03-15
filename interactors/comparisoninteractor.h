@@ -18,9 +18,11 @@ public:
 
     void loadTwoImagesBeingCompared(QString& Image1Path,
                                     QString& Image2Path,
-                                    bool usePreviousImageGeometry = false,
-                                    bool removeFilesAtExit = false
+                                    bool usePreviousImageGeometry,
+                                    bool removeFilesAtExit,
+                                    bool isUpdateRecentMenu
                                     );
+
     void loadTwoImagesBeingCompared(QList<QUrl> urls);
     void onImageProcessorShouldBeCalled(QVariant callerData);
     void saveImage(SaveImageInfo info);
@@ -29,7 +31,7 @@ public:
 
     friend class ComparisonInteractorTests;
 
-    void loadTwoImagesBeingCompared(QString recentFileMenuRecord);
+    void loadTwoImagesBeingCompared(QString recentFileMenuRecord, bool isUpdateRecentMenu);
 private:
     IMainWindowCallbacks *callbacks;
     RecentFilesManager *recentFilesManager;

@@ -12,6 +12,8 @@
 #include <filters/rgbfilter.h>
 #include <qhash.h>
 
+using namespace std;
+
 ImageProcessorsManager *ImageProcessorsManager::manager = new ImageProcessorsManager();
 
 ImageProcessorsManager *ImageProcessorsManager::instance() {
@@ -58,6 +60,12 @@ ImageProcessorsManager::ImageProcessorsManager() {
 
 void ImageProcessorsManager::addProcessor(shared_ptr<IImageProcessor> comporator) {
     if (comporator != nullptr) {
+        if (hotkeys.contains(comporator->hotkey())) {
+            QString errorMsg = QString("Error: It is not possible to add ") +
+                                       "two IImageProcessors with the same hotkey value.";
+            throw runtime_error(errorMsg.toStdString());
+        }
+        hotkeys.insert(comporator->hotkey());
         processors.append(comporator);
     }
 }
@@ -65,24 +73,18 @@ void ImageProcessorsManager::addProcessor(shared_ptr<IImageProcessor> comporator
 void ImageProcessorsManager::removeProcessor(QString name) {
     for (auto it = processors.begin(); it != processors.end(); ++it) {
         if ((*it)->name() == name) {
+            if (hotkeys.contains((*it)->hotkey())) {
+                hotkeys.remove((*it)->hotkey());
+            }
             processors.erase(it);
             break;
         }
     }
 }
 
-shared_ptr<IImageProcessor> ImageProcessorsManager::findProcessorByName(QString name) {
+shared_ptr<IImageProcessor> ImageProcessorsManager::findProcessor(QString name) {
     for (auto it = processors.begin(); it != processors.end(); ++it) {
         if ((*it)->name() == name) {
-            return *it;
-        }
-    }
-    return nullptr;
-}
-
-shared_ptr<IImageProcessor> ImageProcessorsManager::findProcessorByHotkey(QString hotkey) {
-    for (auto it = processors.begin(); it != processors.end(); ++it) {
-        if ((*it)->hotkey() == hotkey) {
             return *it;
         }
     }
@@ -91,25 +93,9 @@ shared_ptr<IImageProcessor> ImageProcessorsManager::findProcessorByHotkey(QStrin
 
 QList<ImageProcessorInfo> ImageProcessorsManager::allProcessorsInfo() {
     QList<ImageProcessorInfo> processorsInfo;
-    QHash<QString, int> hotkeyCount;
-
     for (auto it = processors.begin(); it != processors.end(); ++it) {
-        QString hotkey = (*it)->hotkey().toLower();
-        ImageProcessorInfo processorInfo((*it)->name(),
-                                         (*it)->description(),
-                                         hotkey,
-                                         (*it)->getType()
-                                         );
-
-        hotkeyCount[hotkey]++;
+        ImageProcessorInfo processorInfo((*it)->name(), (*it)->description(), (*it)->hotkey(), (*it)->getType());
         processorsInfo.append(processorInfo);
     }
-
-    for (auto& processor : processorsInfo) {
-        if (hotkeyCount[processor.hotkey] > 1) {
-            processor.hotkey = "";
-        }
-    }
-
     return processorsInfo;
 }

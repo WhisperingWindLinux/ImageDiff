@@ -61,7 +61,7 @@ private:
     int currentImageIndex;
     qreal scaleFactor;
     MainWindow *parent = nullptr;
-    QMouseEvent* lastMousEvent = nullptr;
+    QPoint lastCursorPos;
     bool isRgbTrackingActive = false;
 
     // Zoom to selection
@@ -71,11 +71,10 @@ private:
     QRect selectionRect;                    // Rectangle being selected (in view coordinates)
 
     static QPixmap getVisiblePixmap(QGraphicsView* view);
+
     void passCropedImageToOtherAppInstance(QRectF rect);
 
-    void extracted(int &x, int &y, QColor &colorOfHiddenImage,
-                   QString &visibleImageName, QString &hiddenImageName);
-    void trackPixelColor(QMouseEvent *event);
+    void trackPixelColor(QPoint cursorPos);
 
     void fillRgbValues(QString visibleImageName,
                                        QColor colorOfVisibleImage,

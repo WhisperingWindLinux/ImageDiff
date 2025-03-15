@@ -46,10 +46,6 @@ ImageViewer::~ImageViewer() {
         delete comparatorResultImage;
         comparatorResultImage = nullptr;
     }
-    if (lastMousEvent != nullptr) {
-        delete lastMousEvent;
-        lastMousEvent = nullptr;
-    }
 }
 
 /* Color Picker is run { */
@@ -57,7 +53,7 @@ ImageViewer::~ImageViewer() {
 void ImageViewer::onColorPickerStatusChanged(bool isActivate) {
     if (isActivate) {
         isRgbTrackingActive = true;
-        parent->onRgbValueUnderCursonChanged({firstImageName, -1, -1, -1}, {secondImageName, -1, -1, -1});
+        trackPixelColor(lastCursorPos);
     } else {
         isRgbTrackingActive = false;
     }
@@ -139,7 +135,6 @@ void ImageViewer::showImageFromComparator(QPixmap &image, QString description) {
     secondImage->setVisible(false);
     comparatorResultImage->setVisible(true);
     parent->showStatusMessage(description);
-    parent->onRgbValueUnderCursonChanged({"", -1, -1, -1}, {"", -1, -1, -1});
 }
 
 /* } =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
@@ -184,8 +179,7 @@ void ImageViewer::toggleImage() {
     }
 
     centerOn(viewRect.center());
-
-    trackPixelColor(lastMousEvent);
+    trackPixelColor(lastCursorPos);
 }
 
 /* } =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
@@ -327,39 +321,31 @@ void ImageViewer::passCropedImageToOtherAppInstance(QRectF rect) {
 /* Events { */
 
 void ImageViewer::mouseMoveEvent(QMouseEvent* event) {
-
     if (event == nullptr) {
         return;
     }
-
+    lastCursorPos = event->pos();
     QGraphicsView::mouseMoveEvent(event);
-
-    if (lastMousEvent != nullptr) {
-        delete lastMousEvent;
-    }
-    lastMousEvent = event->clone();
 
     if (selecting) {
         // Zoom to selection.
         // Update the selection rectangle as the user drags the mouse
         QPoint currentPoint = event->pos();
-        selectionRect = QRect(selectionStart, currentPoint).normalized(); // Create a normalized rectangle
-        viewport()->update(); // Request a repaint of the view
+        selectionRect = QRect(selectionStart, currentPoint).normalized();
+        viewport()->update();
     }
 
-    // Implement RGB values tracking under the mouse cursor.
-    // It needs for Color Picker.
-    trackPixelColor(event);
+    // Implement RGB values tracking under the mouse cursor. It needs for Color Picker.
+    trackPixelColor(event->pos());
 }
 
-void ImageViewer::trackPixelColor(QMouseEvent* event) {
-
-    if (!isRgbTrackingActive || comparatorResultImage != nullptr) {
+void ImageViewer::trackPixelColor(QPoint cursorPos) {
+    if (!isRgbTrackingActive) {
         return;
     }
 
     // Convert mouse position to scene coordinates
-    QPointF scenePos = mapToScene(event->pos());
+    QPointF scenePos = mapToScene(cursorPos);
 
     // Get the item under the cursor (if any)
     QGraphicsItem* item = scene->itemAt(scenePos, transform());
@@ -379,21 +365,19 @@ void ImageViewer::trackPixelColor(QMouseEvent* event) {
             // Ensure the coordinates are within the image bounds
             if (x >= 0 && x < visibleImage.width() && y >= 0 && y < visibleImage.height()) {
                 // Get the color of the pixel
-                QColor colorOfVisibleImage = visibleImage.pixelColor(x, y);
-                QColor colorOfHiddenImage;
+                QColor colorOfVisibleImage, colorOfHiddenImage;
                 QString visibleImageName, hiddenImageName;
-                if (comparatorResultImage != nullptr) {
-                    visibleImageName = "comparison result";
-                } else if (currentImageIndex == 0) {
+                if (currentImageIndex == 0) {
+                    colorOfVisibleImage = firstImage->pixmap().toImage().pixelColor(x, y);
                     colorOfHiddenImage = secondImage->pixmap().toImage().pixelColor(x, y);
                     visibleImageName = firstImageName;
                     hiddenImageName = secondImageName;
                 } else {
+                    colorOfVisibleImage = secondImage->pixmap().toImage().pixelColor(x, y);
                     colorOfHiddenImage = firstImage->pixmap().toImage().pixelColor(x, y);
                     visibleImageName = secondImageName;
                     hiddenImageName = firstImageName;
                 }
-
                 fillRgbValues(visibleImageName, colorOfVisibleImage, hiddenImageName, colorOfHiddenImage);
             }
         }

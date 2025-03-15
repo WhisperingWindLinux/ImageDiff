@@ -4,6 +4,7 @@
 #include <interfaces/mainwindowcallbacks.h>
 #include <interactors/comparisoninteractor.h>
 #include <interactors/recentfilesmanager.h>
+#include <interactors/rgbtrackinginteractor.h>
 #include <gui/RgbValue.h>
 
 #include <QMainWindow>
@@ -47,6 +48,8 @@ public:
     void showStatusMessage(QString message);
     void passTwoImagesBeingComparedToOtherAppInstance(QString firstFilePath, QString secondFilePath);
     void onReceiveTwoImagesBeingComparedViaCommandline(QString firstFilePath, QString secondFilePath);
+    void onRgbTrackingStatusChanged(bool isActive);
+
 
 protected:
     void closeEvent(QCloseEvent *event) override;
@@ -57,16 +60,13 @@ protected:
 
 private:
     Ui::MainWindow *ui;
-    ImageViewer *viewer = nullptr;                          // memory managed manualy
-    ComparisonInteractor* comparisionInteractor = nullptr;  // long live object
-    ColorInfoPanel* colorPanel = nullptr;                   // memory managed manualy
+    ImageViewer *viewer = nullptr;
+    ComparisonInteractor* comparisionInteractor = nullptr;
+    RgbTrackingInteractor *rgbTrackingInteractor = nullptr;
     QList<shared_ptr<QProcess>> instances;
 
-    // A value of 50% places the color picker window centered
-    // relative to the vertical axis of the main window.
-    int colorPickerAlignmentPercent = 80;
-
-    void populateComparatorsAndFiltersMenus();
+    void buildMenu();
+    void makeConnections();
     void loadTwoImagesBeingCompared();
     void showError(const QString &errorMessage);
     void openColorPickerDialog(bool isOnePanelMode);

@@ -3,19 +3,20 @@
 
 #include "imageprocessorsinfo.h"
 #include <interfaces/comporator.h>
+#include <QSet>
 
 class ImageProcessorsManager
 {
 public:
     static ImageProcessorsManager *instance();
-    shared_ptr<IImageProcessor> findProcessorByName(QString name);
+    shared_ptr<IImageProcessor> findProcessor(QString name);
     QList<ImageProcessorInfo> allProcessorsInfo();
 
     friend class ImageProcessorsManagerTests;
 
-    shared_ptr<IImageProcessor> findProcessorByHotkey(QString hotkey);
 private:
     QList<shared_ptr<IImageProcessor>> processors;
+    QSet<QString> hotkeys;
 
     static ImageProcessorsManager *manager;
     ImageProcessorsManager();

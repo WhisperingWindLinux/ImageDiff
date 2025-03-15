@@ -26,6 +26,7 @@ SOURCES += \
     imageprocessorsmanager/imageprocessorsmanager.cpp \
     interactors/comparisoninteractor.cpp \
     interactors/recentfilesmanager.cpp \
+    interactors/rgbtrackinginteractor.cpp \
     interactors/setpropertiesinteractor.cpp \
     main.cpp \
     mainwindow.cpp \
@@ -64,6 +65,7 @@ HEADERS += \
     gui/propertyeditordialog.h \
     interactors/comparisoninteractor.h \
     interactors/recentfilesmanager.h \
+    interactors/rgbtrackinginteractor.h \
     interactors/setpropertiesinteractor.h \
     interfaces/comporator.h \
     interfaces/filter.h \

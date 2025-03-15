@@ -34,7 +34,7 @@ void ComparisonInteractor::onImageProcessorShouldBeCalled(QVariant callerData) {
 
     QString processorName = callerData.toString();
 
-    auto processor = ImageProcessorsManager::instance()->findProcessorByName(processorName);
+    auto processor = ImageProcessorsManager::instance()->findProcessor(processorName);
 
 
     if (processor == nullptr) {
@@ -129,7 +129,7 @@ void ComparisonInteractor::clear() {
 }
 
 void ComparisonInteractor::realoadImagesFromDisk() {
-    loadTwoImagesBeingCompared(firstImagePath, secondImagePath, true);
+    loadTwoImagesBeingCompared(firstImagePath, secondImagePath, true, false, false);
 }
 
 QStringList ComparisonInteractor::getRecentFiles() {
@@ -152,13 +152,13 @@ QStringList ComparisonInteractor::getRecentFiles() {
 
 // Open images from the recent files menu.
 // The menu item is formatted as "path to file 1 -> path to file 2".
-void ComparisonInteractor::loadTwoImagesBeingCompared(QString recentFileMenuRecord) {
+void ComparisonInteractor::loadTwoImagesBeingCompared(QString recentFileMenuRecord, bool isUpdateRecentMenu) {
     auto formatter = make_unique<RecentFilesPathFormater>();
     std::optional<QPair<QString, QString>> pair = formatter->stringToPair(recentFileMenuRecord);
     if (!pair) {
         throw std::runtime_error("Error: Unable to load images!");
     }
-    loadTwoImagesBeingCompared(pair->first, pair->second, false);
+    loadTwoImagesBeingCompared(pair->first, pair->second, false, false, isUpdateRecentMenu);
 }
 
 void ComparisonInteractor::loadTwoImagesBeingCompared(QList<QUrl> urls) {
@@ -168,14 +168,15 @@ void ComparisonInteractor::loadTwoImagesBeingCompared(QList<QUrl> urls) {
     if (urls[0].isLocalFile() && urls[1].isLocalFile()) {
         QString file1 = urls[0].toLocalFile();
         QString file2 = urls[1].toLocalFile();
-        loadTwoImagesBeingCompared(file1, file2, false);
+        loadTwoImagesBeingCompared(file1, file2, false, false, true);
     }
 }
 
 void ComparisonInteractor::loadTwoImagesBeingCompared(QString& Image1Path,
                                                       QString& Image2Path,
                                                       bool usePreviousImageGeometry,
-                                                      bool removeImageFilesAtExit
+                                                      bool removeImageFilesAtExit,
+                                                      bool isUpdateRecentMenu
                                                       )
 {
 
@@ -210,8 +211,10 @@ void ComparisonInteractor::loadTwoImagesBeingCompared(QString& Image1Path,
                                            usePreviousImageGeometry
                                            );
 
-    recentFilesManager->addPair(firstImagePath, secondImagePath);
-    callbacks->updateRecentFilesMenu();
+    if (isUpdateRecentMenu) {
+        recentFilesManager->addPair(firstImagePath, secondImagePath);
+        callbacks->updateRecentFilesMenu();
+    }
 }
 
 bool ComparisonInteractor::validateFile(const QString &filePath) {

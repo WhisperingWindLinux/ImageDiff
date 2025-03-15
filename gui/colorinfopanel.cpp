@@ -110,7 +110,6 @@ void ColorInfoPanel::updateTopPanel(RgbValue rgbValue) {
     // Check if any RGB value is out of range
     if (r < 0 || r > 255 || g < 0 || g > 255 || b < 0 || b > 255) {
         // Display "n/a" for invalid RGB values
-        firstFileNameLabel->setText("n/a");
         firstRLabel->setText("R: n/a");
         firstGLabel->setText("G: n/a");
         firstBLabel->setText("B: n/a");
@@ -149,7 +148,6 @@ void ColorInfoPanel::updateBottomPanel(RgbValue rgbValue) {
     // Check if any RGB value is out of range
     if (r < 0 || r > 255 || g < 0 || g > 255 || b < 0 || b > 255) {
         // Display "n/a" for invalid RGB values
-        secondFileNameLabel->setText("n/a");
         secondRLabel->setText("R: n/a");
         secondGLabel->setText("G: n/a");
         secondBLabel->setText("B: n/a");
@@ -204,8 +202,6 @@ void ColorInfoPanel::updateBothPanelsAndHighlightDifferences(RgbValue topRgb,
         // Check if values are out of range
         if (topValue < 0 || topValue > 255 || bottomValue < 0 || bottomValue > 255) {
             // Display "n/a" for invalid values
-            firstFileNameLabel->setText("n/a");
-            secondFileNameLabel->setText("n/a");
             topLabel->setText(QString("%1: n/a").arg(componentName));
             bottomLabel->setText(QString("%1: n/a").arg(componentName));
             topLabel->setStyleSheet("color: black;");
@@ -256,4 +252,3 @@ void ColorInfoPanel::updateBothPanelsAndHighlightDifferences(RgbValue topRgb,
     // Update and compare B values
     formatComponent("B", topRgb.getB(), bottomRgb.getB(), firstBLabel, secondBLabel);
 }
-

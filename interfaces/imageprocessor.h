@@ -67,6 +67,8 @@ Sharpness comporator                                                            
 
 Compare the proximity of two images to an original image                           Y
 
+Fit In View                                                                        F
+
 
 */
 
