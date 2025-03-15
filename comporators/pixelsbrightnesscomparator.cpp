@@ -73,22 +73,34 @@ PixelsBrightnessComparisonResult PixelsBrightnessComparator::compareImages(QImag
 // Function to format comparison results as an HTML table
 QString PixelsBrightnessComparator::formatResultToHtml(const PixelsBrightnessComparisonResult& result) {
 
+    QLocale locale = QLocale::system();
+    QString formattedTotalPixels = locale.toString(result.totalPixels);
+    QString formattedTheSameCount = locale.toString(result.sameColorCount);
+    QString formattedBrighterCount = locale.toString(result.brighterCount);
+    QString formattedDarkerPercent = locale.toString(result.darkerCount);
+
     QString html;
-    html += QString("<b>Pixel Brightness Difference Analysis for %1</b><br>")
-        .arg(result.name1);
-    html += "<table border='1' cellpadding='5' cellspacing='0'>";
-    html += "<tr><th>Metric</th><th>Value</th></tr>";
-    html += QString("<tr><td>Total Pixels</td><td>%1</td></tr>").arg(result.totalPixels);
-    html += QString("<tr><td>Same Color Count</td><td>%1 (%2%)</td></tr>")
-                .arg(result.sameColorCount)
-                .arg(result.sameColorPercent, 0, 'f', 2);
-    html += QString("<tr><td>Brighter Count</td><td>%1 (%2%)</td></tr>")
-                .arg(result.brighterCount)
-                .arg(result.brighterPercent, 0, 'f', 2);
-    html += QString("<tr><td>Darker Count</td><td>%1 (%2%)</td></tr>")
-                .arg(result.darkerCount)
-                .arg(result.darkerPercent, 0, 'f', 2);
-    html += "</table>";
+    html += "<h2>Comparison of Image Brightness</h2>";
+
+    html += QString("Comparing image %1 with image %2.<br/><br/>")
+                .arg(result.name1)
+                .arg(result.name2);
+
+    html += QString("Total pixels %1.<br/>")
+                .arg(formattedTotalPixels);
+
+    html += QString("%1 (%2%) pixels have the same brightness.<br/>")
+                .arg(formattedTheSameCount)
+                .arg(QString::number(result.sameColorPercent, 'f', 2));
+
+    html += QString("%1 (%2%) pixels are brighter.<br/>")
+                .arg(formattedBrighterCount)
+                .arg(QString::number(result.brighterPercent, 'f', 2));
+
+    html += QString("%1 (%2%) pixels are darker.<br/>")
+                .arg(formattedDarkerPercent)
+                .arg(QString::number(result.darkerPercent, 'f', 2));
+
 
     double dTotalBrightness1 = result.totalBrightness1;
     double dTotalBrightness2 = result.totalBrightness2;
@@ -97,37 +109,41 @@ QString PixelsBrightnessComparator::formatResultToHtml(const PixelsBrightnessCom
     double brightnessDifferencePercentage = (std::abs(dTotalBrightness1 - dTotalBrightness2) /
                                              std::max(dTotalBrightness1, dTotalBrightness2)) * 100;
 
+    html += "<font color=\"green\"><br>";
     if (dTotalBrightness1 > dTotalBrightness2) {
-        html += QString("<br><br>%1 is brighter than %2 because its total brightness (%3) is greater than the second's (%4) by %5%.")
+        html += QString("%1 is brighter than %2 because its brightness is greater by %3%.")
         .arg(result.name1)
             .arg(result.name2)
-            .arg(result.totalBrightness1)
-            .arg(result.totalBrightness2)
             .arg(QString::number(brightnessDifferencePercentage, 'f', 2));
     } else if (dTotalBrightness1 < dTotalBrightness2) {
-        html += QString("<br><br>%1 is darker than %2 because its total brightness (%3) is less than the second's (%4) by %5%.")
+        html += QString("%1 is darker than %2 because its brightness is less by %3%.")
         .arg(result.name1)
             .arg(result.name2)
-            .arg(result.totalBrightness1)
-            .arg(result.totalBrightness2)
             .arg(QString::number(brightnessDifferencePercentage, 'f', 2));
     } else {
-        html += "<br><br>Both images have the same total brightness.";
+        html += "Both images have the same brightness.";
     }
+    html += "</text>";
 
     return html;
 }
 
-QString PixelsBrightnessComparator::name() {
-    return "Show pixels' brigthness difference statistics";
+QString PixelsBrightnessComparator::name() const {
+    return "Brigthness";
 }
 
-QString PixelsBrightnessComparator::hotkey() {
+QString PixelsBrightnessComparator::hotkey() const {
     return "N";
 }
 
-QString PixelsBrightnessComparator::description() {
-    return name() + '.';
+QString PixelsBrightnessComparator::htmlFormattedHelp() const {
+    return QString("This algorithm compares the brightness of corresponding pixels in two images. ")
+                   + "The result provides percentages of pixels with the same color, "
+                   + "brighter pixels in the first image, and darker pixels in the second image. "
+                   + "<br/>The algorithm makes a conclusion based on the total "
+                   + "brightness of all pixels. This means that there may be fewer brighter "
+                   + "pixels, but their total brightness will be higher than that of"
+                   + " the second image.";
 }
 
 std::shared_ptr<ComparisonResultVariant> PixelsBrightnessComparator::compare(ComparableImage first,

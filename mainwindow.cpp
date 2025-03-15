@@ -2,7 +2,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "gui/imageviewer.h"
-#include "imageprocessorsmanager/imageprocessorsmanager.h"
 #include "interactors/savefileinfo.h"
 
 #include <QLabel>
@@ -37,6 +36,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     comparisionInteractor = new ComparisonInteractor(this);
     rgbTrackingInteractor = new RgbTrackingInteractor(this);
+    buildMenuDelegate = new MainWindowBuildMenuDelegate(this);
 
     buildMenu();
     makeConnections();
@@ -62,34 +62,11 @@ void MainWindow::showEvent(QShowEvent* event) {
     updateRecentFilesMenu();
 }
 
-// The application can run comparators and filters - custom image processors classes
-// that can be easily added to the application. For more information see the constructor'
-// imageprocessormanager/imageprocessormanager.cpp
 void MainWindow::buildMenu() {
-    ImageProcessorsManager *manager = ImageProcessorsManager::instance();
-    auto comporatorsInfo = manager->allProcessorsInfo();
-
     QMenu *comparatorsMenu = ui->menuComparators;
-    QMenu *transformersMenu = ui->menuTransftomers;
-
-    // an image comporators
-    for (auto it = comporatorsInfo.begin(); it != comporatorsInfo.end(); ++it) {
-        QString name = (*it).name;
-        QString hotkey = (*it).hotkey;
-        ImageProcessorType type = (*it).type;
-        QAction *newAction;
-
-        if (type == ImageProcessorType::Comparator) {
-            newAction = comparatorsMenu->addAction(name);
-        } else if (type == ImageProcessorType::Filter) {
-            newAction = transformersMenu->addAction(name);
-        } else {
-            continue;
-        }
-        newAction->setData(name);
-        newAction->setShortcut(QKeySequence(hotkey));
-        connect(newAction, &QAction::triggered, this, &MainWindow::callImageComparator);
-    }
+    QMenu *filtersMenu = ui->menuFilters;
+    QMenu *helpMenu = ui->menuHelp;
+    buildMenuDelegate->buildFiltersAndComparatorsMenus(comparatorsMenu, filtersMenu, helpMenu);
     enabledImageOperationMenuItems(false);
 }
 
@@ -110,11 +87,12 @@ void MainWindow::makeConnections() {
     connect(ui->actionPlaceColorPickerOnRight, &QAction::triggered, this, &MainWindow::placeColorPickerOnRight);
     connect(ui->actionPlaceColorPickerOnLeft, &QAction::triggered, this, &MainWindow::placeColorPickerOnLeft);
     connect(ui->actionGrabImagesFromVideos, &QAction::triggered, this, &MainWindow::grabImagesFromVideos);
+    connect(ui->actionRunAllComparators, &QAction::triggered, this, &MainWindow::runAllComparators);
 }
 
 void MainWindow::enabledImageOperationMenuItems(bool isEnabled) {
     ui->menuComparators->setDisabled(!isEnabled);
-    ui->menuTransftomers->setDisabled(!isEnabled);
+    ui->menuFilters->setDisabled(!isEnabled);
     ui->menuImageAnalysis->setDisabled(!isEnabled);
     ui->actionSaveImageAs->setDisabled(!isEnabled);
     ui->actionSaveVisibleAreaAs->setDisabled(!isEnabled);
@@ -149,6 +127,10 @@ void MainWindow::grabImagesFromVideos() {
     } catch (std::runtime_error &e) {
         showError(e.what());
     }
+}
+
+void MainWindow::runAllComparators() {
+
 }
 
 void MainWindow::imageZoomedToActualSize() {
@@ -200,10 +182,21 @@ void MainWindow::switchBetweenImages() {
     viewer->toggleImage();
 }
 
-void MainWindow::callImageComparator() {
+void MainWindow::callImageProcessor() {
     QAction *action = qobject_cast<QAction*>(sender());
     try {
         comparisionInteractor->onImageProcessorShouldBeCalled(action->data());
+    } catch (std::runtime_error &e) {
+        showError(e.what());
+    } catch (std::exception &e) {
+        qDebug() << e.what();
+    }
+}
+
+void MainWindow::callImageProcessorHelp() {
+    QAction *action = qobject_cast<QAction*>(sender());
+    try {
+        comparisionInteractor->onImageProcessorHelpShouldBeCalled(action->data());
     } catch (std::runtime_error &e) {
         showError(e.what());
     } catch (std::exception &e) {

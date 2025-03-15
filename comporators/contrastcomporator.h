@@ -6,19 +6,22 @@
 
 #include <interfaces/comporator.h>
 
-// Structure to store the comparison results
+// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
 struct ContrastComparisonResult {
-    QString name1;               // The Name of the first image
-    QString name2;               // The Name of the second image
+    QString image1Name;               // The Name of the first image
+    QString image2Name;               // The Name of the second image
     double contrast1;            // Contrast of the first image
     double contrast2;            // Contrast of the second image
-    QString moreContrastImage;   // The name of the image with higher contrast
+    QString moreContrastImageName;   // The name of the image with higher contrast
 };
 
-/*
- * The algorithm calculates the contrast of an image based on the statistical
- * analysis of pixel brightness (luminance).
- */
+// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+// The algorithm calculates the contrast of an image based on the statistical
+// analysis of pixel brightness (luminance).
+// It compares two images based on this criterion.
+
 class ContrastComporator : public IComparator
 {
 public:
@@ -28,9 +31,9 @@ public:
 
     // AComparator interface
 
-    QString name() override;
-    QString hotkey() override;
-    QString description() override;
+    QString name() const override;
+    QString hotkey() const override;
+    QString htmlFormattedHelp() const override;
     std::shared_ptr<ComparisonResultVariant> compare(ComparableImage first, ComparableImage second) override;
 
 private:

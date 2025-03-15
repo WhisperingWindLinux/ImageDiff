@@ -45,14 +45,17 @@
    </widget>
    <widget class="QMenu" name="menuComparators">
     <property name="title">
-     <string>Сomparison</string>
+     <string>Сomparators</string>
     </property>
+    <addaction name="actionRunAllComparators"/>
     <addaction name="separator"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
      <string>Help</string>
     </property>
+    <addaction name="actionFilters_Description"/>
+    <addaction name="separator"/>
     <addaction name="actionAbout"/>
    </widget>
    <widget class="QMenu" name="menuImageAnalysis">
@@ -63,7 +66,7 @@
     <addaction name="actionAdvancedColorPicker"/>
     <addaction name="separator"/>
    </widget>
-   <widget class="QMenu" name="menuTransftomers">
+   <widget class="QMenu" name="menuFilters">
     <property name="title">
      <string>Filters</string>
     </property>
@@ -93,7 +96,7 @@
    <addaction name="menuFile"/>
    <addaction name="menuView"/>
    <addaction name="menuImageAnalysis"/>
-   <addaction name="menuTransftomers"/>
+   <addaction name="menuFilters"/>
    <addaction name="menuComparators"/>
    <addaction name="menuWindow"/>
    <addaction name="menuHelp"/>
@@ -289,6 +292,21 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Alt+O</string>
+   </property>
+  </action>
+  <action name="actionComporators_Description">
+   <property name="text">
+    <string>Comparators Description</string>
+   </property>
+  </action>
+  <action name="actionFilters_Description">
+   <property name="text">
+    <string>Filters Description</string>
+   </property>
+  </action>
+  <action name="actionRunAllComparators">
+   <property name="text">
+    <string>Run All Comparators</string>
    </property>
   </action>
  </widget>

@@ -54,38 +54,37 @@ double SharpnessComparator::calculateSharpness(const QImage& image) {
 // Format the comparison result as an HTML string
 QString SharpnessComparator::formatResultToHtml(const SharpnessComparisonResult& result) {
     QString html;
-    html += "<html><head><style>";
-    html += "table { border-collapse: collapse; width: 100%; }";
-    html += "th, td { border: 1px solid black; padding: 8px; text-align: left; }";
-    html += "th { background-color: #f2f2f2; }";
-    html += "</style></head><body>";
-    html += "<h3>Image Sharpness Comparison Results</h3><br>";
-    html += "<table>";
-    html += "<tr><th>Parameter</th><th>Image 1</th><th>Image 2</th></tr>";
-    html += QString("<tr><td>Filename</td><td>%1</td><td>%2</td></tr>").arg(result.name1, result.name2);
-    html += QString("<tr><td>Sharpness</td><td>%1</td><td>%2</td></tr>")
-                .arg(result.sharpness1, 0, 'f', 4)
-                .arg(result.sharpness2, 0, 'f', 4);
-    html += QString("<tr><td>Sharper Image</td><td colspan='2'>%1</td></tr>")
+    html += "<h2>Comparison of Image Sharpness</h2>";
+    html += QString("The coefficient of %1 is %2.")
+                .arg(result.name1)
+                .arg(result.sharpness1);
+    html += "<br/>";
+    html += QString("The coefficient of %1 is %2.")
+                .arg(result.name2)
+                .arg(result.sharpness2);
+    html += "<br/><br/>";
+    html += QString("<font color=\"green\">The more sharper image is %1.</font>")
                 .arg(result.sharperImage);
-    html += "</table>";
-    html += "</body></html>";
+    html += "<br /><br />";
+    html += QString("The range of coefficient values is approx [0.0, 1.414]. ")
+            + "Where higher values indicate a more sharper image.";
 
     return html;
 }
 
-QString SharpnessComparator::name() {
-    return "Compare images' sharpness";
+QString SharpnessComparator::name() const {
+    return "Sharpness";
 }
 
-QString SharpnessComparator::hotkey() {
+QString SharpnessComparator::hotkey() const {
     return "H";
 }
 
-QString SharpnessComparator::description() {
-    return QString("This program loads images, calculates their sharpness based on ")
-    + "gradient magnitudes of pixel intensity values, compares the results, "
-        + "and formats the comparison as an HTML table.";
+QString SharpnessComparator::htmlFormattedHelp() const {
+    return QString("This algorithm compares the sharpness of two images by calculating ")
+           + "their sharpness values based on the gradient magnitude of pixel intensity "
+           + "differences in both the horizontal and vertical directions."
+           + " Where higher values indicate a more sharper image.";
 }
 
 std::shared_ptr<ComparisonResultVariant> SharpnessComparator::compare(ComparableImage first, ComparableImage second) {

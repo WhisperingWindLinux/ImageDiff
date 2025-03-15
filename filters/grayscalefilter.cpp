@@ -4,15 +4,15 @@
 
 #include <imageprocessorsmanager/property.h>
 
-QString GrayscaleFilter::name() {
+QString GrayscaleFilter::name() const {
     return "Make Grayscale";
 }
 
-QString GrayscaleFilter::hotkey() {
+QString GrayscaleFilter::hotkey() const {
     return "l";
 }
 
-QString GrayscaleFilter::description() {
+QString GrayscaleFilter::htmlFormattedHelp() const {
     return "Convert an image to grayscale.";
 }
 

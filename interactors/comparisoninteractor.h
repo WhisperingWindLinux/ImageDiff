@@ -1,6 +1,7 @@
 #ifndef COMPARISONINTERACTOR_H
 #define COMPARISONINTERACTOR_H
 
+#include "interactors/runallcomparatorsinteractor.h"
 #include "recentfilesmanager.h"
 #include "savefileinfo.h"
 #include <interfaces/mainwindowcallbacks.h>
@@ -25,9 +26,11 @@ public:
 
     void loadTwoImagesBeingCompared(QList<QUrl> urls);
     void onImageProcessorShouldBeCalled(QVariant callerData);
+    void onImageProcessorHelpShouldBeCalled(QVariant callerData);
     void saveImage(SaveImageInfo info);
     void realoadImagesFromDisk();
     QStringList getRecentFiles();
+    void runAllComparators();
 
     friend class ComparisonInteractorTests;
 
@@ -35,6 +38,7 @@ public:
 private:
     IMainWindowCallbacks *callbacks;
     RecentFilesManager *recentFilesManager;
+    RunAllComparatorsInteractor *runAllComparatorsInteractor;
     QString firstImagePath;
     QString secondImagePath;
     QPixmap firstPixmap;

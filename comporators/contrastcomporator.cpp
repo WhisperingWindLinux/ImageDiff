@@ -32,14 +32,25 @@ ContrastComparisonResult ContrastComporator::compareImages(QImage image1,
 QString ContrastComporator::formatResultToHtml(const ContrastComparisonResult& result) {
     // Build an HTML string to display results
     QString html;
-    html += "<html><body>";
-    html += "<h3>Image Contrast Comparison</h3>";
-    html += "<p><b>Image 1:</b> " + result.name1 + "</p>";
-    html += "<p><b>Contrast:</b> " + QString::number(result.contrast1, 'f', 2) + "</p>";
-    html += "<p><b>Image 2:</b> " + result.name2 + "</p>";
-    html += "<p><b>Contrast:</b> " + QString::number(result.contrast2, 'f', 2) + "</p>";
-    html += "<p><b>Higher Contrast Image:</b> " + result.moreContrastImage + "</p>";
-    html += "</body></html>";
+    html += "<h2>Comparison of Image Contrast</h2>";
+    html += QString("The coefficient of %1 is %2.")
+                .arg(result.image1Name)
+                .arg(result.contrast1);
+    html += "<br/>";
+    html += QString("The coefficient of %1 is %2.")
+                .arg(result.image2Name)
+                .arg(result.contrast2);
+    html += "<br/><br/>";
+    html += QString("<font color=\"green\">The more contrasted image is %1.</font>")
+                .arg(result.moreContrastImageName);
+    html += "<br /><br />";
+    html += "The range of coefficient values is [0, ∞).<br/>";
+    html += QString("The minimum contrast value is 0, which corresponds to an image with ")
+            + "completely uniform brightness for all pixels (e.g., a solid color)."
+            + "<br/>The maximum value is theoretically unlimited, as it depends "
+            + "on the range of brightness variations in the image.<br/>The greater "
+            + "the difference between pixel brightness values, the higher the "
+            + "contrast value will be.";
 
     return html;
 }
@@ -77,17 +88,17 @@ double ContrastComporator::calculateContrast(const QImage& image) {
     return std::sqrt(variance);
 }
 
-QString ContrastComporator::name() {
-    return "Show pixels' contrast difference statistics";
+QString ContrastComporator::name() const {
+    return "Contrast";
 }
 
-QString ContrastComporator::hotkey() {
+QString ContrastComporator::hotkey() const {
     return "K";
 }
 
-QString ContrastComporator::description() {
+QString ContrastComporator::htmlFormattedHelp() const {
     return QString("The algorithm calculates the contrast of an image based on the statistical ")
-                + "analysis of pixel brightness (luminance).It does not compare brightness directly but "
+                + "analysis of pixel brightness (luminance). It does not compare brightness directly but "
                 + "uses it to determine the spread of values, allowing for the assessment of differences "
                 + "between light and dark areas of the image.";
 }

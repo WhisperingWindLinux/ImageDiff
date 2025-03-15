@@ -9,9 +9,10 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    comporators/dummycomparator.cpp \
+    comporators/differenceinpixelvaluesasimage.cpp \
     comporators/imageproximitytoorigincomparator.cpp \
     comporators/sharpnesscomparator.cpp \
+    gui/delegates/mainwindowbuildmenudelegate.cpp \
     gui/formattors/recentfilespathformater.cpp \
     gui/getimagesfromvideosdialog.cpp \
     gui/videoplayerwidget.cpp \
@@ -22,7 +23,6 @@ SOURCES += \
     imageprocessorsmanager/comparableimage.cpp \
     imageprocessorsmanager/comparisonresultvariant.cpp \
     comporators/contrastcomporator.cpp \
-    comporators/imagecomparator.cpp \
     gui/imageviewer.cpp \
     gui/propertyeditordialog.cpp \
     imageprocessorsmanager/imageprocessorsmanager.cpp \
@@ -30,6 +30,7 @@ SOURCES += \
     interactors/getimagesfromvideosinteractor.cpp \
     interactors/recentfilesmanager.cpp \
     interactors/rgbtrackinginteractor.cpp \
+    interactors/runallcomparatorsinteractor.cpp \
     interactors/setpropertiesinteractor.cpp \
     main.cpp \
     mainwindow.cpp \
@@ -48,10 +49,11 @@ SOURCES += \
     filters/rgbfilter.cpp
 
 HEADERS += \
-    comporators/dummycomparator.h \
+    comporators/differenceinpixelvaluesasimage.h \
     comporators/imageproximitytoorigincomparator.h \
     comporators/sharpnesscomparator.h \
     gui/RgbValue.h \
+    gui/delegates/mainwindowbuildmenudelegate.h \
     gui/formattors/recentfilespathformater.h \
     gui/getimagesfromvideosdialog.h \
     gui/imageviewstate.h \
@@ -65,13 +67,13 @@ HEADERS += \
     imageprocessorsmanager/comparableimage.h \
     imageprocessorsmanager/comparisonresultvariant.h \
     comporators/contrastcomporator.h \
-    comporators/imagecomparator.h \
     gui/imageviewer.h \
     gui/propertyeditordialog.h \
     interactors/comparisoninteractor.h \
     interactors/getimagesfromvideosinteractor.h \
     interactors/recentfilesmanager.h \
     interactors/rgbtrackinginteractor.h \
+    interactors/runallcomparatorsinteractor.h \
     interactors/setpropertiesinteractor.h \
     interfaces/comporator.h \
     interfaces/filter.h \

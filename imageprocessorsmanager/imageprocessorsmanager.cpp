@@ -2,10 +2,9 @@
 
 #include "comporators/colorssaturationcomporator.h"
 #include "comporators/contrastcomporator.h"
-#include "comporators/imagecomparator.h"
+#include "comporators/differenceinpixelvaluesasimage.h"
 #include "comporators/pixelsabsolutevaluecomparator.h"
 #include "comporators/pixelsbrightnesscomparator.h"
-#include <comporators/dummycomparator.h>
 #include <comporators/imageproximitytoorigincomparator.h>
 #include <comporators/sharpnesscomparator.h>
 #include <filters/grayscalefilter.h>
@@ -24,7 +23,7 @@ ImageProcessorsManager::ImageProcessorsManager() {
 
     // add comporators
 
-    auto imageComparator = make_shared<ImageComparator>();
+    auto imageComparator = make_shared<DifferenceInPixelValuesAsImageComporator>();
     auto imageSaturationComporator = make_shared<ColorsSaturationComporator>();
     auto imageContrastComporator = make_shared<ContrastComporator>();
     auto imagePixelsAbsoluteValueComparator = make_shared<PixelsAbsoluteValueComparator>();
@@ -39,11 +38,6 @@ ImageProcessorsManager::ImageProcessorsManager() {
     addProcessor(imagePixelsBrightnessComparator);
     addProcessor(sharpnessComparator);
     addProcessor(imageProximityComparator);
-
-    #ifdef QT_DEBUG
-        auto dummyComparator = make_shared<DummyComporator>();
-        addProcessor(dummyComparator);
-    #endif
 
     // add filters
 
@@ -94,7 +88,7 @@ shared_ptr<IImageProcessor> ImageProcessorsManager::findProcessor(QString name) 
 QList<ImageProcessorInfo> ImageProcessorsManager::allProcessorsInfo() {
     QList<ImageProcessorInfo> processorsInfo;
     for (auto it = processors.begin(); it != processors.end(); ++it) {
-        ImageProcessorInfo processorInfo((*it)->name(), (*it)->description(), (*it)->hotkey(), (*it)->getType());
+        ImageProcessorInfo processorInfo((*it)->name(), (*it)->htmlFormattedHelp(), (*it)->hotkey(), (*it)->getType());
         processorsInfo.append(processorInfo);
     }
     return processorsInfo;

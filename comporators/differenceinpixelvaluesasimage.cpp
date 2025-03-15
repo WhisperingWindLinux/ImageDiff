@@ -3,11 +3,9 @@
 #include <QFileInfo>
 #include <QDebug>
 
-#include "imagecomparator.h"
+#include "differenceinpixelvaluesasimage.h"
 
-
-// Method to compare images and save the result
-QImage ImageComparator::compareImages(QImage image1, QImage image2) {
+QImage DifferenceInPixelValuesAsImageComporator::compareImages(QImage image1, QImage image2) {
     // Create a resulting image (copy of the first image)
     QImage resultImg = image1.copy();
     QPainter painter(&resultImg);
@@ -30,20 +28,20 @@ QImage ImageComparator::compareImages(QImage image1, QImage image2) {
     return resultImg;
 }
 
-QString ImageComparator::name() {
-    return "Show the difference in pixel values as an image";
+QString DifferenceInPixelValuesAsImageComporator::name() const {
+    return "Difference In Pixel Values As Image";
 }
 
-QString ImageComparator::hotkey() {
+QString DifferenceInPixelValuesAsImageComporator::hotkey() const {
     return "D";
 }
 
-QString ImageComparator::description() {
+QString DifferenceInPixelValuesAsImageComporator::htmlFormattedHelp() const {
     return QString("Show the difference in pixel values as an image. "
                    "Pixels that differ are marked with red dots.");
 }
 
-std::shared_ptr<ComparisonResultVariant> ImageComparator::compare(ComparableImage first, ComparableImage second) {
+std::shared_ptr<ComparisonResultVariant> DifferenceInPixelValuesAsImageComporator::compare(ComparableImage first, ComparableImage second) {
     auto result = compareImages(first.getImage(), second.getImage());
     std::shared_ptr<ComparisonResultVariant> resultVariant = std::make_shared<ComparisonResultVariant>(result);
     return resultVariant;

@@ -5,6 +5,7 @@
 #include <QString>
 #include <QMap>
 #include <QDebug>
+#include <QLocale>
 
 #include "pixelsabsolutevaluecomparator.h"
 
@@ -65,31 +66,57 @@ QMap<QPair<int, int>, QPair<int, double>> PixelsAbsoluteValueComparator::compare
     return result;
 }
 
-QString PixelsAbsoluteValueComparator::formatResultToHtml(const QMap<QPair<int, int>, QPair<int, double>> &result) {
+QString PixelsAbsoluteValueComparator::formatResultToHtml(const QMap<QPair<int, int>,
+                                                          QPair<int, double>> &result
+                                                          )
+{
+    QLocale locale = QLocale::system();
 
-    QString resultText;
-    resultText.append("<h3>Pixel Shade Differences by Range</h3><br><br>");
+    QString resTextPatter = QString("Range <font color=\"green\">[%1-%2]</font>: ")
+                            + "%3 pixels (<font color=\"red\">%4%</font>)";
+    QString html;
+    html += "<h2>Pixels Difference Mapping</h2>";
 
-    for (auto it = result.begin(); it != result.end(); ++it) {
-        resultText.append(QString("Range <font color=\"green\">[%1-%2]</font>: %3 pixels (<font color=\"red\">%4%</font>)<br>")
+    for (auto it = result.begin(); it != result.end(); ++it) {        
+
+        html += QString(resTextPatter)
                               .arg(it.key().first)
                               .arg(it.key().second)
-                              .arg(it.value().first)
-                              .arg(QString::number(it.value().second, 'f', 2)));
+                              .arg(locale.toString(it.value().first))
+                              .arg(QString::number(it.value().second, 'f', 2));
+        html +="<br/>";
     }
-    return resultText;
+    html += "<br/>";
+    html += QString("The result shows the difference in RGB values between ") +
+            + "two images. It then displays the differences as a list of ranges "
+            + "along with the corresponding pixel counts."
+            + "<br/>The difference is calculated as the "
+            + "absolute value of the difference in any R, G, or B "
+            + "component. For example, pixels fall into the range "
+            + "[6-10] if they differ by any absolute value between "
+            + "6 and 10 in any of the R, G, or B components.";
+    return html;
 }
 
-QString PixelsAbsoluteValueComparator::name() {
-    return "Show the absolute difference statistics for pixel values";
+QString PixelsAbsoluteValueComparator::name() const {
+    return "Pixels Difference Mapping";
 }
 
-QString PixelsAbsoluteValueComparator::hotkey() {
+QString PixelsAbsoluteValueComparator::hotkey() const {
     return "V";
 }
 
-QString PixelsAbsoluteValueComparator::description() {
-    return name() + ".";
+QString PixelsAbsoluteValueComparator::htmlFormattedHelp() const {
+    return QString("This algorithm compares two images pixel by pixel ")
+                   + "to calculate the distribution of color differences "
+                   + "across predefined ranges. It computes the maximum "
+                   + "RGB difference for each pixel, categorizes it into "
+                   + "a range, and counts the occurrences. Finally, it "
+                   + "calculates the percentage of pixels in each range"
+                   + "relative to the total number of pixels. The result "
+                   + "is a map where each range corresponds to a count "
+                   + "and percentage, indicating the intensity and spread "
+                   + "of differences between the images.";
 }
 
 std::shared_ptr<ComparisonResultVariant> PixelsAbsoluteValueComparator::compare(ComparableImage first,

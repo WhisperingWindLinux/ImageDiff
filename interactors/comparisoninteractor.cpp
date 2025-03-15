@@ -13,6 +13,7 @@ ComparisonInteractor::ComparisonInteractor(IMainWindowCallbacks *callbacks)
     : callbacks(callbacks)
 {
     recentFilesManager = new RecentFilesManager("com.whisperingwind", "ImageDiff");
+    runAllComparatorsInteractor = new RunAllComparatorsInteractor();
 
     #ifdef QT_DEBUG
         recentFilesManager->addPair("/Users/Shared/Pictures/arc1.png", "/Users/Shared/Pictures/arc3.png");
@@ -52,6 +53,22 @@ void ComparisonInteractor::onImageProcessorShouldBeCalled(QVariant callerData) {
     } else {
         throw std::runtime_error("Error: An unknown image processor type.");
     }
+}
+
+void ComparisonInteractor::onImageProcessorHelpShouldBeCalled(QVariant callerData) {
+    if (!callerData.isValid() || callerData.isNull()) {
+        throw std::runtime_error("Error: An incorrect caller data.");
+    }
+    QString processorName = callerData.toString();
+
+    auto processor = ImageProcessorsManager::instance()->findProcessor(processorName);
+
+    if (processor == nullptr) {
+        throw std::runtime_error("Error: Unable to find the requested image processor.");
+    }
+
+    QString helpText = processor->htmlFormattedHelp();
+    callbacks->onTextResultFromComparatorReceived(helpText);
 }
 
 void ComparisonInteractor::handleProcessorPropertiesIfNeed(shared_ptr<IImageProcessor> processor) {
@@ -283,3 +300,8 @@ void ComparisonInteractor::saveImage(SaveImageInfo info) {
         break;
     }
 }
+
+void ComparisonInteractor::runAllComparators() {
+    // TBD run all comparators with runAllComparatorsInteractor
+}
+

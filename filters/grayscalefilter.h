@@ -16,8 +16,8 @@ public:
 // ATransformer interface
 
 public:
-    QString name() override;
-    QString hotkey() override;
-    QString description() override;
+    QString name() const override;
+    QString hotkey() const override;
+    QString htmlFormattedHelp() const override;
     QImage filter(QImage image) override;
 };

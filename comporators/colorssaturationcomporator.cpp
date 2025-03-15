@@ -50,38 +50,36 @@ double ColorsSaturationComporator::calculateAverageSaturation(const QImage& imag
 // Format the comparison result as an HTML string
 QString ColorsSaturationComporator::formatResultToHtml(const ColorsSaturationComparisonResult& result) {
     QString html;
-    html += "<html><head><style>";
-    html += "table { border-collapse: collapse; width: 100%; }";
-    html += "th, td { border: 1px solid black; padding: 8px; text-align: left; }";
-    html += "th { background-color: #f2f2f2; }";
-    html += "</style></head><body>";
-    html += "<h3>Image Comparison Results</h3><br>";
-    html += "<table>";
-    html += "<tr><th>Parameter</th><th>Image 1</th><th>Image 2</th></tr>";
-    html += QString("<tr><td>Filename</td><td>%1</td><td>%2</td></tr>").arg(result.name1, result.name2);
-    html += QString("<tr><td>Average Saturation</td><td>%1</td><td>%2</td></tr>")
-                .arg(result.avgSaturation1, 0, 'f', 4)
-                .arg(result.avgSaturation2, 0, 'f', 4);
-    html += QString("<tr><td>More Saturated Image</td><td colspan='2'>%1</td></tr>")
-                .arg(result.moreSaturatedImage);
-    html += "</table>";
-    html += "</body></html>";
+    html += "<h2>Comparison of Image Saturation</h2>";
+    html += QString("The coefficient of %1 is %2.")
+                .arg(result.image1Name)
+                .arg(result.avgSaturation1);
+    html += "<br/>";
+    html += QString("The coefficient of %1 is %2.")
+                .arg(result.image2Name)
+                .arg(result.avgSaturation2);
+    html += "<br/><br/>";
+    html += QString("<font color=\"green\">The more saturated image is %1.</font>")
+                .arg(result.moreSaturatedImageName);
+    html += "<br /><br />";
+    html += QString("The range of coefficient values is [0.0, 1.0]. ")
+            + "Where higher values indicate a more saturated image.";
 
     return html;
 }
 
-QString ColorsSaturationComporator::name() {
-    return "Show pixels' saturation difference statistics";
+QString ColorsSaturationComporator::name() const {
+    return "Saturation";
 }
 
-QString ColorsSaturationComporator::hotkey() {
+QString ColorsSaturationComporator::hotkey() const {
     return "T";
 }
 
-QString ColorsSaturationComporator::description() {
-    return QString("This program loads images, calculates their average saturation based on ")
-    + "pixel HSV values, compares the results, and formats the comparison as "
-        + "an HTML table.";
+QString ColorsSaturationComporator::htmlFormattedHelp() const {
+    return QString("This algorithm calculates average saturation based on pixel HSV values. ")
+                   + "The range of claculated coefficient values is [0.0, 1.0]."
+                   + " Where higher values indicate a more saturated image.";
 }
 
 std::shared_ptr<ComparisonResultVariant> ColorsSaturationComporator::compare(ComparableImage first, ComparableImage second) {

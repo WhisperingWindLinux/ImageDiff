@@ -6,6 +6,7 @@
 #include <interactors/recentfilesmanager.h>
 #include <interactors/rgbtrackinginteractor.h>
 #include <gui/RgbValue.h>
+#include <gui/delegates/mainwindowbuildmenudelegate.h>
 
 #include <QMainWindow>
 #include <QProcess>
@@ -27,7 +28,8 @@ public slots:
     void closeImages();
     void openImages();
     void switchBetweenImages();
-    void callImageComparator();
+    void callImageProcessor();
+    void callImageProcessorHelp();
     void saveImageAs();
     void saveVisibleAreaAs();
     void showAboutDialog();
@@ -42,6 +44,7 @@ public slots:
     void placeColorPickerOnLeft();
     void imagFitInView();
     void grabImagesFromVideos();
+    void runAllComparators();
 
 public:
     MainWindow(QWidget *parent = nullptr);
@@ -62,8 +65,9 @@ protected:
 private:
     Ui::MainWindow *ui;
     ImageViewer *viewer = nullptr;
-    ComparisonInteractor* comparisionInteractor = nullptr;
+    ComparisonInteractor *comparisionInteractor = nullptr;
     RgbTrackingInteractor *rgbTrackingInteractor = nullptr;
+    MainWindowBuildMenuDelegate *buildMenuDelegate = nullptr;
     QList<shared_ptr<QProcess>> instances;
 
     void buildMenu();

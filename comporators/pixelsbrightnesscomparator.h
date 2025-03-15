@@ -5,7 +5,8 @@
 
 #include <interfaces/comporator.h>
 
-// Structure to store comparison results
+// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
 struct PixelsBrightnessComparisonResult {
 
     QString name1;            // The name of the first image
@@ -26,6 +27,9 @@ struct PixelsBrightnessComparisonResult {
     int totalBrightness2;
 };
 
+// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+// This class compares the brightness of corresponding pixels in two images
 
 class PixelsBrightnessComparator : public IComparator
 {
@@ -35,9 +39,9 @@ public:
 
     // AComparator interface
 
-    QString name() override;
-    QString hotkey() override;
-    QString description() override;
+    QString name() const override;
+    QString hotkey() const override;
+    QString htmlFormattedHelp() const override;
     std::shared_ptr<ComparisonResultVariant> compare(ComparableImage first, ComparableImage second) override;
 
 private:

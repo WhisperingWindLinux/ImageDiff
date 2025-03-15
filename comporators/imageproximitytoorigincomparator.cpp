@@ -36,10 +36,10 @@ ImageProximityToOriginResult ImageProximityToOriginComparator::compareImages(QIm
 }
 
 
-int ImageProximityToOriginComparator::calculateTotalDifference(const QImage &image, const QImage &originalImage) {
+qint64 ImageProximityToOriginComparator::calculateTotalDifference(const QImage &image, const QImage &originalImage) {
     int width = image.width();
     int height = image.height();
-    int totalDifference = 0;
+    qint64 totalDifference = 0;
 
     // Loop through each pixel in the images
     for (int y = 0; y < height; ++y) {
@@ -60,40 +60,34 @@ int ImageProximityToOriginComparator::calculateTotalDifference(const QImage &ima
 }
 
 QString ImageProximityToOriginComparator::formatResultToHtml(const ImageProximityToOriginResult &result) {
+    QLocale locale = QLocale::system();
+    QString formattedTotalDiff1 = locale.toString(result.totalDifference1);
+    QString formattedTotalDiff2 = locale.toString(result.totalDifference2);
+
     QString html;
-    html += "<html>";
-    html += "<head><style>";
-    html += "table { border-collapse: collapse; width: 100%; }";
-    html += "th, td { border: 1px solid black; padding: 8px; text-align: left; }";
-    html += "th { background-color: #f2f2f2; }";
-    html += "</style></head>";
-    html += "<body>";
+    html += "<h2>Proximity Comparison</h2>";
+    html += QString("Difference for %1 is %2.<br/>")
+                .arg(result.image1Name)
+                .arg(formattedTotalDiff1);
 
-    html += "<h2>Image Proximity Comparison Results</h2>";
-    html += "<br />";
-    html += "<table>";
-    html += "<tr><th>Parameter</th><th>Value</th></tr>";
-    html += QString("<tr><td>Image 1 Name</td><td>%1</td></tr>").arg(result.image1Name);
-    html += QString("<tr><td>Image 2 Name</td><td>%1</td></tr>").arg(result.image2Name);
-    html += QString("<tr><td>Total Difference (Image 1)</td><td>%1</td></tr>").arg(result.totalDifference1);
-    html += QString("<tr><td>Total Difference (Image 2)</td><td>%1</td></tr>").arg(result.totalDifference2);
-    html += QString("<tr><td>Result Description</td><td>%1</td></tr>").arg(result.resultDescription);
-    html += "</table>";
+    html += QString("Difference for %1 is %2.<br/>")
+                .arg(result.image2Name)
+                .arg(formattedTotalDiff2);
 
-    html += "<br />";
-    html += "</body>";
-    html += "</html>";
+    html += "<br/><font color=\"green\">";
+    html += result.resultDescription;
+    html += "</font><br/><br/>";
+    html += QString("The result of the function indicates ")
+                    + "the degree of difference between two images. "
+            + "The higher the value, the greater the differences between them.";
 
     return html;
 }
 
 QList<Property> ImageProximityToOriginComparator::getDefaultProperties() const {
-    QString description = QString("The algorithm assumes that the two images opened in the application ") +
-        "are screenshots taken using an HDMI recorder. And the original image refers " +
-                          "to either a screenshot taken using the operating system's tools or the original picture.";
 
     Property filePathProperty = Property::createFilePathProperty("Path to original image",
-                                                                 description,
+                                                                htmlFormattedHelp(),
                                                                  "");
     return { filePathProperty };
 
@@ -103,9 +97,7 @@ void ImageProximityToOriginComparator::setProperties(QList<Property> properties)
 
     #ifdef QT_DEBUG
     if (!pathToOriginalImage.isEmpty()) {
-        throw runtime_error(
-            "ImageProximityToOriginComparator: pathToOriginalImage is not empty!"
-            );
+        throw runtime_error("Error: Unabel to load the image.");
     }
     #endif
 
@@ -128,19 +120,20 @@ void ImageProximityToOriginComparator::reset() {
     pathToOriginalImage = "";
 }
 
-QString ImageProximityToOriginComparator::name() {
-    return "Compare Two Images To Original One";
+QString ImageProximityToOriginComparator::name() const {
+    return "Proximity To Original";
 }
 
-QString ImageProximityToOriginComparator::hotkey() {
+QString ImageProximityToOriginComparator::hotkey() const {
     return "Y";
 }
 
-QString ImageProximityToOriginComparator::description() {
-    return QString("Compare the proximity of two images to an original image. ") +
-        "The algorithm assumes that the two images opened in the application " +
-        "are screenshots taken using an HDMI recorder. And the original image refers " +
-        "to either a screenshot taken using the operating system's tools or the original picture.";
+QString ImageProximityToOriginComparator::htmlFormattedHelp() const {
+    return QString("This algorithm calculates the total difference between two ")
+                    + "images using the squares of the differences in color "
+                    + "component values (R, G, B) of each pixel. "
+                    + "According to this criterion, the closeness "
+                    + "of each of the two images to the original is evaluated.";
 }
 
 std::shared_ptr<ComparisonResultVariant> ImageProximityToOriginComparator::compare(

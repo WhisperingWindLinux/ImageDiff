@@ -1,6 +1,7 @@
 #ifndef MOCKMAINWINDOWCALLBACKS_H
 #define MOCKMAINWINDOWCALLBACKS_H
 
+#include <QtCore/qdebug.h>
 #include <interfaces/mainwindowcallbacks.h>
 
 // Mock for IMainWindowCallbacks

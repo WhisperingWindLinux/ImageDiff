@@ -13,9 +13,9 @@ public:
     MockImageProcessor(QString name, QString hotkey, QString description, ImageProcessorType type)
         : m_name(name), m_hotkey(hotkey), m_description(description), m_type(type) {}
     virtual ~MockImageProcessor() {};
-    QString name() override { return m_name; }
-    QString hotkey() override { return m_hotkey; }
-    QString description() override { return m_description; }
+    QString name() const override { return m_name; }
+    QString hotkey() const override { return m_hotkey; }
+    QString htmlFormattedHelp() const override { return m_description; }
     ImageProcessorType getType() const override { return m_type; }
 
     QList<Property> getDefaultProperties() const override {

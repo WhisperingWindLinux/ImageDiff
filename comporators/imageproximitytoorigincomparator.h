@@ -3,21 +3,29 @@
 
 #include <interfaces/comporator.h>
 
-// Class to compare the proximity of two images to an original image
+// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 struct ImageProximityToOriginResult {
     ImageProximityToOriginResult(QString image1Name, QString image2Name,
-                                 int totalDifference1, int totalDifference2,
+                                 qint64 totalDifference1, qint64 totalDifference2,
                                  QString resultDescription)
         : image1Name(std::move(image1Name)), image2Name(std::move(image2Name)),
         totalDifference1(totalDifference1), totalDifference2(totalDifference2),
         resultDescription(std::move(resultDescription)) {}
     QString image1Name;
     QString image2Name;
-    int totalDifference1;
-    int totalDifference2;
+    qint64 totalDifference1;
+    qint64 totalDifference2;
     QString resultDescription;
 };
+
+// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+// This class calculates the total difference between two
+// images using the squares of the differences in color
+// component values (R, G, B) of each pixel.
+// According to this criterion, the closeness
+// of each of the two images to the original is evaluated.
 
 class ImageProximityToOriginComparator : public IComparator
 {
@@ -25,9 +33,9 @@ public:
     ImageProximityToOriginComparator() = default;
     virtual ~ImageProximityToOriginComparator() = default;
 
-    QString name() override;
-    QString hotkey() override;
-    QString description() override;
+    QString name() const override;
+    QString hotkey() const override;
+    QString htmlFormattedHelp() const override;
     std::shared_ptr<ComparisonResultVariant> compare(ComparableImage first, ComparableImage second) override;
     QList<Property> getDefaultProperties() const override;
     void setProperties(QList<Property>) override;
@@ -37,7 +45,7 @@ private:
     QString pathToOriginalImage;
 
     double calculateSharpness(const QImage &image);
-    int calculateTotalDifference(const QImage &image, const QImage &originalImage);
+    qint64 calculateTotalDifference(const QImage &image, const QImage &originalImage);
     ImageProximityToOriginResult compareImages(QImage image1,
                                                QImage image2,
                                                QString name1,

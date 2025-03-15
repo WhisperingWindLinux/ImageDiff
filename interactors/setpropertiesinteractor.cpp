@@ -15,7 +15,7 @@ void SetPropertiesInteractor::allowUserToSetPropertiesIfNeed() {
         return;
     }
     auto newProperties = callback->getUpdatedPropertiesFromUser(processor->name(),
-                                                                processor->description(),
+                                                                processor->htmlFormattedHelp(),
                                                                 properties
                                                                 );
     if (!newProperties.empty()) {
