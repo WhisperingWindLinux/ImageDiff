@@ -5,9 +5,9 @@ GrabImagesFromVideosDialog::GrabImagesFromVideosDialog(QWidget *parent,
                                                        QString videoFilePath1,
                                                        QString videoFilePath2)
     : QDialog(parent),
-    totalScreenshotsTaken(0),
     videoFilePath1(videoFilePath1),
-    videoFilePath2(videoFilePath2)
+    videoFilePath2(videoFilePath2),
+    totalScreenshotsTaken(0)
 {
     setWindowTitle("Get Images From Videos");
 
