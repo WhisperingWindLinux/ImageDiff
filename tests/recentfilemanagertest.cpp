@@ -1,6 +1,7 @@
 #include "recentfilemanagertest.h"
 
-#include <interactors/recentfilesmanager.h>
+#include <business/recentfilesmanager.h>
+
 
 
 void RecentFileManagerTest::init() {

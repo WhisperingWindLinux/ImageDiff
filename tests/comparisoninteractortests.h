@@ -5,7 +5,7 @@
 
 #include <tests/mocks/mockmainwindowcallbacks.h>
 
-#include <interactors/comparisoninteractor.h>
+#include <business/imageanalysis/comparisoninteractor.h>
 
 class ComparisonInteractorTests : public QObject {
     Q_OBJECT

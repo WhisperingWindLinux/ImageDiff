@@ -1,13 +1,8 @@
 #include <QtTest>
-
 #include "comparisoninteractortests.h"
 #include "testutils.h"
-
-#include <QtTest>
-#include "comparisoninteractortests.h"
-#include "testutils.h"
-
-#include <gui/formattors/recentfilespathformater.h>
+#include <business/imageanalysis/comparisoninteractor.h>
+#include <presentation/presenters/recentfilespresenter.h>
 
 void ComparisonInteractorTests::init() {
     // Set up mock callbacks and interactor before each test
@@ -284,7 +279,7 @@ void ComparisonInteractorTests::testLoadImagesBeingCompared_RecentFiles() {
     QString image1Path = createTempImage("image1.png", QSize(20, 20), Qt::white);
     QString image2Path = createTempImage("image2.png", QSize(20, 20), Qt::white);
 
-    RecentFilesPathFormater formater;
+    RecentFilesPresenter formater;
     QString pair1 = formater.pairToString({image1Path, image2Path});
     interactor->loadTwoImagesBeingCompared(pair1, true);
 

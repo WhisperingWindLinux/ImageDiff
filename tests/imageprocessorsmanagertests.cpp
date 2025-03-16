@@ -1,6 +1,7 @@
 #include "imageprocessorsmanagertests.h"
 
-#include <tests/mocks/MockImageProcessor.h>
+#include <tests/mocks/mockImageprocessor.h>
+#include <business/imageanalysis/imageprocessorsmanager.h>
 
 void ImageProcessorsManagerTests::initTestCase() {
     manager = ImageProcessorsManager::instance();

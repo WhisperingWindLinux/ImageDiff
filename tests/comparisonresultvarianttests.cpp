@@ -1,7 +1,8 @@
 #include "comparisonresultvarianttests.h"
 
 #include <QtTest>
-#include <imageprocessorsmanager/comparisonresultvariant.h>
+
+#include <domain/valueobjects/comparisonresultvariant.h>
 
 void ComparisonResultVariantTests::testDefaultConstructor() {
     ComparisonResultVariant variant;

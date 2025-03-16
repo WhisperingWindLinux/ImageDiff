@@ -1,7 +1,6 @@
 #include <QtGui/qpainter.h>
+#include <domain/valueobjects/savefileinfo.h>
 #include <qtest.h>
-
-#include <interactors/savefileinfo.h>
 
 #include "saveimageinfotests.h"
 

@@ -3,8 +3,6 @@
 
 #include <QObject>
 
-#include <interfaces/imageprocessor.h>
-
 class SetPropertiesInteractorTests : public QObject {
     Q_OBJECT
 

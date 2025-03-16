@@ -1,7 +1,7 @@
 #include "propertytests.h"
 #include <QTest>
 #include <cfloat>
-#include <imageprocessorsmanager/property.h>
+#include <domain/valueobjects/property.h>
 
 void PropertyTests::testRealPropertyConstructor() {
     Property realProperty("Length", "The length of an object", 10.5, 0.0, 100.0);

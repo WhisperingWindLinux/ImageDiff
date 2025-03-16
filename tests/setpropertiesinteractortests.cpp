@@ -2,10 +2,9 @@
 
 #include <qtest.h>
 
-#include <tests/mocks/MockImageProcessor.h>
+#include <tests/mocks/mockImageprocessor.h>
 #include <tests/mocks/mockmainwindowcallbacks.h>
-
-#include <interactors/setpropertiesinteractor.h>
+#include <business/imageanalysis/setprocessorpropertiesinteractor.h>
 
 void SetPropertiesInteractorTests::testAllowUserToSetPropertiesIfNeed_NoDefaultProperties() {
     // Arrange
@@ -13,7 +12,7 @@ void SetPropertiesInteractorTests::testAllowUserToSetPropertiesIfNeed_NoDefaultP
     MockMainWindowCallbacks callbacks;
 
     processor->defaultProperties = {}; // No default properties
-    SetPropertiesInteractor interactor(processor, &callbacks);
+    SetProcessorPropertiesInteractor interactor(processor, &callbacks);
 
     // Act
     interactor.allowUserToSetPropertiesIfNeed();
@@ -35,7 +34,7 @@ void SetPropertiesInteractorTests::testAllowUserToSetPropertiesIfNeed_UserUpdate
     Property updatedProperty = Property::createIntProperty("TestProperty", "Description", 10);
     callbacks.updatedPropertiesFromUser = { updatedProperty };
 
-    SetPropertiesInteractor interactor(processor, &callbacks);
+    SetProcessorPropertiesInteractor interactor(processor, &callbacks);
 
     // Act
     interactor.allowUserToSetPropertiesIfNeed();
@@ -58,7 +57,7 @@ void SetPropertiesInteractorTests::testAllowUserToSetPropertiesIfNeed_UserDoesNo
     // User does not update properties (empty list returned)
     callbacks.updatedPropertiesFromUser = {};
 
-    SetPropertiesInteractor interactor(processor, &callbacks);
+    SetProcessorPropertiesInteractor interactor(processor, &callbacks);
 
     // Act
     interactor.allowUserToSetPropertiesIfNeed();

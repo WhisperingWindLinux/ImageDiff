@@ -2,7 +2,8 @@
 #define IMAGEPROCESSORSMANAGERTESTS_H
 
 #include <QtTest>
-#include <imageprocessorsmanager/imageprocessorsmanager.h>
+
+class ImageProcessorsManager;
 
 class ImageProcessorsManagerTests : public QObject {
     Q_OBJECT

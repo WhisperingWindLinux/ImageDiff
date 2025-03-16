@@ -2,7 +2,8 @@
 
 #include <qimage.h>
 #include <qtest.h>
-#include <imageprocessorsmanager/comparableimage.h>
+
+#include <domain/valueobjects/comparableimage.h>
 
 void ComparableImageTests::testConstructorWithQImage() {
     QImage image(100, 100, QImage::Format_RGB32);
