@@ -93,7 +93,7 @@ QString SharpnessComparator::formatResultToHtml(const SharpnessComparisonResult&
                 .arg(result.name2)
                 .arg(result.sharpness2);
     html += QString("<tr><td colspan=\"2\" align=\"center\"><b>The more sharper image is "
-                    "</b> <font color=\"green\">%1</font></td></tr>").arg(result.sharperImage);
+                    " <font color=\"green\">%1</font></b></td></tr>").arg(result.sharperImage);
     html += "</table>";
     html += "<br /><br />";
     html += QString("The range of coefficient values is approx [0.0, 1.414]. ")

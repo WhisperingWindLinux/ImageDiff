@@ -154,7 +154,7 @@ QString ImageProximityToOriginComparator::formatResultToHtml(const ImageProximit
                 .arg(result.image2Name)
                 .arg(formattedTotalDiff2);
     html += QString("<tr><td colspan=\"2\" align=\"center\"><b>"
-                    "</b> <font color=\"green\">%1</font></td></tr>").arg(result.resultDescription);
+                    " <font color=\"green\">%1</font></b></td></tr>").arg(result.resultDescription);
     html += "</table>";
     html += "<br /><br />";
     html += QString("The result of the function indicates ")

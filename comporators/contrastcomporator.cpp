@@ -101,7 +101,7 @@ QString ContrastComporator::formatResultToHtml(const ContrastComparisonResult& r
                 .arg(result.image2Name)
                 .arg(result.contrast2);
     html += QString("<tr><td colspan=\"2\" align=\"center\"><b>The image with more contrast:"
-                    "</b> <font color=\"green\">%1</font></td></tr>").arg(result.moreContrastImageName);
+                    " <font color=\"green\">%1</font></b></td></tr>").arg(result.moreContrastImageName);
     html += "</table>";
     html += "<br /><br />";
     html += "The range of coefficient values is [0, ∞).<br/>";

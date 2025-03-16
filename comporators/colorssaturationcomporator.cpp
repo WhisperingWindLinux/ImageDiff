@@ -87,7 +87,7 @@ QString ColorsSaturationComporator::formatResultToHtml(const ColorsSaturationCom
                 .arg(result.image2Name)
                 .arg(result.avgSaturation2);
     html += QString("<tr><td colspan=\"2\" align=\"center\"><b>The image with more saturation:"
-                    "</b> <font color=\"green\">%1</font></td></tr>").arg(result.moreSaturatedImageName);
+                    " <font color=\"green\">%1</font></b></td></tr>").arg(result.moreSaturatedImageName);
     html += "</table>";
     html += "<br /><br />";
     html += QString("The range of coefficient values is [0.0, 1.0]. ")

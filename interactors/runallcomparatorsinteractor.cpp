@@ -9,6 +9,7 @@
 #include <QtGui/qpainter.h>
 #include <imageprocessorsmanager/imageprocessorsmanager.h>
 #include <interactors/formatters/htmlreportformatter.h>
+#include <QDesktopServices>
 
 RunAllComparatorsInteractor::RunAllComparatorsInteractor(IProgressDialog *progressDialog,
                                                          ComparableImage firstImage,
@@ -84,6 +85,7 @@ void RunAllComparatorsInteractor::generateReports() {
 
     if (isOk) {
         progressDialog->onMessage("The report saved to " + reportDirPath + ".");
+        QDesktopServices::openUrl("file://" + reportDirPath + QDir::separator() + "report.html");
     } else {
         progressDialog->onError("Error: Unable to generate the report.");
     }

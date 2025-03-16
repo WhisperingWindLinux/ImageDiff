@@ -13,11 +13,6 @@ ComparisonInteractor::ComparisonInteractor(IMainWindowCallbacks *callbacks)
     : callbacks(callbacks)
 {
     recentFilesManager = new RecentFilesManager("com.whisperingwind", "ImageDiff");
-
-    #ifdef QT_DEBUG
-        recentFilesManager->addPair("/Users/Shared/Pictures/arc1.png", "/Users/Shared/Pictures/arc3.png");
-        recentFilesManager->addPair("/Users/Shared/Pictures/arc-1.png", "/Users/Shared/Pictures/amd-1.png");
-    #endif
 }
 
 ComparisonInteractor::~ComparisonInteractor() {
