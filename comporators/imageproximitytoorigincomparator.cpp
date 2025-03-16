@@ -4,7 +4,6 @@
 #include <QColor>
 #include <QString>
 #include <QDebug>
-#include <cmath>
 #include <qfileinfo.h>
 
 ImageProximityToOriginResult ImageProximityToOriginComparator::compareImages(QImage image1,
@@ -59,35 +58,10 @@ qint64 ImageProximityToOriginComparator::calculateTotalDifference(const QImage &
     return totalDifference;
 }
 
-QString ImageProximityToOriginComparator::formatResultToHtml(const ImageProximityToOriginResult &result) {
-    QLocale locale = QLocale::system();
-    QString formattedTotalDiff1 = locale.toString(result.totalDifference1);
-    QString formattedTotalDiff2 = locale.toString(result.totalDifference2);
-
-    QString html;
-    html += "<h2>Proximity Comparison</h2>";
-    html += QString("Difference for %1 is %2.<br/>")
-                .arg(result.image1Name)
-                .arg(formattedTotalDiff1);
-
-    html += QString("Difference for %1 is %2.<br/>")
-                .arg(result.image2Name)
-                .arg(formattedTotalDiff2);
-
-    html += "<br/><font color=\"green\">";
-    html += result.resultDescription;
-    html += "</font><br/><br/>";
-    html += QString("The result of the function indicates ")
-                    + "the degree of difference between two images. "
-            + "The higher the value, the greater the differences between them.";
-
-    return html;
-}
-
 QList<Property> ImageProximityToOriginComparator::getDefaultProperties() const {
 
     Property filePathProperty = Property::createFilePathProperty("Path to original image",
-                                                                htmlFormattedHelp(),
+                                                                getDescription(),
                                                                  "");
     return { filePathProperty };
 
@@ -120,15 +94,19 @@ void ImageProximityToOriginComparator::reset() {
     pathToOriginalImage = "";
 }
 
-QString ImageProximityToOriginComparator::name() const {
+QString ImageProximityToOriginComparator::getShortName() const {
     return "Proximity To Original";
 }
 
-QString ImageProximityToOriginComparator::hotkey() const {
+QString ImageProximityToOriginComparator::getFullName() const {
+    return "Proximity to an original image";
+}
+
+QString ImageProximityToOriginComparator::getHotkey() const {
     return "Y";
 }
 
-QString ImageProximityToOriginComparator::htmlFormattedHelp() const {
+QString ImageProximityToOriginComparator::getDescription() const {
     return QString("This algorithm calculates the total difference between two ")
                     + "images using the squares of the differences in color "
                     + "component values (R, G, B) of each pixel. "
@@ -159,4 +137,29 @@ std::shared_ptr<ComparisonResultVariant> ImageProximityToOriginComparator::compa
     QString html = ImageProximityToOriginComparator::formatResultToHtml(result);
     std::shared_ptr<ComparisonResultVariant> resultVariant = std::make_shared<ComparisonResultVariant>(html);
     return resultVariant;
+}
+
+QString ImageProximityToOriginComparator::formatResultToHtml(const ImageProximityToOriginResult &result) {
+    QLocale locale = QLocale::system();
+    QString formattedTotalDiff1 = locale.toString(result.totalDifference1);
+    QString formattedTotalDiff2 = locale.toString(result.totalDifference2);
+
+    QString html;
+    html += QString("<h2 style=\"line-height: 2;\">%1</h2>").arg(getFullName());
+    html += "<table border=\"1\" cellspacing=\"0\" cellpadding=\"5\">";
+    html += QString("<tr><td>The difference between %1 and the original image</td><td>%2</td></tr>")
+                .arg(result.image1Name)
+                .arg(formattedTotalDiff1);
+    html += QString("<tr><td>The difference between %1 and the original image</td><td>%2</td></tr>")
+                .arg(result.image2Name)
+                .arg(formattedTotalDiff2);
+    html += QString("<tr><td colspan=\"2\" align=\"center\"><b>"
+                    "</b> <font color=\"green\">%1</font></td></tr>").arg(result.resultDescription);
+    html += "</table>";
+    html += "<br /><br />";
+    html += QString("The result of the function indicates ")
+            + "the degree of difference between two images. "
+            + "The higher the value, the greater the differences between them.";
+
+    return html;
 }

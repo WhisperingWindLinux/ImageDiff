@@ -39,10 +39,11 @@ public:
 
     // AComparator interface
 
-    QString name() const override;
-    QString hotkey() const override;
-    QString htmlFormattedHelp() const override;
+    QString getShortName() const override;
+    QString getHotkey() const override;
+    QString getDescription() const override;
     std::shared_ptr<ComparisonResultVariant> compare(ComparableImage first, ComparableImage second) override;
+    QString getFullName() const override;
 
 private:
     PixelsBrightnessComparisonResult compareImages(QImage image1,

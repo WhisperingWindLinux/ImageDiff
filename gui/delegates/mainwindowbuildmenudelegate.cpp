@@ -22,7 +22,7 @@ void MainWindowBuildMenuDelegate::buildFiltersAndComparatorsMenus(QMenu *compara
                                                              )
 {
     ImageProcessorsManager *manager = ImageProcessorsManager::instance();
-    auto comporatorsInfo = manager->allProcessorsInfo();
+    auto comporatorsInfo = manager->getAllProcessorsInfo();
 
     // an image comporators
     for (auto it = comporatorsInfo.begin(); it != comporatorsInfo.end(); ++it) {

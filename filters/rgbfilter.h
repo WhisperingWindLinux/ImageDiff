@@ -16,12 +16,13 @@ public:
 // ATransformer interface
 
 public:
-    QString name() const override;
-    QString hotkey() const override;
-    QString htmlFormattedHelp() const override;
+    QString getShortName() const override;
+    QString getHotkey() const override;
+    QString getDescription() const override;
     QImage filter(QImage image) override;
     QList<Property> getDefaultProperties() const override;
     void setProperties(QList<Property> properties) override;
+    void reset() override;
 
 private:
     RgbChannel channel;

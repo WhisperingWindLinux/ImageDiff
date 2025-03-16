@@ -1,13 +1,15 @@
 #ifndef MAINWINDOWCALLBACKS_H
 #define MAINWINDOWCALLBACKS_H
 
+#include "iprogressdialog.h"
+
 #include <qpixmap.h>
 
 #include <imageprocessorsmanager/property.h>
 
 #include <gui/RgbValue.h>
 
-class IMainWindowCallbacks {
+class IMainWindowCallbacks : public IProgressDialog {
 public:
     virtual void onTwoImagesBeingComparedLoadedSuccessfully(QPixmap &image1,
                                              QString path1,

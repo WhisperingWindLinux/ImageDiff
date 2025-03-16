@@ -31,10 +31,11 @@ public:
 
     // AComparator interface
 
-    QString name() const override;
-    QString hotkey() const override;
-    QString htmlFormattedHelp() const override;
+    QString getShortName() const override;
+    QString getHotkey() const override;
+    QString getDescription() const override;
     std::shared_ptr<ComparisonResultVariant> compare(ComparableImage first, ComparableImage second) override;
+    QString getFullName() const override;
 
 private:
     ContrastComparisonResult compareImages(QImage image1,
@@ -42,7 +43,7 @@ private:
                                            QImage image2,
                                            QString path2
                                            );
-    static QString formatResultToHtml(const ContrastComparisonResult& result);
+    QString formatResultToHtml(const ContrastComparisonResult& result);
     static double calculateContrast(const QImage& image);
 };
 

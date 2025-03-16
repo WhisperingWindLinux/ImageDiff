@@ -8,15 +8,15 @@ enum class ImageProcessorType { Comparator, Filter };
 class IImageProcessor {
 public:    
     // It must be unique; displayed in the menu.
-    virtual QString name() const = 0;
+    virtual QString getShortName() const = 0;
 
-    // A hotkey is used for quickly calling the comparator.
+    // A getHotkey is used for quickly calling the comparator.
     // All hotkeys must be unique; if this is not the case,
     // an error will occur when the application starts.
     // Example:  "O", "Ctrl+O", etc.
-    virtual QString hotkey() const = 0;
+    virtual QString getHotkey() const = 0;
 
-    virtual QString htmlFormattedHelp()const = 0;
+    virtual QString getDescription()const = 0;
 
     virtual ImageProcessorType getType() const = 0;
 
@@ -24,7 +24,7 @@ public:
 
     virtual void setProperties(QList<Property>) = 0;
 
-    virtual void reset() = 0;
+    virtual void reset() { };
 };
 
 /*

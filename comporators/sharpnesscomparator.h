@@ -28,10 +28,12 @@ public:
     SharpnessComparator() = default;
     virtual ~SharpnessComparator() = default;
 
-    QString name() const override;
-    QString hotkey() const override;
-    QString htmlFormattedHelp() const override;
-    std::shared_ptr<ComparisonResultVariant> compare(ComparableImage first, ComparableImage second);
+    QString getShortName() const override;
+    QString getHotkey() const override;
+    QString getDescription() const override;
+    std::shared_ptr<ComparisonResultVariant> compare(ComparableImage first, ComparableImage second) override;
+    QString getFullName() const override;
+
 private:
     double calculateSharpness(const QImage &image);
     QString formatResultToHtml(const SharpnessComparisonResult &result);

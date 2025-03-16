@@ -28,15 +28,19 @@ QImage DifferenceInPixelValuesAsImageComporator::compareImages(QImage image1, QI
     return resultImg;
 }
 
-QString DifferenceInPixelValuesAsImageComporator::name() const {
-    return "Difference In Pixel Values As Image";
+QString DifferenceInPixelValuesAsImageComporator::getShortName() const {
+    return "Difference In Pixel Values As An Image";
 }
 
-QString DifferenceInPixelValuesAsImageComporator::hotkey() const {
+QString DifferenceInPixelValuesAsImageComporator::getFullName() const {
+    return "Difference in pixel values as an image";
+}
+
+QString DifferenceInPixelValuesAsImageComporator::getHotkey() const {
     return "D";
 }
 
-QString DifferenceInPixelValuesAsImageComporator::htmlFormattedHelp() const {
+QString DifferenceInPixelValuesAsImageComporator::getDescription() const {
     return QString("Show the difference in pixel values as an image. "
                    "Pixels that differ are marked with red dots.");
 }

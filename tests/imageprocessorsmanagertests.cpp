@@ -18,7 +18,7 @@ void ImageProcessorsManagerTests::testFindProcessor() {
     // Verify that the processor can be found by name
     auto found = manager->findProcessor("MockProcessor");
     QVERIFY(found != nullptr);
-    QCOMPARE(found->name(), QString("MockProcessor"));
+    QCOMPARE(found->getShortName(), QString("MockProcessor"));
 
     // Verify that searching for a non-existent processor returns nullptr
     auto notFound = manager->findProcessor("NonExistentProcessor");
@@ -33,7 +33,7 @@ void ImageProcessorsManagerTests::testAddProcessor() {
     // Verify that the processor was added successfully
     auto found = manager->findProcessor("NewProcessor");
     QVERIFY(found != nullptr);
-    QCOMPARE(found->name(), QString("NewProcessor"));
+    QCOMPARE(found->getShortName(), QString("NewProcessor"));
 }
 
 void ImageProcessorsManagerTests::testRemoveProcessor() {
@@ -59,7 +59,7 @@ void ImageProcessorsManagerTests::testAllProcessorsInfo() {
     manager->addProcessor(processor1);
     manager->addProcessor(processor2);
 
-    QList<ImageProcessorInfo> infos = manager->allProcessorsInfo();
+    QList<ImageProcessorInfo> infos = manager->getAllProcessorsInfo();
 
     // Verify that the processors' info is correct
     bool found1 = false, found2 = false;
@@ -88,7 +88,7 @@ void ImageProcessorsManagerTests::testAllProcessorsInfoTheSameHotkeys() {
     manager->addProcessor(processor3);
     manager->addProcessor(processor4);
 
-    QList<ImageProcessorInfo> result = manager->allProcessorsInfo();
+    QList<ImageProcessorInfo> result = manager->getAllProcessorsInfo();
 
     QCOMPARE(result.size(), 4);
 
@@ -109,7 +109,7 @@ void ImageProcessorsManagerTests::testAllProcessorsInfoTheSameHotkeys() {
         manager->addProcessor(processor3);
         manager->addProcessor(processor4);
 
-        QList<ImageProcessorInfo> result = manager->allProcessorsInfo();
+        QList<ImageProcessorInfo> result = manager->getAllProcessorsInfo();
 
         QCOMPARE(result.size(), 4);
 
@@ -130,7 +130,7 @@ void ImageProcessorsManagerTests::testAllProcessorsInfoTheSameHotkeys() {
         manager->addProcessor(processor3);
         manager->addProcessor(processor4);
 
-        QList<ImageProcessorInfo> result = manager->allProcessorsInfo();
+        QList<ImageProcessorInfo> result = manager->getAllProcessorsInfo();
 
         QCOMPARE(result.size(), 4);
 
@@ -151,7 +151,7 @@ void ImageProcessorsManagerTests::testAllProcessorsInfoTheSameHotkeys() {
         manager->addProcessor(processor3);
         manager->addProcessor(processor4);
 
-        QList<ImageProcessorInfo> result = manager->allProcessorsInfo();
+        QList<ImageProcessorInfo> result = manager->getAllProcessorsInfo();
 
         QCOMPARE(result.size(), 4);
 

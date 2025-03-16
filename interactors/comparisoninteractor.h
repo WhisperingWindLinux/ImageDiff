@@ -38,7 +38,6 @@ public:
 private:
     IMainWindowCallbacks *callbacks;
     RecentFilesManager *recentFilesManager;
-    RunAllComparatorsInteractor *runAllComparatorsInteractor;
     QString firstImagePath;
     QString secondImagePath;
     QPixmap firstPixmap;

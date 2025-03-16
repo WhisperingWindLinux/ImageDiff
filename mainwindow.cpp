@@ -130,7 +130,7 @@ void MainWindow::grabImagesFromVideos() {
 }
 
 void MainWindow::runAllComparators() {
-
+    comparisionInteractor->runAllComparators();
 }
 
 void MainWindow::imageZoomedToActualSize() {
@@ -490,5 +490,62 @@ void MainWindow::onReceiveTwoImagesBeingComparedViaCommandline(QString firstFile
 
 /* } =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
+
+/* IProgressDialog interface {   */
+
+void MainWindow::showProgressDialog(QString caption, int totalSteps) {
+    if (progressDialog != nullptr) {
+        delete progressDialog;
+    }
+    progressDialog = new QProgressDialog(this);
+    progressDialog->setWindowTitle(caption);
+    progressDialog->setRange(0, totalSteps);
+    progressDialog->setValue(0);
+    progressDialog->setCancelButtonText("Cancel");
+    progressDialog->setMinimumDuration(0);
+    progressDialog->setWindowModality(Qt::WindowModal);
+    progressDialog->setAutoClose(false);
+}
+
+bool MainWindow::wasCanceled() {
+    if (progressDialog == nullptr) {
+        return true;
+    }
+    bool canceled = progressDialog->wasCanceled();
+    if (canceled) {
+        progressDialog->close();
+        delete progressDialog;
+        progressDialog = nullptr;
+    }
+    return canceled;
+}
+
+void MainWindow::onUpdateProgressValue(int value) {
+    if (progressDialog == nullptr) {
+        return;
+    }
+    progressDialog->setValue(value);
+    QCoreApplication::processEvents();
+    if (value >= progressDialog->maximum()) {
+        progressDialog->close();
+        delete progressDialog;
+        progressDialog = nullptr;
+    }
+}
+
+void MainWindow::onMessage(QString message) {
+    QMessageBox msgBox;
+    msgBox.setIcon(QMessageBox::Information);
+    msgBox.setText(message);
+    msgBox.setStandardButtons(QMessageBox::Ok);
+    msgBox.setDefaultButton(QMessageBox::Ok);
+    msgBox.exec();
+}
+
+void MainWindow::onError(QString error) {
+    showError(error);
+}
+
+/* } =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
 

@@ -7,7 +7,7 @@ GenericRgbFilter::GenericRgbFilter(RgbChannel channel)
 
 }
 
-QString GenericRgbFilter::name() const {
+QString GenericRgbFilter::getShortName() const {
     switch(channel) {
     case RgbChannel::R:
         return "Show Red channel";
@@ -19,7 +19,7 @@ QString GenericRgbFilter::name() const {
     throw std::runtime_error("Error: an incorrect RGB chnannel in GenericRgbTransformer.");
 }
 
-QString GenericRgbFilter::hotkey() const {
+QString GenericRgbFilter::getHotkey() const {
     switch(channel) {
     case RgbChannel::R:
         return "R";
@@ -31,7 +31,7 @@ QString GenericRgbFilter::hotkey() const {
     throw std::runtime_error("Error: an incorrect RGB chnannel in GenericRgbTransformer.");
 }
 
-QString GenericRgbFilter::htmlFormattedHelp() const {
+QString GenericRgbFilter::getDescription() const {
     QString channelName;
     if (channel == RgbChannel::R) {
         channelName = "Red";
@@ -111,4 +111,8 @@ void GenericRgbFilter::setProperties(QList<Property> properties) {
     }
     int iColorModeProperty = colorModeProperty.getValue();
     isOutputImageColored = (iColorModeProperty == 0);
+}
+
+void GenericRgbFilter::reset() {
+    isOutputImageColored = true;
 }

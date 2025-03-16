@@ -54,21 +54,21 @@ ImageProcessorsManager::ImageProcessorsManager() {
 
 void ImageProcessorsManager::addProcessor(shared_ptr<IImageProcessor> comporator) {
     if (comporator != nullptr) {
-        if (hotkeys.contains(comporator->hotkey())) {
+        if (hotkeys.contains(comporator->getHotkey())) {
             QString errorMsg = QString("Error: It is not possible to add ") +
                                        "two IImageProcessors with the same hotkey value.";
             throw runtime_error(errorMsg.toStdString());
         }
-        hotkeys.insert(comporator->hotkey());
+        hotkeys.insert(comporator->getHotkey());
         processors.append(comporator);
     }
 }
 
 void ImageProcessorsManager::removeProcessor(QString name) {
     for (auto it = processors.begin(); it != processors.end(); ++it) {
-        if ((*it)->name() == name) {
-            if (hotkeys.contains((*it)->hotkey())) {
-                hotkeys.remove((*it)->hotkey());
+        if ((*it)->getShortName() == name) {
+            if (hotkeys.contains((*it)->getHotkey())) {
+                hotkeys.remove((*it)->getHotkey());
             }
             processors.erase(it);
             break;
@@ -78,18 +78,39 @@ void ImageProcessorsManager::removeProcessor(QString name) {
 
 shared_ptr<IImageProcessor> ImageProcessorsManager::findProcessor(QString name) {
     for (auto it = processors.begin(); it != processors.end(); ++it) {
-        if ((*it)->name() == name) {
+        if ((*it)->getShortName() == name) {
             return *it;
         }
     }
     return nullptr;
 }
 
-QList<ImageProcessorInfo> ImageProcessorsManager::allProcessorsInfo() {
+QList<ImageProcessorInfo> ImageProcessorsManager::getAllProcessorsInfo() {
     QList<ImageProcessorInfo> processorsInfo;
     for (auto it = processors.begin(); it != processors.end(); ++it) {
-        ImageProcessorInfo processorInfo((*it)->name(), (*it)->htmlFormattedHelp(), (*it)->hotkey(), (*it)->getType());
+        ImageProcessorInfo processorInfo((*it)->getShortName(),
+                                         (*it)->getDescription(),
+                                         (*it)->getHotkey(),
+                                         (*it)->getType()
+                                         );
         processorsInfo.append(processorInfo);
     }
     return processorsInfo;
 }
+
+QList<shared_ptr<IComparator> > ImageProcessorsManager::getAllComparators() {
+    QList<shared_ptr<IComparator>> comparators;
+    for (auto it = processors.begin(); it != processors.end(); ++it) {
+        if ((*it)->getType() == ImageProcessorType::Comparator) {
+            comparators.append(dynamic_pointer_cast<IComparator>(*it));
+        }
+    }
+    return comparators;
+}
+
+
+
+
+
+
+

@@ -33,13 +33,14 @@ public:
     ImageProximityToOriginComparator() = default;
     virtual ~ImageProximityToOriginComparator() = default;
 
-    QString name() const override;
-    QString hotkey() const override;
-    QString htmlFormattedHelp() const override;
+    QString getShortName() const override;
+    QString getHotkey() const override;
+    QString getDescription() const override;
     std::shared_ptr<ComparisonResultVariant> compare(ComparableImage first, ComparableImage second) override;
     QList<Property> getDefaultProperties() const override;
     void setProperties(QList<Property>) override;
     void reset() override;
+    QString getFullName() const override;
 
 private:
     QString pathToOriginalImage;

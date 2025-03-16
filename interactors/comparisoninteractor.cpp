@@ -13,7 +13,6 @@ ComparisonInteractor::ComparisonInteractor(IMainWindowCallbacks *callbacks)
     : callbacks(callbacks)
 {
     recentFilesManager = new RecentFilesManager("com.whisperingwind", "ImageDiff");
-    runAllComparatorsInteractor = new RunAllComparatorsInteractor();
 
     #ifdef QT_DEBUG
         recentFilesManager->addPair("/Users/Shared/Pictures/arc1.png", "/Users/Shared/Pictures/arc3.png");
@@ -67,7 +66,7 @@ void ComparisonInteractor::onImageProcessorHelpShouldBeCalled(QVariant callerDat
         throw std::runtime_error("Error: Unable to find the requested image processor.");
     }
 
-    QString helpText = processor->htmlFormattedHelp();
+    QString helpText = processor->getDescription();
     callbacks->onTextResultFromComparatorReceived(helpText);
 }
 
@@ -91,7 +90,7 @@ void ComparisonInteractor::callComparator(shared_ptr<IComparator> comparator) {
         QImage imageResult = result->imageResult();
         QPixmap pixmap = QPixmap::fromImage(imageResult);
         if (!pixmap.isNull()) {
-            callbacks->onImageResultFromComparatorReceived(pixmap, comparator->name());
+            callbacks->onImageResultFromComparatorReceived(pixmap, comparator->getShortName());
         }
     }
     else if (result->type() == ComparisonResultVariantType::String) {
@@ -302,6 +301,39 @@ void ComparisonInteractor::saveImage(SaveImageInfo info) {
 }
 
 void ComparisonInteractor::runAllComparators() {
-    // TBD run all comparators with runAllComparatorsInteractor
+
+    QFileInfo file1 = QFileInfo(firstImagePath);
+    QFileInfo file2 = QFileInfo(secondImagePath);
+    QString file1Name = file1.baseName();
+    QString file2Name = file2.baseName();
+    QDir defaultDir = file1.absoluteDir();
+    QString reportDirName = QString("%1_vs_%2_comparison_report")
+                                .arg(file1Name)
+                                .arg(file2Name);
+
+    QString reportDirPath = defaultDir.absolutePath()
+                             + QDir::separator()
+                             + reportDirName;
+
+    ComparableImage firstImage {firstPixmap, firstImagePath};
+    ComparableImage secondImage {secondPixmap, secondImagePath};
+    RunAllComparatorsInteractor runAllComparatorsInteractor {callbacks,
+                                                            firstImage,
+                                                            secondImage,
+                                                            reportDirPath
+    };
+    runAllComparatorsInteractor.run();
 }
+
+
+
+
+
+
+
+
+
+
+
+
 

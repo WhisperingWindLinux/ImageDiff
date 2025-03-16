@@ -1,6 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include <interfaces/iprogressdialog.h>
 #include <interfaces/mainwindowcallbacks.h>
 #include <interactors/comparisoninteractor.h>
 #include <interactors/recentfilesmanager.h>
@@ -10,6 +11,7 @@
 
 #include <QMainWindow>
 #include <QProcess>
+#include <QProgressDialog>
 
 class ImageViewer;
 class ColorInfoPanel;
@@ -68,7 +70,8 @@ private:
     ComparisonInteractor *comparisionInteractor = nullptr;
     RgbTrackingInteractor *rgbTrackingInteractor = nullptr;
     MainWindowBuildMenuDelegate *buildMenuDelegate = nullptr;
-    QList<shared_ptr<QProcess>> instances;
+    QProgressDialog *progressDialog = nullptr;
+    QList<shared_ptr<QProcess> > instances;
 
     void buildMenu();
     void makeConnections();
@@ -99,6 +102,14 @@ public:
                                                  QString processorDescription,
                                                  QList<Property> defaultProperties) override;
     void updateRecentFilesMenu() override;
+
+    // IProgressDialog interface
+public:
+    void showProgressDialog(QString caption, int totalSteps) override;
+    bool wasCanceled() override;
+    void onUpdateProgressValue(int value) override;
+    void onMessage(QString message) override;
+    void onError(QString error) override;
 };
 #endif // MAINWINDOW_H
 

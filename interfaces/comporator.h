@@ -19,9 +19,10 @@ public:
 
     virtual void setProperties(QList<Property>) override { };
 
-    virtual void reset() override { }
-
     ImageProcessorType getType() const override { return ImageProcessorType::Comparator; }
+
+    // The full name to be printed in an HTML report.
+    virtual QString getFullName() const = 0;
 };
 
 #endif // COMPORATOR_H

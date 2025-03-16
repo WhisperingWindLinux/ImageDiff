@@ -1,4 +1,5 @@
-QT       += core gui testlib multimedia multimediawidgets
+QT       += core gui testlib multimedia multimediawidgets concurrent printsupport pdf
+
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -32,6 +33,7 @@ SOURCES += \
     interactors/rgbtrackinginteractor.cpp \
     interactors/runallcomparatorsinteractor.cpp \
     interactors/setpropertiesinteractor.cpp \
+    interactors/formatters/htmlreportformatter.cpp \
     main.cpp \
     mainwindow.cpp \
     comporators/pixelsabsolutevaluecomparator.cpp \
@@ -78,7 +80,9 @@ HEADERS += \
     interfaces/comporator.h \
     interfaces/filter.h \
     interfaces/imageprocessor.h \
+    interfaces/iprogressdialog.h \
     interfaces/mainwindowcallbacks.h \
+    interactors/formatters/htmlreportformatter.h \
     mainwindow.h \
     comporators/pixelsabsolutevaluecomparator.h \
     comporators/pixelsbrightnesscomparator.h \

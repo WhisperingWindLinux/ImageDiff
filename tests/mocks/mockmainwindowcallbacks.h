@@ -51,6 +51,14 @@ public:
     bool m_isUpdateRecentFilesMenuCalled = false;
 
     // AMainWindowCallbacks interface
+
+    // IProgressDialog interface
+public:
+    void showProgressDialog(QString caption, int totalSteps) override { }
+    bool wasCanceled() override { return true; }
+    void onUpdateProgressValue(int value) override { }
+    void onMessage(QString message) override { }
+    void onError(QString error) override { }
 };
 
 #endif // MOCKMAINWINDOWCALLBACKS_H

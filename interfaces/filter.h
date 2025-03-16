@@ -18,8 +18,6 @@ public:
 
     virtual void setProperties(QList<Property>) override { };
 
-    virtual void reset() override { }
-
     ImageProcessorType getType() const override { return ImageProcessorType::Filter; }
 };
 

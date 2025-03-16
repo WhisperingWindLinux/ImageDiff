@@ -28,37 +28,10 @@ ContrastComparisonResult ContrastComporator::compareImages(QImage image1,
     return {name1, name2, contrast1, contrast2, moreContrastImage};
 }
 
-// Method to format the comparison result as HTML
-QString ContrastComporator::formatResultToHtml(const ContrastComparisonResult& result) {
-    // Build an HTML string to display results
-    QString html;
-    html += "<h2>Comparison of Image Contrast</h2>";
-    html += QString("The coefficient of %1 is %2.")
-                .arg(result.image1Name)
-                .arg(result.contrast1);
-    html += "<br/>";
-    html += QString("The coefficient of %1 is %2.")
-                .arg(result.image2Name)
-                .arg(result.contrast2);
-    html += "<br/><br/>";
-    html += QString("<font color=\"green\">The more contrasted image is %1.</font>")
-                .arg(result.moreContrastImageName);
-    html += "<br /><br />";
-    html += "The range of coefficient values is [0, ∞).<br/>";
-    html += QString("The minimum contrast value is 0, which corresponds to an image with ")
-            + "completely uniform brightness for all pixels (e.g., a solid color)."
-            + "<br/>The maximum value is theoretically unlimited, as it depends "
-            + "on the range of brightness variations in the image.<br/>The greater "
-            + "the difference between pixel brightness values, the higher the "
-            + "contrast value will be.";
-
-    return html;
-}
-
 // Method to calculate the contrast of an image
 double ContrastComporator::calculateContrast(const QImage& image) {
     double meanLuminance = 0.0;  // Average luminance
-    double variance = 0.0;      // Variance of luminance
+    double variance = 0.0;       // Variance of luminance
 
     int width = image.width();
     int height = image.height();
@@ -88,15 +61,19 @@ double ContrastComporator::calculateContrast(const QImage& image) {
     return std::sqrt(variance);
 }
 
-QString ContrastComporator::name() const {
+QString ContrastComporator::getShortName() const {
     return "Contrast";
 }
 
-QString ContrastComporator::hotkey() const {
+QString ContrastComporator::getFullName() const {
+    return "Comparison of image contrast";
+}
+
+QString ContrastComporator::getHotkey() const {
     return "K";
 }
 
-QString ContrastComporator::htmlFormattedHelp() const {
+QString ContrastComporator::getDescription() const {
     return QString("The algorithm calculates the contrast of an image based on the statistical ")
                 + "analysis of pixel brightness (luminance). It does not compare brightness directly but "
                 + "uses it to determine the spread of values, allowing for the assessment of differences "
@@ -111,4 +88,25 @@ std::shared_ptr<ComparisonResultVariant> ContrastComporator::compare(ComparableI
                                 );
     QString html = ContrastComporator::formatResultToHtml(result);
     return std::make_shared<ComparisonResultVariant>(html);
+}
+
+QString ContrastComporator::formatResultToHtml(const ContrastComparisonResult& result) {
+    QString html;
+    html += QString("<h2 style=\"line-height: 2;\">%1</h2>").arg(getFullName());
+    html += "<table border=\"1\" cellspacing=\"0\" cellpadding=\"5\">";
+    html += QString("<tr><td>%1</td><td>%2</td></tr>")
+                .arg(result.image1Name)
+                .arg(result.contrast1);
+    html += QString("<tr><td>%1</td><td>%2</td></tr>")
+                .arg(result.image2Name)
+                .arg(result.contrast2);
+    html += QString("<tr><td colspan=\"2\" align=\"center\"><b>The image with more contrast:"
+                    "</b> <font color=\"green\">%1</font></td></tr>").arg(result.moreContrastImageName);
+    html += "</table>";
+    html += "<br /><br />";
+    html += "The range of coefficient values is [0, ∞).<br/>";
+    html += QString("The minimum contrast value is 0, which corresponds to an image with ")
+            + "completely uniform brightness for all pixels (e.g., a solid color).";
+
+    return html;
 }

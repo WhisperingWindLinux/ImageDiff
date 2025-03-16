@@ -66,57 +66,26 @@ QMap<QPair<int, int>, QPair<int, double>> PixelsAbsoluteValueComparator::compare
     return result;
 }
 
-QString PixelsAbsoluteValueComparator::formatResultToHtml(const QMap<QPair<int, int>,
-                                                          QPair<int, double>> &result
-                                                          )
-{
-    QLocale locale = QLocale::system();
-
-    QString resTextPatter = QString("Range <font color=\"green\">[%1-%2]</font>: ")
-                            + "%3 pixels (<font color=\"red\">%4%</font>)";
-    QString html;
-    html += "<h2>Pixels Difference Mapping</h2>";
-
-    for (auto it = result.begin(); it != result.end(); ++it) {        
-
-        html += QString(resTextPatter)
-                              .arg(it.key().first)
-                              .arg(it.key().second)
-                              .arg(locale.toString(it.value().first))
-                              .arg(QString::number(it.value().second, 'f', 2));
-        html +="<br/>";
-    }
-    html += "<br/>";
-    html += QString("The result shows the difference in RGB values between ") +
-            + "two images. It then displays the differences as a list of ranges "
-            + "along with the corresponding pixel counts."
-            + "<br/>The difference is calculated as the "
-            + "absolute value of the difference in any R, G, or B "
-            + "component. For example, pixels fall into the range "
-            + "[6-10] if they differ by any absolute value between "
-            + "6 and 10 in any of the R, G, or B components.";
-    return html;
-}
-
-QString PixelsAbsoluteValueComparator::name() const {
+QString PixelsAbsoluteValueComparator::getShortName() const {
     return "Pixels Difference Mapping";
 }
 
-QString PixelsAbsoluteValueComparator::hotkey() const {
+QString PixelsAbsoluteValueComparator::getFullName() const {
+    return "The difference in color for each pixel between two images";
+}
+
+QString PixelsAbsoluteValueComparator::getHotkey() const {
     return "V";
 }
 
-QString PixelsAbsoluteValueComparator::htmlFormattedHelp() const {
-    return QString("This algorithm compares two images pixel by pixel ")
-                   + "to calculate the distribution of color differences "
-                   + "across predefined ranges. It computes the maximum "
-                   + "RGB difference for each pixel, categorizes it into "
-                   + "a range, and counts the occurrences. Finally, it "
-                   + "calculates the percentage of pixels in each range"
-                   + "relative to the total number of pixels. The result "
-                   + "is a map where each range corresponds to a count "
-                   + "and percentage, indicating the intensity and spread "
-                   + "of differences between the images.";
+QString PixelsAbsoluteValueComparator::getDescription() const {
+    return QString("This algorithm compares two images by analyzing ") +
+                   "the difference in the colors of each pixel. For each pixel, the " +
+                   "difference in color brightness (red, green, blue) is calculated, " +
+                   "and based on these differences, the pixels are categorized into " +
+                   "predefined ranges. As a result, you can see what percentage of " +
+                   "pixels falls into each range of difference, allowing you to " +
+                   "assess how similar or different the images are.";
 }
 
 std::shared_ptr<ComparisonResultVariant> PixelsAbsoluteValueComparator::compare(ComparableImage first,
@@ -128,4 +97,56 @@ std::shared_ptr<ComparisonResultVariant> PixelsAbsoluteValueComparator::compare(
     QString html = PixelsAbsoluteValueComparator::formatResultToHtml(result);
     std::shared_ptr<ComparisonResultVariant> resultVariant = std::make_shared<ComparisonResultVariant>(html);
     return resultVariant;
+}
+
+QString PixelsAbsoluteValueComparator::formatResultToHtml(const QMap<QPair<int, int>,
+                                                                     QPair<int, double>> &result
+                                                          )
+{
+    QLocale locale = QLocale::system();
+
+    QString html;
+
+    html += QString("<h2 style=\"line-height: 2;\">%1</h2>").arg(getFullName());
+
+    html += R"(
+        <table border="1" style="
+            border-collapse: collapse;
+            width: 100%;
+            text-align: center;
+            table-layout: fixed;">
+        <thead>
+        <tr style="
+            background-color: #f2f2f2;
+            font-weight: bold;">
+        <th style="padding-left: 10px; padding-right: 10px;">Range</th>
+        <th style="padding-left: 10px; padding-right: 10px;">Pixel Count</th>
+        <th style="padding-left: 10px; padding-right: 10px;">Pixel Count (%)</th>
+        </tr>
+        </thead>
+        <tbody>
+    )";
+
+    for (auto it = result.begin(); it != result.end(); ++it) {
+        QString range = QString("%1...%2")
+        .arg(it.key().first)
+            .arg(it.key().second);
+        QString pixelCount = locale.toString(it.value().first);
+        QString pixelPercentage = QString::number(it.value().second, 'f', 2) + "%";
+
+        html += "<tr>";
+        html += QString("<td align=\"right\" style=\"padding-left: 10px; padding-right: 10px;\">%1</td>").arg(range);
+        html += QString("<td align=\"right\" style=\"padding-left: 10px; padding-right: 10px;\">%1</td>").arg(pixelCount);
+        html += QString("<td align=\"right\" style=\"padding-left: 10px; padding-right: 10px;\">%1</td>").arg(pixelPercentage);
+        html += "</tr>";
+    }
+
+    html += "</tbody>";
+    html += "</table>";
+
+    html += "<br /><br />";
+    html += QString("Range contains the absolute values by which the pixels differ ") +
+            "in any of the R, G, or B components.";
+
+    return html;
 }

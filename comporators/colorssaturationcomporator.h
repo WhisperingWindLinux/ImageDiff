@@ -31,9 +31,10 @@ public:
 
     // AComparator interface
 
-    QString name() const override;
-    QString hotkey() const override;
-    QString htmlFormattedHelp() const override;
+    QString getShortName() const override;
+    QString getHotkey() const override;
+    QString getDescription() const override;
+    QString getFullName() const override;
     std::shared_ptr<ComparisonResultVariant> compare(ComparableImage first, ComparableImage second) override;
 
 private:
@@ -42,7 +43,7 @@ private:
                                                    QImage image2,
                                                    QString name2);
 
-    static QString formatResultToHtml(const ColorsSaturationComparisonResult& result);
+    QString formatResultToHtml(const ColorsSaturationComparisonResult& result);
 
     // Helper function to calculate the average saturation of an image
     double calculateAverageSaturation(const QImage& image);
