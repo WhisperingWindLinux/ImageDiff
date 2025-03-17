@@ -4,6 +4,9 @@
 #include <qimage.h>
 #include <qstring.h>
 
+#include <domain/valueobjects/autocomparisonreportentry.h>
+#include <domain/valueobjects/comparableimage.h>
+
 
 class HtmlReportPresenter
 {
@@ -12,13 +15,21 @@ public:
     HtmlReportPresenter() = delete;
     ~HtmlReportPresenter() = delete;
 
-    static bool createReportPage(const QString &folderPath,
-                                 const QImage &firstOriginalImage,
-                                 const QImage &secondOriginalImage,
-                                 const QString &firstImageName,
-                                 const QString &secondImageName,
-                                 const QList<QPair<QString, QImage> > &comporatorsResults
-                                 , const QList<QString> descriptions);
+    // Writes a comprehensive report consisting of images and text.
+    static bool createExtendedReportPage(const QString &folderPath,
+                                         const ComparableImage &firstOriginalImage,
+                                         const ComparableImage &secondOriginalImage,
+                                         QList<AutocomparisonReportEntry> reportEntries
+                                         );
+
+
+    // Writes a simple report consisting only of text.
+    static bool createSimpleReportPage(const QString &filePath,
+                                       const QString &firstOriginalImageName,
+                                       const QString &secondOriginalImageName,
+                                       const QString &comparatorDescription,
+                                       const QString &reportText
+                                       );
 };
 
 #endif // HTMLREPORTPRESENTER_H

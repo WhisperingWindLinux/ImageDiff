@@ -92,9 +92,19 @@ public:
                                      bool usePreviousImageGeometry) override;
 
     void onImageResultFromComparatorReceived(QPixmap &image, QString description) override;
-    void onTextResultFromComparatorReceived(QString text) override;
+
+    void onTextResultFromComparatorReceived(QString &message,
+                                            QString comparatorFullName,
+                                            QString comparatorDescription,
+                                            QString &firstImageFilePath,
+                                            QString &secondImageFilePath) override;
+
+    void onTextResultFromComparatorReceived(QString &message) override;
+
     void saveImage(QPixmap &image, QString defaultPath) override;
+
     void onRgbValueUnderCursonChanged(RgbValue firstImageRgbValue, RgbValue secondImageRgbValue) override;
+
     QList<Property> getUpdatedPropertiesFromUser(QString processorName,
                                                  QString processorDescription,
                                                  QList<Property> defaultProperties) override;

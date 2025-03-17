@@ -3,14 +3,13 @@
 #include <domain/interfaces/iprogressdialog.h>
 #include "imageprocessorsmanager.h"
 
-#include <QPdfWriter>
-#include <QtGui/qtextcursor.h>
 #include <qdir.h>
 #include <qtextdocument.h>
 #include <QtCore/qdebug.h>
 #include <QtGui/qpainter.h>
 #include <QDesktopServices>
 #include <presentation/presenters/htmlreportpresenter.h>
+#include <domain/valueobjects/autocomparisonreportentry.h>
 
 RunAllComparatorsInteractor::RunAllComparatorsInteractor(IProgressDialog *progressDialog,
                                                          ComparableImage firstImage,
@@ -26,31 +25,32 @@ RunAllComparatorsInteractor::RunAllComparatorsInteractor(IProgressDialog *progre
 }
 
 void RunAllComparatorsInteractor::run() {
-    executeAllComparators();
-    generateReports();
+    auto entries = executeAllComparators();
+    if (entries.size() != 0) {
+        generateReports(entries);
+    }
 }
 
-void RunAllComparatorsInteractor::executeAllComparators() {
-    comparatorsResults.clear();
-    comporatorsNames.clear();
-    descriptions.clear();
+QList<AutocomparisonReportEntry> RunAllComparatorsInteractor::executeAllComparators() {
+    QList<AutocomparisonReportEntry> entries;
     auto manager = ImageProcessorsManager::instance();
     auto comparators = manager->getAllComparators();
     if (comparators.size() == 0) {
-        return;
+        return {};
     }
     progressDialog->showProgressDialog("Run All Comparators", comparators.size());
     int runCounter = 0;
     foreach(auto comparator, comparators) {
         if (!comparator->isPartOfAutoReportingToolbox()) {
-
+            continue;
+        }
+        if (progressDialog->wasCanceled()) {
+            return {};
         }
         try {
             auto result = comparator->compare(firstImage, secondImage);
             if (result != nullptr) {
-                comporatorsNames.append(comparator->getFullName());
-                comparatorsResults.append(result);
-                descriptions.append(comparator->getDescription());
+                entries.append({result, comparator->getFullName(), comparator->getDescription()});
             }
         } catch(runtime_error &e) {
             qDebug() << e.what();
@@ -58,34 +58,17 @@ void RunAllComparatorsInteractor::executeAllComparators() {
         runCounter++;
         progressDialog->onUpdateProgressValue(runCounter);
     }
+    progressDialog->onUpdateProgressValue(INT32_MAX);
+    return entries;
 }
 
-void RunAllComparatorsInteractor::generateReports() {
-    if (comparatorsResults.size() != comporatorsNames.size()) {
-        return;
-    }
-    QList<QPair<QString, QImage>> comparatorsCombinedResults;
-    for (int i = 0; i < comparatorsResults.size(); i++) {
-        auto result = comparatorsResults[i];
-        auto name = comporatorsNames[i];
-        if (result->type() == ComparisonResultVariantType::String) {
-             comparatorsCombinedResults.append({result->stringResult(), QImage()});
-        }
-        else if (result->type() == ComparisonResultVariantType::Image){
-            comparatorsCombinedResults.append({name, result->imageResult()});
-        }
-        else {
-            continue;
-        }
-    }
+void RunAllComparatorsInteractor::generateReports(QList<AutocomparisonReportEntry> entries) {
 
-    bool isOk = HtmlReportPresenter::createReportPage(reportDirPath,
-                                                      firstImage.getImage(),
-                                                      secondImage.getImage(),
-                                                      firstImage.getName(),
-                                                      secondImage.getName(),
-                                                      comparatorsCombinedResults,
-                                                      descriptions);
+    bool isOk = HtmlReportPresenter::createExtendedReportPage(reportDirPath,
+                                                              firstImage,
+                                                              secondImage,
+                                                              entries
+                                                              );
 
     if (isOk) {
         progressDialog->onMessage("The report saved to " + reportDirPath + ".");

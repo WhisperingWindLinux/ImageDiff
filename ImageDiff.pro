@@ -30,6 +30,7 @@ SOURCES += \
     main.cpp \
     presentation/dialogs/aboutdialog.cpp \
     presentation/dialogs/colorinfopanel.cpp \
+    presentation/dialogs/comparatorresultdialog.cpp \
     presentation/dialogs/getimagesfromvideosdialog.cpp \
     presentation/dialogs/propertyeditordialog.cpp \
     presentation/dialogs/rgbtrackinghelper.cpp \
@@ -47,7 +48,8 @@ SOURCES += \
     tests/recentfilemanagertest.cpp \
     tests/recentfilespathformatertest.cpp \
     tests/saveimageinfotests.cpp \
-    tests/setpropertiesinteractortests.cpp
+    tests/setpropertiesinteractortests.cpp \
+    domain/valueobjects/autocomparisonreportentry.cpp \
 
 HEADERS += \
     business/getimagesfromvideosinteractor.h \
@@ -70,6 +72,7 @@ HEADERS += \
     domain/interfaces/imageprocessor.h \
     domain/interfaces/iprogressdialog.h \
     domain/interfaces/mainwindowcallbacks.h \
+    domain/valueobjects/autocomparisonreportentry.h \
     domain/valueobjects/comparableimage.h \
     domain/valueobjects/comparisonresultvariant.h \
     domain/valueobjects/imageprocessorsinfo.h \
@@ -79,6 +82,7 @@ HEADERS += \
     domain/valueobjects/savefileinfo.h \
     presentation/dialogs/aboutdialog.h \
     presentation/dialogs/colorinfopanel.h \
+    presentation/dialogs/comparatorresultdialog.h \
     presentation/dialogs/getimagesfromvideosdialog.h \
     presentation/dialogs/propertyeditordialog.h \
     presentation/dialogs/rgbtrackinghelper.h \

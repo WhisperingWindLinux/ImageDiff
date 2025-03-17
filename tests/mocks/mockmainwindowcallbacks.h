@@ -22,18 +22,26 @@ public:
         m_usePreviousImageGeometry = usePreviousImageGeometry;
     }
     void onImageResultFromComparatorReceived(QPixmap &, QString) override {}
-    void onTextResultFromComparatorReceived(QString) override {}
+
+    void onTextResultFromComparatorReceived(QString &) override {}
+
+    void onTextResultFromComparatorReceived(QString &,
+                                            QString  ,
+                                            QString  ,
+                                            QString &,
+                                            QString &) override {}
+
     void saveImage(QPixmap &pixmap, QString path) override {
         lastSavedFilePath = "";
         if (!pixmap.isNull()) {
             lastSavedFilePath = path;
         }
     }
-    void onRgbValueUnderCursonChanged(RgbValue firstImageRgbValue, RgbValue secondImageRgbValue) override { }
+    void onRgbValueUnderCursonChanged(RgbValue, RgbValue) override { }
 
-    QList<Property> getUpdatedPropertiesFromUser(QString processorName,
-                                                 QString processorDescription,
-                                                 QList<Property> properties) override {
+    QList<Property> getUpdatedPropertiesFromUser(QString,
+                                                 QString ,
+                                                 QList<Property>) override {
         return updatedPropertiesFromUser;
     }
 
@@ -55,11 +63,11 @@ public:
 
     // IProgressDialog interface
 public:
-    void showProgressDialog(QString caption, int totalSteps) override { }
+    void showProgressDialog(QString, int) override { }
     bool wasCanceled() override { return true; }
-    void onUpdateProgressValue(int value) override { }
-    void onMessage(QString message) override { }
-    void onError(QString error) override { }
+    void onUpdateProgressValue(int) override { }
+    void onMessage(QString) override { }
+    void onError(QString) override { }
 };
 
 #endif // MOCKMAINWINDOWCALLBACKS_H

@@ -22,6 +22,7 @@
 #include <business/getimagesfromvideosinteractor.h>
 #include <presentation/views/imageviewer.h>
 #include <presentation/dialogs/aboutdialog.h>
+#include <presentation/dialogs/comparatorresultdialog.h>
 #include <presentation/dialogs/propertyeditordialog.h>
 #include <presentation/dialogs/rgbtrackinghelper.h>
 
@@ -299,7 +300,7 @@ void MainWindow::dropEvent(QDropEvent *event) {
 
 /* MainWindow' close event { */
 
-void MainWindow::closeEvent(QCloseEvent *event) {
+void MainWindow::closeEvent(QCloseEvent *) {
     saveMainWindowPosition();
     rgbTrackingInteractor->onMainWindowClosed();
 }
@@ -361,11 +362,24 @@ void MainWindow::onImageResultFromComparatorReceived(QPixmap &image, QString des
     viewer->showImageFromComparator(image, description);
 }
 
-void MainWindow::onTextResultFromComparatorReceived(QString text) {
+void MainWindow::onTextResultFromComparatorReceived(QString &message,
+                                                    QString comparatorFullName,
+                                                    QString comparatorDescription,
+                                                    QString &firstImageFilePath,
+                                                    QString &secondImageFilePath)
+{
+    ComparatorResultDialog dialog { message,
+                                  comparatorFullName,
+                                  comparatorDescription,
+                                  firstImageFilePath,
+                                  secondImageFilePath };
+    dialog.exec();
+}
+
+void MainWindow::onTextResultFromComparatorReceived(QString &message) {
     QMessageBox msgBox;
-    msgBox.setWindowTitle("Pixel Difference Analysis");
     msgBox.setTextFormat(Qt::RichText);
-    msgBox.setText(text);
+    msgBox.setText(message);
     msgBox.setStandardButtons(QMessageBox::Ok);
     msgBox.exec();
 }

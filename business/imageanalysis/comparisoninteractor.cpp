@@ -94,7 +94,12 @@ void ComparisonInteractor::callComparator(shared_ptr<IComparator> comparator) {
         if (stringResult.isNull() || stringResult.isEmpty()) {
             throw std::runtime_error("Error: The comparator returns the empty string.");
         }
-        callbacks->onTextResultFromComparatorReceived(stringResult);
+        callbacks->onTextResultFromComparatorReceived(stringResult,
+                                                      comparator->getFullName(),
+                                                      comparator->getDescription(),
+                                                      firstImagePath,
+                                                      secondImagePath
+                                                      );
     }
 }
 

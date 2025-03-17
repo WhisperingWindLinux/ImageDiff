@@ -17,7 +17,13 @@ public:
     virtual void onImageResultFromComparatorReceived(QPixmap &image,
                                           QString description) = 0;
 
-    virtual void onTextResultFromComparatorReceived(QString text) = 0;
+    virtual void onTextResultFromComparatorReceived(QString &message,
+                                                    QString comparatorFullName,
+                                                    QString comparatorDescription,
+                                                    QString &firstImageFilePath,
+                                                    QString &secondImageFilePath) = 0;
+
+    virtual void onTextResultFromComparatorReceived(QString &message) = 0;
 
     virtual void saveImage(QPixmap &image, QString defaultPath) = 0;
 
