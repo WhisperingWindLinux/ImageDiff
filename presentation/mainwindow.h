@@ -99,7 +99,7 @@ public:
                                             QString &firstImageFilePath,
                                             QString &secondImageFilePath) override;
 
-    void onTextResultFromComparatorReceived(QString &message) override;
+    void userShouldSeeHelpMessage(QString &message) override;
 
     void saveImage(QPixmap &image, QString defaultPath) override;
 

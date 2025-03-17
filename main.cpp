@@ -2,7 +2,6 @@
 
 #include <QApplication>
 #include <QtTest>
-#include <qfiledialog.h>
 
 #include <tests/propertytests.h>
 #include <tests/comparableimagetests.h>

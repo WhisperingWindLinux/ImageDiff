@@ -4,7 +4,6 @@
 #include <QtGui/qevent.h>
 #include <QtWidgets/qgraphicsitem.h>
 #include <QtWidgets/qstatusbar.h>
-#include <qfiledialog.h>
 #include <qmainwindow.h>
 #include <qmessagebox.h>
 #include <qapplication.h>

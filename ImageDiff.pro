@@ -24,6 +24,7 @@ SOURCES += \
     business/imageanalysis/runallcomparatorsinteractor.cpp \
     business/imageanalysis/setprocessorpropertiesinteractor.cpp \
     business/recentfilesmanager.cpp \
+    data/getfileuserpathsservcie.cpp \
     domain/valueobjects/comparableimage.cpp \
     domain/valueobjects/comparisonresultvariant.cpp \
     domain/valueobjects/property.cpp \
@@ -67,6 +68,7 @@ HEADERS += \
     business/imageanalysis/runallcomparatorsinteractor.h \
     business/imageanalysis/setprocessorpropertiesinteractor.h \
     business/recentfilesmanager.h \
+    data/getfileuserpathsservcie.h \
     domain/interfaces/comporator.h \
     domain/interfaces/filter.h \
     domain/interfaces/imageprocessor.h \

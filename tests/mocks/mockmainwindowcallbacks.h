@@ -23,13 +23,7 @@ public:
     }
     void onImageResultFromComparatorReceived(QPixmap &, QString) override {}
 
-    void onTextResultFromComparatorReceived(QString &) override {}
-
-    void onTextResultFromComparatorReceived(QString &,
-                                            QString  ,
-                                            QString  ,
-                                            QString &,
-                                            QString &) override {}
+    void userShouldSeeHelpMessage(QString &) override {}
 
     void saveImage(QPixmap &pixmap, QString path) override {
         lastSavedFilePath = "";
@@ -37,6 +31,14 @@ public:
             lastSavedFilePath = path;
         }
     }
+
+
+    void onTextResultFromComparatorReceived(QString &,
+                                            QString  ,
+                                            QString  ,
+                                            QString &,
+                                            QString &) override {}
+
     void onRgbValueUnderCursonChanged(RgbValue, RgbValue) override { }
 
     QList<Property> getUpdatedPropertiesFromUser(QString,

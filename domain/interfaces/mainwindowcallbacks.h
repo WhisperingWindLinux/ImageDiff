@@ -14,8 +14,7 @@ public:
                                              QString path2,
                                              bool usePreviousImageGeometry) = 0;
 
-    virtual void onImageResultFromComparatorReceived(QPixmap &image,
-                                          QString description) = 0;
+    virtual void onImageResultFromComparatorReceived(QPixmap &image,QString description) = 0;
 
     virtual void onTextResultFromComparatorReceived(QString &message,
                                                     QString comparatorFullName,
@@ -23,9 +22,7 @@ public:
                                                     QString &firstImageFilePath,
                                                     QString &secondImageFilePath) = 0;
 
-    virtual void onTextResultFromComparatorReceived(QString &message) = 0;
-
-    virtual void saveImage(QPixmap &image, QString defaultPath) = 0;
+    virtual void userShouldSeeHelpMessage(QString &message) = 0;
 
     virtual void onRgbValueUnderCursonChanged(RgbValue firstImageRgbValue, RgbValue secondImageRgbValue) = 0;
 
@@ -34,6 +31,8 @@ public:
                                                          QList<Property> defaultProperties) = 0;
 
     virtual void updateRecentFilesMenu() = 0;
+
+    virtual void saveImage(QPixmap &image, QString defaultPath) = 0;
 };
 
 

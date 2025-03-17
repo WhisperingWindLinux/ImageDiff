@@ -1,6 +1,7 @@
 #include "propertyeditordialog.h"
 
-#include <qfiledialog.h>
+#include <data/getfileuserpathsservcie.h>
+
 
 PropertyEditorDialog::PropertyEditorDialog(QString processorName,
                                            QString processorDescription,
@@ -72,9 +73,10 @@ PropertyEditorDialog::PropertyEditorDialog(QString processorName,
             fileLayout->addWidget(fileButton);
 
             connect(fileButton, &QPushButton::clicked, this, [this, filePathEdit]() {
-                QString filePath = QFileDialog::getOpenFileName(this, "Select File");
-                if (!filePath.isEmpty()) {
-                    filePathEdit->setText(filePath);
+                GetFileUserPathsService service;
+                auto filePath =service.getUserOpenImagePath("");
+                if (filePath) {
+                    filePathEdit->setText(filePath.value());
                 }
             });
 

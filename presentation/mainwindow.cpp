@@ -1,4 +1,5 @@
 #include "mainwindow.h"
+#include "data/getfileuserpathsservcie.h"
 #include "mainwindow.h"
 #include <QLabel>
 #include <QSplitter>
@@ -10,7 +11,6 @@
 #include <QGraphicsPixmapItem>
 #include <QKeyEvent>
 #include <QWheelEvent>
-#include <QFileDialog>
 #include <QPixmap>
 #include <QScrollBar>
 #include <QDebug>
@@ -172,7 +172,12 @@ void MainWindow::openRecentFile() {
 
 void MainWindow::openImages() {
     deleteImageView();
-    loadTwoImagesBeingCompared();
+    try {
+        comparisionInteractor->userRequestOpenTwoImagesBeingCompared();
+    } catch (std::runtime_error &e) {
+        deleteImageView();
+        showError(e.what());
+    }
 }
 
 void MainWindow::closeImages() {
@@ -310,34 +315,6 @@ void MainWindow::closeEvent(QCloseEvent *) {
 
 // These methods are called from ComparisonInteractor
 
-void MainWindow::saveImage(QPixmap &image, QString defaultPath) {
-    QString filePath = QFileDialog::getSaveFileName(
-        this,
-        "Save Image",                  // Dialog title
-        defaultPath,                   // Default directory
-        "Images (*.png)"               // File filters
-        );
-
-    if (filePath.isEmpty()) {
-        return;
-    }
-
-    if (!image.save(filePath)) {
-        QMessageBox::warning(this, "Error", "Failed to save the image.");
-    }
-}
-
-void MainWindow::loadTwoImagesBeingCompared() {
-    try {
-        QString firstImagePath = QFileDialog::getOpenFileName(nullptr, "Open First Image", "", "Images (*.png)");
-        QString secondImagePath = QFileDialog::getOpenFileName(nullptr, "Open Second Image", "", "Images (*.png)");
-        comparisionInteractor->loadTwoImagesBeingCompared(firstImagePath, secondImagePath, false, false, true);
-    } catch (std::runtime_error &e) {
-        deleteImageView();
-        showError(e.what());
-    }
-}
-
 void MainWindow::onRgbValueUnderCursonChanged(RgbValue visibleImageRgbValue, RgbValue hiddenImageRgbValue) {
     rgbTrackingInteractor->onRgbValueUnderCursonChanged(visibleImageRgbValue, hiddenImageRgbValue);
 }
@@ -376,7 +353,19 @@ void MainWindow::onTextResultFromComparatorReceived(QString &message,
     dialog.exec();
 }
 
-void MainWindow::onTextResultFromComparatorReceived(QString &message) {
+void MainWindow::saveImage(QPixmap &image, QString defaultPath) {
+
+    GetFileUserPathsService service;
+    auto savedFilePath = service.getUserSaveImagePath(defaultPath);
+    if (!savedFilePath) {
+        return;
+    }
+    if (!image.save(savedFilePath.value())) {
+        QMessageBox::warning(this, "Error", "Failed to save the image.");
+    }
+}
+
+void MainWindow::userShouldSeeHelpMessage(QString &message) {
     QMessageBox msgBox;
     msgBox.setTextFormat(Qt::RichText);
     msgBox.setText(message);

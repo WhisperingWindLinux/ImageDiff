@@ -6,6 +6,7 @@
 
 #include <QtCore/qdir.h>
 #include <QtCore/qurl.h>
+#include <data/getfileuserpathsservcie.h>
 #include <presentation/presenters/recentfilespresenter.h>
 #include <qfileinfo.h>
 #include <tests/testutils.h>
@@ -63,7 +64,7 @@ void ComparisonInteractor::onImageProcessorHelpShouldBeCalled(QVariant callerDat
     }
 
     QString helpText = processor->getDescription();
-    callbacks->onTextResultFromComparatorReceived(helpText);
+    callbacks->userShouldSeeHelpMessage(helpText);
 }
 
 void ComparisonInteractor::handleProcessorPropertiesIfNeed(shared_ptr<IImageProcessor> processor) {
@@ -167,6 +168,20 @@ QStringList ComparisonInteractor::getRecentFiles() {
     return result;
 }
 
+void ComparisonInteractor::userRequestOpenTwoImagesBeingCompared() {
+    GetFileUserPathsService service;
+    OptionalPathPair twoUserImagePaths = service.getUserOpenTwoImagePaths("");
+    if (!twoUserImagePaths) {
+        return;
+    }
+    loadTwoImagesBeingCompared(twoUserImagePaths.value().first,
+                               twoUserImagePaths.value().second,
+                               false,
+                               false,
+                               true
+                               );
+}
+
 // Open images from the recent files menu.
 // The menu item is formatted as "path to file 1 -> path to file 2".
 void ComparisonInteractor::loadTwoImagesBeingCompared(QString recentFileMenuRecord, bool isUpdateRecentMenu) {
@@ -205,7 +220,9 @@ void ComparisonInteractor::loadTwoImagesBeingCompared(QString& Image1Path,
 
     if (!validateFile(firstImagePath) || !validateFile(secondImagePath)) {
         clear();
-        throw std::runtime_error("Error: Both images must be selected!");
+        QString errorMsg = QString("Error: Unable to load images; the files ") +
+                            "are missing, or the application does not have access to them!";
+        throw std::runtime_error(errorMsg.toStdString());
     }
 
     bool isLoaded1 = firstPixmap.load(firstImagePath);
@@ -266,6 +283,7 @@ void ComparisonInteractor::saveImage(SaveImageInfo info) {
     QDir defaultDir = file1.absoluteDir();
     QString defaultExtention = QString(".") + file1.suffix();
     QString fileName, fullPath;
+    GetFileUserPathsService fsAccess;
 
     switch (info.saveImageInfoType) {
     case SaveImageInfoType::FirstImage:
@@ -325,14 +343,6 @@ void ComparisonInteractor::runAllComparators() {
     };
     runAllComparatorsInteractor.run();
 }
-
-
-
-
-
-
-
-
 
 
 

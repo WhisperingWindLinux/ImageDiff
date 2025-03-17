@@ -5,7 +5,6 @@
 #include <QVBoxLayout>
 #include <QPushButton>
 #include <QSlider>
-#include <QFileDialog>
 #include <QMediaPlayer>
 #include <QVideoWidget>
 #include <QStyle>

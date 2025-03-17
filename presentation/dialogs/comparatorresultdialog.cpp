@@ -1,4 +1,5 @@
 #include "comparatorresultdialog.h"
+#include "data/getfileuserpathsservcie.h"
 #include <QtWidgets/qmessagebox.h>
 #include <presentation/presenters/htmlreportpresenter.h>
 
@@ -46,13 +47,11 @@ void ComparatorResultDialog::onSaveClicked() {
     QDir parentDir(QFileInfo(firstFilePath).absolutePath());
     QString filePath = parentDir.absolutePath() + QDir::separator() + "report.html";
 
-    QString savePath = QFileDialog::getSaveFileName(this,
-                                                    "Save report",
-                                                    filePath
-                                                    );
+    GetFileUserPathsService services;
+    auto savedPath = services.getUserSaveReportPath(filePath);
 
-    if (!savePath.isEmpty()) {
-        bool isOk = HtmlReportPresenter::createSimpleReportPage(savePath,
+    if (savedPath) {
+        bool isOk = HtmlReportPresenter::createSimpleReportPage(savedPath.value(),
                                                                 firstFilePath,
                                                                 secondFilePath,
                                                                 comparatorDescription,

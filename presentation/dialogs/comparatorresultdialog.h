@@ -5,7 +5,6 @@
 #include <QLabel>
 #include <QPushButton>
 #include <QVBoxLayout>
-#include <QFileDialog>
 #include <QDir>
 
 class ComparatorResultDialog : public QDialog {

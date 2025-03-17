@@ -23,6 +23,7 @@ public:
                                     );
 
     void loadTwoImagesBeingCompared(QList<QUrl> urls);
+    void loadTwoImagesBeingCompared(QString recentFileMenuRecord, bool isUpdateRecentMenu);
     void onImageProcessorShouldBeCalled(QVariant callerData);
     void onImageProcessorHelpShouldBeCalled(QVariant callerData);
     void saveImage(SaveImageInfo info);
@@ -32,7 +33,7 @@ public:
 
     friend class ComparisonInteractorTests;
 
-    void loadTwoImagesBeingCompared(QString recentFileMenuRecord, bool isUpdateRecentMenu);
+    void userRequestOpenTwoImagesBeingCompared();
 private:
     IMainWindowCallbacks *callbacks;
     RecentFilesManager *recentFilesManager;

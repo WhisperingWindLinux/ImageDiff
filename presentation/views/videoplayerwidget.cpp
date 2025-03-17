@@ -1,5 +1,7 @@
 #include "videoplayerwidget.h"
 
+#include <qmessagebox.h>
+
 VideoPlayerWidget::VideoPlayerWidget(QWidget *parent)
     : QWidget(parent), screenshotCounter(0), frameRate(INFINITY), currentPosition(0) {
     // Set minimum size to prevent hidden widgets
@@ -63,7 +65,7 @@ void VideoPlayerWidget::loadVideo(const QString &filePath) {
         currentVideoPath = filePath;
         mediaPlayer->play();
         mediaPlayer->pause();
-        playPauseButton->setText("Pause"); // Update button to "Pause"
+        playPauseButton->setText("Play");
     }
 }
 
@@ -91,7 +93,8 @@ void VideoPlayerWidget::takeScreenshot() {
 
     QVideoSink *videoSink = mediaPlayer->videoSink();
     if (!videoSink || !videoSink->videoFrame().isValid()) {
-        throw std::runtime_error("No valid video frame available for screenshot.");
+        QMessageBox::critical(this, "Error", "No valid video frame available for screenshot.");
+        return;
     }
 
     QVideoFrame frame = videoSink->videoFrame();
@@ -100,7 +103,8 @@ void VideoPlayerWidget::takeScreenshot() {
     frame.unmap();
 
     if (image.isNull()) {
-        throw std::runtime_error("Failed to convert video frame to image.");
+        QMessageBox::critical(this, "Error", "Failed to convert video frame to image!");
+        return;
     }
 
     // Generate the file name

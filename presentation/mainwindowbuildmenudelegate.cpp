@@ -16,9 +16,9 @@ MainWindowBuildMenuDelegate::MainWindowBuildMenuDelegate(MainWindow *mainWindow)
 // imageprocessormanager/imageprocessormanager.cpp
 
 void MainWindowBuildMenuDelegate::buildFiltersAndComparatorsMenus(QMenu *comparatorsMenu,
-                                                             QMenu *filtersMenu,
-                                                                     QMenu *helpMenu
-                                                             )
+                                                                  QMenu *filtersMenu,
+                                                                  QMenu *helpMenu
+                                                                  )
 {
     ImageProcessorsManager *manager = ImageProcessorsManager::instance();
     auto comporatorsInfo = manager->getAllProcessorsInfo();
