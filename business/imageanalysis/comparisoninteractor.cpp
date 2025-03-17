@@ -206,7 +206,7 @@ void ComparisonInteractor::loadTwoImagesBeingCompared(QList<QUrl> urls) {
 
 void ComparisonInteractor::loadTwoImagesBeingCompared(QString& Image1Path,
                                                       QString& Image2Path,
-                                                      bool usePreviousImageGeometry,
+                                                      bool useSavedImageViewState,
                                                       bool removeImageFilesAtExit,
                                                       bool isUpdateRecentMenu
                                                       )
@@ -239,11 +239,11 @@ void ComparisonInteractor::loadTwoImagesBeingCompared(QString& Image1Path,
     }
 
     callbacks->onTwoImagesBeingComparedLoadedSuccessfully(firstPixmap,
-                                           firstImagePath,
-                                           secondPixmap,
-                                           secondImagePath,
-                                           usePreviousImageGeometry
-                                           );
+                                                          firstImagePath,
+                                                          secondPixmap,
+                                                          secondImagePath,
+                                                          useSavedImageViewState
+                                                         );
 
     if (isUpdateRecentMenu) {
         recentFilesManager->addPair(firstImagePath, secondImagePath);

@@ -17,7 +17,7 @@ public:
 
     void loadTwoImagesBeingCompared(QString& Image1Path,
                                     QString& Image2Path,
-                                    bool usePreviousImageGeometry,
+                                    bool useSavedImageViewState,
                                     bool removeFilesAtExit,
                                     bool isUpdateRecentMenu
                                     );

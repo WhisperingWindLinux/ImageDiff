@@ -111,13 +111,15 @@ void ImageViewer::showTwoImagesBeingCompared(QPixmap& image1,
     secondImage = scene->addPixmap(image2);
     parent->showStatusMessage(path1);
     secondImage->setVisible(false);
+
     if (imageViewState != nullptr) {
+        if (currentImageIndex != imageViewState.get()->imageIndex) {
+            setSceneRect(secondImage->boundingRect());
+            toggleImage();
+        }
         centerOn(imageViewState.get()->rect.center());
         scale(imageViewState.get()->scaleFactor, imageViewState.get()->scaleFactor);
         scaleFactor = imageViewState.get()->scaleFactor;
-        if (currentImageIndex != imageViewState.get()->imageIndex) {
-            toggleImage();
-        }
         onColorPickerStatusChanged(imageViewState->isRgbTrackingActive);
     } else {
         setSceneRect(firstImage->boundingRect());
