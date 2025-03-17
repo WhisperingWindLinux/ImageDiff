@@ -77,6 +77,15 @@ void RgbTrackingHelper::openColorPickerDialog(bool isOnePanelMode) {
     placeColorPickerOnRight();
 }
 
+std::shared_ptr<RgbTrackingState> RgbTrackingHelper::getCurrentState() {
+    // TBD
+    return make_shared<RgbTrackingState>();
+}
+
+void RgbTrackingHelper::setState(std::shared_ptr<RgbTrackingState> newState) {
+    // TBD
+}
+
 void RgbTrackingHelper::closeColorPickerDialog() {
     if (colorPanel != nullptr) {
         colorPanel->close();

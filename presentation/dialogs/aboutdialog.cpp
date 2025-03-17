@@ -55,8 +55,8 @@ AboutDialog::AboutDialog(QWidget *parent) : QDialog(parent) {
         "without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. "
         "See the GNU General Public License for more details.\n\n"
         "You should have received a copy of the GNU General Public License along with this program. "
-        "If not, see https://www.gnu.org/licenses/gpl-3.0.txt."
-        "You can find me on ledstrain.org and https://github.com/WhisperingWindLinux.");
+        "If not, see https://www.gnu.org/licenses/gpl-3.0.txt.\n\n"
+        "You can find me on https://ledstrain.org and https://github.com/WhisperingWindLinux.");
     licenseDetails->setReadOnly(true);
     licenseDetails->setMinimumHeight(150);
     layout->addWidget(licenseDetails);

@@ -226,7 +226,7 @@ void MainWindow::showAboutDialog() {
 }
 
 void MainWindow::showOriginalImages() {
-    comparisionInteractor->realoadImagesFromDisk();
+    comparisionInteractor->reloadImagesFromDisk();
 }
 
 void MainWindow::showColorPicker() {
@@ -320,18 +320,23 @@ void MainWindow::onRgbValueUnderCursonChanged(RgbValue visibleImageRgbValue, Rgb
 }
 
 void MainWindow::onTwoImagesBeingComparedLoadedSuccessfully(QPixmap& image1,
-                                                         QString path1,
-                                                         QPixmap& image2,
-                                                         QString path2,
-                                                         bool useSavedImageViewState
-                                                         )
+                                                            QString path1,
+                                                            QPixmap& image2,
+                                                            QString path2,
+                                                            bool useSavedImageViewState
+                                                            )
 {
     std::shared_ptr<ImageViewState> imageViewState = nullptr;
+    std::shared_ptr<RgbTrackingState> rgbTrackingState = nullptr;
     if (useSavedImageViewState && viewer) {
         imageViewState = std::make_shared<ImageViewState>(viewer->getCurrentState());
+        rgbTrackingState = rgbTrackingInteractor->getCurrentState();
     }
     deleteImageView();
     createImageView();
+    if (useSavedImageViewState && rgbTrackingState != nullptr) {
+        rgbTrackingInteractor->setState(rgbTrackingState);
+    }
     viewer->showTwoImagesBeingCompared(image1, path1, image2, path2, imageViewState);
 }
 

@@ -146,7 +146,7 @@ void ComparisonInteractor::clear() {
     comparisionImage = {};
 }
 
-void ComparisonInteractor::realoadImagesFromDisk() {
+void ComparisonInteractor::reloadImagesFromDisk() {
     loadTwoImagesBeingCompared(firstImagePath, secondImagePath, true, false, false);
 }
 

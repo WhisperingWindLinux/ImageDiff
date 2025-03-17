@@ -1,8 +1,11 @@
 #ifndef RGBTRACKINGHELPER_H
 #define RGBTRACKINGHELPER_H
 
+#include <domain/valueobjects/rgbtrackingstate.h>
 #include <domain/valueobjects/rgbvalue.h>
 #include <presentation/dialogs/colorinfopanel.h>
+
+using namespace std;
 
 class MainWindow;
 class ColorInfoPanel;
@@ -23,6 +26,8 @@ public:
     void showAdvancedColorPicker();
     void onRgbValueUnderCursonChanged(RgbValue visibleImageRgbValue, RgbValue hiddenImageRgbValue);
     void openColorPickerDialog(bool isOnePanelMode);
+    shared_ptr<RgbTrackingState> getCurrentState();
+    void setState(shared_ptr<RgbTrackingState> newState);
 
 private:
     ColorInfoPanel* colorPanel = nullptr;

@@ -24,11 +24,11 @@ ImageProximityToOriginResult ImageProximityToOriginComparator::compareImages(QIm
 
     QString strResult;
     if (totalDifference1 < totalDifference2) {
-        strResult = QString(name1) + " is closer to the original image.";
+        strResult = QString(name1) + " is closer to the original image";
     } else if (totalDifference1 > totalDifference2) {
-        strResult = QString(name2) + " is closer to the original image.";
+        strResult = QString(name2) + " is closer to the original image";
     } else {
-        strResult = "Both images are equally close to the original image.";
+        strResult = "Both images are equally close to the original image";
     }
 
     return {name1, name2, totalDifference1, totalDifference2, strResult };

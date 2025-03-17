@@ -115,6 +115,9 @@ QString PixelsBrightnessComparator::formatResultToHtml(const PixelsBrightnessCom
     QString formattedBrighterCount = locale.toString(result.brighterCount);
     QString formattedDarkerPercent = locale.toString(result.darkerCount);
 
+    QString formattedTotalBrightness1 = locale.toString(result.totalBrightness1);
+    QString formattedTotalBrightness2 = locale.toString(result.totalBrightness2);
+
     QString html;
 
     html += QString("<h2 style=\"line-height: 2;\">%1</h2>").arg(getFullName());
@@ -141,6 +144,20 @@ QString PixelsBrightnessComparator::formatResultToHtml(const PixelsBrightnessCom
                 .arg(result.name2)
                 .arg(formattedDarkerPercent)
                 .arg(QString::number(result.darkerPercent, 'f', 2) + "%");
+    html += "</table>";
+    html += "<br/>";
+
+    html += "<table border=\"1\" cellspacing=\"0\" cellpadding=\"5\">";
+    html += QString("<tr><td align=\"center\">%1</td><td align=\"center\">%2</td></tr>")
+                .arg("Parameter")
+                .arg("Value");
+    html += QString("<tr><td>Overall brightness %1</td><td align=\"right\">%2</td></tr>")
+                .arg(result.name1)
+                .arg(formattedTotalBrightness1);
+    html += QString("<tr><td>Overall brightness %1</td><td align=\"right\">%2</td></tr>")
+                .arg(result.name2)
+                .arg(formattedTotalBrightness2);
+
 
     double dTotalBrightness1 = result.totalBrightness1;
     double dTotalBrightness2 = result.totalBrightness2;
@@ -149,7 +166,7 @@ QString PixelsBrightnessComparator::formatResultToHtml(const PixelsBrightnessCom
     double brightnessDifferencePercentage = (std::abs(dTotalBrightness1 - dTotalBrightness2) /
                                              std::max(dTotalBrightness1, dTotalBrightness2)) * 100;
 
-    html += "<tr><td colspan=\"3\" align=\"center\"><b>";
+    html += "<tr><td colspan=\"2\" align=\"center\"><b>";
 
     if (dTotalBrightness1 > dTotalBrightness2) {
         html += QString("<font color=\"green\">%1</font> is brighter than %2 by %3%")
@@ -165,7 +182,7 @@ QString PixelsBrightnessComparator::formatResultToHtml(const PixelsBrightnessCom
         html += " <font color=\"green\">Both images have the same brightness</font>";
     }
 
-    html += "</b></td></tr>";
+    html += "</tr>";
     html += "</table>";
     html += "<br/><br/>";
     html += QString("The algorithm makes a conclusion based on the total ")

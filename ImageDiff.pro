@@ -80,6 +80,7 @@ HEADERS += \
     domain/valueobjects/imageprocessorsinfo.h \
     domain/valueobjects/imageviewstate.h \
     domain/valueobjects/property.h \
+    domain/valueobjects/rgbtrackingstate.h \
     domain/valueobjects/rgbvalue.h \
     domain/valueobjects/savefileinfo.h \
     presentation/dialogs/aboutdialog.h \

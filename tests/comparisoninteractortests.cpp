@@ -49,7 +49,7 @@ void ComparisonInteractorTests::testReloadImagesFromDisk() {
     verifyLoadedImages(image1Path, image2Path, false);
 
     // Act: Reload images from disk
-    interactor->realoadImagesFromDisk();
+    interactor->reloadImagesFromDisk();
 
     // Assert: Verify that images are reloaded with updated geometry flag
     verifyLoadedImages(image1Path, image2Path, true);

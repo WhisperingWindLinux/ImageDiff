@@ -27,7 +27,7 @@ public:
     void onImageProcessorShouldBeCalled(QVariant callerData);
     void onImageProcessorHelpShouldBeCalled(QVariant callerData);
     void saveImage(SaveImageInfo info);
-    void realoadImagesFromDisk();
+    void reloadImagesFromDisk();
     QStringList getRecentFiles();
     void runAllComparators();
 
