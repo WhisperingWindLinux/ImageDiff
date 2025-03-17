@@ -16,6 +16,19 @@ AboutDialog::AboutDialog(QWidget *parent) : QDialog(parent) {
     appNameLabel->setAlignment(Qt::AlignCenter);
     layout->addWidget(appNameLabel);
 
+    QLabel *appVersion = new QLabel("version 0.3.0");
+    appVersion->setAlignment(Qt::AlignCenter);
+    layout->addWidget(appVersion);
+
+    QLabel *warning = new QLabel("<b>The application is in the alpha testing stage</b>");
+    warning->setWordWrap(true);
+    warning->setAlignment(Qt::AlignCenter) ;
+    layout->addWidget(warning);
+
+    QLabel *warning2 = new QLabel("<b>and may contain bugs!</b>");
+    warning2->setAlignment(Qt::AlignCenter);
+    layout->addWidget(warning2);
+
     QLabel *authorLabel = new QLabel("Author: WhisperingWind", this);
     authorLabel->setAlignment(Qt::AlignCenter);
     layout->addWidget(authorLabel);
