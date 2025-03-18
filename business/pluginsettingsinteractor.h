@@ -5,14 +5,14 @@
 
 using namespace std;
 
-class PluginSettingsInteractor
+class PluginsSettingsInteractor
 {
 public:
-    PluginSettingsInteractor();
+    PluginsSettingsInteractor();
 
-    bool updatePluginSettings(PluginsSettings pluginSettings, QString& error);
+    bool updatePluginSettings(PluginsSettings pluginSettings, /* out */ QString& error);
     PluginsSettings getPluginSettings();
-
+    bool rescanPluginsDir(/* out */ QString &error);
 private:
     unique_ptr<PluginsSettingsRepository> pluginSettingsRepository;
 

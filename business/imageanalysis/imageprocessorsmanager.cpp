@@ -9,7 +9,6 @@
 #include <business/imageanalysis/comporators/pixelsabsolutevaluecomparator.h>
 #include <business/imageanalysis/comporators/pixelsbrightnesscomparator.h>
 #include <business/imageanalysis/comporators/sharpnesscomparator.h>
-
 #include <business/imageanalysis/filters/grayscalefilter.h>
 #include <business/imageanalysis/filters/rgbfilter.h>
 
@@ -22,45 +21,11 @@ ImageProcessorsManager *ImageProcessorsManager::instance() {
 }
 
 ImageProcessorsManager::ImageProcessorsManager() {
-
-    // add comporators
-
-    auto imageComparator = make_shared<DifferenceInPixelValuesAsImageComporator>();
-    auto imageSaturationComporator = make_shared<ColorsSaturationComporator>();
-    auto imageContrastComporator = make_shared<ContrastComporator>();
-    auto imagePixelsAbsoluteValueComparator = make_shared<PixelsAbsoluteValueComparator>();
-    auto imagePixelsBrightnessComparator = make_shared<PixelsBrightnessComparator>();
-    auto sharpnessComparator = make_shared<SharpnessComparator>();
-    auto imageProximityComparator = make_shared<ImageProximityToOriginComparator>();
-
-    addProcessor(imageComparator);
-    addProcessor(imageSaturationComporator);
-    addProcessor(imageContrastComporator);
-    addProcessor(imagePixelsAbsoluteValueComparator);
-    addProcessor(imagePixelsBrightnessComparator);
-    addProcessor(sharpnessComparator);
-    addProcessor(imageProximityComparator);
-
-    // add filters
-
-    auto redChannelFilter = make_shared<RedChannelFilter>();
-    auto greenChannelFilter = make_shared<GreenChannelFilter>();
-    auto blueChannelFilter = make_shared<BlueChannelFilter>();
-    auto grayscaleFilter = make_shared<GrayscaleFilter>();
-
-    addProcessor(redChannelFilter);
-    addProcessor(greenChannelFilter);
-    addProcessor(blueChannelFilter);
-    addProcessor(grayscaleFilter);
-
-    pluginsManager = make_unique<PluginsManager>(this);
-    pluginsManager->loadAsync();
 }
 
-void ImageProcessorsManager::onPluginsLoaded(QList<shared_ptr<IImageProcessor> > processors) {
-    foreach (auto processor, processors) {
-        addProcessor(processor);
-    }
+void ImageProcessorsManager::clear() {
+    processors.clear();
+    hotkeys.clear();
 }
 
 void ImageProcessorsManager::addProcessor(shared_ptr<IImageProcessor> processor) {
@@ -118,10 +83,3 @@ QList<shared_ptr<IComparator> > ImageProcessorsManager::getAllComparators() {
     }
     return comparators;
 }
-
-
-
-
-
-
-

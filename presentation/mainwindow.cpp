@@ -21,6 +21,7 @@
 #include <presentation/views/imageviewer.h>
 #include <presentation/dialogs/aboutdialog.h>
 #include <presentation/dialogs/comparatorresultdialog.h>
+#include <presentation/dialogs/helpdialog.h>
 #include <presentation/dialogs/pluginssettingsdialog.h>
 #include <presentation/dialogs/propertyeditordialog.h>
 #include <presentation/dialogs/rgbtrackinghelper.h>
@@ -39,7 +40,7 @@ MainWindow::MainWindow(QWidget *parent)
     rgbTrackingInteractor = new RgbTrackingHelper(this);
     buildMenuDelegate = new MainWindowBuildMenuDelegate(this);
 
-    buildMenu();
+    buildMenu(comparisionInteractor->getImageProcessorsInfo());
     makeConnections();
 
     setWindowTitle("Image Diff");
@@ -63,12 +64,18 @@ void MainWindow::showEvent(QShowEvent* event) {
     updateRecentFilesMenu();
 }
 
-void MainWindow::buildMenu() {
+void MainWindow::buildMenu(QList<ImageProcessorInfo> imageProcessorsInfo) {
     QMenu *comparatorsMenu = ui->menuComparators;
     QMenu *filtersMenu = ui->menuFilters;
-    QMenu *helpMenu = ui->menuHelp;
-    buildMenuDelegate->buildFiltersAndComparatorsMenus(comparatorsMenu, filtersMenu, helpMenu);
-    enabledImageOperationMenuItems(false);
+    buildMenuDelegate->buildFiltersAndComparatorsMenus(comparatorsMenu,
+                                                       filtersMenu,
+                                                       imageProcessorsInfo
+                                                       );
+    if (viewer == nullptr) {
+        enabledImageOperationMenuItems(false);
+    } else {
+        enabledImageOperationMenuItems(true);
+    }
 }
 
 void MainWindow::makeConnections() {
@@ -89,7 +96,9 @@ void MainWindow::makeConnections() {
     connect(ui->actionPlaceColorPickerOnLeft, &QAction::triggered, this, &MainWindow::placeColorPickerOnLeft);
     connect(ui->actionGrabImagesFromVideos, &QAction::triggered, this, &MainWindow::grabImagesFromVideos);
     connect(ui->actionRunAllComparators, &QAction::triggered, this, &MainWindow::runAllComparators);
-    connect(ui->actionPluginsSettings, &QAction::triggered, this, &MainWindow::actionPluginsSettings);
+    connect(ui->actionPluginsSettings, &QAction::triggered, this, &MainWindow::changePluginsSettings);
+    connect(ui->actionRescanPluginDir, &QAction::triggered, this, &MainWindow::rescanPluginDir);
+    connect(ui->actionHelp, &QAction::triggered, this, &MainWindow::callImageProcessorsHelp);
 }
 
 void MainWindow::enabledImageOperationMenuItems(bool isEnabled) {
@@ -107,6 +116,8 @@ void MainWindow::enabledImageOperationMenuItems(bool isEnabled) {
     ui->actionPlaceColorPickerOnLeft->setDisabled(!isEnabled);
     ui->actionPlaceColorPickerOnRight->setDisabled(!isEnabled);
     ui->actionFitInView->setDisabled(!isEnabled);
+    ui->actionAdvancedColorPicker->setDisabled(!isEnabled);
+    ui->actionColorPicker->setDisabled(!isEnabled);
 }
 
 /* } =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
@@ -135,9 +146,14 @@ void MainWindow::runAllComparators() {
     comparisionInteractor->runAllComparators();
 }
 
-void MainWindow::actionPluginsSettings() {
+void MainWindow::changePluginsSettings() {
     PluginsSettingsDialog dialog {};
     dialog.exec();
+}
+
+void MainWindow::rescanPluginDir() {
+    buildMenu(comparisionInteractor->getImageProcessorsInfo());
+    makeConnections();
 }
 
 void MainWindow::imageZoomedToActualSize() {
@@ -205,15 +221,8 @@ void MainWindow::callImageProcessor() {
     }
 }
 
-void MainWindow::callImageProcessorHelp() {
-    QAction *action = qobject_cast<QAction*>(sender());
-    try {
-        comparisionInteractor->onImageProcessorHelpShouldBeCalled(action->data());
-    } catch (std::runtime_error &e) {
-        showError(e.what());
-    } catch (std::exception &e) {
-        qDebug() << e.what();
-    }
+void MainWindow::callImageProcessorsHelp() {
+    comparisionInteractor->onImageProcessorsHelpShouldBeCalled();
 }
 
 void MainWindow::saveImageAs() {
@@ -377,11 +386,10 @@ void MainWindow::saveImage(QPixmap &image, QString defaultPath) {
 }
 
 void MainWindow::userShouldSeeHelpMessage(QString &message) {
-    QMessageBox msgBox;
-    msgBox.setTextFormat(Qt::RichText);
-    msgBox.setText(message);
-    msgBox.setStandardButtons(QMessageBox::Ok);
-    msgBox.exec();
+    if (!message.isEmpty()) {
+        HelpDialog dialog(message);
+        dialog.exec();
+    }
 }
 
 /*

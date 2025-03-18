@@ -14,6 +14,8 @@
 
 #include <business/pluginsettingsinteractor.h>
 
+class QLineEdit;
+
 class PluginsSettingsDialog : public QDialog {
     Q_OBJECT
 
@@ -24,9 +26,9 @@ private slots:
     void onOkClicked();
 
 private:
-    QTextEdit* pythonInterpreterEdit;
-    QTextEdit* pluginsDirectoryEdit;
-    unique_ptr<PluginSettingsInteractor> interactor;
+    QLineEdit* pythonInterpreterEdit;
+    QLineEdit* pluginsDirectoryEdit;
+    unique_ptr<PluginsSettingsInteractor> interactor;
 
     void loadCurrentSettings();
     void showError(const QString &errorMessage);

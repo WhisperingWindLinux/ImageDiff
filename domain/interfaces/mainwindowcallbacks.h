@@ -3,6 +3,7 @@
 
 #include <domain/interfaces/iprogressdialog.h>
 #include <qpixmap.h>
+#include <domain/valueobjects/imageprocessorsinfo.h>
 #include <domain/valueobjects/property.h>
 #include <domain/valueobjects/rgbvalue.h>
 

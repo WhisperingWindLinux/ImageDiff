@@ -29,7 +29,7 @@ void ComparisonInteractorTests::testClear() {
     interactor->loadTwoImagesBeingCompared(image1Path, image2Path, false, false, true);
 
     // Act: Clear the interactor state
-    interactor->clear();
+    interactor->onImagesClosed();
 
     // Assert: Verify that paths and pixmaps are cleared
     QCOMPARE(interactor->firstImagePath.isEmpty(), true);

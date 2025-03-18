@@ -28,7 +28,7 @@ public slots:
     void openImages();
     void switchBetweenImages();
     void callImageProcessor();
-    void callImageProcessorHelp();
+    void callImageProcessorsHelp();
     void saveImageAs();
     void saveVisibleAreaAs();
     void showAboutDialog();
@@ -44,7 +44,8 @@ public slots:
     void imagFitInView();
     void grabImagesFromVideos();
     void runAllComparators();
-    void actionPluginsSettings();
+    void changePluginsSettings();
+    void rescanPluginDir();
 
 public:
     MainWindow(QWidget *parent = nullptr);
@@ -71,7 +72,7 @@ private:
     QProgressDialog *progressDialog;
     QList<shared_ptr<QProcess> > instances;
 
-    void buildMenu();
+    void buildMenu(QList<ImageProcessorInfo> imageProcessorsInfo);
     void makeConnections();
     void loadTwoImagesBeingCompared();
     void showError(const QString &errorMessage);

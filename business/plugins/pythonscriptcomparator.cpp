@@ -71,7 +71,7 @@ shared_ptr<ComparisonResultVariant> PythonScriptComparator::compare(ComparableIm
         throw runtime_error("Failed to encode images to bytes array.");
     }
 
-    auto pluginSettings = PluginSettingsInteractor().getPluginSettings();
+    auto pluginSettings = PluginsSettingsInteractor().getPluginSettings();
     if (pluginSettings.pythonInterpreterPath.isEmpty()) {
         throw runtime_error("Bad python interpreter.");
     }
@@ -109,6 +109,7 @@ shared_ptr<ComparisonResultVariant> PythonScriptComparator::compare(ComparableIm
     QByteArray output = process.readAllStandardOutput();
     QImage resultImage;
     if (!resultImage.loadFromData(output, "PNG")) {
+        qDebug() << process.readAllStandardError();
         throw runtime_error("Failed to load the image from data.");
     }
 
@@ -118,8 +119,3 @@ shared_ptr<ComparisonResultVariant> PythonScriptComparator::compare(ComparableIm
 
     return make_shared<ComparisonResultVariant>(resultImage);
 }
-
-
-
-
-

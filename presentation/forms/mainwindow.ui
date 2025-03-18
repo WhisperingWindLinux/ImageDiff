@@ -41,7 +41,6 @@
     <addaction name="separator"/>
     <addaction name="actionSaveImageAs"/>
     <addaction name="actionSaveVisibleAreaAs"/>
-    <addaction name="separator"/>
    </widget>
    <widget class="QMenu" name="menuComparators">
     <property name="title">
@@ -52,25 +51,19 @@
     <property name="title">
      <string>Help</string>
     </property>
-    <addaction name="actionFilters_Description"/>
-    <addaction name="separator"/>
     <addaction name="actionAbout"/>
+    <addaction name="actionHelp"/>
    </widget>
    <widget class="QMenu" name="menuImageAnalysis">
     <property name="title">
      <string>Analysis</string>
     </property>
     <addaction name="actionRunAllComparators"/>
-    <addaction name="separator"/>
-    <addaction name="actionColorPicker"/>
-    <addaction name="actionAdvancedColorPicker"/>
-    <addaction name="separator"/>
    </widget>
    <widget class="QMenu" name="menuFilters">
     <property name="title">
      <string>Filters</string>
     </property>
-    <addaction name="separator"/>
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
@@ -93,26 +86,30 @@
     <addaction name="actionPlaceColorPickerOnRight"/>
     <addaction name="actionPlaceColorPickerOnLeft"/>
    </widget>
-   <widget class="QMenu" name="menuPlugins">
+   <widget class="QMenu" name="menuTools">
     <property name="title">
-     <string>Plugins</string>
+     <string>Tools</string>
     </property>
-    <addaction name="actionPluginsSettings"/>
-   </widget>
-   <widget class="QMenu" name="menu5465465">
-    <property name="title">
-     <string>5465465</string>
-    </property>
+    <widget class="QMenu" name="menuPlugins">
+     <property name="title">
+      <string>Plugins</string>
+     </property>
+     <addaction name="actionPluginsSettings"/>
+     <addaction name="actionRescanPluginDir"/>
+    </widget>
+    <addaction name="actionColorPicker"/>
+    <addaction name="actionAdvancedColorPicker"/>
+    <addaction name="separator"/>
+    <addaction name="menuPlugins"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuView"/>
    <addaction name="menuImageAnalysis"/>
    <addaction name="menuFilters"/>
    <addaction name="menuComparators"/>
-   <addaction name="menuPlugins"/>
+   <addaction name="menuTools"/>
    <addaction name="menuWindow"/>
    <addaction name="menuHelp"/>
-   <addaction name="menu5465465"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QToolBar" name="toolBar">
@@ -185,46 +182,6 @@
     <string>P</string>
    </property>
   </action>
-  <action name="actionShow_R_channel">
-   <property name="text">
-    <string>Display Red Channel</string>
-   </property>
-   <property name="shortcut">
-    <string>R</string>
-   </property>
-  </action>
-  <action name="actionShow_G_channel">
-   <property name="text">
-    <string>Display Green Channel</string>
-   </property>
-   <property name="shortcut">
-    <string>G</string>
-   </property>
-  </action>
-  <action name="actionShow_B_channel">
-   <property name="text">
-    <string>Display Blue Channel</string>
-   </property>
-   <property name="shortcut">
-    <string>B</string>
-   </property>
-  </action>
-  <action name="actionShow_RGB">
-   <property name="text">
-    <string>DIsplay RGB</string>
-   </property>
-   <property name="shortcut">
-    <string>A</string>
-   </property>
-  </action>
-  <action name="actionDisplay_grayscale">
-   <property name="text">
-    <string>Grayscale </string>
-   </property>
-   <property name="shortcut">
-    <string>E</string>
-   </property>
-  </action>
   <action name="actionShowOriginalImage">
    <property name="text">
     <string>Show Original Image</string>
@@ -265,11 +222,6 @@
     <string>Ctrl+-</string>
    </property>
   </action>
-  <action name="actionNo_Files">
-   <property name="text">
-    <string>No Files</string>
-   </property>
-  </action>
   <action name="actionPlaceColorPickerOnRight">
    <property name="text">
     <string>Place Color Picker On Right</string>
@@ -294,27 +246,12 @@
     <string>F</string>
    </property>
   </action>
-  <action name="actionOpen_Videos">
-   <property name="text">
-    <string>Open Videos</string>
-   </property>
-  </action>
   <action name="actionGrabImagesFromVideos">
    <property name="text">
     <string>Get Images From Videos</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Alt+O</string>
-   </property>
-  </action>
-  <action name="actionComporators_Description">
-   <property name="text">
-    <string>Comparators Description</string>
-   </property>
-  </action>
-  <action name="actionFilters_Description">
-   <property name="text">
-    <string>Filters Description</string>
    </property>
   </action>
   <action name="actionRunAllComparators">
@@ -328,6 +265,19 @@
   <action name="actionPluginsSettings">
    <property name="text">
     <string>Settings</string>
+   </property>
+  </action>
+  <action name="actionRescanPluginDir">
+   <property name="text">
+    <string>Rescan Plugins Directory</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+R</string>
+   </property>
+  </action>
+  <action name="actionHelp">
+   <property name="text">
+    <string>Image Processing Algorithms</string>
    </property>
   </action>
  </widget>

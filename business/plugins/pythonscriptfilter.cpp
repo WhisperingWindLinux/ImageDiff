@@ -52,7 +52,7 @@ QImage PythonScripFilter::filter(QImage image) {
         throw runtime_error("Failed to encode images to bytes array.");
     }
 
-    auto pluginSettings = PluginSettingsInteractor().getPluginSettings();
+    auto pluginSettings = PluginsSettingsInteractor().getPluginSettings();
     if (pluginSettings.pythonInterpreterPath.isEmpty()) {
         throw runtime_error("Bad python interpreter.");
     }

@@ -6,8 +6,19 @@
 
 #include <QtCore/qdir.h>
 #include <QtCore/qurl.h>
+#include <business/imageanalysis/comporators/colorssaturationcomporator.h>
+#include <business/imageanalysis/comporators/contrastcomporator.h>
+#include <business/imageanalysis/comporators/differenceinpixelvaluesasimage.h>
+#include <business/imageanalysis/comporators/imageproximitytoorigincomparator.h>
+#include <business/imageanalysis/comporators/pixelsabsolutevaluecomparator.h>
+#include <business/imageanalysis/comporators/pixelsbrightnesscomparator.h>
+#include <business/imageanalysis/comporators/sharpnesscomparator.h>
+#include <business/imageanalysis/filters/grayscalefilter.h>
+#include <business/imageanalysis/filters/rgbfilter.h>
 #include <data/storage/getfileuserpathsservcie.h>
+#include <presentation/presenters/htmlimageprocessorshelppresenter.h>
 #include <presentation/presenters/recentfilespresenter.h>
+#include <qcoreapplication.h>
 #include <qfileinfo.h>
 #include <tests/testutils.h>
 
@@ -15,6 +26,9 @@ ComparisonInteractor::ComparisonInteractor(IMainWindowCallbacks *callbacks)
     : callbacks(callbacks)
 {
     recentFilesManager = new RecentFilesManager("com.whisperingwind", "ImageDiff");
+    pluginsManager = new PluginsManager();
+    processorsManager = ImageProcessorsManager::instance();
+    getImageProcessorsInfo();
 }
 
 ComparisonInteractor::~ComparisonInteractor() {
@@ -51,19 +65,12 @@ void ComparisonInteractor::onImageProcessorShouldBeCalled(QVariant callerData) {
     }
 }
 
-void ComparisonInteractor::onImageProcessorHelpShouldBeCalled(QVariant callerData) {
-    if (!callerData.isValid() || callerData.isNull()) {
-        throw std::runtime_error("Error: An incorrect caller data.");
+void ComparisonInteractor::onImageProcessorsHelpShouldBeCalled() {
+    auto processorsInfo = processorsManager->getAllProcessorsInfo();
+    if (processorsInfo.size() == 0) {
+        return;
     }
-    QString processorName = callerData.toString();
-
-    auto processor = ImageProcessorsManager::instance()->findProcessor(processorName);
-
-    if (processor == nullptr) {
-        throw std::runtime_error("Error: Unable to find the requested image processor.");
-    }
-
-    QString helpText = processor->getDescription();
+    auto helpText = HtmlImageProcessorsHelpPresenter::formatToHTML(processorsInfo);
     callbacks->userShouldSeeHelpMessage(helpText);
 }
 
@@ -139,7 +146,7 @@ void ComparisonInteractor::callFilter(shared_ptr<IFilter> filter) {
                                                           );
 }
 
-void ComparisonInteractor::clear() {
+void ComparisonInteractor::onImagesClosed() {
     firstImagePath = {};
     secondImagePath = {};
     firstPixmap = {};
@@ -220,7 +227,7 @@ void ComparisonInteractor::loadTwoImagesBeingCompared(QString& Image1Path,
     secondPixmap = QPixmap();
 
     if (!validateFile(firstImagePath) || !validateFile(secondImagePath)) {
-        clear();
+        onImagesClosed();
         QString errorMsg = QString("Error: Unable to load images; the files ") +
                             "are missing, or the application does not have access to them!";
         throw std::runtime_error(errorMsg.toStdString());
@@ -230,12 +237,12 @@ void ComparisonInteractor::loadTwoImagesBeingCompared(QString& Image1Path,
     bool isLoaded2 = secondPixmap.load(secondImagePath);
 
     if (firstPixmap.size() != secondPixmap.size()) {
-        clear();
+        onImagesClosed();
         throw std::runtime_error("Error: Images must have the same resolution!");
     }
 
     if (!isLoaded1 || !isLoaded2) {
-        clear();
+        onImagesClosed();
         throw std::runtime_error("Error: Unable to load images!");
     }
 
@@ -345,7 +352,44 @@ void ComparisonInteractor::runAllComparators() {
     runAllComparatorsInteractor.run();
 }
 
+QList<ImageProcessorInfo> ComparisonInteractor::getImageProcessorsInfo()
+{
+    processorsManager->clear();
 
+    // add comporators
 
+    auto imageComparator = make_shared<DifferenceInPixelValuesAsImageComporator>();
+    auto imageSaturationComporator = make_shared<ColorsSaturationComporator>();
+    auto imageContrastComporator = make_shared<ContrastComporator>();
+    auto imagePixelsAbsoluteValueComparator = make_shared<PixelsAbsoluteValueComparator>();
+    auto imagePixelsBrightnessComparator = make_shared<PixelsBrightnessComparator>();
+    auto sharpnessComparator = make_shared<SharpnessComparator>();
+    auto imageProximityComparator = make_shared<ImageProximityToOriginComparator>();
 
+    processorsManager->addProcessor(imageComparator);
+    processorsManager->addProcessor(imageSaturationComporator);
+    processorsManager->addProcessor(imageContrastComporator);
+    processorsManager->addProcessor(imagePixelsAbsoluteValueComparator);
+    processorsManager->addProcessor(imagePixelsBrightnessComparator);
+    processorsManager->addProcessor(sharpnessComparator);
+    processorsManager->addProcessor(imageProximityComparator);
 
+    // add filters
+
+    auto redChannelFilter = make_shared<RedChannelFilter>();
+    auto greenChannelFilter = make_shared<GreenChannelFilter>();
+    auto blueChannelFilter = make_shared<BlueChannelFilter>();
+    auto grayscaleFilter = make_shared<GrayscaleFilter>();
+
+    processorsManager->addProcessor(redChannelFilter);
+    processorsManager->addProcessor(greenChannelFilter);
+    processorsManager->addProcessor(blueChannelFilter);
+    processorsManager->addProcessor(grayscaleFilter);
+
+    auto processors = pluginsManager->loadPlugins();
+
+    foreach (auto processor, processors) {
+        processorsManager->addProcessor(processor);
+    }
+    return processorsManager->getAllProcessorsInfo();
+}

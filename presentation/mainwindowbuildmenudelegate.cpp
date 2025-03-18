@@ -17,14 +17,13 @@ MainWindowBuildMenuDelegate::MainWindowBuildMenuDelegate(MainWindow *mainWindow)
 
 void MainWindowBuildMenuDelegate::buildFiltersAndComparatorsMenus(QMenu *comparatorsMenu,
                                                                   QMenu *filtersMenu,
-                                                                  QMenu *helpMenu
+                                                                  QList<ImageProcessorInfo> imageProcessorsInfo
                                                                   )
 {
-    ImageProcessorsManager *manager = ImageProcessorsManager::instance();
-    auto comporatorsInfo = manager->getAllProcessorsInfo();
+    comparatorsMenu->clear();
+    filtersMenu->clear();
 
-    // an image comporators
-    for (auto it = comporatorsInfo.begin(); it != comporatorsInfo.end(); ++it) {
+    for (auto it = imageProcessorsInfo.begin(); it != imageProcessorsInfo.end(); ++it) {
         QString name = (*it).name;
         QString hotkey = (*it).hotkey;
         ImageProcessorType type = (*it).type;
@@ -43,14 +42,6 @@ void MainWindowBuildMenuDelegate::buildFiltersAndComparatorsMenus(QMenu *compara
                             &QAction::triggered,
                             mainWindow,
                             &MainWindow::callImageProcessor
-                            );
-
-        QAction *newProcessorHelpAction = helpMenu->addAction(name);
-        newProcessorHelpAction->setData(name);
-        mainWindow->connect(newProcessorHelpAction,
-                            &QAction::triggered,
-                            mainWindow,
-                            &MainWindow::callImageProcessorHelp
                             );
     }
 }

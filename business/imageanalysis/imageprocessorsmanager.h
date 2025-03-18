@@ -7,13 +7,15 @@
 #include <domain/interfaces/imageprocessor.h>
 #include <domain/valueobjects/imageprocessorsinfo.h>
 
-class ImageProcessorsManager : public IPluginsManagerCallbacks
+class ImageProcessorsManager
 {
 public:
     static ImageProcessorsManager *instance();
+    void addProcessor(shared_ptr<IImageProcessor> processor);
     shared_ptr<IImageProcessor> findProcessor(QString name);
     QList<ImageProcessorInfo> getAllProcessorsInfo();
     QList<shared_ptr<IComparator> > getAllComparators();
+    void clear();
 
     friend class ImageProcessorsManagerTests;
 
@@ -24,13 +26,7 @@ private:
 
     static ImageProcessorsManager *manager;
     ImageProcessorsManager();
-    void addProcessor(shared_ptr<IImageProcessor> comporator);
     void removeProcessor(QString name);
-    void addProcessors(QList<shared_ptr<IImageProcessor> > processors);
-
-    // IPluginsManagerCallbacks interface
-public:
-    void onPluginsLoaded(QList<shared_ptr<IImageProcessor> > processors) override;
 };
 
 #endif // IMAGEPROCESSORSMANAGER_H

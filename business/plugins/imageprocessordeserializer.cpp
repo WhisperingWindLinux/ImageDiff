@@ -13,8 +13,12 @@ QList<std::shared_ptr<IImageProcessor> > ImageProcessorDeserializer::deserialize
     QList<std::shared_ptr<IImageProcessor>> processors;
 
     foreach (auto pyScriptInfo, pyScriptsInfo) {
-
-        auto jsonData = *pyScriptInfo.jsonData.get();
+        QFile file(pyScriptInfo.jsonFilePath);
+        if (!file.open(QIODevice::ReadOnly)) {
+            qWarning() << "Failed to open file:" << file.fileName();
+            continue;
+        }
+        QByteArray jsonData = file.readAll();
         QJsonDocument doc = QJsonDocument::fromJson(jsonData);
         if (!doc.isObject()) {
             qWarning() << "Invalid JSON format in file";
@@ -23,9 +27,9 @@ QList<std::shared_ptr<IImageProcessor> > ImageProcessorDeserializer::deserialize
         QJsonObject obj = doc.object();
         QString type = obj.value("type").toString();
         if (type == "Filter") {
-            processors.append(createFilter(obj, jsonData));
+            processors.append(createFilter(obj, pyScriptInfo.pythonFilePath));
         } else if (type == "Comparator") {
-            processors.append(createComparator(obj, jsonData));
+            processors.append(createComparator(obj, pyScriptInfo.pythonFilePath));
         } else {
             qWarning() << "Unknown processor type";
         }

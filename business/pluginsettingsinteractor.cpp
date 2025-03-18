@@ -2,11 +2,13 @@
 
 #include <qfileinfo.h>
 
-PluginSettingsInteractor::PluginSettingsInteractor() {
+#include <business/imageanalysis/imageprocessorsmanager.h>
+
+PluginsSettingsInteractor::PluginsSettingsInteractor() {
     pluginSettingsRepository = make_unique<PluginsSettingsRepository>();
 }
 
-bool PluginSettingsInteractor::updatePluginSettings(PluginsSettings pluginSettings, QString& error) {
+bool PluginsSettingsInteractor::updatePluginSettings(PluginsSettings pluginSettings, QString& error) {
     if (!isPythonPathValid(pluginSettings.pythonInterpreterPath)) {
         error.append(QString("Bad python interpreter."));
         return false;
@@ -19,7 +21,7 @@ bool PluginSettingsInteractor::updatePluginSettings(PluginsSettings pluginSettin
     return true;
 }
 
-PluginsSettings PluginSettingsInteractor::getPluginSettings() {
+PluginsSettings PluginsSettingsInteractor::getPluginSettings() {
     auto pluginSettings = pluginSettingsRepository->getSettings();
 
     QString pythonInterpreterPath;
@@ -34,7 +36,10 @@ PluginsSettings PluginSettingsInteractor::getPluginSettings() {
     return {pythonInterpreterPath, pluginsDirectoryPath};
 }
 
-bool PluginSettingsInteractor::isPluginDirPathValid(const QString &path) {
+bool PluginsSettingsInteractor::isPluginDirPathValid(const QString &path) {
+    if(path.isEmpty()) {
+        return true;
+    }
     QFileInfo pluginsDirInfo { path };
     if (!pluginsDirInfo.exists() ||
         !pluginsDirInfo.isDir()) {
@@ -43,8 +48,11 @@ bool PluginSettingsInteractor::isPluginDirPathValid(const QString &path) {
     return true;
 }
 
-bool PluginSettingsInteractor::isPythonPathValid(const QString &path)
-{ QFileInfo pythonInterpretatorInfo { path };
+bool PluginsSettingsInteractor::isPythonPathValid(const QString &path) {
+    if(path.isEmpty()) {
+        return true;
+    }
+    QFileInfo pythonInterpretatorInfo { path };
     if (!pythonInterpretatorInfo.exists() ||
         !pythonInterpretatorInfo.isFile() ||
         !pythonInterpretatorInfo.isExecutable()) {
