@@ -3,7 +3,7 @@
 
 #include <QtCore/qvariant.h>
 #include <qpixmap.h>
-#include <domain/interfaces/comporator.h>
+#include <domain/interfaces/comparator.h>
 #include <domain/interfaces/filter.h>
 #include <domain/interfaces/mainwindowcallbacks.h>
 #include <domain/valueobjects/savefileinfo.h>

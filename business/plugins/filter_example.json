@@ -1,0 +1,18 @@
+{
+  "type": "Filter",
+  "shortName": "BlurFilter",
+  "hotkey": "Ctrl+B",
+  "description": "Applies a blur effect to the image",
+  "properties": [
+    {
+      "name": "blurRadius",
+      "type": "int",
+      "value": 5
+    },
+    {
+      "name": "blurType",
+      "type": "string",
+      "value": "Gaussian"
+    }
+  ]
+}

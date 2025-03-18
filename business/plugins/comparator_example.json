@@ -1,0 +1,15 @@
+{
+  "type": "Comparator",
+  "shortName": "HistogramComparator",
+  "hotkey": "Ctrl+H",
+  "description": "Compares images based on histogram similarity",
+  "properties": [
+    {
+      "name": "comparisonThreshold",
+      "type": "float",
+      "value": 0.85
+    }
+  ],
+  "fullName": "Advanced Histogram Comparator",
+  "isPartOfAutoReportingToolbox": true
+}

@@ -3,7 +3,7 @@
 
 #include <QPair>
 
-#include <domain/interfaces/comporator.h>
+#include <domain/interfaces/comparator.h>
 
 
 // This class calculates the difference in RGB values between two images.

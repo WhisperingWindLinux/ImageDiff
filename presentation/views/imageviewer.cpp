@@ -97,11 +97,11 @@ void ImageViewer::fitImageInView() {
 /* Show images in QGraphicsView { */
 
 void ImageViewer::showTwoImagesBeingCompared(QPixmap& image1,
-                                          QString path1,
-                                          QPixmap& image2,
-                                          QString path2,
-                                          std::shared_ptr<ImageViewState> imageViewState
-                                          )
+                                             QString path1,
+                                             QPixmap& image2,
+                                             QString path2,
+                                             std::shared_ptr<ImageViewState> imageViewState
+                                             )
 {
     firstImagePath = path1;
     secondImagePath = path2;

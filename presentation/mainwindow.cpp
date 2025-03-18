@@ -1,6 +1,4 @@
 #include "mainwindow.h"
-#include "data/getfileuserpathsservcie.h"
-#include "mainwindow.h"
 #include <QLabel>
 #include <QSplitter>
 #include <QVBoxLayout>
@@ -23,8 +21,10 @@
 #include <presentation/views/imageviewer.h>
 #include <presentation/dialogs/aboutdialog.h>
 #include <presentation/dialogs/comparatorresultdialog.h>
+#include <presentation/dialogs/pluginssettingsdialog.h>
 #include <presentation/dialogs/propertyeditordialog.h>
 #include <presentation/dialogs/rgbtrackinghelper.h>
+#include <data/storage/getfileuserpathsservcie.h>
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -89,6 +89,7 @@ void MainWindow::makeConnections() {
     connect(ui->actionPlaceColorPickerOnLeft, &QAction::triggered, this, &MainWindow::placeColorPickerOnLeft);
     connect(ui->actionGrabImagesFromVideos, &QAction::triggered, this, &MainWindow::grabImagesFromVideos);
     connect(ui->actionRunAllComparators, &QAction::triggered, this, &MainWindow::runAllComparators);
+    connect(ui->actionPluginsSettings, &QAction::triggered, this, &MainWindow::actionPluginsSettings);
 }
 
 void MainWindow::enabledImageOperationMenuItems(bool isEnabled) {
@@ -132,6 +133,11 @@ void MainWindow::grabImagesFromVideos() {
 
 void MainWindow::runAllComparators() {
     comparisionInteractor->runAllComparators();
+}
+
+void MainWindow::actionPluginsSettings() {
+    PluginsSettingsDialog dialog {};
+    dialog.exec();
 }
 
 void MainWindow::imageZoomedToActualSize() {

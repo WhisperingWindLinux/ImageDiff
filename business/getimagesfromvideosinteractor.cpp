@@ -1,5 +1,6 @@
 #include "getimagesfromvideosinteractor.h"
-#include <data/getfileuserpathsservcie.h>
+
+#include <data/storage/getfileuserpathsservcie.h>
 
 GetImagesFromVideosInteractor::GetImagesFromVideosInteractor() {}
 

@@ -52,17 +52,26 @@ ImageProcessorsManager::ImageProcessorsManager() {
     addProcessor(greenChannelFilter);
     addProcessor(blueChannelFilter);
     addProcessor(grayscaleFilter);
+
+    pluginsManager = make_unique<PluginsManager>(this);
+    pluginsManager->loadAsync();
 }
 
-void ImageProcessorsManager::addProcessor(shared_ptr<IImageProcessor> comporator) {
-    if (comporator != nullptr) {
-        if (hotkeys.contains(comporator->getHotkey())) {
+void ImageProcessorsManager::onPluginsLoaded(QList<shared_ptr<IImageProcessor> > processors) {
+    foreach (auto processor, processors) {
+        addProcessor(processor);
+    }
+}
+
+void ImageProcessorsManager::addProcessor(shared_ptr<IImageProcessor> processor) {
+    if (processor != nullptr) {
+        if (hotkeys.contains(processor->getHotkey())) {
             QString errorMsg = QString("Error: It is not possible to add ") +
                                        "two IImageProcessors with the same hotkey value.";
             throw runtime_error(errorMsg.toStdString());
         }
-        hotkeys.insert(comporator->getHotkey());
-        processors.append(comporator);
+        hotkeys.insert(processor->getHotkey());
+        processors.append(processor);
     }
 }
 

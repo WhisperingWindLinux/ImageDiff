@@ -4,7 +4,7 @@
 #include <qstring.h>
 #include <qimage.h>
 
-#include <domain/interfaces/comporator.h>
+#include <domain/interfaces/comparator.h>
 
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 

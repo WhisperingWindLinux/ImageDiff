@@ -1,6 +1,6 @@
 #include "propertyeditordialog.h"
 
-#include <data/getfileuserpathsservcie.h>
+#include <data/storage/getfileuserpathsservcie.h>
 
 
 PropertyEditorDialog::PropertyEditorDialog(QString processorName,

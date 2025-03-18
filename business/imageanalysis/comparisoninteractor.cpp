@@ -6,7 +6,7 @@
 
 #include <QtCore/qdir.h>
 #include <QtCore/qurl.h>
-#include <data/getfileuserpathsservcie.h>
+#include <data/storage/getfileuserpathsservcie.h>
 #include <presentation/presenters/recentfilespresenter.h>
 #include <qfileinfo.h>
 #include <tests/testutils.h>
@@ -86,14 +86,15 @@ void ComparisonInteractor::callComparator(shared_ptr<IComparator> comparator) {
     if (result->type() == ComparisonResultVariantType::Image) {
         QImage imageResult = result->imageResult();
         QPixmap pixmap = QPixmap::fromImage(imageResult);
-        if (!pixmap.isNull()) {
-            callbacks->onImageResultFromComparatorReceived(pixmap, comparator->getShortName());
+        if (pixmap.isNull()) {
+            throw std::runtime_error("Error: The comparator returns an empty result.");
         }
+        callbacks->onImageResultFromComparatorReceived(pixmap, comparator->getShortName());
     }
     else if (result->type() == ComparisonResultVariantType::String) {
         QString stringResult = result->stringResult();
         if (stringResult.isNull() || stringResult.isEmpty()) {
-            throw std::runtime_error("Error: The comparator returns the empty string.");
+            throw std::runtime_error("Error: The comparator returns an empty result.");
         }
         callbacks->onTextResultFromComparatorReceived(stringResult,
                                                       comparator->getFullName(),
@@ -117,14 +118,14 @@ void ComparisonInteractor::callFilter(shared_ptr<IFilter> filter) {
     QImage transformedImage2 = filter->filter(image2);
 
     if (transformedImage1.isNull() || transformedImage2.isNull()) {
-        throw std::runtime_error("Error: The filter returns nothing.");
+        throw std::runtime_error("Error: The filter returns an empty result.");
     }
 
     auto pixmap1 = QPixmap::fromImage(transformedImage1);
     auto pixmap2 = QPixmap::fromImage(transformedImage2);
 
     if (pixmap1.isNull() || pixmap2.isNull()) {
-        throw std::runtime_error("Error: The filter returns nothing.");
+        throw std::runtime_error("Error: The filter returns an empty result.");
     }
 
     firstPixmap = pixmap1;

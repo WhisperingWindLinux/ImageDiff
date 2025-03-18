@@ -5,7 +5,7 @@
 #include <QImage>
 #include <QColor>
 
-#include <domain/interfaces/comporator.h>
+#include <domain/interfaces/comparator.h>
 
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 

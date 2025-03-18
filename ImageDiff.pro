@@ -21,10 +21,16 @@ SOURCES += \
     business/imageanalysis/filters/grayscalefilter.cpp \
     business/imageanalysis/filters/rgbfilter.cpp \
     business/imageanalysis/imageprocessorsmanager.cpp \
+    business/plugins/imageprocessordeserializer.cpp \
+    business/plugins/pluginsmanager.cpp \
     business/imageanalysis/runallcomparatorsinteractor.cpp \
     business/imageanalysis/setprocessorpropertiesinteractor.cpp \
+    business/plugins/pythonscriptcomparator.cpp \
+    business/plugins/pythonscriptfilter.cpp \
+    business/pluginsettingsinteractor.cpp \
     business/recentfilesmanager.cpp \
-    data/getfileuserpathsservcie.cpp \
+    data/storage/getfileuserpathsservcie.cpp \
+    data/storage/repositories/pluginsrepository.cpp \
     domain/valueobjects/comparableimage.cpp \
     domain/valueobjects/comparisonresultvariant.cpp \
     domain/valueobjects/property.cpp \
@@ -33,6 +39,7 @@ SOURCES += \
     presentation/dialogs/colorinfopanel.cpp \
     presentation/dialogs/comparatorresultdialog.cpp \
     presentation/dialogs/getimagesfromvideosdialog.cpp \
+    presentation/dialogs/pluginssettingsdialog.cpp \
     presentation/dialogs/propertyeditordialog.cpp \
     presentation/dialogs/rgbtrackinghelper.cpp \
     presentation/mainwindow.cpp \
@@ -65,21 +72,30 @@ HEADERS += \
     business/imageanalysis/filters/grayscalefilter.h \
     business/imageanalysis/filters/rgbfilter.h \
     business/imageanalysis/imageprocessorsmanager.h \
+    business/plugins/imageprocessordeserializer.h \
+    business/plugins/pluginsmanager.h \
     business/imageanalysis/runallcomparatorsinteractor.h \
     business/imageanalysis/setprocessorpropertiesinteractor.h \
+    business/plugins/pythonscriptcomparator.h \
+    business/plugins/pythonscriptfilter.h \
+    business/pluginsettingsinteractor.h \
     business/recentfilesmanager.h \
-    data/getfileuserpathsservcie.h \
-    domain/interfaces/comporator.h \
+    data/storage/getfileuserpathsservcie.h \
+    data/storage/repositories/pluginsrepository.h \
+    domain/interfaces/comparator.h \
     domain/interfaces/filter.h \
     domain/interfaces/imageprocessor.h \
     domain/interfaces/iprogressdialog.h \
     domain/interfaces/mainwindowcallbacks.h \
+    domain/interfaces/pluginsmanagercallbacks.h \
     domain/valueobjects/autocomparisonreportentry.h \
     domain/valueobjects/comparableimage.h \
     domain/valueobjects/comparisonresultvariant.h \
     domain/valueobjects/imageprocessorsinfo.h \
     domain/valueobjects/imageviewstate.h \
+    domain/valueobjects/pluginssettings.h \
     domain/valueobjects/property.h \
+    domain/valueobjects/pyscriptinfo.h \
     domain/valueobjects/rgbtrackingstate.h \
     domain/valueobjects/rgbvalue.h \
     domain/valueobjects/savefileinfo.h \
@@ -87,6 +103,7 @@ HEADERS += \
     presentation/dialogs/colorinfopanel.h \
     presentation/dialogs/comparatorresultdialog.h \
     presentation/dialogs/getimagesfromvideosdialog.h \
+    presentation/dialogs/pluginssettingsdialog.h \
     presentation/dialogs/propertyeditordialog.h \
     presentation/dialogs/rgbtrackinghelper.h \
     presentation/mainwindow.h \
@@ -117,3 +134,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 ICON = Resources/app_icon.icns
+
+DISTFILES += \
+    business/plugins/comparator_example.json \
+    business/plugins/filter_example.json

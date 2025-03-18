@@ -3,7 +3,7 @@
 
 #include <qstring.h>
 
-#include <domain/interfaces/comporator.h>
+#include <domain/interfaces/comparator.h>
 
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 

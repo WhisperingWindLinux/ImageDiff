@@ -4,7 +4,7 @@
 #include <qimage.h>
 #include <qstring.h>
 
-#include <domain/interfaces/comporator.h>
+#include <domain/interfaces/comparator.h>
 
 // This class shows the difference in pixel values as an image.
 // Pixels that differ are marked with red dots.

@@ -93,13 +93,26 @@
     <addaction name="actionPlaceColorPickerOnRight"/>
     <addaction name="actionPlaceColorPickerOnLeft"/>
    </widget>
+   <widget class="QMenu" name="menuPlugins">
+    <property name="title">
+     <string>Plugins</string>
+    </property>
+    <addaction name="actionPluginsSettings"/>
+   </widget>
+   <widget class="QMenu" name="menu5465465">
+    <property name="title">
+     <string>5465465</string>
+    </property>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuView"/>
    <addaction name="menuImageAnalysis"/>
    <addaction name="menuFilters"/>
    <addaction name="menuComparators"/>
+   <addaction name="menuPlugins"/>
    <addaction name="menuWindow"/>
    <addaction name="menuHelp"/>
+   <addaction name="menu5465465"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QToolBar" name="toolBar">
@@ -310,6 +323,11 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Alt+R</string>
+   </property>
+  </action>
+  <action name="actionPluginsSettings">
+   <property name="text">
+    <string>Settings</string>
    </property>
   </action>
  </widget>

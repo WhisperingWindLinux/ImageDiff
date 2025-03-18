@@ -44,6 +44,7 @@ public slots:
     void imagFitInView();
     void grabImagesFromVideos();
     void runAllComparators();
+    void actionPluginsSettings();
 
 public:
     MainWindow(QWidget *parent = nullptr);

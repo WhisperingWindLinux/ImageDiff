@@ -1,5 +1,5 @@
-#ifndef COMPORATOR_H
-#define COMPORATOR_H
+#ifndef COMPARATOR_H
+#define COMPARATOR_H
 
 #include <qstring.h>
 
@@ -32,6 +32,6 @@ public:
     virtual bool isPartOfAutoReportingToolbox() { return true; }
 };
 
-#endif // COMPORATOR_H
+#endif // COMPARATOR_H
 
 

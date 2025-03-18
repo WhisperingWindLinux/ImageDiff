@@ -1,6 +1,6 @@
 #include "comparatorresultdialog.h"
-#include "data/getfileuserpathsservcie.h"
 #include <QtWidgets/qmessagebox.h>
+#include <data/storage/getfileuserpathsservcie.h>
 #include <presentation/presenters/htmlreportpresenter.h>
 
 
