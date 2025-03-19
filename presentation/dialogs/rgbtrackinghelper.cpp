@@ -66,7 +66,7 @@ void RgbTrackingHelper::placeColorPickerOnLeft() {
     }
 }
 
-void RgbTrackingHelper::openColorPickerDialog(bool isOnePanelMode, optional<QPoint> pos) {
+void RgbTrackingHelper::openColorPickerDialog(bool isOnePanelMode) {
     if (mainWindow->isMaximized() || mainWindow->isFullScreen()) {
         return;
     }
@@ -92,7 +92,8 @@ void RgbTrackingHelper::setState(optional<RgbTrackingState> newState) {
         return;
     }
     if (colorPanel == nullptr) {
-        openColorPickerDialog(newState->getIsOpenedInOnePanelMode(), newState->getPosition());
+        openColorPickerDialog(newState->getIsOpenedInOnePanelMode());
+        colorPanel->move(newState->getPosition());
     } else {
         colorPanel->move(newState->getPosition());
     }
