@@ -1,6 +1,7 @@
 #include "pythonscriptcomparator.h"
 
 #include <QBuffer>
+#include <QtCore/qregularexpression.h>
 #include <QtGui/qpixmap.h>
 #include <qprocess.h>
 #include <QtCore/qdebug.h>
@@ -54,6 +55,16 @@ bool PythonScriptComparator::isPartOfAutoReportingToolbox() {
     return m_isPartOfAutoReportingToolbox;
 }
 
+optional<QString> PythonScriptComparator::validateText(QString &text) {
+    QString validatedText = text.mid(0, qMin(charsInReportMax, text.size()));
+    foreach (auto ch, validatedText) {
+        if (!ch.isPrint()) {
+            return nullopt;
+        }
+    }
+    return make_optional(validatedText);
+}
+
 shared_ptr<ComparisonResultVariant> PythonScriptComparator::compare(ComparableImage first,
                                                                     ComparableImage second
                                                                     )
@@ -76,11 +87,19 @@ shared_ptr<ComparisonResultVariant> PythonScriptComparator::compare(ComparableIm
         throw runtime_error("Bad python interpreter.");
     }
 
+    QStringList params;
+    params << pyScriptPath << first.getName() << second.getName();
+
+    foreach (auto property, properties) {
+        params << property.getAnyValueAsString();
+    }
+
     QProcess process;
-    process.start(pluginSettings.pythonInterpreterPath, QStringList()
-                                                            << pyScriptPath
-                                                            << first.getName()
-                                                            << second.getName());
+    QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+    env.insert("Runner", "ImageDiff");
+    process.setProcessEnvironment(env);
+
+    process.start(pluginSettings.pythonInterpreterPath, params);
 
     if (!process.waitForStarted()) {
         throw runtime_error("Failed to start process.");
@@ -108,14 +127,16 @@ shared_ptr<ComparisonResultVariant> PythonScriptComparator::compare(ComparableIm
 
     QByteArray output = process.readAllStandardOutput();
     QImage resultImage;
-    if (!resultImage.loadFromData(output, "PNG")) {
-        qDebug() << process.readAllStandardError();
-        throw runtime_error("Failed to load the image from data.");
+    if (resultImage.loadFromData(output, "PNG") && !resultImage.isNull()) {
+        return make_shared<ComparisonResultVariant>(resultImage);
     }
 
-    if (resultImage.isNull()) {
-        throw runtime_error("The Python script returns an empty image.");
-    };
+    QString text = QString::fromUtf8(output);
+    auto validText = validateText(text);
+    if(validText) {
+        return make_shared<ComparisonResultVariant>(validText.value());
+    }
 
-    return make_shared<ComparisonResultVariant>(resultImage);
+    throw runtime_error("Error! The script returned '" +
+                            process.readAllStandardError() + "'");
 }

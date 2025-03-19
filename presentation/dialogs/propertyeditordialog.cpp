@@ -39,9 +39,12 @@ PropertyEditorDialog::PropertyEditorDialog(QString processorName,
         switch (property.getPropertyType()) {
         case Property::Type::Integer: {
             QSpinBox *spinBox = new QSpinBox(this);
-            spinBox->setMinimum(static_cast<int>(property.getMinValue()));
-            spinBox->setMaximum(static_cast<int>(property.getMaxValue()));
+            int minValue = static_cast<int>(property.getMinValue());
+            int maxValue = static_cast<int>(property.getMaxValue());
+            spinBox->setMinimum(static_cast<int>(minValue));
+            spinBox->setMaximum(static_cast<int>(maxValue));
             spinBox->setValue(static_cast<int>(property.getValue()));
+            spinBox->setReadOnly(false);
             editor = spinBox;
             break;
         }

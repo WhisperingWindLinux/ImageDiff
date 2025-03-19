@@ -82,13 +82,10 @@ QImage PythonScripFilter::filter(QImage image) {
 
     QByteArray output = process.readAllStandardOutput();
     QImage resultImage;
-    if (!resultImage.loadFromData(output, "PNG")) {
-        throw runtime_error("Failed to load the image from data.");
+    if (!resultImage.loadFromData(output, "PNG") && !resultImage.isNull()) {
+        throw runtime_error("Error! The script returned '" +
+                            process.readAllStandardError() + "'");
     }
-
-    if (resultImage.isNull()) {
-        throw runtime_error("The Python script returns an empty image.");
-    };
 
     return resultImage;
 }

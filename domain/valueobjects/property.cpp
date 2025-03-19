@@ -161,14 +161,34 @@ QStringList Property::getAlternatives() const {
 }
 
 double Property::getMinValue() const {
-    if (propertyType == Type::Alternatives) {
+    if (propertyType == Type::Alternatives || propertyType == Type::FilePath) {
         throw std::logic_error("This property type does not have min/max values");
     }
     return min;
 }
 
+QString Property::getAnyValueAsString() const {
+    switch (propertyType) {
+    case Type::Integer:
+        return QString::number((int)doubleValue);
+    case Type::Real:
+        return QString::number(doubleValue);
+    case Type::Alternatives:
+        if (alternativesValue.size() == 0) {
+            return "";
+        }
+        if ((int)doubleValue > alternativesValue.size() || (int)doubleValue < 0) {
+            return "";
+        }
+        return alternativesValue[(int)doubleValue];
+    case Type::FilePath:
+        return filePathValue;
+    }
+    return "";
+}
+
 double Property::getMaxValue() const {
-    if (propertyType == Type::Alternatives) {
+    if (propertyType == Type::Alternatives || propertyType == Type::FilePath) {
         throw std::logic_error("This property type does not have min/max values");
     }
     return max;

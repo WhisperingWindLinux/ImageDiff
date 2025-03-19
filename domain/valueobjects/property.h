@@ -55,9 +55,9 @@ public:
     double getMaxValue() const;
     QString toString() const;
     QString getFilePath() const;
+    QString getAnyValueAsString() const;
 
     friend class PropertyTests;
-
 private:
     Type propertyType;
     QString propertyName;

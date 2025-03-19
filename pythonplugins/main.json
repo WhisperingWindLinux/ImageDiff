@@ -1,0 +1,25 @@
+{
+  "type": "Comparator",
+  "shortName": "Pixel Difference Detection (Python)",
+  "hotkey": "Q",
+  "description": "This algorithm compares two images pixel by pixel and retains only those pixels that differ between the two compared images.",
+  "fullName": "Pixel Difference Detection",
+  "isPartOfAutoReportingToolbox": true,
+  "properties": [
+    {
+      "name": "Dot Color",
+      "type": "alternatives",
+      "alternatives": ["black","red", "green", "blue", "yellow", "cyan", "magenta", "white", "orange", "purple", "lime"],
+      "defaultIndex": 4
+    },
+    {
+      "name": "Show Image",
+      "type": "alternatives",
+      "alternatives": ["yes", "no"],
+      "defaultIndex": 0
+    }
+  ]
+}
+
+
+

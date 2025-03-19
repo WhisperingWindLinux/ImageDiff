@@ -26,8 +26,9 @@ public:
     shared_ptr<ComparisonResultVariant> compare(ComparableImage first,
                                                 ComparableImage second
                                                 ) override;
-
+        
 private:
+    const int charsInReportMax = 10000;
     QString shortName;
     QString hotkey;
     QString description;
@@ -35,6 +36,7 @@ private:
     QString fullName;
     bool m_isPartOfAutoReportingToolbox;
     QString pyScriptPath;
+    optional<QString> validateText(QString &text);
 };
 
 #endif // PYTHONSCRIPTCOMPARATOR_H
