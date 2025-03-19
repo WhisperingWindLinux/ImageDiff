@@ -113,6 +113,7 @@ void ImageViewer::showTwoImagesBeingCompared(QPixmap& image1,
     secondImage->setVisible(false);
 
     if (imageViewState != nullptr) {
+        lastCursorPos = imageViewState->lastCursorPos;
         if (currentImageIndex != imageViewState.get()->imageIndex) {
             setSceneRect(secondImage->boundingRect());
             toggleImage();
@@ -120,7 +121,6 @@ void ImageViewer::showTwoImagesBeingCompared(QPixmap& image1,
         centerOn(imageViewState.get()->rect.center());
         scale(imageViewState.get()->scaleFactor, imageViewState.get()->scaleFactor);
         scaleFactor = imageViewState.get()->scaleFactor;
-        lastCursorPos = imageViewState->lastCursorPos;
         onColorPickerStatusChanged(imageViewState->isRgbTrackingActive);
     } else {
         setSceneRect(firstImage->boundingRect());
@@ -181,7 +181,9 @@ void ImageViewer::toggleImage() {
     }
 
     centerOn(viewRect.center());
-    trackPixelColor(lastCursorPos);
+    if (lastCursorPos) {
+        trackPixelColor(lastCursorPos.value());
+    }
 }
 
 /* } =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
@@ -341,13 +343,13 @@ void ImageViewer::mouseMoveEvent(QMouseEvent* event) {
     trackPixelColor(event->pos());
 }
 
-void ImageViewer::trackPixelColor(QPoint cursorPos) {
-    if (!isRgbTrackingActive) {
+void ImageViewer::trackPixelColor(std::optional<QPoint> cursorPos) {
+    if (!isRgbTrackingActive || !cursorPos) {
         return;
     }
 
     // Convert mouse position to scene coordinates
-    QPointF scenePos = mapToScene(cursorPos);
+    QPointF scenePos = mapToScene(cursorPos.value());
 
     // Get the item under the cursor (if any)
     QGraphicsItem* item = scene->itemAt(scenePos, transform());

@@ -27,9 +27,6 @@ public:
     void onRgbValueUnderCursonChanged(RgbValue visibleImageRgbValue, RgbValue hiddenImageRgbValue);
     void openColorPickerDialog(bool isOnePanelMode);
 
-    optional<RgbTrackingState> getCurrentState();
-    void setState(optional<RgbTrackingState> newState);
-
 private:
     ColorInfoPanel* colorPanel = nullptr;
     MainWindow *mainWindow = nullptr;

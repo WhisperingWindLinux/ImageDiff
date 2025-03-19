@@ -62,7 +62,7 @@ void RgbTrackingHelper::placeColorPickerOnLeft() {
         positionColorPickerWindow(false);
     } else {
         openColorPickerDialog(false);
-        positionColorPickerWindow(true);
+        positionColorPickerWindow(false);
     }
 }
 
@@ -75,28 +75,6 @@ void RgbTrackingHelper::openColorPickerDialog(bool isOnePanelMode) {
     colorPanel->show();
     mainWindow->onRgbTrackingStatusChanged(true);
     placeColorPickerOnRight();
-}
-
-optional<RgbTrackingState> RgbTrackingHelper::getCurrentState() {
-    if (colorPanel == nullptr) {
-        return nullopt;
-    }
-    if (colorPanel->isHidden()) {
-        return nullopt;
-    }
-    return make_optional<RgbTrackingState>(colorPanel->pos(), colorPanel->isOpenedInOnePanelMode());
-}
-
-void RgbTrackingHelper::setState(optional<RgbTrackingState> newState) {
-    if (!newState) {
-        return;
-    }
-    if (colorPanel == nullptr) {
-        openColorPickerDialog(newState->getIsOpenedInOnePanelMode());
-        colorPanel->move(newState->getPosition());
-    } else {
-        colorPanel->move(newState->getPosition());
-    }
 }
 
 void RgbTrackingHelper::closeColorPickerDialog() {

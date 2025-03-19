@@ -62,7 +62,7 @@ private:
     int currentImageIndex;
     qreal scaleFactor;
     MainWindow *parent = nullptr;
-    QPoint lastCursorPos;
+    std::optional<QPoint> lastCursorPos = std::nullopt;
     bool isRgbTrackingActive = false;
 
     // Zoom to selection
@@ -75,7 +75,7 @@ private:
 
     void passCropedImageToOtherAppInstance(QRectF rect);
 
-    void trackPixelColor(QPoint cursorPos);
+    void trackPixelColor(std::optional<QPoint> cursorPos);
 
     void fillRgbValues(QString visibleImageName,
                                        QColor colorOfVisibleImage,
