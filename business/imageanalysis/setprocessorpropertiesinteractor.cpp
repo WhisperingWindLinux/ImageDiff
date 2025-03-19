@@ -14,7 +14,7 @@ void SetProcessorPropertiesInteractor::allowUserToSetPropertiesIfNeed() {
     if (properties.empty()) {
         return;
     }
-    auto newProperties = callback->getUpdatedPropertiesFromUser(processor->getShortName(),
+    auto newProperties = callback->showImageProcessorPropertiesDialog(processor->getShortName(),
                                                                 processor->getDescription(),
                                                                 properties
                                                                 );

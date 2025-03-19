@@ -9,21 +9,19 @@
 class MockMainWindowCallbacks : public IMainWindowCallbacks {
 public:
     virtual ~MockMainWindowCallbacks() {};
-    void onTwoImagesBeingComparedLoadedSuccessfully(QPixmap &pixmap1,
+    void displayImages(QPixmap &pixmap1,
                                      QString path1,
                                      QPixmap &pixmap2,
-                                     QString path2,
-                                     bool usePreviousImageGeometry) override
+                                     QString path2) override
     {
         m_pixmap1 = pixmap1;
         m_path1 = path1;
         m_pixmap2 = pixmap2;
         m_path2 = path2;
-        m_usePreviousImageGeometry = usePreviousImageGeometry;
     }
     void onImageResultFromComparatorReceived(QPixmap &, QString) override {}
 
-    void userShouldSeeHelpMessage(QString &) override {}
+    void showHelp(QString &) override {}
 
     void saveImage(QPixmap &pixmap, QString path) override {
         lastSavedFilePath = "";
@@ -39,9 +37,9 @@ public:
                                             QString &,
                                             QString &) override {}
 
-    void onRgbValueUnderCursonChanged(RgbValue, RgbValue) override { }
+    void onColorUnderCursorChanged(ImagePixelColor, ImagePixelColor) override {}
 
-    QList<Property> getUpdatedPropertiesFromUser(QString,
+    QList<Property> showImageProcessorPropertiesDialog(QString,
                                                  QString ,
                                                  QList<Property>) override {
         return updatedPropertiesFromUser;
@@ -50,6 +48,8 @@ public:
     void updateRecentFilesMenu() override {
         m_isUpdateRecentFilesMenuCalled = true;
     }
+
+    void onDisplayedImagesShouldBeReplaced(QPixmap &, QPixmap &) override {}
 
     QList<Property> updatedPropertiesFromUser;
     QString lastSavedFilePath;

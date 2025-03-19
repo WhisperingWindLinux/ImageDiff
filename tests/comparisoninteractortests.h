@@ -25,7 +25,6 @@ private slots:
 
     void testLoadImagesBeingComparedNotSameSize_Failed();
     void testLoadImagesBeingCompared();
-    void testReloadImagesFromDisk();
     void testClear();
     void testConstructor();
     void testSaveImage_ComparisonImage();

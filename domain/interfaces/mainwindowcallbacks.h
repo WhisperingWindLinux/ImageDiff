@@ -1,21 +1,20 @@
 #ifndef MAINWINDOWCALLBACKS_H
 #define MAINWINDOWCALLBACKS_H
 
-#include <domain/interfaces/iprogressdialog.h>
 #include <qpixmap.h>
+#include <domain/interfaces/iprogressdialog.h>
 #include <domain/valueobjects/imageprocessorsinfo.h>
 #include <domain/valueobjects/property.h>
-#include <domain/valueobjects/rgbvalue.h>
+#include <domain/valueobjects/imagepixelcolor.h>
 
 class IMainWindowCallbacks : public IProgressDialog {
 public:
-    virtual void onTwoImagesBeingComparedLoadedSuccessfully(QPixmap &image1,
+    virtual void displayImages(QPixmap &image1,
                                              QString path1,
                                              QPixmap &image2,
-                                             QString path2,
-                                             bool usePreviousImageGeometry) = 0;
+                                             QString path2) = 0;
 
-    virtual void onImageResultFromComparatorReceived(QPixmap &image,QString description) = 0;
+    virtual void onImageResultFromComparatorReceived(QPixmap &image, QString description) = 0;
 
     virtual void onTextResultFromComparatorReceived(QString &message,
                                                     QString comparatorFullName,
@@ -23,11 +22,14 @@ public:
                                                     QString &firstImageFilePath,
                                                     QString &secondImageFilePath) = 0;
 
-    virtual void userShouldSeeHelpMessage(QString &message) = 0;
+    virtual void showHelp(QString &message) = 0;
 
-    virtual void onRgbValueUnderCursonChanged(RgbValue firstImageRgbValue, RgbValue secondImageRgbValue) = 0;
+    virtual void onColorUnderCursorChanged(ImagePixelColor firstImageRgbValue,
+                                              ImagePixelColor secondImageRgbValue) = 0;
 
-    virtual QList<Property> getUpdatedPropertiesFromUser(QString processorName,
+    virtual void onDisplayedImagesShouldBeReplaced(QPixmap& first, QPixmap &second) = 0;
+
+    virtual QList<Property> showImageProcessorPropertiesDialog(QString processorName,
                                                          QString processorDescription,
                                                          QList<Property> defaultProperties) = 0;
 

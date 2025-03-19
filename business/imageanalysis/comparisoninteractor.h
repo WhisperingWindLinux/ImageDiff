@@ -15,29 +15,29 @@ class ImageProcessorsManager;
 class ComparisonInteractor
 {
 public:
+    friend class ComparisonInteractorTests;
+
     ComparisonInteractor(IMainWindowCallbacks *callbacks);
     ~ComparisonInteractor();
 
-    void loadTwoImagesBeingCompared(QString& Image1Path,
+    void openImages(QString& Image1Path,
                                     QString& Image2Path,
-                                    bool useSavedImageViewState,
                                     bool removeFilesAtExit,
                                     bool isUpdateRecentMenu
                                     );
 
-    void loadTwoImagesBeingCompared(QList<QUrl> urls);
-    void loadTwoImagesBeingCompared(QString recentFileMenuRecord, bool isUpdateRecentMenu);
-    void onImageProcessorShouldBeCalled(QVariant callerData);
-    void onImageProcessorsHelpShouldBeCalled();
+    void openImagesFromDragAndDrop(QList<QUrl> urls);
+    void openImagesFromRecentMenu(QString recentFileMenuRecord, bool isUpdateRecentMenu);
+    void callImageProcessor(QVariant callerData);
+    void showImageProcessorsHelp();
     void saveImage(SaveImageInfo info);
-    void reloadImagesFromDisk();
     QStringList getRecentFiles();
     void runAllComparators();
-    void userRequestOpenTwoImagesBeingCompared();
+    void getPathsFromUserAndOpenImages();
     QList<ImageProcessorInfo> getImageProcessorsInfo();
 
-    friend class ComparisonInteractorTests;
 
+    void showOriginalImages();
 private:
     IMainWindowCallbacks *callbacks;
     RecentFilesManager *recentFilesManager;
@@ -45,16 +45,19 @@ private:
     ImageProcessorsManager *processorsManager;
     QString firstImagePath;
     QString secondImagePath;
-    QPixmap firstPixmap;
-    QPixmap secondPixmap;
+    QPixmap originalFirstPixmap;
+    QPixmap originalSecondPixmap;
+    QPixmap firstCurrentlyDisplayedPixmap;
+    QPixmap secondCurrentlyDisplayedPixmap;
     QPixmap comparisionImage;
     bool cleanUpImageFilesAtExit = false;
 
-    void onImagesClosed();
     bool validateFile(const QString &filePath);
     void callComparator(shared_ptr<IComparator> comparator);
     void callFilter(shared_ptr<IFilter> transformer);
     void handleProcessorPropertiesIfNeed(shared_ptr<IImageProcessor>processor);
+
+    void cleanUp();
 };
 
 #endif // COMPARISONINTERACTOR_H

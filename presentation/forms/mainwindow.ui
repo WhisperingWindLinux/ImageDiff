@@ -98,7 +98,6 @@
      <addaction name="actionRescanPluginDir"/>
     </widget>
     <addaction name="actionColorPicker"/>
-    <addaction name="actionAdvancedColorPicker"/>
     <addaction name="separator"/>
     <addaction name="menuPlugins"/>
    </widget>

@@ -26,33 +26,16 @@ void ComparisonInteractorTests::testClear() {
     QString image1Path = createTempImage("testClear1.png", QSize(20, 20), Qt::white);
     QString image2Path = createTempImage("testClear2.png", QSize(20, 20), Qt::white);
 
-    interactor->loadTwoImagesBeingCompared(image1Path, image2Path, false, false, true);
+    interactor->openImages(image1Path, image2Path, false, true);
 
     // Act: Clear the interactor state
-    interactor->onImagesClosed();
+    interactor->cleanUp();
 
     // Assert: Verify that paths and pixmaps are cleared
     QCOMPARE(interactor->firstImagePath.isEmpty(), true);
     QCOMPARE(interactor->secondImagePath.isEmpty(), true);
-    QVERIFY(interactor->firstPixmap.isNull());
-    QVERIFY(interactor->secondPixmap.isNull());
-}
-
-void ComparisonInteractorTests::testReloadImagesFromDisk() {
-    // Arrange: Prepare test images and load them into the interactor
-    QString image1Path = createTempImage("image1Reload.png", QSize(20, 20), Qt::white);
-    QString image2Path = createTempImage("image2Reload.png", QSize(20, 20), Qt::white);
-
-    interactor->loadTwoImagesBeingCompared(image1Path, image2Path, false, false, true);
-
-    // Initial state verification
-    verifyLoadedImages(image1Path, image2Path, false);
-
-    // Act: Reload images from disk
-    interactor->reloadImagesFromDisk();
-
-    // Assert: Verify that images are reloaded with updated geometry flag
-    verifyLoadedImages(image1Path, image2Path, true);
+    QVERIFY(interactor->firstCurrentlyDisplayedPixmap.isNull());
+    QVERIFY(interactor->secondCurrentlyDisplayedPixmap.isNull());
 }
 
 void ComparisonInteractorTests::testLoadImagesBeingCompared() {
@@ -61,7 +44,7 @@ void ComparisonInteractorTests::testLoadImagesBeingCompared() {
     QString image2Path = createTempImage("image2Load.png", QSize(20, 20), Qt::white);
 
     // Act: Load images into the interactor
-    interactor->loadTwoImagesBeingCompared(image1Path, image2Path, true, false, true);
+    interactor->openImages(image1Path, image2Path, false, true);
 
     // Assert: Verify that images are loaded correctly with geometry flag set to true
     verifyLoadedImages(image1Path, image2Path, true);
@@ -74,7 +57,7 @@ void ComparisonInteractorTests::testLoadImagesBeingComparedNotSameSize_Failed() 
 
     // Act & Assert: Loading images of different sizes should fail
     QVERIFY_EXCEPTION_THROWN(
-        interactor->loadTwoImagesBeingCompared(image1Path, image2Path, true, false, true),
+        interactor->openImages(image1Path, image2Path, false, true),
         std::runtime_error
         );
 }
@@ -237,7 +220,7 @@ void ComparisonInteractorTests::testCallUpdateRecentFilesMenu() {
     QString image1Path = createTempImage("image1.png", QSize(20, 20), Qt::white);
     QString image2Path = createTempImage("image2.png", QSize(20, 20), Qt::white);
 
-    interactor->loadTwoImagesBeingCompared(image1Path, image2Path, false, false, true);
+    interactor->openImages(image1Path, image2Path, false, true);
 
     // Initial state verification
     verifyLoadedImages(image1Path, image2Path, false);
@@ -252,7 +235,7 @@ void ComparisonInteractorTests::testLoadImagesBeingCompared_OpenFilesFromDrop() 
     QString image2Path = createTempImage("image2.png", QSize(20, 20), Qt::white);
 
     QList<QUrl> urls = { QUrl("file://"+image1Path),  QUrl("file://"+image2Path) };
-    interactor->loadTwoImagesBeingCompared(urls);
+    interactor->openImagesFromDragAndDrop(urls);
 
     QCOMPARE(image1Path, mockCallbacks->m_path1);
     QCOMPARE(image2Path, mockCallbacks->m_path2);
@@ -265,7 +248,7 @@ void ComparisonInteractorTests::testLoadImagesBeingCompared_OpenFilesFromDropInc
     QString image2Path = createTempImage("image2.png", QSize(20, 20), Qt::white);
 
     QList<QUrl> urls = { QUrl(image1Path),  QUrl(image2Path) };
-    interactor->loadTwoImagesBeingCompared(urls);
+    interactor->openImagesFromDragAndDrop(urls);
 
     QCOMPARE("", mockCallbacks->m_path1);
     QCOMPARE("", mockCallbacks->m_path2);
@@ -281,14 +264,14 @@ void ComparisonInteractorTests::testLoadImagesBeingCompared_RecentFiles() {
 
     RecentFilesPresenter formater;
     QString pair1 = formater.pairToString({image1Path, image2Path});
-    interactor->loadTwoImagesBeingCompared(pair1, true);
+    interactor->openImagesFromRecentMenu(pair1, true);
 
     QCOMPARE(image1Path, mockCallbacks->m_path1);
     QCOMPARE(image2Path, mockCallbacks->m_path2);
 
     QString pair2 = formater.pairToString({"", ""});
 
-    QVERIFY_EXCEPTION_THROWN(interactor->loadTwoImagesBeingCompared(pair2, true), std::runtime_error);
+    QVERIFY_EXCEPTION_THROWN(interactor->openImagesFromRecentMenu(pair2, true), std::runtime_error);
 
     QCOMPARE(image1Path, mockCallbacks->m_path1);
     QCOMPARE(image2Path, mockCallbacks->m_path2);

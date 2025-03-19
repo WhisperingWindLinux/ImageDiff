@@ -54,7 +54,7 @@ int main(int argc, char *argv[]) {
     if (argc == 3) {
         QString firstFilePath = argv[1];
         QString SecondFilePath = argv[2];
-        w.onReceiveTwoImagesBeingComparedViaCommandline(firstFilePath, SecondFilePath);
+        w.openImagesFromCommandLine(firstFilePath, SecondFilePath);
     }
 
     return a.exec();

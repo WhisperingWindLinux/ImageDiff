@@ -1,7 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "mainwindowbuildmenudelegate.h"
+#include "imageprocessorsmenucontroller.h"
 
 #include <QMainWindow>
 #include <QProcess>
@@ -10,8 +10,8 @@
 #include <business/imageanalysis/comparisoninteractor.h>
 
 class ImageViewer;
-class ColorInfoPanel;
-class RgbTrackingHelper;
+class ColorPickerPanel;
+class ColorPickerController;
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -33,7 +33,6 @@ public slots:
     void saveVisibleAreaAs();
     void showAboutDialog();
     void showColorPicker();
-    void showAdvancedColorPicker();
     void showOriginalImages();
     void imageZoomedToActualSize();
     void imageZoomIn();
@@ -51,47 +50,40 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
     void showStatusMessage(QString message);
-    void passTwoImagesBeingComparedToOtherAppInstance(QString firstFilePath, QString secondFilePath);
-    void onReceiveTwoImagesBeingComparedViaCommandline(QString firstFilePath, QString secondFilePath);
-    void onRgbTrackingStatusChanged(bool isActive);
+    void openImagesInOtherAppInstance(QString firstFilePath, QString secondFilePath);
+    void openImagesFromCommandLine(QString firstFilePath, QString secondFilePath);
+    void onColorUnderCursorTrackingStatusChanged(bool isActive);
 
 
 protected:
     void closeEvent(QCloseEvent *event) override;
     void dragEnterEvent(QDragEnterEvent *event) override;
     void dropEvent(QDropEvent *event) override;
-    void showEvent(QShowEvent *event) override;
     bool event(QEvent *event) override;
 
 private:
     Ui::MainWindow *ui;
-    ImageViewer *viewer;
+    ImageViewer *imageView;
     ComparisonInteractor *comparisionInteractor;
-    RgbTrackingHelper *rgbTrackingInteractor;
-    MainWindowBuildMenuDelegate *buildMenuDelegate;
+    ColorPickerController *colorPickerController;
+    ImageProcessorsMenuController *imageProcessorsMenuController;
     QProgressDialog *progressDialog;
     QList<shared_ptr<QProcess> > instances;
 
-    void buildMenu(QList<ImageProcessorInfo> imageProcessorsInfo);
+    void buildImageProcessorsMenu();
     void makeConnections();
     void loadTwoImagesBeingCompared();
     void showError(const QString &errorMessage);
-    void openColorPickerDialog(bool isOnePanelMode);
-    void closeColorPickerDialog();
-    void enabledImageOperationMenuItems(bool isEnabled);
-    void deleteImageView();
-    void createImageView();
-    void positionColorPickerWindow(QWidget *colorPickerWindow, int alignmentPercent, bool placeOnRight);
+    void enableImageProceesorsMenuItems(bool isEnabled);
     void saveMainWindowPosition();
     void restoreMainWindowPosition();
+    void coreUpdateRecentFilesMenu();
 
-    // AMainWindowCallback interface
 public:
-    void onTwoImagesBeingComparedLoadedSuccessfully(QPixmap& image1,
-                                     QString path1,
-                                     QPixmap& image2,
-                                     QString path2,
-                                     bool usePreviousImageGeometry) override;
+    void displayImages(QPixmap& image1,
+                       QString path1,
+                       QPixmap& image2,
+                       QString path2) override;
 
     void onImageResultFromComparatorReceived(QPixmap &image, QString description) override;
 
@@ -101,16 +93,19 @@ public:
                                             QString &firstImageFilePath,
                                             QString &secondImageFilePath) override;
 
-    void userShouldSeeHelpMessage(QString &message) override;
+    void showHelp(QString &message) override;
 
     void saveImage(QPixmap &image, QString defaultPath) override;
 
-    void onRgbValueUnderCursonChanged(RgbValue firstImageRgbValue, RgbValue secondImageRgbValue) override;
+    void onColorUnderCursorChanged(ImagePixelColor firstImageRgbValue,
+                                      ImagePixelColor secondImageRgbValue) override;
 
-    QList<Property> getUpdatedPropertiesFromUser(QString processorName,
+    QList<Property> showImageProcessorPropertiesDialog(QString processorName,
                                                  QString processorDescription,
                                                  QList<Property> defaultProperties) override;
     void updateRecentFilesMenu() override;
+
+    void onDisplayedImagesShouldBeReplaced(QPixmap& first, QPixmap &second) override;
 
     // IProgressDialog interface
 public:

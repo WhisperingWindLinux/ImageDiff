@@ -1,26 +1,22 @@
-#ifndef MAINWINDOWBUILDMENUDELEGATE_H
-#define MAINWINDOWBUILDMENUDELEGATE_H
+#ifndef IMAGEPROCESSORSMENUCONTROLLER_H
+#define IMAGEPROCESSORSMENUCONTROLLER_H
 
 #include <domain/valueobjects/imageprocessorsinfo.h>
-
 
 class MainWindow;
 class QMenu;
 
-class MainWindowBuildMenuDelegate
+class ImageProcessorsMenuController
 {
 public:
-    MainWindowBuildMenuDelegate(MainWindow *mainWindow);
+    ImageProcessorsMenuController(MainWindow *mainWindow);
 
     void buildFiltersAndComparatorsMenus(QMenu *comparatorsMenu,
                                          QMenu *filtersMenu,
                                          QList<ImageProcessorInfo> imageProcessorsInfo
                                          );
-
-    void buildHelpFiltersAndComparatorsMenus(QMenu *helpMenu);
-
 private:
     MainWindow *mainWindow;
 };
 
-#endif // MAINWINDOWBUILDMENUDELEGATE_H
+#endif // IMAGEPROCESSORSMENUCONTROLLER_H

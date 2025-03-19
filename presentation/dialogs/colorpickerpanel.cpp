@@ -1,18 +1,18 @@
-#include "colorinfopanel.h"
+#include "colorpickerpanel.h"
 
 #include <qboxlayout.h>
 #include <qlineedit.h>
 
-ColorInfoPanel::ColorInfoPanel(bool isForVisibleImageOnly)
+ColorPickerPanel::ColorPickerPanel(bool isTwoPanelMode)
     : QWidget{nullptr},
-    isForVisibleImageOnly(isForVisibleImageOnly)
+    isTwoPanelMode(isTwoPanelMode),
+    isReserveSpaceForLayoutStability(true)
 {
     setWindowTitle("Color Picker");
 
-    // Create the main layout for the panel (vertical layout)
     QVBoxLayout* mainLayout = new QVBoxLayout(this);
-    mainLayout->setContentsMargins(10, 10, 10, 10); // Add padding
-    mainLayout->setSpacing(10); // Add spacing between elements
+    mainLayout->setContentsMargins(10, 10, 10, 10);
+    mainLayout->setSpacing(10);
 
     // Create the first panel (visible image panel)
     auto rgbWidgets = createPanel();
@@ -23,8 +23,8 @@ ColorInfoPanel::ColorInfoPanel(bool isForVisibleImageOnly)
     firstGLabel = rgbWidgets.gLabel;
     firstBLabel = rgbWidgets.bLabel;
 
-    // If isForVisibleImageOnly is false, create a advanced color picker' panel
-    if (!isForVisibleImageOnly) {
+    // If isTwoPanelMode is true, create a advanced color picker' panel
+    if (isTwoPanelMode) {
         // Add some spacing before the second panel
         mainLayout->addSpacing(20);
 
@@ -51,12 +51,14 @@ ColorInfoPanel::ColorInfoPanel(bool isForVisibleImageOnly)
                    Qt::CustomizeWindowHint |
                    Qt::WindowCloseButtonHint
                    );
-
-    updateBottomPanel({"n/a", -1, -1, -1});
-    updateTopPanel({"n/a", -1, -1, -1});
 }
 
-RgbWidgets ColorInfoPanel::createPanel() {
+void ColorPickerPanel::reset() {
+    ImagePixelColor emptyData =  { "n/a", -1, -1, -1 };
+    update(emptyData, emptyData);
+}
+
+RgbWidgets ColorPickerPanel::createPanel() {
     // Create a vertical layout for this specific panel
     QVBoxLayout* panelLayout = new QVBoxLayout();
 
@@ -100,14 +102,14 @@ RgbWidgets ColorInfoPanel::createPanel() {
     return { fileNameLabel, panelLayout, colorSquare, rLabel, gLabel, bLabel };
 }
 
-void ColorInfoPanel::updateTopPanel(RgbValue rgbValue) {
+void ColorPickerPanel::updateTopPanelOnly(ImagePixelColor visibleImageColor) {
     // Set the file name in the top panel
-    firstFileNameLabel->setText(rgbValue.getImageName());
+    firstFileNameLabel->setText(visibleImageColor.getImageName());
 
     // Validate RGB values
-    int r = rgbValue.getR();
-    int g = rgbValue.getG();
-    int b = rgbValue.getB();
+    int r = visibleImageColor.getR();
+    int g = visibleImageColor.getG();
+    int b = visibleImageColor.getB();
 
     // Check if any RGB value is out of range
     if (r < 0 || r > 255 || g < 0 || g > 255 || b < 0 || b > 255) {
@@ -133,79 +135,58 @@ void ColorInfoPanel::updateTopPanel(RgbValue rgbValue) {
     }
 }
 
-void ColorInfoPanel::updateBottomPanel(RgbValue rgbValue) {
-    // If the panel is only for visible images, skip updating
-    if (isForVisibleImageOnly) {
-        return;
-    }
-
-    // Set the file name in the bottom panel
-    secondFileNameLabel->setText(rgbValue.getImageName());
-
-    // Validate RGB values
-    int r = rgbValue.getR();
-    int g = rgbValue.getG();
-    int b = rgbValue.getB();
-
-    // Check if any RGB value is out of range
-    if (r < 0 || r > 255 || g < 0 || g > 255 || b < 0 || b > 255) {
-        // Display "n/a" for invalid RGB values
-        secondRLabel->setText("R: n/a");
-        secondGLabel->setText("G: n/a");
-        secondBLabel->setText("B: n/a");
-
-        // Set a default background color (e.g., gray) for invalid RGB
-        secondColorSquare->setStyleSheet("background-color: gray;");
-    } else {
-        // Update the background color of the square based on valid RGB values
-        QString style = QString("background-color: rgb(%1, %2, %3);")
-                            .arg(r)
-                            .arg(g)
-                            .arg(b);
-        secondColorSquare->setStyleSheet(style);
-
-        // Display valid RGB values
-        secondRLabel->setText(QString("R: %1").arg(r));
-        secondGLabel->setText(QString("G: %1").arg(g));
-        secondBLabel->setText(QString("B: %1").arg(b));
-    }
-}
-
-void ColorInfoPanel::updateBothPanelsAndHighlightDifferences(RgbValue topRgb,
-                                                             RgbValue bottomRgb,
-                                                             bool showDifferenceForSmallerComponents
-                                                             )
+void ColorPickerPanel::update(ImagePixelColor visibleImageColor,
+                            std::optional<ImagePixelColor> hiddenImageColor
+                            )
 {
-    if (isForVisibleImageOnly) {
-        updateTopPanel(topRgb);
+    if (!isTwoPanelMode) {
+        updateTopPanelOnly(visibleImageColor);
         return;
+    }
+
+    if (!hiddenImageColor) {
+        reset();
     }
 
     // Update the top panel
-    firstFileNameLabel->setText(topRgb.getImageName());
+    firstFileNameLabel->setText(visibleImageColor.getImageName());
     QString topStyle = QString("background-color: rgb(%1, %2, %3);")
-                           .arg(topRgb.getR())
-                           .arg(topRgb.getG())
-                           .arg(topRgb.getB());
+                           .arg(visibleImageColor.getR())
+                           .arg(visibleImageColor.getG())
+                           .arg(visibleImageColor.getB());
     firstColorSquare->setStyleSheet(topStyle);
 
     // Update the bottom panel
-    secondFileNameLabel->setText(bottomRgb.getImageName());
+    secondFileNameLabel->setText(hiddenImageColor->getImageName());
     QString bottomStyle = QString("background-color: rgb(%1, %2, %3);")
-                              .arg(bottomRgb.getR())
-                              .arg(bottomRgb.getG())
-                              .arg(bottomRgb.getB());
+                              .arg(hiddenImageColor->getR())
+                              .arg(hiddenImageColor->getG())
+                              .arg(hiddenImageColor->getB());
     secondColorSquare->setStyleSheet(bottomStyle);
 
     // Helper lambda to calculate and format differences for each RGB component
-    auto formatComponent = [&](const QString& componentName, int topValue, int bottomValue, QLabel* topLabel, QLabel* bottomLabel) {
-        QString reservedSpace = "   ";  // Reserve space for layout stability
+    auto formatComponent = [&](const QString& componentName,
+                               int topValue,
+                               int bottomValue,
+                               QLabel* topLabel,
+                               QLabel* bottomLabel
+                               )
+    {
+        QString reservedSpace = "       ";
+        if (!isReserveSpaceForLayoutStability) {
+            reservedSpace = " ";
+        }
+        isReserveSpaceForLayoutStability = false;
 
         // Check if values are out of range
         if (topValue < 0 || topValue > 255 || bottomValue < 0 || bottomValue > 255) {
             // Display "n/a" for invalid values
-            topLabel->setText(QString("%1: n/a").arg(componentName));
-            bottomLabel->setText(QString("%1: n/a").arg(componentName));
+            topLabel->setText(QString("%1: n/a%2")
+                                  .arg(componentName)
+                                  .arg(reservedSpace));
+            bottomLabel->setText(QString("%1: n/a%2")
+                                     .arg(componentName)
+                                     .arg(reservedSpace));
             topLabel->setStyleSheet("color: black;");
             bottomLabel->setStyleSheet("color: black;");
             firstColorSquare->setStyleSheet("background-color: gray;");
@@ -218,43 +199,74 @@ void ColorInfoPanel::updateBothPanelsAndHighlightDifferences(RgbValue topRgb,
 
         if (topValue > bottomValue) {
             // Top value is greater
-            topLabel->setText(QString("%1: %2 | %3%4").arg(componentName).arg(topValue).arg(difference).arg(reservedSpace));
-            if (showDifferenceForSmallerComponents) {
-                bottomLabel->setText(QString("%1: %2 | %3%4").arg(componentName).arg(bottomValue).arg(difference).arg(reservedSpace));
-            } else {
-                bottomLabel->setText(QString("%1: %2").arg(componentName).arg(bottomValue));
-            }
+            topLabel->setText(QString("%1: %2 | %3%4")
+                                  .arg(componentName)
+                                  .arg(topValue)
+                                  .arg(difference)
+                                  .arg(reservedSpace)
+                              );
+            bottomLabel->setText(QString("%1: %2 | %3%4")
+                                     .arg(componentName)
+                                     .arg(bottomValue)
+                                     .arg(difference)
+                                     .arg(reservedSpace)
+                                 );
             topLabel->setStyleSheet("color: green;");
             bottomLabel->setStyleSheet("color: red;");
         } else if (topValue < bottomValue) {
             // Bottom value is greater
-            if (showDifferenceForSmallerComponents) {
-                topLabel->setText(QString("%1: %2 | %3%4").arg(componentName).arg(topValue).arg(difference).arg(reservedSpace));
-            } else {
-                topLabel->setText(QString("%1: %2").arg(componentName).arg(topValue));
-            }
-            bottomLabel->setText(QString("%1: %2 | %3%4").arg(componentName).arg(bottomValue).arg(difference).arg(reservedSpace));
+            topLabel->setText(QString("%1: %2 | %3%4")
+                                  .arg(componentName)
+                                  .arg(topValue)
+                                  .arg(difference)
+                                  .arg(reservedSpace)
+                              );
+            bottomLabel->setText(QString("%1: %2 | %3%4")
+                                     .arg(componentName)
+                                     .arg(bottomValue)
+                                     .arg(difference)
+                                     .arg(reservedSpace)
+                                 );
             topLabel->setStyleSheet("color: red;");
             bottomLabel->setStyleSheet("color: green;");
         } else {
             // Values are equal, no difference to show
-            topLabel->setText(QString("%1: %2").arg(componentName).arg(topValue));
-            bottomLabel->setText(QString("%1: %2").arg(componentName).arg(bottomValue));
+            topLabel->setText(QString("%1: %2%3")
+                                  .arg(componentName)
+                                  .arg(topValue)
+                                  .arg(reservedSpace)
+                              );
+            bottomLabel->setText(QString("%1: %2%3")
+                                     .arg(componentName)
+                                     .arg(bottomValue)
+                                     .arg(reservedSpace)
+                                 );
             topLabel->setStyleSheet("color: black;");
             bottomLabel->setStyleSheet("color: black;");
         }
     };
 
     // Update and compare R values
-    formatComponent("R", topRgb.getR(), bottomRgb.getR(), firstRLabel, secondRLabel);
+    formatComponent("R",
+                    visibleImageColor.getR(),
+                    hiddenImageColor->getR(),
+                    firstRLabel,
+                    secondRLabel
+                    );
 
     // Update and compare G values
-    formatComponent("G", topRgb.getG(), bottomRgb.getG(), firstGLabel, secondGLabel);
+    formatComponent("G",
+                    visibleImageColor.getG(),
+                    hiddenImageColor->getG(),
+                    firstGLabel,
+                    secondGLabel
+                    );
 
     // Update and compare B values
-    formatComponent("B", topRgb.getB(), bottomRgb.getB(), firstBLabel, secondBLabel);
-}
-
-bool ColorInfoPanel::isOpenedInOnePanelMode() {
-    return isForVisibleImageOnly;
+    formatComponent("B",
+                    visibleImageColor.getB(),
+                    hiddenImageColor->getB(),
+                    firstBLabel,
+                    secondBLabel
+                    );
 }

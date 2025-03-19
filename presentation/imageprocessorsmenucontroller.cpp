@@ -1,11 +1,11 @@
-#include "mainwindowbuildmenudelegate.h"
+#include "imageprocessorsmenucontroller.h"
 #include <domain/interfaces/imageprocessor.h>
 #include <business/imageanalysis/imageprocessorsmanager.h>
 #include <presentation/mainwindow.h>
 #include <qmenu.h>
 
 
-MainWindowBuildMenuDelegate::MainWindowBuildMenuDelegate(MainWindow *mainWindow)
+ImageProcessorsMenuController::ImageProcessorsMenuController(MainWindow *mainWindow)
     : mainWindow(mainWindow)
 {
 
@@ -15,7 +15,7 @@ MainWindowBuildMenuDelegate::MainWindowBuildMenuDelegate(MainWindow *mainWindow)
 // that can be easily added to the application. For more information see the constructor'
 // imageprocessormanager/imageprocessormanager.cpp
 
-void MainWindowBuildMenuDelegate::buildFiltersAndComparatorsMenus(QMenu *comparatorsMenu,
+void ImageProcessorsMenuController::buildFiltersAndComparatorsMenus(QMenu *comparatorsMenu,
                                                                   QMenu *filtersMenu,
                                                                   QList<ImageProcessorInfo> imageProcessorsInfo
                                                                   )

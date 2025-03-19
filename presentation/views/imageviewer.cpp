@@ -16,45 +16,34 @@
 
 ImageViewer::ImageViewer(MainWindow *parent)
     : QGraphicsView(parent),
-    currentImageIndex(0),
-    scaleFactor(1.0),
     parent(parent)
 {
     scene = new QGraphicsScene(this);
     setScene(scene);
 
+    QColor backgroundColor = QApplication::palette().color(QPalette::Window);
+    setBackgroundBrush(backgroundColor);
+
     setMouseTracking(true);
     setDragMode(QGraphicsView::ScrollHandDrag);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+    cleanUp();
 }
 
 ImageViewer::~ImageViewer() {
-    if (firstImage != nullptr) {
-        scene->removeItem(firstImage);
-        delete firstImage;
-        firstImage = nullptr;
-    }
-    if (secondImage != nullptr) {
-        scene->removeItem(secondImage);
-        delete secondImage;
-        secondImage = nullptr;
-    }
-    if (comparatorResultImage != nullptr) {
-        scene->removeItem(comparatorResultImage);
-        delete comparatorResultImage;
-        comparatorResultImage = nullptr;
-    }
+    cleanUp();
 }
 
 /* Color Picker is run { */
 
-void ImageViewer::onColorPickerStatusChanged(bool isActivate) {
+void ImageViewer::onColorUnderCursorTrackingStatusChanged(bool isActivate) {
     if (isActivate) {
-        isRgbTrackingActive = true;
-        trackPixelColor(lastCursorPos);
+        isColorUnderCursorTrackingActive = true;
+        getPixelColorUnderCursor(lastCursorPos);
     } else {
-        isRgbTrackingActive = false;
+        isColorUnderCursorTrackingActive = false;
     }
 }
 
@@ -68,75 +57,137 @@ void ImageViewer::wheelEvent(QWheelEvent *event) {
     } else {
         zoomOut();
     }
+    event->accept();
 }
 
 void ImageViewer::zoomIn() {
+    setCenterToViewRectCenter();
     scale(1.25, 1.25);
     scaleFactor *= 1.25;
 }
 
 void ImageViewer::zoomOut() {
+    setCenterToViewRectCenter();
     scale(0.8, 0.8);
     scaleFactor *= 0.8;
 }
 
-void ImageViewer::actualSize() {
+void ImageViewer::setCenterToViewRectCenter() {
+    QRectF viewRect = mapToScene(viewport()->geometry()).boundingRect();
+    centerOn(viewRect.center());
+}
+
+void ImageViewer::setToActualSize() {
     resetTransform();
     scaleFactor = 1.0;
 }
 
-void ImageViewer::fitImageInView() {
-    fitInView(firstImage, Qt::KeepAspectRatio);
-    fitInView(secondImage, Qt::KeepAspectRatio);
-    if (comparatorResultImage != nullptr) {
-        fitInView(comparatorResultImage, Qt::KeepAspectRatio);
+void ImageViewer::setToFitImageInView() {
+    fitInView(firstDisplayedImage, Qt::KeepAspectRatio);
+    fitInView(secondDisplayedImage, Qt::KeepAspectRatio);
+    if (comparatorResultDisplayedImage != nullptr) {
+        fitInView(comparatorResultDisplayedImage, Qt::KeepAspectRatio);
     }
+    scaleFactor = 1.0;
 }
+
 /* } =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
 /* Show images in QGraphicsView { */
 
-void ImageViewer::showTwoImagesBeingCompared(QPixmap& image1,
-                                             QString path1,
-                                             QPixmap& image2,
-                                             QString path2,
-                                             std::shared_ptr<ImageViewState> imageViewState
-                                             )
+void ImageViewer::displayImages(QPixmap& image1,
+                                QString path1,
+                                QPixmap& image2,
+                                QString path2
+                                )
 {
+    QString image1Name = QFileInfo(path1).baseName();
+    QString image2Name = QFileInfo(path2).baseName();
+
     firstImagePath = path1;
     secondImagePath = path2;
-    firstImageName = QFileInfo(path1).baseName();
-    secondImageName = QFileInfo(path2).baseName();
-    firstImage = scene->addPixmap(image1);
-    secondImage = scene->addPixmap(image2);
-    parent->showStatusMessage(path1);
-    secondImage->setVisible(false);
+    firstImageName = image1Name;
+    secondImageName = image2Name;
 
-    if (imageViewState != nullptr) {
-        lastCursorPos = imageViewState->lastCursorPos;
-        if (currentImageIndex != imageViewState.get()->imageIndex) {
-            setSceneRect(secondImage->boundingRect());
-            toggleImage();
-        }
-        centerOn(imageViewState.get()->rect.center());
-        scale(imageViewState.get()->scaleFactor, imageViewState.get()->scaleFactor);
-        scaleFactor = imageViewState.get()->scaleFactor;
-        onColorPickerStatusChanged(imageViewState->isRgbTrackingActive);
-    } else {
-        setSceneRect(firstImage->boundingRect());
-    }
+    firstDisplayedImage = scene->addPixmap(image1);
+    secondDisplayedImage = scene->addPixmap(image2);
+    parent->showStatusMessage(firstImagePath);
+    secondDisplayedImage->setVisible(false);
+    setToFitImageInView();
 }
 
 void ImageViewer::showImageFromComparator(QPixmap &image, QString description) {
-    if (comparatorResultImage != nullptr) {
-        scene->removeItem(comparatorResultImage);
-        comparatorResultImage = nullptr;
+    if (comparatorResultDisplayedImage != nullptr) {
+        scene->removeItem(comparatorResultDisplayedImage);
+        comparatorResultDisplayedImage = nullptr;
     }
-    comparatorResultImage = scene->addPixmap(image);
-    firstImage->setVisible(false);
-    secondImage->setVisible(false);
-    comparatorResultImage->setVisible(true);
+    comparatorResultDisplayedImage = scene->addPixmap(image);
+    firstDisplayedImage->setVisible(false);
+    secondDisplayedImage->setVisible(false);
+    comparatorResultDisplayedImage->setVisible(true);
     parent->showStatusMessage(description);
+}
+
+void ImageViewer::replaceDisplayedImages(QPixmap& pixmap1, QPixmap& pixmap2) {
+
+    QRectF viewRect = mapToScene(viewport()->geometry()).boundingRect();
+
+    if (firstDisplayedImage != nullptr) {
+        scene->removeItem(firstDisplayedImage);
+        firstDisplayedImage = nullptr;
+    }
+    if (secondDisplayedImage != nullptr) {
+        scene->removeItem(secondDisplayedImage);
+        secondDisplayedImage = nullptr;
+    }
+    if (comparatorResultDisplayedImage != nullptr) {
+        scene->removeItem(comparatorResultDisplayedImage);
+        comparatorResultDisplayedImage = nullptr;
+    }
+    firstDisplayedImage = scene->addPixmap(pixmap1);
+    secondDisplayedImage = scene->addPixmap(pixmap2);
+    if (currentImageIndex == 0) {
+        secondDisplayedImage->setVisible(false);
+        parent->showStatusMessage(firstImagePath);
+    } else {
+        firstDisplayedImage->setVisible(false);
+        parent->showStatusMessage(secondImagePath);
+    }
+    centerOn(viewRect.center());
+    if (lastCursorPos) {
+        getPixelColorUnderCursor(lastCursorPos.value());
+    }
+}
+
+bool ImageViewer::hasActiveSession() {
+    return (firstDisplayedImage != nullptr && secondDisplayedImage != nullptr);
+}
+
+void ImageViewer::cleanUp() {
+    if (firstDisplayedImage != nullptr) {
+        scene->removeItem(firstDisplayedImage);
+        firstDisplayedImage = nullptr;
+    }
+    if (secondDisplayedImage != nullptr) {
+        scene->removeItem(secondDisplayedImage);
+        secondDisplayedImage = nullptr;
+    }
+    if (comparatorResultDisplayedImage != nullptr) {
+        scene->removeItem(comparatorResultDisplayedImage);
+        comparatorResultDisplayedImage = nullptr;
+    }
+    firstImagePath = "";
+    secondImagePath = "";
+    firstImageName = "";
+    secondImageName = "";
+    currentImageIndex = 0;
+    scaleFactor = 1.0;
+    isColorUnderCursorTrackingActive = false;
+    lastCursorPos = std::nullopt;
+    selecting = false;
+    isZoomToSelectionEnabled = false;
+    selectionStart = {};
+    selectionRect = {};
 }
 
 /* } =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
@@ -153,53 +204,32 @@ void ImageViewer::showImageFromComparator(QPixmap &image, QString description) {
  *  {   */
 
 void ImageViewer::toggleImage() {
-
-    if (firstImage == nullptr || secondImage == nullptr) {
-        return;
-    }
-
     QRectF viewRect = mapToScene(viewport()->geometry()).boundingRect();
 
-    if (comparatorResultImage != nullptr) {
-        scene->removeItem(comparatorResultImage);
-        comparatorResultImage = nullptr;
+    if (comparatorResultDisplayedImage != nullptr) {
+        scene->removeItem(comparatorResultDisplayedImage);
+        comparatorResultDisplayedImage = nullptr;
         currentImageIndex == 1 ?
             currentImageIndex = 0 :
             currentImageIndex = 1;
     }
 
     if (currentImageIndex == 0) {
-        firstImage->setVisible(false);
-        secondImage->setVisible(true);
+        firstDisplayedImage->setVisible(false);
+        secondDisplayedImage->setVisible(true);
         currentImageIndex = 1;
         parent->showStatusMessage(secondImagePath);
     } else {
-        firstImage->setVisible(true);
-        secondImage->setVisible(false);
+        firstDisplayedImage->setVisible(true);
+        secondDisplayedImage->setVisible(false);
         currentImageIndex = 0;
         parent->showStatusMessage(firstImagePath);
     }
 
     centerOn(viewRect.center());
     if (lastCursorPos) {
-        trackPixelColor(lastCursorPos.value());
+        getPixelColorUnderCursor(lastCursorPos.value());
     }
-}
-
-/* } =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
-
-/*  If a filter is applied to the two images being compared and displayed in QGraphicsView,
- *  they can change. For example, the Red Channel filter removes the blue and green channels.
- *  Filters are applied directly to the compared images. If the user selects
- *  "Show original images" from the menu, the effects of the filters will be discarded.
- *  To achieve this, the original images will be reloaded from disk. To preserve
- *  the scrolling parameters, zoom level, and current image index (0 or 1), we save them
- *  in a structure so they can be reapplied after loading the original images from the disk.
- *  {  */
-
-ImageViewState ImageViewer::getCurrentState() {
-    QRectF rect = mapToScene(viewport()->geometry()).boundingRect();
-    return ImageViewState(rect, scaleFactor, currentImageIndex, isRgbTrackingActive, lastCursorPos);
 }
 
 /* } =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
@@ -220,7 +250,7 @@ SaveImageInfo ImageViewer::getCurrentVisiableArea() {
 
 
     SaveImageInfoType contentType = SaveImageInfoType::None;
-    bool isComparisonImageShowing = (comparatorResultImage != nullptr);
+    bool isComparisonImageShowing = (comparatorResultDisplayedImage != nullptr);
     if (isComparisonImageShowing) {
         contentType = SaveImageInfoType::ComparisonImageArea;
     } else if (currentImageIndex == 0) {
@@ -233,14 +263,13 @@ SaveImageInfo ImageViewer::getCurrentVisiableArea() {
 }
 
 SaveImageInfo ImageViewer::getImageShowedOnTheScreen() {
-
-    bool isComparisonImageShowing = (comparatorResultImage != nullptr);
+    bool isComparisonImageShowing = (comparatorResultDisplayedImage != nullptr);
     if (isComparisonImageShowing) {
-        return SaveImageInfo(SaveImageInfoType::ComparisonImage, comparatorResultImage->pixmap());
+        return SaveImageInfo(SaveImageInfoType::ComparisonImage, comparatorResultDisplayedImage->pixmap());
     } else if (currentImageIndex == 0) {
-        return SaveImageInfo(SaveImageInfoType::FirstImage, firstImage->pixmap());
+        return SaveImageInfo(SaveImageInfoType::FirstImage, firstDisplayedImage->pixmap());
     } else if (currentImageIndex == 1) {
-        return SaveImageInfo(SaveImageInfoType::SecondImage, secondImage->pixmap());
+        return SaveImageInfo(SaveImageInfoType::SecondImage, secondDisplayedImage->pixmap());
     }
     return {};
 }
@@ -307,8 +336,8 @@ QPixmap ImageViewer::getVisiblePixmap(QGraphicsView* view) {
 void ImageViewer::passCropedImageToOtherAppInstance(QRectF rect) {
     QRect selectionRect = rect.toAlignedRect();
 
-    auto firstPixmap = firstImage->pixmap();
-    auto secondPixmap = secondImage->pixmap();
+    auto firstPixmap = firstDisplayedImage->pixmap();
+    auto secondPixmap = secondDisplayedImage->pixmap();
     QRect boundedRect1 = selectionRect.intersected(firstPixmap.rect());
     QPixmap croppedPixmap1 = firstPixmap.copy(boundedRect1);
     QRect boundedRect2 = selectionRect.intersected(secondPixmap.rect());
@@ -317,7 +346,7 @@ void ImageViewer::passCropedImageToOtherAppInstance(QRectF rect) {
     QString path1 = FileUtils::savePixmapToTempDir(croppedPixmap1, firstImageName);
     QString path2 = FileUtils::savePixmapToTempDir(croppedPixmap2, secondImageName);
 
-    parent->passTwoImagesBeingComparedToOtherAppInstance(path1, path2);
+    parent->openImagesInOtherAppInstance(path1, path2);
 }
 
 /* } =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
@@ -340,11 +369,11 @@ void ImageViewer::mouseMoveEvent(QMouseEvent* event) {
     }
 
     // Implement RGB values tracking under the mouse cursor. It needs for Color Picker.
-    trackPixelColor(event->pos());
+    getPixelColorUnderCursor(event->pos());
 }
 
-void ImageViewer::trackPixelColor(std::optional<QPoint> cursorPos) {
-    if (!isRgbTrackingActive || !cursorPos) {
+void ImageViewer::getPixelColorUnderCursor(std::optional<QPoint> cursorPos) {
+    if (!isColorUnderCursorTrackingActive || !cursorPos) {
         return;
     }
 
@@ -372,42 +401,42 @@ void ImageViewer::trackPixelColor(std::optional<QPoint> cursorPos) {
                 QColor colorOfVisibleImage, colorOfHiddenImage;
                 QString visibleImageName, hiddenImageName;
                 if (currentImageIndex == 0) {
-                    colorOfVisibleImage = firstImage->pixmap().toImage().pixelColor(x, y);
-                    colorOfHiddenImage = secondImage->pixmap().toImage().pixelColor(x, y);
+                    colorOfVisibleImage = firstDisplayedImage->pixmap().toImage().pixelColor(x, y);
+                    colorOfHiddenImage = secondDisplayedImage->pixmap().toImage().pixelColor(x, y);
                     visibleImageName = firstImageName;
                     hiddenImageName = secondImageName;
                 } else {
-                    colorOfVisibleImage = secondImage->pixmap().toImage().pixelColor(x, y);
-                    colorOfHiddenImage = firstImage->pixmap().toImage().pixelColor(x, y);
+                    colorOfVisibleImage = secondDisplayedImage->pixmap().toImage().pixelColor(x, y);
+                    colorOfHiddenImage = firstDisplayedImage->pixmap().toImage().pixelColor(x, y);
                     visibleImageName = secondImageName;
                     hiddenImageName = firstImageName;
                 }
-                fillRgbValues(visibleImageName, colorOfVisibleImage, hiddenImageName, colorOfHiddenImage);
+                fillPixelColorValues(visibleImageName, colorOfVisibleImage, hiddenImageName, colorOfHiddenImage);
             }
         }
     }
 }
 
-void ImageViewer::fillRgbValues(QString visibleImageName,
-                               QColor colorOfVisibleImage,
-                               QString hiddenImageName,
-                               QColor colorOfHiddenImage
-                               )
+void ImageViewer::fillPixelColorValues(QString visibleImageName,
+                                       QColor colorOfVisibleImage,
+                                       QString hiddenImageName,
+                                       QColor colorOfHiddenImage
+                                       )
 {
-    RgbValue rgbValueOfVisibleImage = {
+    ImagePixelColor pixelValueOfVisibleImage = {
         visibleImageName,
         colorOfVisibleImage.red(),
         colorOfVisibleImage.green(),
         colorOfVisibleImage.blue()
     };
 
-    RgbValue rgbValueOfHiddenImage = {
+    ImagePixelColor pixelValueOfHiddenImage = {
             hiddenImageName,
             colorOfHiddenImage.red(),
             colorOfHiddenImage.green(),
             colorOfHiddenImage.blue()
     };
-    parent->onRgbValueUnderCursonChanged(rgbValueOfVisibleImage, rgbValueOfHiddenImage);
+    parent->onColorUnderCursorChanged(pixelValueOfVisibleImage, pixelValueOfHiddenImage);
 }
 
 // Implement zoom to selection

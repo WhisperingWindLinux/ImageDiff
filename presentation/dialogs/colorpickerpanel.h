@@ -3,38 +3,29 @@
 
 #include <QObject>
 #include <QWidget>
-#include <qboxlayout.h>
-#include <qframe.h>
-#include <qlabel.h>
-
-#include <domain/valueobjects/rgbvalue.h>
-
-struct RgbWidgets {
-    QLabel* fileNamelabel;     // The name of the file
-    QVBoxLayout* panelLayout;
-    QFrame* colorSquare;       // The square that shows the color (first panel)
-    QLabel* rLabel;            // Label for R value (first panel)
-    QLabel* gLabel;            // Label for G value (first panel)
-    QLabel* bLabel;            // Label for B value (first panel)
-};
+#include <domain/valueobjects/imagepixelcolor.h>
+#include <presentation/valueobjects/rgbwidgets.h>
 
 class QLineEdit;
+class QLabel;
+class QFrame;
 
-class ColorInfoPanel : public QWidget
+// If RGB tracking is active, the dialog displays the RGB values of the pixel
+// under the mouse cursor for both compared images. For this purpose,
+// the dialog has two panels with RGB values.
+
+class ColorPickerPanel : public QWidget
 {
     Q_OBJECT
 public:
     // One panel displays the RGB values only for the visible image.
     // The second panel is for the second (hidden) image.
-    explicit ColorInfoPanel(bool isOnePanelMode = true);
+    explicit ColorPickerPanel(bool isTwoPanelMode = true);
 
-    void updateTopPanel(RgbValue rgbValue);
-    void updateBottomPanel(RgbValue rgbValue);
-    void updateBothPanelsAndHighlightDifferences(RgbValue topRgb,
-                                                 RgbValue bottomRgb,
-                                                 bool showDifferenceForSmallerComponents = true
-                                                 );
-    bool isOpenedInOnePanelMode();
+    void update(ImagePixelColor visibleImageColor, std::optional<ImagePixelColor> hiddenImageColor);
+
+    void reset();
+
 private:
     RgbWidgets createPanel();  // Helper method to create a single panel
 
@@ -51,7 +42,10 @@ private:
     QLabel* secondGLabel = nullptr;      // Label for G value (second panel)
     QLabel* secondBLabel = nullptr;      // Label for B value (second panel)
 
-    bool isForVisibleImageOnly;
+    bool isTwoPanelMode;
+    bool isReserveSpaceForLayoutStability;
+
+    void updateTopPanelOnly(ImagePixelColor firstPanelValue);
 };
 
 

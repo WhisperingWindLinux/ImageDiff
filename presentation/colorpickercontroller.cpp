@@ -1,89 +1,71 @@
-#include "rgbtrackinghelper.h"
-
+#include "colorpickercontroller.h"
 #include <QtGui/qscreen.h>
 #include <qguiapplication.h>
 #include <qmainwindow.h>
 #include <qwidget.h>
 #include <presentation/mainwindow.h>
+#include <presentation/dialogs/colorpickerpanel.h>
 
-RgbTrackingHelper::RgbTrackingHelper(MainWindow *mainWindow)
-    : mainWindow(mainWindow)
+ColorPickerController::ColorPickerController(MainWindow *mainWindow)
+    : mainWindow(mainWindow),
+    alignmentPercent(80)
 {
-
+    colorPicker = std::make_unique<ColorPickerPanel>();
 }
 
-void RgbTrackingHelper::onRgbValueUnderCursonChanged(RgbValue visibleImageRgbValue,
-                                                         RgbValue hiddenImageRgbValue
-                                                         )
+void ColorPickerController::onColorUnderCursorChanged(ImagePixelColor visibleImagePixelColor,
+                                                      ImagePixelColor hiddenImagePixelColor
+                                                      )
 {
-    if (colorPanel == nullptr) {
-        return;
+    colorPicker->update(visibleImagePixelColor, hiddenImagePixelColor);
+}
+
+void ColorPickerController::onImagesOpened() {
+    if (colorPicker->isVisible()) {
+        mainWindow->onColorUnderCursorTrackingStatusChanged(true);
     }
-    if (colorPanel->isVisible()) {
-        colorPanel->updateBothPanelsAndHighlightDifferences(visibleImageRgbValue, hiddenImageRgbValue);
-    }
 }
 
-void RgbTrackingHelper::showColorPicker() {
-    openColorPickerDialog(true);
+void ColorPickerController::onImagesClosed() {
+    colorPicker->reset();
 }
 
-void RgbTrackingHelper::showAdvancedColorPicker() {
-    openColorPickerDialog(false);
-}
-
-void RgbTrackingHelper::onImageViewDestroyed() {
+void ColorPickerController::onMainWindowClosed() {
     closeColorPickerDialog();
 }
 
-void RgbTrackingHelper::onMainWindowClosed() {
-    closeColorPickerDialog();
-}
-
-void RgbTrackingHelper::onMainWindowStateChanged(bool isMinimized) {
+void ColorPickerController::onMainWindowStateChanged(bool isMinimized) {
     if (isMinimized) {
-        if (colorPanel != nullptr) { colorPanel->hide(); }
+        colorPicker->hide();
     } else {
-        if (colorPanel != nullptr) { colorPanel->show(); }
+        colorPicker->show();
     }
 }
 
-void RgbTrackingHelper::placeColorPickerOnRight() {
-    if (colorPanel != nullptr && colorPanel->isVisible()) {
-        positionColorPickerWindow(true);
-    } else {
-        openColorPickerDialog(false);
-        positionColorPickerWindow(true);
+void ColorPickerController::placeColorPickerToRightSideOfMainWindow() {
+    if (colorPicker->isVisible()) {
+        moveColorPickerPanel(PositionColorPickerWindow::Right);
     }
 }
 
-void RgbTrackingHelper::placeColorPickerOnLeft() {
-    if (colorPanel != nullptr && colorPanel->isVisible()) {
-        positionColorPickerWindow(false);
-    } else {
-        openColorPickerDialog(false);
-        positionColorPickerWindow(false);
+void ColorPickerController::placeColorPickerToLeftSideOfMainWindow() {
+    if (colorPicker->isVisible()) {
+        moveColorPickerPanel(PositionColorPickerWindow::Left);
     }
 }
 
-void RgbTrackingHelper::openColorPickerDialog(bool isOnePanelMode) {
+void ColorPickerController::openColorPickerDialog() {
     if (mainWindow->isMaximized() || mainWindow->isFullScreen()) {
         return;
     }
-    closeColorPickerDialog();
-    colorPanel = new ColorInfoPanel(isOnePanelMode);
-    colorPanel->show();
-    mainWindow->onRgbTrackingStatusChanged(true);
-    placeColorPickerOnRight();
+    colorPicker->show();
+    mainWindow->onColorUnderCursorTrackingStatusChanged(true);
+    placeColorPickerToRightSideOfMainWindow();
 }
 
-void RgbTrackingHelper::closeColorPickerDialog() {
-    if (colorPanel != nullptr) {
-        colorPanel->close();
-        delete colorPanel;
-        colorPanel = nullptr;
-    }
-    mainWindow->onRgbTrackingStatusChanged(false);
+void ColorPickerController::closeColorPickerDialog() {
+    colorPicker->close();
+    mainWindow->onColorUnderCursorTrackingStatusChanged(false);
 }
 
 // Calculates the position of the color picker window relative to the main window (QMainWindow).
@@ -91,7 +73,7 @@ void RgbTrackingHelper::closeColorPickerDialog() {
 // If necessary, shifts the main window to the left or adjusts its size. The position of the second
 // window vertically is set as a percentage (alignmentPercent) of the height of the main window.
 // A value of 50% places the second window centered relative to the vertical axis of the main window.
-void RgbTrackingHelper::positionColorPickerWindow(bool placeOnRight)
+void ColorPickerController::moveColorPickerPanel(PositionColorPickerWindow position)
 {
     // Ensure alignmentPercent is within valid range
     alignmentPercent = qBound(0, alignmentPercent, 100);
@@ -103,23 +85,25 @@ void RgbTrackingHelper::positionColorPickerWindow(bool placeOnRight)
     // Get main window geometry
     QRect mainGeometry = mainWindow->geometry();
 
+    bool placeToRight = (position == PositionColorPickerWindow::Right);
+
     // Calculate target position for the second window
     int secondWindowX;
-    if (placeOnRight) {
+    if (placeToRight) {
         // Place the color picker to the right of the main window
-        secondWindowX = mainGeometry.right() + 1; // Start just to the right of the main window
+        secondWindowX = mainGeometry.right() + 1;
     } else {
         // Place the color picker to the left of the main window
-        secondWindowX = mainGeometry.left() - colorPanel->width() - 1; // Start just to the left of the main window
+        secondWindowX = mainGeometry.left() - colorPicker->width() - 1;
     }
 
     int secondWindowY = mainGeometry.y() +
-                        (mainGeometry.height() - colorPanel->height()) * (100 - alignmentPercent) / 100;
+                        (mainGeometry.height() - colorPicker->height()) * (100 - alignmentPercent) / 100;
 
     // Adjust position if placing on the right and the second window goes off-screen horizontally
-    if (placeOnRight && secondWindowX + colorPanel->width() > screenGeometry.right()) {
+    if (placeToRight && secondWindowX + colorPicker->width() > screenGeometry.right()) {
         // Second window goes off-screen; adjust the main window
-        int requiredShift = (secondWindowX + colorPanel->width()) - screenGeometry.right();
+        int requiredShift = (secondWindowX + colorPicker->width()) - screenGeometry.right();
         if (mainGeometry.x() - requiredShift >= screenGeometry.left()) {
             // Move the main window to the left without resizing
             mainGeometry.moveLeft(mainGeometry.x() - requiredShift);
@@ -135,7 +119,7 @@ void RgbTrackingHelper::positionColorPickerWindow(bool placeOnRight)
     }
 
     // Adjust position if placing on the left and the second window goes off-screen horizontally
-    if (!placeOnRight && secondWindowX < screenGeometry.left()) {
+    if (!placeToRight && secondWindowX < screenGeometry.left()) {
         // Second window goes off-screen; adjust the main window
         int requiredShift = screenGeometry.left() - secondWindowX;
         if (mainGeometry.right() + requiredShift <= screenGeometry.right()) {
@@ -149,16 +133,16 @@ void RgbTrackingHelper::positionColorPickerWindow(bool placeOnRight)
         }
         mainWindow->setGeometry(mainGeometry);
         // Recalculate the second window's position after adjusting the main window
-        secondWindowX = mainGeometry.left() - colorPanel->width() - 1;
+        secondWindowX = mainGeometry.left() - colorPicker->width() - 1;
     }
 
     // Ensure the second window stays within vertical bounds of the screen
     if (secondWindowY < screenGeometry.top()) {
         secondWindowY = screenGeometry.top();
-    } else if (secondWindowY + colorPanel->height() > screenGeometry.bottom()) {
-        secondWindowY = screenGeometry.bottom() - colorPanel->height();
+    } else if (secondWindowY + colorPicker->height() > screenGeometry.bottom()) {
+        secondWindowY = screenGeometry.bottom() - colorPicker->height();
     }
 
     // Set the final position of the second window
-    colorPanel->move(secondWindowX, secondWindowY);
+    colorPicker->move(secondWindowX, secondWindowY);
 }

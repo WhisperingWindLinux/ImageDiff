@@ -35,16 +35,16 @@ SOURCES += \
     domain/valueobjects/comparisonresultvariant.cpp \
     domain/valueobjects/property.cpp \
     main.cpp \
+    presentation/colorpickercontroller.cpp \
     presentation/dialogs/aboutdialog.cpp \
-    presentation/dialogs/colorinfopanel.cpp \
+    presentation/dialogs/colorpickerpanel.cpp \
     presentation/dialogs/comparatorresultdialog.cpp \
     presentation/dialogs/getimagesfromvideosdialog.cpp \
     presentation/dialogs/helpdialog.cpp \
     presentation/dialogs/pluginssettingsdialog.cpp \
     presentation/dialogs/propertyeditordialog.cpp \
-    presentation/dialogs/rgbtrackinghelper.cpp \
+    presentation/imageprocessorsmenucontroller.cpp \
     presentation/mainwindow.cpp \
-    presentation/mainwindowbuildmenudelegate.cpp \
     presentation/presenters/htmlimageprocessorshelppresenter.cpp \
     presentation/presenters/htmlreportpresenter.cpp \
     presentation/presenters/recentfilespresenter.cpp \
@@ -92,27 +92,26 @@ HEADERS += \
     domain/valueobjects/autocomparisonreportentry.h \
     domain/valueobjects/comparableimage.h \
     domain/valueobjects/comparisonresultvariant.h \
+    domain/valueobjects/imagepixelcolor.h \
     domain/valueobjects/imageprocessorsinfo.h \
-    domain/valueobjects/imageviewstate.h \
     domain/valueobjects/pluginssettings.h \
     domain/valueobjects/property.h \
     domain/valueobjects/pyscriptinfo.h \
-    domain/valueobjects/rgbtrackingstate.h \
-    domain/valueobjects/rgbvalue.h \
     domain/valueobjects/savefileinfo.h \
+    presentation/colorpickercontroller.h \
     presentation/dialogs/aboutdialog.h \
-    presentation/dialogs/colorinfopanel.h \
+    presentation/dialogs/colorpickerpanel.h \
     presentation/dialogs/comparatorresultdialog.h \
     presentation/dialogs/getimagesfromvideosdialog.h \
     presentation/dialogs/helpdialog.h \
     presentation/dialogs/pluginssettingsdialog.h \
     presentation/dialogs/propertyeditordialog.h \
-    presentation/dialogs/rgbtrackinghelper.h \
+    presentation/imageprocessorsmenucontroller.h \
     presentation/mainwindow.h \
-    presentation/mainwindowbuildmenudelegate.h \
     presentation/presenters/htmlimageprocessorshelppresenter.h \
     presentation/presenters/htmlreportpresenter.h \
     presentation/presenters/recentfilespresenter.h \
+    presentation/valueobjects/rgbwidgets.h \
     presentation/views/imageviewer.h \
     presentation/views/videoplayerwidget.h \
     tests/comparableimagetests.h \

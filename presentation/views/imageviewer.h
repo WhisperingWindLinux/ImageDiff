@@ -1,10 +1,8 @@
 #ifndef IMAGEVIEWER_H
 #define IMAGEVIEWER_H
 
-#include <domain/valueobjects/imageviewstate.h>
 #include <domain/valueobjects/savefileinfo.h>
 #include <qgraphicsview.h>
-#include <qlabel.h>
 
 class MainWindow;
 
@@ -15,59 +13,68 @@ public:
     explicit ImageViewer(MainWindow *parent = nullptr);
     virtual ~ImageViewer();
     
-    void showTwoImagesBeingCompared(QPixmap& image1,
-                                 QString path1,
-                                 QPixmap& image2,
-                                 QString path2,
-                                 std::shared_ptr<ImageViewState> imageGeometry);
+    void displayImages(QPixmap& image1,
+                                    QString path,
+                                    QPixmap& image2,
+                                    QString path2
+                                    );
 
     void showImageFromComparator(QPixmap &image, QString description);
 
+    void cleanUp();
+
     void toggleImage();
 
-    /*
-     Implementation of a method to capture the image displayed
-     in QGraphicsView, taking into account the current scale (zoom)
-     and visible area. In other words, everything outside the
-     currently visible area will be cropped.
-    */
-    SaveImageInfo getCurrentVisiableArea();
 
+    // Implementation of a method to capture the image displayed
+    // in QGraphicsView, taking into account the current scale (zoom)
+    // and visible area. In other words, everything outside the
+    // currently visible area will be cropped.
+    SaveImageInfo getCurrentVisiableArea();
     SaveImageInfo getImageShowedOnTheScreen();
 
-    void onColorPickerStatusChanged(bool isActivate);
+    // The RGB values of the pixel under the mouse cursor are displayed
+    // in the Color Picker if it is open. If true, we track the color
+    // changes under the cursor; if false, we do not.
+    void onColorUnderCursorTrackingStatusChanged(bool isActivate);
 
-    ImageViewState getCurrentState();
+    // Filters can be applied to modify images. This function removes
+    // all filters applied to the compared images.
+    void replaceDisplayedImages(QPixmap &pixmap1, QPixmap &pixmap2);
 
     void zoomIn();
     void zoomOut();
-    void actualSize();
-    void fitImageInView();
+    void setToActualSize();
+    void setToFitImageInView();
+
+    bool hasActiveSession();
+
 protected:
     void wheelEvent(QWheelEvent *event) override;
     void mouseMoveEvent(QMouseEvent* event) override;
     void mousePressEvent(QMouseEvent *event) override ;
-    void mouseReleaseEvent(QMouseEvent *event) override ;
+    void mouseReleaseEvent(QMouseEvent *event) override;
     void paintEvent(QPaintEvent *event) override;
 
 private:
+    MainWindow *parent;
     QGraphicsScene *scene;
     QString firstImagePath;
     QString secondImagePath;
     QString firstImageName;
     QString secondImageName;
-    QGraphicsPixmapItem *firstImage = nullptr;
-    QGraphicsPixmapItem *secondImage = nullptr;
-    QGraphicsPixmapItem *comparatorResultImage = nullptr;
+    QGraphicsPixmapItem *firstDisplayedImage;
+    QGraphicsPixmapItem *secondDisplayedImage;
+    QGraphicsPixmapItem *comparatorResultDisplayedImage;
     int currentImageIndex;
     qreal scaleFactor;
-    MainWindow *parent = nullptr;
-    std::optional<QPoint> lastCursorPos = std::nullopt;
-    bool isRgbTrackingActive = false;
+    bool isColorUnderCursorTrackingActive;
+    std::optional<QPoint> lastCursorPos;
+
 
     // Zoom to selection
     bool selecting;                         // Whether the user is currently selecting an area
-    bool isZoomToSelectionEnabled = false;
+    bool isZoomToSelectionEnabled;
     QPoint selectionStart;                  // Start point of the selection (in view coordinates)
     QRect selectionRect;                    // Rectangle being selected (in view coordinates)
 
@@ -75,13 +82,14 @@ private:
 
     void passCropedImageToOtherAppInstance(QRectF rect);
 
-    void trackPixelColor(std::optional<QPoint> cursorPos);
+    void getPixelColorUnderCursor(std::optional<QPoint> cursorPos);
 
-    void fillRgbValues(QString visibleImageName,
-                                       QColor colorOfVisibleImage,
-                                       QString hiddenImageName,
-                                       QColor colorOfHiddenImage
-                                       );
+    void fillPixelColorValues(QString visibleImageName,
+                              QColor colorOfVisibleImage,
+                              QString hiddenImageName,
+                              QColor colorOfHiddenImage
+                              );
+    void setCenterToViewRectCenter();
 };
 
 
