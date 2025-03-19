@@ -66,7 +66,7 @@ void RgbTrackingHelper::placeColorPickerOnLeft() {
     }
 }
 
-void RgbTrackingHelper::openColorPickerDialog(bool isOnePanelMode) {
+void RgbTrackingHelper::openColorPickerDialog(bool isOnePanelMode, optional<QPoint> pos) {
     if (mainWindow->isMaximized() || mainWindow->isFullScreen()) {
         return;
     }
@@ -77,13 +77,25 @@ void RgbTrackingHelper::openColorPickerDialog(bool isOnePanelMode) {
     placeColorPickerOnRight();
 }
 
-std::shared_ptr<RgbTrackingState> RgbTrackingHelper::getCurrentState() {
-    // TBD
-    return make_shared<RgbTrackingState>();
+optional<RgbTrackingState> RgbTrackingHelper::getCurrentState() {
+    if (colorPanel == nullptr) {
+        return nullopt;
+    }
+    if (colorPanel->isHidden()) {
+        return nullopt;
+    }
+    return make_optional<RgbTrackingState>(colorPanel->pos(), colorPanel->isOpenedInOnePanelMode());
 }
 
-void RgbTrackingHelper::setState(std::shared_ptr<RgbTrackingState> newState) {
-    // TBD
+void RgbTrackingHelper::setState(optional<RgbTrackingState> newState) {
+    if (!newState) {
+        return;
+    }
+    if (colorPanel == nullptr) {
+        openColorPickerDialog(newState->getIsOpenedInOnePanelMode(), newState->getPosition());
+    } else {
+        colorPanel->move(newState->getPosition());
+    }
 }
 
 void RgbTrackingHelper::closeColorPickerDialog() {

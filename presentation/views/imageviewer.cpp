@@ -120,6 +120,7 @@ void ImageViewer::showTwoImagesBeingCompared(QPixmap& image1,
         centerOn(imageViewState.get()->rect.center());
         scale(imageViewState.get()->scaleFactor, imageViewState.get()->scaleFactor);
         scaleFactor = imageViewState.get()->scaleFactor;
+        lastCursorPos = imageViewState->lastCursorPos;
         onColorPickerStatusChanged(imageViewState->isRgbTrackingActive);
     } else {
         setSceneRect(firstImage->boundingRect());
@@ -196,7 +197,7 @@ void ImageViewer::toggleImage() {
 
 ImageViewState ImageViewer::getCurrentState() {
     QRectF rect = mapToScene(viewport()->geometry()).boundingRect();
-    return ImageViewState(rect, scaleFactor, currentImageIndex, isRgbTrackingActive);
+    return ImageViewState(rect, scaleFactor, currentImageIndex, isRgbTrackingActive, lastCursorPos);
 }
 
 /* } =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */

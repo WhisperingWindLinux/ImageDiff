@@ -25,9 +25,10 @@ public:
     void showColorPicker();
     void showAdvancedColorPicker();
     void onRgbValueUnderCursonChanged(RgbValue visibleImageRgbValue, RgbValue hiddenImageRgbValue);
-    void openColorPickerDialog(bool isOnePanelMode);
-    shared_ptr<RgbTrackingState> getCurrentState();
-    void setState(shared_ptr<RgbTrackingState> newState);
+    void openColorPickerDialog(bool isOnePanelMode, optional<QPoint> pos = nullopt);
+
+    optional<RgbTrackingState> getCurrentState();
+    void setState(optional<RgbTrackingState> newState);
 
 private:
     ColorInfoPanel* colorPanel = nullptr;

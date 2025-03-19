@@ -34,6 +34,7 @@ public:
                                                  RgbValue bottomRgb,
                                                  bool showDifferenceForSmallerComponents = true
                                                  );
+    bool isOpenedInOnePanelMode();
 private:
     RgbWidgets createPanel();  // Helper method to create a single panel
 

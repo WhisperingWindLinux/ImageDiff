@@ -342,16 +342,14 @@ void MainWindow::onTwoImagesBeingComparedLoadedSuccessfully(QPixmap& image1,
                                                             )
 {
     std::shared_ptr<ImageViewState> imageViewState = nullptr;
-    std::shared_ptr<RgbTrackingState> rgbTrackingState = nullptr;
+    std::optional<RgbTrackingState> rgbTrackingState;
     if (useSavedImageViewState && viewer) {
         imageViewState = std::make_shared<ImageViewState>(viewer->getCurrentState());
         rgbTrackingState = rgbTrackingInteractor->getCurrentState();
     }
     deleteImageView();
     createImageView();
-    if (useSavedImageViewState && rgbTrackingState != nullptr) {
-        rgbTrackingInteractor->setState(rgbTrackingState);
-    }
+    rgbTrackingInteractor->setState(rgbTrackingState);
     viewer->showTwoImagesBeingCompared(image1, path1, image2, path2, imageViewState);
 }
 

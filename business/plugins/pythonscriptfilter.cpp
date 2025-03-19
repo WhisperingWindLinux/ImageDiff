@@ -58,7 +58,19 @@ QImage PythonScripFilter::filter(QImage image) {
     }
 
     QProcess process;
-    process.start(pluginSettings.pythonInterpreterPath, QStringList() << pyScriptPath);
+    QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+    env.insert("Runner", "ImageDiff");
+    process.setProcessEnvironment(env);
+
+
+    QStringList params;
+    params << pyScriptPath;
+
+    foreach (auto property, properties) {
+        params << property.getAnyValueAsString();
+    }
+
+    process.start(pluginSettings.pythonInterpreterPath, params);
 
     if (!process.waitForStarted()) {
         throw runtime_error("Failed to start process.");

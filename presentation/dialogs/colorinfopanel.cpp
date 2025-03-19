@@ -51,6 +51,9 @@ ColorInfoPanel::ColorInfoPanel(bool isForVisibleImageOnly)
                    Qt::CustomizeWindowHint |
                    Qt::WindowCloseButtonHint
                    );
+
+    updateBottomPanel({"n/a", -1, -1, -1});
+    updateTopPanel({"n/a", -1, -1, -1});
 }
 
 RgbWidgets ColorInfoPanel::createPanel() {
@@ -250,4 +253,8 @@ void ColorInfoPanel::updateBothPanelsAndHighlightDifferences(RgbValue topRgb,
 
     // Update and compare B values
     formatComponent("B", topRgb.getB(), bottomRgb.getB(), firstBLabel, secondBLabel);
+}
+
+bool ColorInfoPanel::isOpenedInOnePanelMode() {
+    return isForVisibleImageOnly;
 }
