@@ -14,11 +14,8 @@ public:
                               );
 
     std::optional<QString> getTextReport() const;
-
     std::optional<QImage> getImagereport() const;
-
     QString getComporatorFullName() const;
-
     QString getComporatorDescription() const;
 
 private:

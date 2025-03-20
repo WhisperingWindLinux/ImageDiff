@@ -13,12 +13,10 @@ public:
     virtual ~GenericRgbFilter() = default;
 
 // ATransformer interface
-
-public:
     QString getShortName() const override;
     QString getHotkey() const override;
     QString getDescription() const override;
-    QImage filter(QImage image) override;
+    QImage filter(const QImage &image) override;
     QList<Property> getDefaultProperties() const override;
     void setProperties(QList<Property> properties) override;
     void reset() override;
@@ -26,9 +24,11 @@ public:
 private:
     RgbChannel channel;
     bool isOutputImageColored;
-
-    static QImage extractChannel(const QImage& image, bool isGrayscale, RgbChannel channels);
-};
+    static QImage extractChannel(const QImage &image,
+                                 bool isImageColored,
+                                 RgbChannel channels
+                                 );
+    };
 
 class RedChannelFilter : public GenericRgbFilter {
 public:

@@ -12,6 +12,7 @@
 class ImageViewer;
 class ColorPickerPanel;
 class ColorPickerController;
+class RecentFilesInteractor;
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -54,6 +55,44 @@ public:
     void openImagesFromCommandLine(QString firstFilePath, QString secondFilePath);
     void onColorUnderCursorTrackingStatusChanged(bool isActive);
 
+    // IProgressDialog interface
+
+    void showProgressDialog(QString caption, int totalSteps) override;
+    bool wasCanceled() override;
+    void onUpdateProgressValue(int value) override;
+    void onMessage(QString message) override;
+    void onError(QString error) override;
+
+    // IMainWindow interface
+
+    void displayImages(const std::shared_ptr<QPixmap> image1,
+                       const QString &path1,
+                       const std::shared_ptr<QPixmap> image2,
+                       const QString &path2) override;
+
+    void onColorUnderCursorChanged(ImagePixelColor visibleImageRgbValue,
+                                   ImagePixelColor hiddenImageRgbValue) override;
+
+    void onImageResultFromComparatorReceived(const std::shared_ptr<QPixmap>  image,
+                                             const QString &description) override;
+
+    void onTextResultFromComparatorReceived(const QString &message,
+                                            const QString &comparatorFullName,
+                                            const QString &comparatorDescription,
+                                            const QString &firstImageFilePath,
+                                            const QString &secondImageFilePath) override;
+
+    void saveImage(const std::shared_ptr<QPixmap>  image, const QString &defaultPath) override;
+
+    void showHelp(const QString &message) override;
+
+    QList<Property> showImageProcessorPropertiesDialog(const QString &processorName,
+                                                       const QString &processorDescription,
+                                                       const QList<Property> &defaultProperties) override;
+    void updateRecentFilesMenu() override;
+
+    void onDisplayedImagesShouldBeReplaced(const std::shared_ptr<QPixmap> first,
+                                           const std::shared_ptr<QPixmap> second) override;
 
 protected:
     void closeEvent(QCloseEvent *event) override;
@@ -67,6 +106,7 @@ private:
     ComparisonInteractor *comparisionInteractor;
     ColorPickerController *colorPickerController;
     ImageProcessorsMenuController *imageProcessorsMenuController;
+    RecentFilesInteractor *recentFilesInteractor;
     QProgressDialog *progressDialog;
     QList<shared_ptr<QProcess> > instances;
 
@@ -78,42 +118,6 @@ private:
     void saveMainWindowPosition();
     void restoreMainWindowPosition();
     void coreUpdateRecentFilesMenu();
-
-public:
-    void displayImages(QPixmap& image1,
-                       QString path1,
-                       QPixmap& image2,
-                       QString path2) override;
-
-    void onImageResultFromComparatorReceived(QPixmap &image, QString description) override;
-
-    void onTextResultFromComparatorReceived(QString &message,
-                                            QString comparatorFullName,
-                                            QString comparatorDescription,
-                                            QString &firstImageFilePath,
-                                            QString &secondImageFilePath) override;
-
-    void showHelp(QString &message) override;
-
-    void saveImage(QPixmap &image, QString defaultPath) override;
-
-    void onColorUnderCursorChanged(ImagePixelColor firstImageRgbValue,
-                                      ImagePixelColor secondImageRgbValue) override;
-
-    QList<Property> showImageProcessorPropertiesDialog(QString processorName,
-                                                 QString processorDescription,
-                                                 QList<Property> defaultProperties) override;
-    void updateRecentFilesMenu() override;
-
-    void onDisplayedImagesShouldBeReplaced(QPixmap& first, QPixmap &second) override;
-
-    // IProgressDialog interface
-public:
-    void showProgressDialog(QString caption, int totalSteps) override;
-    bool wasCanceled() override;
-    void onUpdateProgressValue(int value) override;
-    void onMessage(QString message) override;
-    void onError(QString error) override;
 };
 #endif // MAINWINDOW_H
 

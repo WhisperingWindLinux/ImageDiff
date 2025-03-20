@@ -11,11 +11,11 @@ class ComparatorResultDialog : public QDialog {
     Q_OBJECT
 
 public:
-    ComparatorResultDialog(QString &message,
-                           QString &comparatorFullName,
-                           QString &comparatorDescription,
-                           QString &firstImageFilePath,
-                           QString &secondImageFilePath,
+    ComparatorResultDialog(const QString& message,
+                           const QString& comparatorFullName,
+                           const QString& comparatorDescription,
+                           const QString& firstImageFilePath,
+                           const QString& secondImageFilePath,
                            QWidget *parent = nullptr
                            );
 

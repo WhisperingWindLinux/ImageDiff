@@ -1,20 +1,19 @@
 #ifndef PLUGINSETTINGSINTERACTOR_H
 #define PLUGINSETTINGSINTERACTOR_H
 
-#include <data/storage/repositories/pluginsrepository.h>
-
-using namespace std;
+#include <data/repositories/pluginsrepository.h>
 
 class PluginsSettingsInteractor
 {
 public:
     PluginsSettingsInteractor();
+    ~PluginsSettingsInteractor();
 
     bool updatePluginSettings(PluginsSettings pluginSettings, /* out */ QString& error);
     PluginsSettings getPluginSettings();
     bool rescanPluginsDir(/* out */ QString &error);
 private:
-    unique_ptr<PluginsSettingsRepository> pluginSettingsRepository;
+    PluginsSettingsRepository *pluginSettingsRepository;
 
     static bool isPluginDirPathValid(const QString &path);
     static bool isPythonPathValid(const QString &path);

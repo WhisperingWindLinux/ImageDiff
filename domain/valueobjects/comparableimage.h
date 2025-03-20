@@ -6,8 +6,8 @@
 class ComparableImage {
 
 public:
-    ComparableImage(QImage image, QString name);
-    ComparableImage(QPixmap image, QString name);
+    ComparableImage(const QImage &image, const QString &name);
+    ComparableImage(const QPixmap &image, const QString &name);
     QImage getImage() const;
     QString getName() const;
 

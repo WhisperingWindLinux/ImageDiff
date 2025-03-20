@@ -1,12 +1,12 @@
 #include "getimagesfromvideosinteractor.h"
 
-#include <data/storage/getfileuserpathsservcie.h>
+#include <data/storage/savefiledialoghandler.h>
 
 GetImagesFromVideosInteractor::GetImagesFromVideosInteractor() {}
 
 std::optional<QPair<QString, QString> > GetImagesFromVideosInteractor::grabImagesFromVideos() {
     // Load videos for both players
-    GetFileUserPathsService service;
+    SaveFileDialogHandler service;
     auto pathsPair = service.getUserOpenTwoVideoPaths("");
     if (!pathsPair) {
         return nullopt;

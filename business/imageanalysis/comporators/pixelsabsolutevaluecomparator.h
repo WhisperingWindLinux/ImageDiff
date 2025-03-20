@@ -20,13 +20,14 @@ public:
     QString getShortName() const override;
     QString getHotkey() const override;
     QString getDescription() const override;
-    std::shared_ptr<ComparisonResultVariant> compare(ComparableImage first, ComparableImage second) override;
+    std::shared_ptr<ComparisonResultVariant> compare(const ComparableImage &first,
+                                                     const ComparableImage &second) override;
     QString getFullName() const override;
 
 private:
-    QMap<QPair<int, int>, QPair<int, double>> compareImages(QImage image1, QImage image2);
+    QMap<QPair<int, int>, QPair<int, double>> compareImages(const QImage &image1, const QImage &image2);
 
-    QString formatResultToHtml(const QMap<QPair<int, int>, QPair<int, double>>& result);
+    QString formatResultToHtml(const QMap<QPair<int, int>, QPair<int, double>> &result);
 };
 
 #endif // PIXELSABSOLUTEVALUECOMPARATOR_H

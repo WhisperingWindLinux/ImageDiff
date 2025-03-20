@@ -1,3 +1,5 @@
+#include "pixelsabsolutevaluecomparator.h"
+
 #include <QCoreApplication>
 #include <QImage>
 #include <QMessageBox>
@@ -7,11 +9,9 @@
 #include <QDebug>
 #include <QLocale>
 
-#include "pixelsabsolutevaluecomparator.h"
-
 // Function to calculate pixel differences between two images
-QMap<QPair<int, int>, QPair<int, double>> PixelsAbsoluteValueComparator::compareImages(QImage image1,
-                                                                                       QImage image2
+QMap<QPair<int, int>, QPair<int, double>> PixelsAbsoluteValueComparator::compareImages(const QImage &image1,
+                                                                                       const QImage &image2
                                                                                        )
 {
     // General image parameters
@@ -88,15 +88,14 @@ QString PixelsAbsoluteValueComparator::getDescription() const {
                    "assess how similar or different the images are.";
 }
 
-std::shared_ptr<ComparisonResultVariant> PixelsAbsoluteValueComparator::compare(ComparableImage first,
-                                                                                ComparableImage second
-                                                                                )
+ComparisonResultVariantPtr PixelsAbsoluteValueComparator::compare(const ComparableImage &first,
+                                                                  const ComparableImage &second
+                                                                 )
 {
     auto result = compareImages(first.getImage(), second.getImage());
 
     QString html = PixelsAbsoluteValueComparator::formatResultToHtml(result);
-    std::shared_ptr<ComparisonResultVariant> resultVariant = std::make_shared<ComparisonResultVariant>(html);
-    return resultVariant;
+    return std::make_shared<ComparisonResultVariant>(html);
 }
 
 QString PixelsAbsoluteValueComparator::formatResultToHtml(const QMap<QPair<int, int>,

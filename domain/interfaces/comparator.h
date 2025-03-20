@@ -13,7 +13,8 @@
 
 class IComparator : public IImageProcessor {
 public:
-    virtual std::shared_ptr<ComparisonResultVariant> compare(ComparableImage first, ComparableImage second) = 0;
+    virtual ComparisonResultVariantPtr compare(const ComparableImage &first,
+                                               const ComparableImage &second) = 0;
 
     virtual QList<Property> getDefaultProperties() const override { return {}; }
 
@@ -31,6 +32,8 @@ public:
     // the 'properties' mechanism in any way.
     virtual bool isPartOfAutoReportingToolbox() { return true; }
 };
+
+typedef std::shared_ptr<IComparator> IComparatorPtr;
 
 #endif // COMPARATOR_H
 

@@ -29,8 +29,11 @@ SOURCES += \
     business/plugins/pythonscriptfilter.cpp \
     business/pluginsettingsinteractor.cpp \
     business/recentfilesmanager.cpp \
-    data/storage/getfileuserpathsservcie.cpp \
-    data/storage/repositories/pluginsrepository.cpp \
+    business/recentfilesinteractor.cpp \
+    data/storage/imagefileshandler.cpp \
+    data/repositories/imagesrepository.cpp \
+    data/repositories/pluginsrepository.cpp \
+    data/storage/savefiledialoghandler.cpp \
     domain/valueobjects/comparableimage.cpp \
     domain/valueobjects/comparisonresultvariant.cpp \
     domain/valueobjects/property.cpp \
@@ -47,18 +50,8 @@ SOURCES += \
     presentation/mainwindow.cpp \
     presentation/presenters/htmlimageprocessorshelppresenter.cpp \
     presentation/presenters/htmlreportpresenter.cpp \
-    presentation/presenters/recentfilespresenter.cpp \
     presentation/views/imageviewer.cpp \
     presentation/views/videoplayerwidget.cpp \
-    tests/comparableimagetests.cpp \
-    tests/comparisoninteractortests.cpp \
-    tests/comparisonresultvarianttests.cpp \
-    tests/imageprocessorsmanagertests.cpp \
-    tests/propertytests.cpp \
-    tests/recentfilemanagertest.cpp \
-    tests/recentfilespathformatertest.cpp \
-    tests/saveimageinfotests.cpp \
-    tests/setpropertiesinteractortests.cpp \
     domain/valueobjects/autocomparisonreportentry.cpp \
 
 HEADERS += \
@@ -82,11 +75,15 @@ HEADERS += \
     business/plugins/pythonscriptfilter.h \
     business/pluginsettingsinteractor.h \
     business/recentfilesmanager.h \
-    data/storage/getfileuserpathsservcie.h \
-    data/storage/repositories/pluginsrepository.h \
+    business/recentfilesinteractor.h \
+    data/storage/imagefileshandler.h \
+    data/repositories/imagesrepository.h \
+    data/repositories/pluginsrepository.h \
+    data/storage/savefiledialoghandler.h \
     domain/interfaces/comparator.h \
     domain/interfaces/filter.h \
     domain/interfaces/imageprocessor.h \
+    domain/interfaces/imagerepository.h \
     domain/interfaces/iprogressdialog.h \
     domain/interfaces/mainwindowcallbacks.h \
     domain/valueobjects/autocomparisonreportentry.h \
@@ -110,22 +107,9 @@ HEADERS += \
     presentation/mainwindow.h \
     presentation/presenters/htmlimageprocessorshelppresenter.h \
     presentation/presenters/htmlreportpresenter.h \
-    presentation/presenters/recentfilespresenter.h \
     presentation/valueobjects/rgbwidgets.h \
     presentation/views/imageviewer.h \
-    presentation/views/videoplayerwidget.h \
-    tests/comparableimagetests.h \
-    tests/comparisoninteractortests.h \
-    tests/comparisonresultvarianttests.h \
-    tests/imageprocessorsmanagertests.h \
-    tests/mocks/mockImageprocessor.h \
-    tests/mocks/mockmainwindowcallbacks.h \
-    tests/propertytests.h \
-    tests/recentfilemanagertest.h \
-    tests/recentfilespathformatertest.h \
-    tests/saveimageinfotests.h \
-    tests/setpropertiesinteractortests.h \
-    tests/testutils.h
+    presentation/views/videoplayerwidget.h
 
 FORMS += \
     presentation/forms/mainwindow.ui

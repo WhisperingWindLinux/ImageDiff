@@ -2,16 +2,16 @@
 
 #include <QImage>
 #include <QColor>
-#include <QString>
+#include <qstring>
 #include <QDebug>
 #include <qfileinfo.h>
 
-ImageProximityToOriginResult ImageProximityToOriginComparator::compareImages(QImage image1,
-                                                        QImage image2,
-                                                        QString name1,
-                                                        QString name2,
-                                                        QImage originalImage
-                                                        )
+ImageProximityToOriginResult ImageProximityToOriginComparator::compareImages(const QImage &image1,
+                                                                             const QImage &image2,
+                                                                             const QString &name1,
+                                                                             const QString &name2,
+                                                                             const QImage &originalImage
+                                                                            )
 {
     // Ensure all images have the same size
     if (image1.size() != image2.size() || image1.size() != originalImage.size()) {
@@ -31,11 +31,14 @@ ImageProximityToOriginResult ImageProximityToOriginComparator::compareImages(QIm
         strResult = "Both images are equally close to the original image";
     }
 
-    return {name1, name2, totalDifference1, totalDifference2, strResult };
+    return { name1, name2, totalDifference1, totalDifference2, strResult };
 }
 
 
-qint64 ImageProximityToOriginComparator::calculateTotalDifference(const QImage &image, const QImage &originalImage) {
+qint64 ImageProximityToOriginComparator::calculateTotalDifference(const QImage &image,
+                                                                  const QImage &originalImage
+                                                                  )
+{
     int width = image.width();
     int height = image.height();
     qint64 totalDifference = 0;
@@ -92,6 +95,7 @@ void ImageProximityToOriginComparator::setProperties(QList<Property> properties)
 
 void ImageProximityToOriginComparator::reset() {
     pathToOriginalImage = "";
+    originalImage = {};
 }
 
 QString ImageProximityToOriginComparator::getShortName() const {
@@ -119,12 +123,11 @@ QString ImageProximityToOriginComparator::getDescription() const {
 }
 
 std::shared_ptr<ComparisonResultVariant> ImageProximityToOriginComparator::compare(
-                                                                        ComparableImage first,
-                                                                        ComparableImage second
+                                                                    const ComparableImage &first,
+                                                                    const ComparableImage &second
                                                                         )
 {
-
-    QImage originalImage;
+    originalImage = {};
     originalImage.load(pathToOriginalImage);
 
     if (originalImage.isNull()) {
@@ -139,7 +142,7 @@ std::shared_ptr<ComparisonResultVariant> ImageProximityToOriginComparator::compa
                                 );
 
     QString html = ImageProximityToOriginComparator::formatResultToHtml(result);
-    std::shared_ptr<ComparisonResultVariant> resultVariant = std::make_shared<ComparisonResultVariant>(html);
+    ComparisonResultVariantPtr resultVariant = std::make_shared<ComparisonResultVariant>(html);
     return resultVariant;
 }
 

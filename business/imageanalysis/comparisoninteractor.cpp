@@ -1,9 +1,9 @@
 #include "comparisoninteractor.h"
+
 #include <QtCore/qdir.h>
 #include <QtCore/qurl.h>
 #include <qcoreapplication.h>
 #include <qfileinfo.h>
-#include <tests/testutils.h>
 #include <business/imageanalysis/comporators/colorssaturationcomporator.h>
 #include <business/imageanalysis/comporators/contrastcomporator.h>
 #include <business/imageanalysis/comporators/differenceinpixelvaluesasimage.h>
@@ -13,9 +13,9 @@
 #include <business/imageanalysis/comporators/sharpnesscomparator.h>
 #include <business/imageanalysis/filters/grayscalefilter.h>
 #include <business/imageanalysis/filters/rgbfilter.h>
-#include <data/storage/getfileuserpathsservcie.h>
+#include <data/storage/savefiledialoghandler.h>
 #include <presentation/presenters/htmlimageprocessorshelppresenter.h>
-#include <presentation/presenters/recentfilespresenter.h>
+#include <domain/interfaces/imagerepository.h>
 #include "imageprocessorsmanager.h"
 #include "runallcomparatorsinteractor.h"
 #include "setprocessorpropertiesinteractor.h"
@@ -23,20 +23,26 @@
 ComparisonInteractor::ComparisonInteractor(IMainWindowCallbacks *callbacks)
     : callbacks(callbacks)
 {
-    recentFilesManager = new RecentFilesManager("com.whisperingwind", "ImageDiff");
     pluginsManager = new PluginsManager();
     processorsManager = ImageProcessorsManager::instance();
     getImageProcessorsInfo();
 }
 
 ComparisonInteractor::~ComparisonInteractor() {
-    if (cleanUpImageFilesAtExit) {
-        FileUtils::deleteFile(firstImagePath);
-        FileUtils::deleteFile(secondImagePath);
+    if (pluginsManager != nullptr) {
+        delete pluginsManager;
+        pluginsManager = nullptr;
+    }
+    if (processorsManager != nullptr) {
+        delete processorsManager;
+        processorsManager = nullptr;
     }
 }
 
-void ComparisonInteractor::callImageProcessor(QVariant callerData) {
+void ComparisonInteractor::callImageProcessor(const QVariant &callerData,
+                                              IImagesRepositoryPtr imagesRepository
+                                              )
+{
     if (!callerData.isValid() || callerData.isNull()) {
         throw std::runtime_error("Error: An incorrect caller data.");
     }
@@ -54,9 +60,9 @@ void ComparisonInteractor::callImageProcessor(QVariant callerData) {
     handleProcessorPropertiesIfNeed(processor);
 
     if (processor->getType() == ImageProcessorType::Comparator) {
-        callComparator(dynamic_pointer_cast<IComparator>(processor));
+        callComparator(dynamic_pointer_cast<IComparator>(processor), imagesRepository);
     } else if (processor->getType() == ImageProcessorType::Filter) {
-        callFilter(dynamic_pointer_cast<IFilter>(processor));
+        callFilter(dynamic_pointer_cast<IFilter>(processor), imagesRepository);
     } else {
         throw std::runtime_error("Error: An unknown image processor type.");
     }
@@ -71,15 +77,23 @@ void ComparisonInteractor::showImageProcessorsHelp() {
     callbacks->showHelp(helpText);
 }
 
-void ComparisonInteractor::handleProcessorPropertiesIfNeed(shared_ptr<IImageProcessor> processor) {
+void ComparisonInteractor::handleProcessorPropertiesIfNeed(IImageProcessorPtr processor) {
     SetProcessorPropertiesInteractor setPropsInteractor(processor, callbacks);
     setPropsInteractor.allowUserToSetPropertiesIfNeed();
 }
 
-void ComparisonInteractor::callComparator(shared_ptr<IComparator> comparator) {
+void ComparisonInteractor::callComparator(IComparatorPtr comparator,
+                                          IImagesRepositoryPtr imagesRepository
+                                          )
+{
 
-    ComparableImage comapableImage1{firstCurrentlyDisplayedPixmap, firstImagePath};
-    ComparableImage comapableImage2{secondCurrentlyDisplayedPixmap, secondImagePath};
+    auto firstImage = imagesRepository->getFirstImage();
+    auto firstImagePath = imagesRepository->getFirstImagePath();
+    auto secondImage = imagesRepository->getSecondImage();
+    auto secondImagePath = imagesRepository->getSecondImagePath();
+
+    ComparableImage comapableImage1{ firstImage, firstImagePath };
+    ComparableImage comapableImage2{ secondImage, secondImagePath };
 
     auto result = comparator->compare(comapableImage1, comapableImage2);
 
@@ -109,17 +123,19 @@ void ComparisonInteractor::callComparator(shared_ptr<IComparator> comparator) {
     }
 }
 
-void ComparisonInteractor::callFilter(shared_ptr<IFilter> filter) {
+void ComparisonInteractor::callFilter(shared_ptr<IFilter> filter,
+                                      IImagesRepositoryPtr imagesRepository
+                                      )
+{
+    auto firstImage = imagesRepository->getFirstImage().toImage();
+    auto secondImage = imagesRepository->getSecondImage().toImage();
 
-    QImage image1 = firstCurrentlyDisplayedPixmap.toImage();
-    QImage image2 = secondCurrentlyDisplayedPixmap.toImage();
-
-    if (image1.isNull() || image2.isNull()) {
+    if (firstImage.isNull() || secondImage.isNull()) {
         throw std::runtime_error("Error: An error occurred during the loading of one of the images");
     }
 
-    QImage transformedImage1 = filter->filter(image1);
-    QImage transformedImage2 = filter->filter(image2);
+    QImage transformedImage1 = filter->filter(firstImage);
+    QImage transformedImage2 = filter->filter(secondImage);
 
     if (transformedImage1.isNull() || transformedImage2.isNull()) {
         throw std::runtime_error("Error: The filter returns an empty result.");
@@ -132,236 +148,43 @@ void ComparisonInteractor::callFilter(shared_ptr<IFilter> filter) {
         throw std::runtime_error("Error: The filter returns an empty result.");
     }
 
-    firstCurrentlyDisplayedPixmap = pixmap1;
-    secondCurrentlyDisplayedPixmap = pixmap2;
+    imagesRepository->update(pixmap1, pixmap2);
 
-    callbacks->onDisplayedImagesShouldBeReplaced(firstCurrentlyDisplayedPixmap,
-                                                 secondCurrentlyDisplayedPixmap
-                                                 );
+    callbacks->onDisplayedImagesShouldBeReplaced(pixmap1, pixmap2);
 }
 
-void ComparisonInteractor::cleanUp() {
-    firstImagePath = {};
-    secondImagePath = {};
-    firstCurrentlyDisplayedPixmap = {};
-    secondCurrentlyDisplayedPixmap = {};
-    originalFirstPixmap = {};
-    originalSecondPixmap = {};
-    comparisionImage = {};
-}
+void ComparisonInteractor::runAllComparators(IImagesRepositoryPtr imagesRepository) {
 
-QStringList ComparisonInteractor::getRecentFiles() {
+    auto name1 = imagesRepository->getFirstImageBaseName();
+    auto name2 = imagesRepository->getSecondImageBaseName();
 
-    QStringList result;
-    auto formatter = make_unique<RecentFilesPresenter>();
-    auto pairs = recentFilesManager->getAllPairs();
+    QString reportDirName = QString("%1_vs_%2_comparison_report").arg(name1, name2);
 
+    QString saveReportDirPath = imagesRepository->getFirstImageDir()
+                                + QDir::separator()
+                                + reportDirName;
 
-    foreach (auto pair, pairs) {
-        auto record = formatter->pairToString(pair);
-        if (record.isEmpty()) {
-            continue;
-        }
-        result.append(record);
-    }
+    auto image1 = imagesRepository->getFirstImage();
+    auto image2 = imagesRepository->getSecondImage();
+    auto path1 = imagesRepository->getFirstImagePath();
+    auto path2 = imagesRepository->getSecondImagePath();
 
-    return result;
-}
+    ComparableImage firstComparableImage {image1, path1};
+    ComparableImage secondComparableImage {image2, path2};
 
-// Open images from the recent files menu.
-// The menu item is formatted as "path to file 1 -> path to file 2".
-void ComparisonInteractor::openImagesFromRecentMenu(QString recentFileMenuRecord,
-                                                      bool isUpdateRecentMenu
-                                                      )
-{
-    auto formatter = make_unique<RecentFilesPresenter>();
-    std::optional<QPair<QString, QString>> pair = formatter->stringToPair(recentFileMenuRecord);
-    if (!pair) {
-        throw std::runtime_error("Error: Unable to load images!");
-    }
-    openImages(pair->first, pair->second, false, isUpdateRecentMenu);
-}
+    RunAllComparatorsInteractor runAllComparatorsInteractor { callbacks,
+                                                              firstComparableImage,
+                                                              secondComparableImage,
+                                                              saveReportDirPath
+                                                            };
 
-void ComparisonInteractor::openImagesFromDragAndDrop(QList<QUrl> urls) {
-    if (urls.size() != 2) {
-        return;
-    }
-    if (urls[0].isLocalFile() && urls[1].isLocalFile()) {
-        QString file1 = urls[0].toLocalFile();
-        QString file2 = urls[1].toLocalFile();
-        openImages(file1, file2, false, true);
-    }
-}
-
-void ComparisonInteractor::getPathsFromUserAndOpenImages() {
-    GetFileUserPathsService service;
-    OptionalPathPair twoUserImagePaths = service.getUserOpenTwoImagePaths("");
-    if (!twoUserImagePaths) {
-        return;
-    }
-    openImages(twoUserImagePaths.value().first,
-               twoUserImagePaths.value().second,
-               false,
-               true
-               );
-}
-
-
-void ComparisonInteractor::openImages(QString& Image1Path,
-                                      QString& Image2Path,
-                                      bool removeImageFilesAtExit,
-                                      bool isUpdateRecentMenu
-                                      )
-{
-
-    firstImagePath = Image1Path;
-    secondImagePath = Image2Path;
-    cleanUpImageFilesAtExit = removeImageFilesAtExit;
-    originalFirstPixmap = QPixmap();
-    originalSecondPixmap = QPixmap();
-
-    if (!validateFile(firstImagePath) || !validateFile(secondImagePath)) {
-        cleanUp();
-        QString errorMsg = QString("Error: Unable to load images; the files ") +
-                            "are missing, or the application does not have access to them!";
-        throw std::runtime_error(errorMsg.toStdString());
-    }
-
-    bool isLoaded1 = originalFirstPixmap.load(firstImagePath);
-    bool isLoaded2 = originalSecondPixmap.load(secondImagePath);
-
-    if (originalFirstPixmap.size() != originalSecondPixmap.size()) {
-        cleanUp();
-        throw std::runtime_error("Error: Images must have the same resolution!");
-    }
-
-    if (!isLoaded1 || !isLoaded2) {
-        cleanUp();
-        throw std::runtime_error("Error: Unable to load images!");
-    }
-
-    firstCurrentlyDisplayedPixmap = originalFirstPixmap;
-    secondCurrentlyDisplayedPixmap = originalSecondPixmap;
-
-    callbacks->displayImages(firstCurrentlyDisplayedPixmap,
-                             firstImagePath,
-                             secondCurrentlyDisplayedPixmap,
-                             secondImagePath
-                             );
-
-    if (isUpdateRecentMenu) {
-        recentFilesManager->addPair(firstImagePath, secondImagePath);
-        callbacks->updateRecentFilesMenu();
-    }
-}
-
-void ComparisonInteractor::showOriginalImages() {
-    firstCurrentlyDisplayedPixmap = originalFirstPixmap;
-    secondCurrentlyDisplayedPixmap = originalSecondPixmap;
-
-    callbacks->onDisplayedImagesShouldBeReplaced(firstCurrentlyDisplayedPixmap,
-                                                 secondCurrentlyDisplayedPixmap
-                                                 );
-}
-
-bool ComparisonInteractor::validateFile(const QString &filePath) {
-
-    if (filePath.isEmpty()) {
-        return false;
-    }
-
-    QFileInfo fileInfo(filePath);
-    if (!fileInfo.exists() || !fileInfo.isFile()) {
-        return false;
-    }
-
-    static const QStringList supportedFormats = {".png"};
-    QString suffix = fileInfo.suffix().toLower();
-    if (!supportedFormats.contains("." + suffix)) {
-        return false;
-    }
-
-    return true;
-}
-
-void ComparisonInteractor::saveImage(SaveImageInfo info) {
-    if (info.saveImageInfoType == SaveImageInfoType::None || info.image.isNull()) {
-        return;
-    }
-
-    QFileInfo file1 = QFileInfo(firstImagePath);
-    QFileInfo file2 = QFileInfo(secondImagePath);
-    QString file1Name = file1.baseName();
-    QString file2Name = file2.baseName();
-    QDir defaultDir = file1.absoluteDir();
-    QString defaultExtention = QString(".") + file1.suffix();
-    QString fileName, fullPath;
-    GetFileUserPathsService fsAccess;
-
-    switch (info.saveImageInfoType) {
-    case SaveImageInfoType::FirstImage:
-        callbacks->saveImage(info.image, firstImagePath);
-        break;
-    case SaveImageInfoType::SecondImage:
-        callbacks->saveImage(info.image, secondImagePath);
-        break;
-    case SaveImageInfoType::FirstImageArea:
-        fileName = file1Name + "_area" + defaultExtention;
-        fullPath = defaultDir.filePath(fileName);
-        callbacks->saveImage(info.image, fullPath);
-        break;
-    case SaveImageInfoType::SecondImageArea:
-        fileName = file2Name + "_area" + defaultExtention;
-        fullPath = defaultDir.filePath(fileName);
-        callbacks->saveImage(info.image, fullPath);
-        break;
-    case SaveImageInfoType::ComparisonImage:
-        fileName = QString("%1_vs_%2_comparison%3")
-                       .arg(file1Name, file2Name, defaultExtention);
-        fullPath = defaultDir.filePath(fileName);
-        callbacks->saveImage(info.image, fullPath);
-        break;
-    case SaveImageInfoType::ComparisonImageArea:
-        fileName = QString("%1_vs_%2_area_comparison%3")
-                       .arg(file1Name, file2Name, defaultExtention);
-        fullPath = defaultDir.filePath(fileName);
-        callbacks->saveImage(info.image, fullPath);
-        break;
-    default:
-        break;
-    }
-}
-
-void ComparisonInteractor::runAllComparators() {
-
-    QFileInfo file1 = QFileInfo(firstImagePath);
-    QFileInfo file2 = QFileInfo(secondImagePath);
-    QString file1Name = file1.baseName();
-    QString file2Name = file2.baseName();
-    QDir defaultDir = file1.absoluteDir();
-    QString reportDirName = QString("%1_vs_%2_comparison_report")
-                                .arg(file1Name)
-                                .arg(file2Name);
-
-    QString reportDirPath = defaultDir.absolutePath()
-                             + QDir::separator()
-                             + reportDirName;
-
-    ComparableImage firstImage {firstCurrentlyDisplayedPixmap, firstImagePath};
-    ComparableImage secondImage {secondCurrentlyDisplayedPixmap, secondImagePath};
-    RunAllComparatorsInteractor runAllComparatorsInteractor {callbacks,
-                                                            firstImage,
-                                                            secondImage,
-                                                            reportDirPath
-    };
     runAllComparatorsInteractor.run();
 }
 
-QList<ImageProcessorInfo> ComparisonInteractor::getImageProcessorsInfo()
-{
+QList<ImageProcessorInfo> ComparisonInteractor::getImageProcessorsInfo() {
     processorsManager->clear();
 
-    // add comporators
+    // add comparators
 
     auto imageComparator = make_shared<DifferenceInPixelValuesAsImageComporator>();
     auto imageSaturationComporator = make_shared<ColorsSaturationComporator>();
@@ -391,10 +214,13 @@ QList<ImageProcessorInfo> ComparisonInteractor::getImageProcessorsInfo()
     processorsManager->addProcessor(blueChannelFilter);
     processorsManager->addProcessor(grayscaleFilter);
 
+    // add plugins (comparators and filters)
+
     auto processors = pluginsManager->loadPlugins();
 
     foreach (auto processor, processors) {
         processorsManager->addProcessor(processor);
     }
+
     return processorsManager->getAllProcessorsInfo();
 }

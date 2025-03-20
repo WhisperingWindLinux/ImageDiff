@@ -1,4 +1,5 @@
 #include "mainwindow.h"
+#include "data/storage/repositories/imagesrepository.h"
 #include <QLabel>
 #include <QSplitter>
 #include <QVBoxLayout>
@@ -24,10 +25,8 @@
 #include <presentation/dialogs/helpdialog.h>
 #include <presentation/dialogs/pluginssettingsdialog.h>
 #include <presentation/dialogs/propertyeditordialog.h>
-#include <data/storage/getfileuserpathsservcie.h>
+#include <data/storage/savefiledialoghandler.h>
 #include <presentation/colorpickercontroller.h>
-
-
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent),
@@ -323,43 +322,53 @@ void MainWindow::onColorUnderCursorChanged(ImagePixelColor visibleImageRgbValue,
     colorPickerController->onColorUnderCursorChanged(visibleImageRgbValue, hiddenImageRgbValue);
 }
 
-void MainWindow::displayImages(QPixmap& image1, QString path1,QPixmap& image2,QString path2) {
+void MainWindow::displayImages(QPixmapPtr image1,
+                               const QString& path1,
+                               QPixmapPtr image2,
+                               const QString& path2
+                               )
+{
     imageView->displayImages(image1, path1, image2, path2);
     colorPickerController->onImagesOpened();
     enableImageProceesorsMenuItems(true);
 }
 
-void MainWindow::onImageResultFromComparatorReceived(QPixmap &image, QString description) {
+void MainWindow::onImageResultFromComparatorReceived(const QPixmapPtr image,
+                                                     const QString& description
+                                                     )
+{
     imageView->showImageFromComparator(image, description);
 }
 
-void MainWindow::onTextResultFromComparatorReceived(QString &message,
-                                                    QString comparatorFullName,
-                                                    QString comparatorDescription,
-                                                    QString &firstImageFilePath,
-                                                    QString &secondImageFilePath)
+void MainWindow::onTextResultFromComparatorReceived(const QString& message,
+                                                    const QString& comparatorFullName,
+                                                    const QString& comparatorDescription,
+                                                    const QString& firstImageFilePath,
+                                                    const QString& secondImageFilePath
+                                                    )
 {
     ComparatorResultDialog dialog { message,
-                                  comparatorFullName,
-                                  comparatorDescription,
-                                  firstImageFilePath,
-                                  secondImageFilePath };
+                                    comparatorFullName,
+                                    comparatorDescription,
+                                    firstImageFilePath,
+                                    secondImageFilePath
+                                  };
     dialog.exec();
 }
 
-void MainWindow::saveImage(QPixmap &image, QString defaultPath) {
+void MainWindow::saveImage(const QPixmapPtr image, const QString& defaultPath) {
 
-    GetFileUserPathsService service;
-    auto savedFilePath = service.getUserSaveImagePath(defaultPath);
+    SaveFileDialogHandler fileDialogHandler;
+    auto savedFilePath = fileDialogHandler.getUserSaveImagePath(defaultPath);
     if (!savedFilePath) {
         return;
     }
-    if (!image.save(savedFilePath.value())) {
+    if (!image->save(savedFilePath.value())) {
         QMessageBox::warning(this, "Error", "Failed to save the image.");
     }
 }
 
-void MainWindow::showHelp(QString &message) {
+void MainWindow::showHelp(const QString& message) {
     if (!message.isEmpty()) {
         HelpDialog dialog(message);
         dialog.exec();
@@ -371,9 +380,9 @@ void MainWindow::showHelp(QString &message) {
  * The user can change the values. The function returns the new properties
  * or the default ones if nothing was changed.
  */
-QList<Property> MainWindow::showImageProcessorPropertiesDialog(QString processorName,
-                                                               QString processorDescription,
-                                                               QList<Property> defaultProperties
+QList<Property> MainWindow::showImageProcessorPropertiesDialog(const QString& processorName,
+                                                               const QString& processorDescription,
+                                                               const QList<Property>& defaultProperties
                                                                )
 {
     PropertyEditorDialog dialog(processorName, processorDescription, defaultProperties, this);
@@ -397,7 +406,7 @@ void MainWindow::updateRecentFilesMenu() {
     coreUpdateRecentFilesMenu();
 }
 
-void MainWindow::onDisplayedImagesShouldBeReplaced(QPixmap &first, QPixmap &second) {
+void MainWindow::onDisplayedImagesShouldBeReplaced(const QPixmapPtr first, const QPixmapPtr second) {
     imageView->replaceDisplayedImages(first, second);
 }
 

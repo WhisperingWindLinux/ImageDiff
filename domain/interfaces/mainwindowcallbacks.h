@@ -9,33 +9,34 @@
 
 class IMainWindowCallbacks : public IProgressDialog {
 public:
-    virtual void displayImages(QPixmap &image1,
-                                             QString path1,
-                                             QPixmap &image2,
-                                             QString path2) = 0;
+    virtual void displayImages(const QPixmap &image1,
+                               const QString &path1,
+                               const QPixmap &image2,
+                               const QString &path2) = 0;
 
-    virtual void onImageResultFromComparatorReceived(QPixmap &image, QString description) = 0;
+    virtual void onImageResultFromComparatorReceived(const QPixmap &image,
+                                                     const QString &description) = 0;
 
-    virtual void onTextResultFromComparatorReceived(QString &message,
-                                                    QString comparatorFullName,
-                                                    QString comparatorDescription,
-                                                    QString &firstImageFilePath,
-                                                    QString &secondImageFilePath) = 0;
+    virtual void onTextResultFromComparatorReceived(const QString &message,
+                                                    const QString &comparatorFullName,
+                                                    const QString &comparatorDescription,
+                                                    const QString &firstImageFilePath,
+                                                    const QString &secondImageFilePath) = 0;
 
-    virtual void showHelp(QString &message) = 0;
+    virtual void showHelp(const QString &message) = 0;
 
     virtual void onColorUnderCursorChanged(ImagePixelColor firstImageRgbValue,
-                                              ImagePixelColor secondImageRgbValue) = 0;
+                                           ImagePixelColor secondImageRgbValue) = 0;
 
-    virtual void onDisplayedImagesShouldBeReplaced(QPixmap& first, QPixmap &second) = 0;
+    virtual void onDisplayedImagesShouldBeReplaced(const QPixmap &first, const QPixmap &second) = 0;
 
-    virtual QList<Property> showImageProcessorPropertiesDialog(QString processorName,
-                                                         QString processorDescription,
-                                                         QList<Property> defaultProperties) = 0;
+    virtual QList<Property> showImageProcessorPropertiesDialog(const QString &processorName,
+                                                               const QString &processorDescription,
+                                                               const QList<Property> &defaultProperties) = 0;
 
     virtual void updateRecentFilesMenu() = 0;
 
-    virtual void saveImage(QPixmap &image, QString defaultPath) = 0;
+    virtual void saveImage(const QPixmap &image, const QString &defaultPath) = 0;
 };
 
 

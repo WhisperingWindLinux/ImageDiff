@@ -5,7 +5,14 @@
 #include <business/imageanalysis/imageprocessorsmanager.h>
 
 PluginsSettingsInteractor::PluginsSettingsInteractor() {
-    pluginSettingsRepository = make_unique<PluginsSettingsRepository>();
+    pluginSettingsRepository = new PluginsSettingsRepository();
+}
+
+PluginsSettingsInteractor::~PluginsSettingsInteractor() {
+    if (pluginSettingsRepository != nullptr) {
+        delete pluginSettingsRepository;
+        pluginSettingsRepository = nullptr;
+    }
 }
 
 bool PluginsSettingsInteractor::updatePluginSettings(PluginsSettings pluginSettings, QString& error) {

@@ -3,6 +3,8 @@
 
 #include <domain/valueobjects/property.h>
 
+#include <qimage.h>
+
 enum class ImageProcessorType { Comparator, Filter };
 
 class IImageProcessor {
@@ -26,6 +28,11 @@ public:
 
     virtual void reset() { };
 };
+
+typedef std::shared_ptr<IImageProcessor> IImageProcessorPtr;
+typedef std::shared_ptr<QPixmap> QPixmapPtr;
+typedef std::shared_ptr<QImage> QImagePtr;
+typedef std::optional<QString> QStringOptional;
 
 /*
 

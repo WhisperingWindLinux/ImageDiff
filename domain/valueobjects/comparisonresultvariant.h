@@ -9,8 +9,8 @@ class ComparisonResultVariant
 {
 public:
     ComparisonResultVariant();
-    ComparisonResultVariant(QImage image);
-    ComparisonResultVariant(QString string);
+    ComparisonResultVariant(const QImage &image);
+    ComparisonResultVariant(const QString &string);
 
     QImage imageResult();
     QString stringResult();
@@ -24,5 +24,7 @@ private:
     QImage image;
     QString string;
 };
+
+typedef std::shared_ptr<ComparisonResultVariant> ComparisonResultVariantPtr;
 
 #endif // COMPARISONRESULTVARIANT_H

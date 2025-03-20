@@ -2,6 +2,8 @@
 #define IMAGEVIEWER_H
 
 #include <domain/valueobjects/savefileinfo.h>
+#include <data/storage/repositories/imagesrepository.h>
+
 #include <qgraphicsview.h>
 
 class MainWindow;
@@ -11,15 +13,16 @@ class ImageViewer : public QGraphicsView {
 
 public:
     explicit ImageViewer(MainWindow *parent = nullptr);
+
     virtual ~ImageViewer();
     
-    void displayImages(QPixmap& image1,
-                                    QString path,
-                                    QPixmap& image2,
-                                    QString path2
-                                    );
+    void displayImages(QPixmapPtr image1,
+                       const QString &path,
+                       QPixmapPtr image2,
+                       const QString &path2
+                       );
 
-    void showImageFromComparator(QPixmap &image, QString description);
+    void showImageFromComparator(QPixmapPtr image, const QString& description);
 
     void cleanUp();
 
@@ -40,7 +43,7 @@ public:
 
     // Filters can be applied to modify images. This function removes
     // all filters applied to the compared images.
-    void replaceDisplayedImages(QPixmap &pixmap1, QPixmap &pixmap2);
+    void replaceDisplayedImages(QPixmapPtr image1, QPixmapPtr image2);
 
     void zoomIn();
     void zoomOut();

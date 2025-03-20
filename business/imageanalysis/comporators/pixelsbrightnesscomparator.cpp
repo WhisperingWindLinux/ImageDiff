@@ -7,11 +7,11 @@
 #include "pixelsbrightnesscomparator.h"
 
 
-PixelsBrightnessComparisonResult PixelsBrightnessComparator::compareImages(QImage image1,
-                                                           QString name1,
-                                                           QImage image2,
-                                                           QString name2
-                                                           )
+PixelsBrightnessComparisonResult PixelsBrightnessComparator::compareImages(const QImage &image1,
+                                                                           const QString& name1,
+                                                                           const QImage &image2,
+                                                                           const QString& name2
+                                                                          )
 {
     int width = image1.width();
     int height = image1.height();
@@ -92,9 +92,9 @@ QString PixelsBrightnessComparator::getDescription() const {
                    + " the second image.";
 }
 
-std::shared_ptr<ComparisonResultVariant> PixelsBrightnessComparator::compare(ComparableImage first,
-                                                                             ComparableImage second
-                                                                             )
+ComparisonResultVariantPtr PixelsBrightnessComparator::compare(const ComparableImage &first,
+                                                               const ComparableImage &second
+                                                              )
 {
     auto result = compareImages(first.getImage(),
                                 first.getName(),
@@ -103,11 +103,11 @@ std::shared_ptr<ComparisonResultVariant> PixelsBrightnessComparator::compare(Com
                                 );
 
     QString html = PixelsBrightnessComparator::formatResultToHtml(result);
-    std::shared_ptr<ComparisonResultVariant> resultVariant = std::make_shared<ComparisonResultVariant>(html);
+    ComparisonResultVariantPtr resultVariant = std::make_shared<ComparisonResultVariant>(html);
     return resultVariant;
 }
 
-QString PixelsBrightnessComparator::formatResultToHtml(const PixelsBrightnessComparisonResult& result) {
+QString PixelsBrightnessComparator::formatResultToHtml(const PixelsBrightnessComparisonResult &result) {
 
     QLocale locale = QLocale::system();
     QString formattedTotalPixels = locale.toString(result.totalPixels);
@@ -170,7 +170,7 @@ QString PixelsBrightnessComparator::formatResultToHtml(const PixelsBrightnessCom
 
     if (dTotalBrightness1 > dTotalBrightness2) {
         html += QString("<font color=\"green\">%1</font> is brighter than %2 by %3%")
-        .arg(result.name1)
+        .arg(result.name1)      
             .arg(result.name2)
             .arg(QString::number(brightnessDifferencePercentage, 'f', 2));
     } else if (dTotalBrightness1 < dTotalBrightness2) {

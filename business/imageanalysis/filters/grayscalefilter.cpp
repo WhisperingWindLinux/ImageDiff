@@ -14,7 +14,7 @@ QString GrayscaleFilter::getDescription() const {
     return "Convert an image to grayscale.";
 }
 
-QImage GrayscaleFilter::filter(QImage image) {
+QImage GrayscaleFilter::filter(const QImage &image) {
     // Create a copy of the input image to modify
     QImage grayImage = image;
 

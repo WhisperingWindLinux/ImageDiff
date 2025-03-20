@@ -13,7 +13,6 @@
 #include <presentation/mainwindow.h>
 #include <tests/testutils.h>
 
-
 ImageViewer::ImageViewer(MainWindow *parent)
     : QGraphicsView(parent),
     parent(parent)
@@ -95,12 +94,16 @@ void ImageViewer::setToFitImageInView() {
 
 /* Show images in QGraphicsView { */
 
-void ImageViewer::displayImages(QPixmap& image1,
-                                QString path1,
-                                QPixmap& image2,
-                                QString path2
+void ImageViewer::displayImages(QPixmapPtr image1,
+                                const QString& path1,
+                                QPixmapPtr image2,
+                                const QString& path2
                                 )
 {
+    if (image1 == nullptr || image2 == nullptr) {
+        return;
+    }
+
     QString image1Name = QFileInfo(path1).baseName();
     QString image2Name = QFileInfo(path2).baseName();
 
@@ -109,26 +112,33 @@ void ImageViewer::displayImages(QPixmap& image1,
     firstImageName = image1Name;
     secondImageName = image2Name;
 
-    firstDisplayedImage = scene->addPixmap(image1);
-    secondDisplayedImage = scene->addPixmap(image2);
+    firstDisplayedImage = scene->addPixmap(*image1.get());
+    secondDisplayedImage = scene->addPixmap(*image2.get());
     parent->showStatusMessage(firstImagePath);
     secondDisplayedImage->setVisible(false);
     setToFitImageInView();
 }
 
-void ImageViewer::showImageFromComparator(QPixmap &image, QString description) {
+void ImageViewer::showImageFromComparator(QPixmapPtr image, const QString& description) {
+    if (image == nullptr) {
+        return;
+    }
     if (comparatorResultDisplayedImage != nullptr) {
         scene->removeItem(comparatorResultDisplayedImage);
         comparatorResultDisplayedImage = nullptr;
     }
-    comparatorResultDisplayedImage = scene->addPixmap(image);
+    comparatorResultDisplayedImage = scene->addPixmap(*image.get());
     firstDisplayedImage->setVisible(false);
     secondDisplayedImage->setVisible(false);
     comparatorResultDisplayedImage->setVisible(true);
     parent->showStatusMessage(description);
 }
 
-void ImageViewer::replaceDisplayedImages(QPixmap& pixmap1, QPixmap& pixmap2) {
+void ImageViewer::replaceDisplayedImages(QPixmapPtr image1, QPixmapPtr image2) {
+
+    if (image1 == nullptr || image2 == nullptr) {
+        return;
+    }
 
     QRectF viewRect = mapToScene(viewport()->geometry()).boundingRect();
 
@@ -144,8 +154,8 @@ void ImageViewer::replaceDisplayedImages(QPixmap& pixmap1, QPixmap& pixmap2) {
         scene->removeItem(comparatorResultDisplayedImage);
         comparatorResultDisplayedImage = nullptr;
     }
-    firstDisplayedImage = scene->addPixmap(pixmap1);
-    secondDisplayedImage = scene->addPixmap(pixmap2);
+    firstDisplayedImage = scene->addPixmap(*image1.get());
+    secondDisplayedImage = scene->addPixmap(*image2.get());
     if (currentImageIndex == 0) {
         secondDisplayedImage->setVisible(false);
         parent->showStatusMessage(firstImagePath);

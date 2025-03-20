@@ -1,24 +1,23 @@
-#include "getfileuserpathsservcie.h"
+#include "savefiledialoghandler.h"
 
 #include <QMimeDatabase>
 #include <qfiledialog.h>
 #include <qmediaplayer.h>
 #include <qmessagebox.h>
 
-GetFileUserPathsService::GetFileUserPathsService() {
-
+SaveFileDialogHandler::SaveFileDialogHandler() {
 }
 
-optional<QString> GetFileUserPathsService::getUserSaveImagePath(QString path) {
+optional<QString> SaveFileDialogHandler::getUserSaveImagePath(QString path) {
     return getUserSaveFilePath(path, PathType::Image);
 }
 
-optional<QString> GetFileUserPathsService::getUserSaveReportPath(QString path) {
+optional<QString> SaveFileDialogHandler::getUserSaveReportPath(QString path) {
     return getUserSaveFilePath(path, PathType::Report);
 }
 
-optional<QString> GetFileUserPathsService::getUserSaveFilePath(QString path,
-                                                               PathType savedFileType
+optional<QString> SaveFileDialogHandler::getUserSaveFilePath(QString path,
+                                                             PathType savedFileType
                                                                )
 {
     QFileDialog dialog;
@@ -69,7 +68,7 @@ optional<QString> GetFileUserPathsService::getUserSaveFilePath(QString path,
     return make_optional<QString>(filePath);
 }
 
-std::optional<QString> GetFileUserPathsService::getUserOpenImagePath(QString baseDir)
+std::optional<QString> SaveFileDialogHandler::getUserOpenImagePath(QString baseDir)
 {
     QFileDialog dialog;
     QString firstPath;    
@@ -105,15 +104,15 @@ std::optional<QString> GetFileUserPathsService::getUserOpenImagePath(QString bas
     return make_optional<QString>(firstPath);
 }
 
-OptionalPathPair GetFileUserPathsService::getUserOpenTwoImagePaths(QString baseDir) {
+OptionalPathPair SaveFileDialogHandler::getUserOpenTwoImagePaths(QString baseDir) {
     return getUserOpenTwoFilePaths(baseDir, PathType::Image);
 }
 
-OptionalPathPair GetFileUserPathsService::getUserOpenTwoVideoPaths(QString baseDir) {
+OptionalPathPair SaveFileDialogHandler::getUserOpenTwoVideoPaths(QString baseDir) {
     return getUserOpenTwoFilePaths(baseDir, PathType::Video);
 }
 
-OptionalPathPair GetFileUserPathsService::getUserOpenTwoFilePaths(QString baseDir, PathType pathType) {
+OptionalPathPair SaveFileDialogHandler::getUserOpenTwoFilePaths(QString baseDir, PathType pathType) {
     QFileDialog dialog;
     QString firstFile;
     QString secondFile;
@@ -189,7 +188,7 @@ OptionalPathPair GetFileUserPathsService::getUserOpenTwoFilePaths(QString baseDi
     return std::make_optional<QPair<QString, QString>>(firstFile, secondFile);
 }
 
-void GetFileUserPathsService::showWarningMessage(QString msg) {
+void SaveFileDialogHandler::showWarningMessage(QString msg) {
     QMessageBox msgBox;
     msgBox.setIcon(QMessageBox::Warning);
     msgBox.setText(msg);
@@ -198,7 +197,7 @@ void GetFileUserPathsService::showWarningMessage(QString msg) {
     msgBox.exec();
 }
 
-bool GetFileUserPathsService::validateVideoFile(QString path) {
+bool SaveFileDialogHandler::validateVideoFile(QString path) {
     if (path.isEmpty()) {
         return false;
     }

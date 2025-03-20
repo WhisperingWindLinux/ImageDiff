@@ -4,10 +4,10 @@
 #include <QDebug>
 
 // Compare the two images and return a structure with the results
-ColorsSaturationComparisonResult ColorsSaturationComporator::compareImages(QImage image1,
-                                                                           QString name1,
-                                                                           QImage image2,
-                                                                           QString name2
+ColorsSaturationComparisonResult ColorsSaturationComporator::compareImages(const QImage &image1,
+                                                                           const QString &name1,
+                                                                           const QImage &image2,
+                                                                           const QString &name2
                                                                            )
 {
 
@@ -32,7 +32,7 @@ ColorsSaturationComparisonResult ColorsSaturationComporator::compareImages(QImag
 }
 
 // Calculate the average saturation of an image
-double ColorsSaturationComporator::calculateAverageSaturation(const QImage& image) {
+double ColorsSaturationComporator::calculateAverageSaturation(const QImage &image) {
     double totalSaturation = 0.0;
     int pixelCount = 0;
 
@@ -65,7 +65,10 @@ QString ColorsSaturationComporator::getDescription() const {
                    + " Where higher values indicate a more saturated image.";
 }
 
-std::shared_ptr<ComparisonResultVariant> ColorsSaturationComporator::compare(ComparableImage first, ComparableImage second) {
+ComparisonResultVariantPtr ColorsSaturationComporator::compare(const ComparableImage& first,
+                                                               const ComparableImage& second
+                                                              )
+{
     auto result = compareImages(first.getImage(),
                                 first.getName(),
                                 second.getImage(),

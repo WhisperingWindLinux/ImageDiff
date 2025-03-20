@@ -10,11 +10,10 @@ public:
     GrayscaleFilter() = default;
     virtual ~GrayscaleFilter() = default;
 
-// ATransformer interface
+    // ATransformer interface
 
-public:
     QString getShortName() const override;
     QString getHotkey() const override;
     QString getDescription() const override;
-    QImage filter(QImage image) override;
+    QImage filter(const QImage &image) override;
 };

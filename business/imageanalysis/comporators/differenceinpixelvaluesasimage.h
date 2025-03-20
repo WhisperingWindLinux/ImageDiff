@@ -12,7 +12,6 @@
 class DifferenceInPixelValuesAsImageComporator : public IComparator
 {
 public:
-
     DifferenceInPixelValuesAsImageComporator() = default;
     virtual ~DifferenceInPixelValuesAsImageComporator() = default;
 
@@ -21,11 +20,12 @@ public:
     QString getShortName() const override;
     QString getHotkey() const override;
     QString getDescription() const override;
-    std::shared_ptr<ComparisonResultVariant> compare(ComparableImage first, ComparableImage second) override;
+    ComparisonResultVariantPtr compare(const ComparableImage &first,
+                                       const ComparableImage &second) override;
     QString getFullName() const override;
 
 private:
-    QImage compareImages(QImage image1, QImage image2);
+    QImage compareImages(const QImage &image1, const QImage &image2);
 };
 
 #endif // DIFFERENCEINPIXELVALUESASIMAGE_H

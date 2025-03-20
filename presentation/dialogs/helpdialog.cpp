@@ -3,7 +3,7 @@
 #include <qboxlayout.h>
 #include <qtextedit.h>
 
-HelpDialog::HelpDialog(QString &helpMessage) {
+HelpDialog::HelpDialog(const QString &helpMessage) {
     setWindowTitle("Help");
 
     QVBoxLayout *layout = new QVBoxLayout(this);

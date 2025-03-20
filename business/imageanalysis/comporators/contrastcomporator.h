@@ -25,7 +25,6 @@ struct ContrastComparisonResult {
 class ContrastComporator : public IComparator
 {
 public:
-
     ContrastComporator() = default;
     virtual ~ContrastComporator() = default;
 
@@ -34,17 +33,18 @@ public:
     QString getShortName() const override;
     QString getHotkey() const override;
     QString getDescription() const override;
-    std::shared_ptr<ComparisonResultVariant> compare(ComparableImage first, ComparableImage second) override;
+    std::shared_ptr<ComparisonResultVariant> compare(const ComparableImage& first,
+                                                     const ComparableImage& second) override;
     QString getFullName() const override;
 
 private:
-    ContrastComparisonResult compareImages(QImage image1,
-                                           QString path1,
-                                           QImage image2,
-                                           QString path2
+    ContrastComparisonResult compareImages(const QImage &image1,
+                                           const QString &path1,
+                                           const QImage &image2,
+                                           const QString &path2
                                            );
-    QString formatResultToHtml(const ContrastComparisonResult& result);
-    static double calculateContrast(const QImage& image);
+    QString formatResultToHtml(const ContrastComparisonResult &result);
+    static double calculateContrast(const QImage &image);
 };
 
 

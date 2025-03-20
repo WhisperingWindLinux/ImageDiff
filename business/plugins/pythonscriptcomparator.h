@@ -23,9 +23,8 @@ public:
     void setProperties(QList<Property> properties) override;
     QString getFullName() const override;
     bool isPartOfAutoReportingToolbox() override;
-    shared_ptr<ComparisonResultVariant> compare(ComparableImage first,
-                                                ComparableImage second
-                                                ) override;
+    ComparisonResultVariantPtr compare(const ComparableImage &first,
+                                       const ComparableImage &second) override;
         
 private:
     const int charsInReportMax = 10000;

@@ -10,7 +10,7 @@ class HelpDialog : public QDialog
 {
     Q_OBJECT
 public:
-    HelpDialog(QString &helpMessage);
+    HelpDialog(const QString &helpMessage);
 
 private:
     QTextEdit *textEdit;

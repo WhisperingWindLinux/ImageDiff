@@ -34,27 +34,34 @@ public:
     ImageProximityToOriginComparator() = default;
     virtual ~ImageProximityToOriginComparator() = default;
 
+    // AComparator interface
+
     QString getShortName() const override;
     QString getHotkey() const override;
     QString getDescription() const override;
-    std::shared_ptr<ComparisonResultVariant> compare(ComparableImage first, ComparableImage second) override;
+    ComparisonResultVariantPtr compare(const ComparableImage &first,
+                                       const ComparableImage &second) override;
     QList<Property> getDefaultProperties() const override;
-    void setProperties(QList<Property>) override;
+    void setProperties(QList<Property> properties) override;
     void reset() override;
     QString getFullName() const override;
     bool isPartOfAutoReportingToolbox() override;
 
 private:
     QString pathToOriginalImage;
+    QImage originalImage;
 
     double calculateSharpness(const QImage &image);
+
     qint64 calculateTotalDifference(const QImage &image, const QImage &originalImage);
-    ImageProximityToOriginResult compareImages(QImage image1,
-                                               QImage image2,
-                                               QString name1,
-                                               QString name2,
-                                               QImage originalImage
+
+    ImageProximityToOriginResult compareImages(const QImage &image1,
+                                               const QImage &image2,
+                                               const QString &name1,
+                                               const QString &name2,
+                                               const QImage &originalImage
                                                );
+
     QString formatResultToHtml(const ImageProximityToOriginResult &result);
 };
 

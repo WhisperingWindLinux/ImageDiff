@@ -3,14 +3,14 @@
 #include <qfileinfo.h>
 #include <qpixmap.h>
 
-ComparableImage::ComparableImage(QImage image, QString name) {
+ComparableImage::ComparableImage(const QImage &image, const QString &name) {
     this->image = image;
-    this->name = QFileInfo(name).fileName();
+    this->name = name;
 }
 
-ComparableImage::ComparableImage(QPixmap image, QString name) {
+ComparableImage::ComparableImage(const QPixmap &image, const QString &name) {
     this->image = image.toImage();
-    this->name = QFileInfo(name).fileName();
+    this->name = name;
 }
 
 QImage ComparableImage::getImage() const {

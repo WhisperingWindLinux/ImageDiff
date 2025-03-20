@@ -1,5 +1,5 @@
-#ifndef GETFILEUSERPATHSSERVCIE_H
-#define GETFILEUSERPATHSSERVCIE_H
+#ifndef SAVEFILEDIALOGHANDLER_H
+#define SAVEFILEDIALOGHANDLER_H
 
 #include <qpixmap.h>
 #include <qstring.h>
@@ -10,10 +10,10 @@ typedef optional<QPair<QString, QString>> OptionalPathPair;
 
 
 
-class GetFileUserPathsService
+class SaveFileDialogHandler
 {
 public:
-    GetFileUserPathsService();
+    SaveFileDialogHandler();
 
     optional<QString> getUserSaveImagePath(QString path);
 
@@ -40,4 +40,4 @@ private:
 
 };
 
-#endif // GETFILEUSERPATHSSERVCIE_H
+#endif // SAVEFILEDIALOGHANDLER_H

@@ -4,7 +4,6 @@ GenericRgbFilter::GenericRgbFilter(RgbChannel channel)
     : channel(channel),
       isOutputImageColored(true)
 {
-
 }
 
 QString GenericRgbFilter::getShortName() const {
@@ -47,16 +46,21 @@ QString GenericRgbFilter::getDescription() const {
     return description;
 }
 
-QImage GenericRgbFilter::filter(QImage image) {
+QImage GenericRgbFilter::filter(const QImage &image) {
     return extractChannel(image, isOutputImageColored, channel);
 }
 
-QImage GenericRgbFilter::extractChannel(const QImage& image, bool isImageColored, RgbChannel channel) {
+QImage GenericRgbFilter::extractChannel(const QImage &image,
+                                        bool isImageColored,
+                                        RgbChannel channel
+                                        )
+{
 
-    QImage oneChannelImage(image.size(),
-                           isImageColored ?
-                               QImage::Format_ARGB32
-                                       : QImage::Format_Grayscale8);
+    QImage oneChannelImage { image.size(),
+                            isImageColored ?
+                                QImage::Format_ARGB32
+                                           : QImage::Format_Grayscale8
+                           };
 
     // Iterate over each pixel
     for (int y = 0; y < image.height(); ++y) {
@@ -85,17 +89,15 @@ QImage GenericRgbFilter::extractChannel(const QImage& image, bool isImageColored
 }
 
 QList<Property> GenericRgbFilter::getDefaultProperties() const {
-
     QList<QString> alternatives = { "Colored", "Grayscale" };
-
     QString description = "Represents the choice between colored and grayscale image in an R/G/B mode.";
-
-    Property colorModeProperty = Property::createAlternativesProperty("Color mode", description, alternatives, 0);
-
+    Property colorModeProperty = Property::createAlternativesProperty("Color mode",
+                                                                      description,
+                                                                      alternatives,
+                                                                      0
+                                                                      );
     QList<Property> properties = { colorModeProperty };
-
     return properties;
-
 }
 
 void GenericRgbFilter::setProperties(QList<Property> properties) {

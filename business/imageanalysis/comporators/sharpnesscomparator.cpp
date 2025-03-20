@@ -7,10 +7,11 @@
 #include <QtMath>
 
 // Compare the two images and return a structure with the results
-SharpnessComparisonResult SharpnessComparator::compareImages(QImage image1,
-                                                             QString name1,
-                                                             QImage image2,
-                                                             QString name2)
+SharpnessComparisonResult SharpnessComparator::compareImages(const QImage &image1,
+                                                             const QString &name1,
+                                                             const QImage &image2,
+                                                             const QString &name2
+                                                             )
 {
     double sharpness1 = calculateSharpness(image1);
     double sharpness2 = calculateSharpness(image2);
@@ -29,7 +30,7 @@ SharpnessComparisonResult SharpnessComparator::compareImages(QImage image1,
 
 
 // Calculate the sharpness of an image using gradient magnitude
-double SharpnessComparator::calculateSharpness(const QImage& image) {
+double SharpnessComparator::calculateSharpness(const QImage &image) {
     double totalGradient = 0.0;
     int pixelCount = 0;
 
@@ -71,17 +72,21 @@ QString SharpnessComparator::getDescription() const {
            + " Where higher values indicate a more sharper image.";
 }
 
-std::shared_ptr<ComparisonResultVariant> SharpnessComparator::compare(ComparableImage first, ComparableImage second) {
+std::shared_ptr<ComparisonResultVariant> SharpnessComparator::compare(const ComparableImage &first,
+                                                                      const ComparableImage &second
+                                                                      )
+{
     auto result = compareImages(first.getImage(),
                                 first.getName(),
                                 second.getImage(),
-                                second.getName());
+                                second.getName()
+                                );
 
     QString html = SharpnessComparator::formatResultToHtml(result);
     return std::make_shared<ComparisonResultVariant>(html);
 }
 
-QString SharpnessComparator::formatResultToHtml(const SharpnessComparisonResult& result) {
+QString SharpnessComparator::formatResultToHtml(const SharpnessComparisonResult &result) {
 
     QString html;
     html += QString("<h2 style=\"line-height: 2;\">%1</h2>").arg(getFullName());

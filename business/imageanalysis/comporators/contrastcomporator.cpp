@@ -4,10 +4,10 @@
 #include "contrastcomporator.h"
 
 // Method to compare the contrast of two images
-ContrastComparisonResult ContrastComporator::compareImages(QImage image1,
-                                                           QString name1,
-                                                           QImage image2,
-                                                           QString name2
+ContrastComparisonResult ContrastComporator::compareImages(const QImage &image1,
+                                                           const QString &name1,
+                                                           const QImage &image2,
+                                                           const QString &name2
                                                            )
 {
     // Calculate contrast for both images
@@ -17,19 +17,19 @@ ContrastComparisonResult ContrastComporator::compareImages(QImage image1,
     // Determine which image has higher contrast
     QString moreContrastImage;
     if (contrast1 > contrast2) {
-        moreContrastImage = QFileInfo(name1).fileName();
+        moreContrastImage = name1;
     } else if (contrast2 > contrast1) {
-        moreContrastImage = QFileInfo(name2).fileName();
+        moreContrastImage = name2;
     } else {
         moreContrastImage = "Both images have the same contrast.";
     }
 
     // Return a structure with the results
-    return {name1, name2, contrast1, contrast2, moreContrastImage};
+    return { name1, name2, contrast1, contrast2, moreContrastImage };
 }
 
 // Method to calculate the contrast of an image
-double ContrastComporator::calculateContrast(const QImage& image) {
+double ContrastComporator::calculateContrast(const QImage &image) {
     double meanLuminance = 0.0;  // Average luminance
     double variance = 0.0;       // Variance of luminance
 
@@ -80,7 +80,11 @@ QString ContrastComporator::getDescription() const {
                 + "between light and dark areas of the image.";
 }
 
-std::shared_ptr<ComparisonResultVariant> ContrastComporator::compare(ComparableImage first, ComparableImage second) {
+std::shared_ptr<ComparisonResultVariant> ContrastComporator::compare(
+                                                            const ComparableImage& first,
+                                                            const ComparableImage& second
+                                                            )
+{
     auto result = compareImages(first.getImage(),
                                 first.getName(),
                                 second.getImage(),

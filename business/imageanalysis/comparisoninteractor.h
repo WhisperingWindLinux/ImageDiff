@@ -1,6 +1,7 @@
 #ifndef COMPARISONINTERACTOR_H
 #define COMPARISONINTERACTOR_H
 
+#include <domain/interfaces/imagerepository.h>
 #include <QtCore/qvariant.h>
 #include <qpixmap.h>
 #include <domain/interfaces/comparator.h>
@@ -20,44 +21,19 @@ public:
     ComparisonInteractor(IMainWindowCallbacks *callbacks);
     ~ComparisonInteractor();
 
-    void openImages(QString& Image1Path,
-                                    QString& Image2Path,
-                                    bool removeFilesAtExit,
-                                    bool isUpdateRecentMenu
-                                    );
-
-    void openImagesFromDragAndDrop(QList<QUrl> urls);
-    void openImagesFromRecentMenu(QString recentFileMenuRecord, bool isUpdateRecentMenu);
-    void callImageProcessor(QVariant callerData);
+    void callImageProcessor(const QVariant &callerData, IImagesRepositoryPtr imagesRepository);
     void showImageProcessorsHelp();
-    void saveImage(SaveImageInfo info);
-    QStringList getRecentFiles();
-    void runAllComparators();
-    void getPathsFromUserAndOpenImages();
+    void runAllComparators(IImagesRepositoryPtr imagesRepository);
     QList<ImageProcessorInfo> getImageProcessorsInfo();
 
-
-    void showOriginalImages();
 private:
     IMainWindowCallbacks *callbacks;
-    RecentFilesManager *recentFilesManager;
     PluginsManager *pluginsManager;
     ImageProcessorsManager *processorsManager;
-    QString firstImagePath;
-    QString secondImagePath;
-    QPixmap originalFirstPixmap;
-    QPixmap originalSecondPixmap;
-    QPixmap firstCurrentlyDisplayedPixmap;
-    QPixmap secondCurrentlyDisplayedPixmap;
-    QPixmap comparisionImage;
-    bool cleanUpImageFilesAtExit = false;
 
-    bool validateFile(const QString &filePath);
-    void callComparator(shared_ptr<IComparator> comparator);
-    void callFilter(shared_ptr<IFilter> transformer);
-    void handleProcessorPropertiesIfNeed(shared_ptr<IImageProcessor>processor);
-
-    void cleanUp();
+    void callComparator(IComparatorPtr comparator, IImagesRepositoryPtr imagesRepository);
+    void callFilter(IFilterPtr transformer, IImagesRepositoryPtr imagesRepository);
+    void handleProcessorPropertiesIfNeed(IImageProcessorPtr processor);
 };
 
 #endif // COMPARISONINTERACTOR_H

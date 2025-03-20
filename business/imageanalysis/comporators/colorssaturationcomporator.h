@@ -25,7 +25,6 @@ struct ColorsSaturationComparisonResult {
 
 class ColorsSaturationComporator : public IComparator {
 public:
-
     ColorsSaturationComporator() = default;
     virtual ~ColorsSaturationComporator() = default;
 
@@ -35,18 +34,19 @@ public:
     QString getHotkey() const override;
     QString getDescription() const override;
     QString getFullName() const override;
-    std::shared_ptr<ComparisonResultVariant> compare(ComparableImage first, ComparableImage second) override;
+    ComparisonResultVariantPtr compare(const ComparableImage &first,
+                                       const ComparableImage &second) override;
 
 private:
-    ColorsSaturationComparisonResult compareImages(QImage image1,
-                                                   QString name1,
-                                                   QImage image2,
-                                                   QString name2);
+    ColorsSaturationComparisonResult compareImages(const QImage &image1,
+                                                   const QString &name1,
+                                                   const QImage &image2,
+                                                   const QString &name2);
 
     QString formatResultToHtml(const ColorsSaturationComparisonResult& result);
 
     // Helper function to calculate the average saturation of an image
-    double calculateAverageSaturation(const QImage& image);
+    double calculateAverageSaturation(const QImage &image);
 };
 
 #endif // COLORSSATURATIONCOMPORATOR_H

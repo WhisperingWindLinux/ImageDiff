@@ -5,7 +5,10 @@
 
 #include "differenceinpixelvaluesasimage.h"
 
-QImage DifferenceInPixelValuesAsImageComporator::compareImages(QImage image1, QImage image2) {
+QImage DifferenceInPixelValuesAsImageComporator::compareImages(const QImage &image1,
+                                                               const QImage &image2
+                                                               )
+{
     // Create a resulting image (copy of the first image)
     QImage resultImg = image1.copy();
     QPainter painter(&resultImg);
@@ -45,8 +48,12 @@ QString DifferenceInPixelValuesAsImageComporator::getDescription() const {
                    "Pixels that differ are marked with red dots.");
 }
 
-std::shared_ptr<ComparisonResultVariant> DifferenceInPixelValuesAsImageComporator::compare(ComparableImage first, ComparableImage second) {
+ComparisonResultVariantPtr DifferenceInPixelValuesAsImageComporator::compare(const ComparableImage &first,
+                                                                             const ComparableImage &second
+                                                                             )
+{
     auto result = compareImages(first.getImage(), second.getImage());
-    std::shared_ptr<ComparisonResultVariant> resultVariant = std::make_shared<ComparisonResultVariant>(result);
+    std::shared_ptr<ComparisonResultVariant> resultVariant =
+                                std::make_shared<ComparisonResultVariant>(result);
     return resultVariant;
 }
