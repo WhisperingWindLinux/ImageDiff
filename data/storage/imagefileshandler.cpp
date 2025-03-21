@@ -4,10 +4,11 @@
 #include <QtCore/qdir.h>
 #include <qfileinfo.h>
 #include <business/recentfilesmanager.h>
-#include <business/imageanalysis/comparisoninteractor.h>
+#include <business/imageanalysis/imageprocessinginteractor.h>
 #include <data/storage/savefiledialoghandler.h>
 #include <data/repositories/imagesrepository.h>
 #include <domain/valueobjects/images.h>
+#include <business/utils/imagesinfo.h>
 
 
 const QString ImageFilesHandler::imageExtentionWithoutDot = "png";
@@ -70,53 +71,55 @@ ImagesPtr ImageFilesHandler::openImages(const QString &image1Path, const QString
 }
 
 
-FileSaveResult ImageFilesHandler::saveImage(const SaveImageInfo &info,
-                                            const IImagesRepositoryPtr imageRepository
+FileSaveResult ImageFilesHandler::saveImage(const SaveImageInfo &saveImageInfo,
+                                            const ImagesPtr images
                                            )
 {
-    if (info.saveImageInfoType == SaveImageInfoType::None ||
-        info.image.isNull())
+    if (saveImageInfo.saveImageInfoType == SaveImageInfoType::None ||
+        saveImageInfo.image.isNull())
     {
         return { false, "unknown" };
     }
 
-    const QString &file1Name = imageRepository->getFirstImageBaseName();
-    const QString &file2Name = imageRepository->getSecondImageBaseName();
-    const QString &path1 = imageRepository->getFirstImagePath();
-    const QString &path2 = imageRepository->getSecondImagePath();
-    const QString &file1DirPath = imageRepository->getFirstImageDir();
-    const QString &file2DirPath = imageRepository->getSecondImageDir();
+    ImagesInfo imagesInfo { images };
+
+    const QString &file1Name = imagesInfo.getFirstImageBaseName();
+    const QString &file2Name = imagesInfo.getSecondImageBaseName();
+    const QString &path1 = imagesInfo.getFirstImagePath();
+    const QString &path2 = imagesInfo.getSecondImagePath();
+    const QString &file1DirPath = imagesInfo.getFirstImageDir();
+    const QString &file2DirPath = imagesInfo.getSecondImageDir();
     QDir file1Dir { file1DirPath };
     QDir file2Dir { file2DirPath };
     QString fileName, fullPath;
 
     bool isSaved = false;
 
-    switch (info.saveImageInfoType) {
+    switch (saveImageInfo.saveImageInfoType) {
     case SaveImageInfoType::FirstImage:
         fullPath = path1;
-        isSaved = info.image.save(fullPath);
+        isSaved = saveImageInfo.image.save(fullPath);
     case SaveImageInfoType::SecondImage:
         fullPath = path2;
-        isSaved = info.image.save(fullPath);
+        isSaved = saveImageInfo.image.save(fullPath);
     case SaveImageInfoType::FirstImageArea:
         fileName = file1Name + "_area" + imageExtentionWithDot;
         fullPath = file1Dir.filePath(fileName);
-        isSaved = info.image.save(fullPath);
+        isSaved = saveImageInfo.image.save(fullPath);
     case SaveImageInfoType::SecondImageArea:
         fileName = file2Name + "_area" + imageExtentionWithDot;
         fullPath = file1Dir.filePath(fileName);
-        isSaved = info.image.save(fullPath);
+        isSaved = saveImageInfo.image.save(fullPath);
     case SaveImageInfoType::ComparisonImage:
         fileName = QString("%1_vs_%2_comparison%3")
                        .arg(file1Name, file2Name, imageExtentionWithDot);
         fullPath = file1Dir.filePath(fileName);
-        isSaved = info.image.save(fullPath);
+        isSaved = saveImageInfo.image.save(fullPath);
     case SaveImageInfoType::ComparisonImageArea:
         fileName = QString("%1_vs_%2_area_comparison%3")
                        .arg(file1Name, file2Name, imageExtentionWithDot);
         fullPath = file1Dir.filePath(fileName);
-        isSaved = info.image.save(fullPath);
+        isSaved = saveImageInfo.image.save(fullPath);
     default:
         break;
     }

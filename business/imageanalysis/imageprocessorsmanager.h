@@ -17,8 +17,6 @@ public:
     QList<shared_ptr<IComparator> > getAllComparators();
     void clear();
 
-    friend class ImageProcessorsManagerTests;
-
 private:
     QList<shared_ptr<IImageProcessor> > processors;
     QSet<QString> hotkeys;

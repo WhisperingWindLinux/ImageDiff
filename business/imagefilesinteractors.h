@@ -6,18 +6,17 @@
 
 #include <domain/valueobjects/savefileinfo.h>
 #include <domain/interfaces/imagefilesinteractorlistener.h>
-#include <domain/interfaces/mainwindowcallbacks.h>
 #include <data/repositories/imagesrepository.h>
+#include <domain/valueobjects/images.h>
 
 
-class IMainWindowCallbacks;
 class RecentFilesInteractor;
 class ImageFilesHandler;
 
 class ImageFilesInteractors
 {
 public:
-    ImageFilesInteractors(IMainWindowCallbacks *callbacks);
+    ImageFilesInteractors();
     ~ImageFilesInteractors();
 
     void openImagesFromRecentMenu(const QString &recentFileMenuRecord);
@@ -30,20 +29,15 @@ public:
     bool unsubscribe(const IImageFilesInteractorListenerPtr listener);
 
 private:
-    IMainWindowCallbacks *callbacks;
+    ImagesPtr images;
     ImageFilesHandler *imageFileHandler;
     RecentFilesInteractor *recentFilesInteractor;
-    ImagesRepositoryPtr imagesRepository;
     QList<IImageFilesInteractorListenerPtr> listeners;
 
-    void notifyComparedImagesUpdated(IImagesRepositoryPtr imageRepository);
-    void notifyComparisonResultImageOpened(IImagesRepositoryPtr imageRepository);
+    void notifyImagesOpened(const ImagesPtr images);
+    void notifyImagesOpenFailed(const QString &error);
     void notifyImagesClosed();
-    void notifyComparedImagesOpened(IImagesRepositoryPtr imageRepository);
-    void notifyComparedImagedsOpenFailed(const QString &error);
-    void notifyComparisonResultImageOpenedFailed(const QString &error);
-    void notifyComparedImagesOpenFailed(const QString &error);
-    void notifySaveFileFailed(const QString &path);
+    void notifySavingFileFailed(const QString &path);
     void notifyFileSavedSuccessfully(const QString &path);
 };
 

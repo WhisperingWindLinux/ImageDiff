@@ -4,29 +4,28 @@
 #include <domain/valueobjects/autocomparisonreportentry.h>
 #include <domain/valueobjects/comparableimage.h>
 #include <domain/valueobjects/comparisonresultvariant.h>
-
-using namespace std;
+#include <domain/valueobjects/images.h>
 
 class IProgressDialog;
 
 class RunAllComparatorsInteractor
 {
 public:
-    RunAllComparatorsInteractor(IProgressDialog *progressDialog,
-                                ComparableImage firstImage,
-                                ComparableImage secondImage,
-                                QString reportDirPath
+    RunAllComparatorsInteractor(IProgressDialog *callback,
+                                const ComparableImage &firstImage,
+                                const ComparableImage &secondImage,
+                                const QString &reportDirPath
                                 );
-    void run();
 
+    void run();
 private:
-    IProgressDialog *progressDialog;
+    IProgressDialog *callback;
     ComparableImage firstImage;
     ComparableImage secondImage;
     QString reportDirPath;
 
     QList<AutocomparisonReportEntry> executeAllComparators();
-    void generateReports(QList<AutocomparisonReportEntry> entries);
+    void generateReports(QList<AutocomparisonReportEntry> &entries);
 };
 
 #endif // RUNALLCOMPARATORSINTERACTOR_H

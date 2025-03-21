@@ -1,8 +1,5 @@
 #include "runallcomparatorsinteractor.h"
 
-#include <domain/interfaces/iprogressdialog.h>
-#include "imageprocessorsmanager.h"
-
 #include <qdir.h>
 #include <qtextdocument.h>
 #include <QtCore/qdebug.h>
@@ -10,13 +7,16 @@
 #include <QDesktopServices>
 #include <presentation/presenters/htmlreportpresenter.h>
 #include <domain/valueobjects/autocomparisonreportentry.h>
+#include <domain/interfaces/iprogressdialog.h>
+#include <business/utils/imagesinfo.h>
+#include "imageprocessorsmanager.h"
 
-RunAllComparatorsInteractor::RunAllComparatorsInteractor(IProgressDialog *progressDialog,
-                                                         ComparableImage firstImage,
-                                                         ComparableImage secondImage,
-                                                         QString reportDirPath
+RunAllComparatorsInteractor::RunAllComparatorsInteractor(IProgressDialog *callback,
+                                                         const ComparableImage &firstImage,
+                                                         const ComparableImage &secondImage,
+                                                         const QString &reportDirPath
                                                          )
-    : progressDialog(progressDialog),
+    : callback(callback),
     firstImage(firstImage),
     secondImage(secondImage),
     reportDirPath(reportDirPath)
@@ -38,13 +38,13 @@ QList<AutocomparisonReportEntry> RunAllComparatorsInteractor::executeAllComparat
     if (comparators.size() == 0) {
         return {};
     }
-    progressDialog->showProgressDialog("Run All Comparators", comparators.size());
+    callback->showProgressDialog("Run All Comparators", comparators.size());
     int runCounter = 0;
     foreach(auto comparator, comparators) {
         if (!comparator->isPartOfAutoReportingToolbox()) {
             continue;
         }
-        if (progressDialog->wasCanceled()) {
+        if (callback->wasCanceled()) {
             return {};
         }
         try {
@@ -56,13 +56,13 @@ QList<AutocomparisonReportEntry> RunAllComparatorsInteractor::executeAllComparat
             qDebug() << e.what();
         }
         runCounter++;
-        progressDialog->onUpdateProgressValue(runCounter);
+        callback->onUpdateProgressValue(runCounter);
     }
-    progressDialog->onUpdateProgressValue(INT32_MAX);
+    callback->onUpdateProgressValue(INT32_MAX);
     return entries;
 }
 
-void RunAllComparatorsInteractor::generateReports(QList<AutocomparisonReportEntry> entries) {
+void RunAllComparatorsInteractor::generateReports(QList<AutocomparisonReportEntry> &entries) {
 
     bool isOk = HtmlReportPresenter::createExtendedReportPage(reportDirPath,
                                                               firstImage,
@@ -71,11 +71,9 @@ void RunAllComparatorsInteractor::generateReports(QList<AutocomparisonReportEntr
                                                               );
 
     if (isOk) {
-        progressDialog->onMessage("The report saved to " + reportDirPath + ".");
+        callback->onMessage("The report saved to " + reportDirPath + ".");
         QDesktopServices::openUrl("file://" + reportDirPath + QDir::separator() + "report.html");
     } else {
-        progressDialog->onError("Error: Unable to generate the report.");
+        callback->onError("Error: Unable to generate the report.");
     }
 }
-
-

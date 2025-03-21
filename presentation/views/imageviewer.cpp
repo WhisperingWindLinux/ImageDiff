@@ -11,7 +11,7 @@
 #include <qlabel.h>
 #include <QGraphicsView>
 #include <presentation/mainwindow.h>
-#include <tests/testutils.h>
+#include <business/utils/imagesinfo.h>
 
 ImageViewer::ImageViewer(MainWindow *parent)
     : QGraphicsView(parent),
@@ -94,49 +94,47 @@ void ImageViewer::setToFitImageInView() {
 
 /* Show images in QGraphicsView { */
 
-void ImageViewer::displayImages(QPixmapPtr image1,
-                                const QString& path1,
-                                QPixmapPtr image2,
-                                const QString& path2
-                                )
+void ImageViewer::displayImages(const ImagesPtr images)
 {
-    if (image1 == nullptr || image2 == nullptr) {
+    if (images == nullptr) {
         return;
     }
 
-    QString image1Name = QFileInfo(path1).baseName();
-    QString image2Name = QFileInfo(path2).baseName();
+    ImagesInfo info { images };
 
-    firstImagePath = path1;
-    secondImagePath = path2;
+    QString image1Name = info.getFirstImageBaseName();
+    QString image2Name = info.getSecondImageBaseName();
+
+    firstImagePath = images->path1;
+    secondImagePath = images->path2;
     firstImageName = image1Name;
     secondImageName = image2Name;
-
-    firstDisplayedImage = scene->addPixmap(*image1.get());
-    secondDisplayedImage = scene->addPixmap(*image2.get());
+    
+    firstDisplayedImage = scene->addPixmap(images->image1);
+    secondDisplayedImage = scene->addPixmap(images->image2);
     parent->showStatusMessage(firstImagePath);
     secondDisplayedImage->setVisible(false);
     setToFitImageInView();
 }
 
-void ImageViewer::showImageFromComparator(QPixmapPtr image, const QString& description) {
-    if (image == nullptr) {
+void ImageViewer::showImageFromComparator(const QPixmap &image, const QString &description) {
+    if (image.isNull()) {
         return;
     }
     if (comparatorResultDisplayedImage != nullptr) {
         scene->removeItem(comparatorResultDisplayedImage);
         comparatorResultDisplayedImage = nullptr;
     }
-    comparatorResultDisplayedImage = scene->addPixmap(*image.get());
+    comparatorResultDisplayedImage = scene->addPixmap(image);
     firstDisplayedImage->setVisible(false);
     secondDisplayedImage->setVisible(false);
     comparatorResultDisplayedImage->setVisible(true);
     parent->showStatusMessage(description);
 }
 
-void ImageViewer::replaceDisplayedImages(QPixmapPtr image1, QPixmapPtr image2) {
+void ImageViewer::replaceDisplayedImages(const QPixmap& image1, const QPixmap& image2) {
 
-    if (image1 == nullptr || image2 == nullptr) {
+    if (image1.isNull() || image2.isNull()) {
         return;
     }
 
@@ -154,8 +152,8 @@ void ImageViewer::replaceDisplayedImages(QPixmapPtr image1, QPixmapPtr image2) {
         scene->removeItem(comparatorResultDisplayedImage);
         comparatorResultDisplayedImage = nullptr;
     }
-    firstDisplayedImage = scene->addPixmap(*image1.get());
-    secondDisplayedImage = scene->addPixmap(*image2.get());
+    firstDisplayedImage = scene->addPixmap(image1);
+    secondDisplayedImage = scene->addPixmap(image2);
     if (currentImageIndex == 0) {
         secondDisplayedImage->setVisible(false);
         parent->showStatusMessage(firstImagePath);
@@ -353,10 +351,22 @@ void ImageViewer::passCropedImageToOtherAppInstance(QRectF rect) {
     QRect boundedRect2 = selectionRect.intersected(secondPixmap.rect());
     QPixmap croppedPixmap2 = secondPixmap.copy(boundedRect2);
 
-    QString path1 = FileUtils::savePixmapToTempDir(croppedPixmap1, firstImageName);
-    QString path2 = FileUtils::savePixmapToTempDir(croppedPixmap2, secondImageName);
+    QString path1 = savePixmapToTempDir(croppedPixmap1, firstImageName);
+    QString path2 = savePixmapToTempDir(croppedPixmap2, secondImageName);
 
     parent->openImagesInOtherAppInstance(path1, path2);
+}
+
+QString ImageViewer::savePixmapToTempDir(const QPixmap &pixmap, const QString &fileName) {
+    QString tempDir = QDir::tempPath();
+
+    QString filePath = QDir(tempDir).filePath(QString(fileName) + ".png");
+
+    if (pixmap.save(filePath)) {
+        return filePath;
+    } else {
+        return {};
+    }
 }
 
 /* } =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */

@@ -1,19 +1,15 @@
 #ifndef IMAGEFILESINTERACTORLISTENER_H
 #define IMAGEFILESINTERACTORLISTENER_H
 
-#include <domain/interfaces/imagerepository.h>
+#include <domain/valueobjects/images.h>
 
 class IImageFilesInteractorListener {
 public:
-    bool onComparedImagesOpened(const IImagesRepositoryPtr imageRepository);
-    void onImagesClosed();
-    bool onComparisonResultImageOpened(const IImagesRepositoryPtr imageRepository);
-    void onComparedImagesUpdated(const IImagesRepositoryPtr imageRepository);
-    void onComparedImagesOpenFailed(const QString &error);
-    void onComparisonResultImageOpenedFailed(const QString &error);
-    void onComparedImagedsOpenFailed(const QString &error);
-    void onSaveFileFailed(const QString &path);
-    void onFileSavedSuccessfully(const QString &path);
+    virtual void onImagesOpened(const ImagesPtr images) = 0;
+    virtual void onImagesOpenFailed(const QString &error) = 0;
+    virtual void onImagesClosed() = 0;
+    virtual void onSavingFileFailed(const QString &path) = 0;
+    virtual void onFileSavedSuccessfully(const QString &path) = 0;
 };
 
 typedef std::shared_ptr<IImageFilesInteractorListener> IImageFilesInteractorListenerPtr;

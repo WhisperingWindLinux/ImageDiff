@@ -4,9 +4,7 @@
 #include <data/storage/imagefileshandler.h>
 #include <data/repositories/imagesrepository.h>
 
-ImageFilesInteractors::ImageFilesInteractors(IMainWindowCallbacks *callbacks)
-    : callbacks(callbacks)
-{
+ImageFilesInteractors::ImageFilesInteractors() {
     imageFileHandler = new ImageFilesHandler();
     recentFilesInteractor = new RecentFilesInteractor();
 }
@@ -28,29 +26,25 @@ void ImageFilesInteractors::openImagesFromRecentMenu(const QString &recentFileMe
         if (!paths) {
             throw std::runtime_error("Error: Unable to open images!");
         }
-        ImagesPtr images = imageFileHandler->openImages(paths->first, paths->second);
-        imagesRepository = std::make_shared<ImagesRepository>(paths->first,
-                                                              paths->second,
-                                                              images->image1,
-                                                              images->image2
-                                                              );
-        notifyComparedImagesOpened(imagesRepository);
+        images = imageFileHandler->openImages(paths->first, paths->second);
+        if (images == nullptr) {
+            throw std::runtime_error("Unknown error.");
+        }
+        notifyImagesOpened(images);
     } catch(std::runtime_error &e) {
-        notifyComparedImagesOpenFailed(e.what());
+        notifyImagesOpenFailed(e.what());
     }
 }
 
 void ImageFilesInteractors::openImagesFromDragAndDrop(const QList<QUrl> &urls) {
     try {
-        ImagesPtr images = imageFileHandler->openImages(urls);
-        imagesRepository = std::make_shared<ImagesRepository>(images->path1,
-                                                              images->path2,
-                                                              images->image1,
-                                                              images->image2
-                                                              );
-        notifyComparedImagesOpened(imagesRepository);
+        images = imageFileHandler->openImages(urls);
+        if (images == nullptr) {
+            throw std::runtime_error("Unknown error.");
+        }
+        notifyImagesOpened(images);
     } catch(std::runtime_error &e) {
-        notifyComparedImagedsOpenFailed(e.what());
+        notifyImagesOpenFailed(e.what());
     }
 }
 
@@ -60,38 +54,34 @@ void ImageFilesInteractors::openImagesViaCommandLine(const QString &image1Path,
 {
     try {
         ImagesPtr images = imageFileHandler->openImages(image1Path, image2Path);
-        imagesRepository = std::make_shared<ImagesRepository>(images->path1,
-                                                              images->path2,
-                                                              images->image1,
-                                                              images->image2
-                                                              );
-        imagesRepository->setDeleteFilesAfterClose();
-        notifyComparedImagesOpened(imagesRepository);
+        if (images == nullptr) {
+            throw std::runtime_error("Unknown error.");
+        }
+        images->markAsTemporary();
+        notifyImagesOpened(images);
     } catch(std::runtime_error &e) {
-        notifyComparedImagedsOpenFailed(e.what());
+        notifyImagesOpenFailed(e.what());
     }
 }
 
 void ImageFilesInteractors::openImagesViaOpenFilesDialog() {
     try {
         ImagesPtr images = imageFileHandler->openImages();
-        imagesRepository = std::make_shared<ImagesRepository>(images->path1,
-                                                              images->path2,
-                                                              images->image1,
-                                                              images->image2
-                                                              );
-        notifyComparedImagesOpened(imagesRepository);
+        if (images == nullptr) {
+            throw std::runtime_error("Unknown error.");
+        }
+        notifyImagesOpened(images);
     } catch(std::runtime_error &e) {
-        notifyComparedImagedsOpenFailed(e.what());
+        notifyImagesOpenFailed(e.what());
     }
 }
 
 void ImageFilesInteractors::saveImage(const SaveImageInfo &info) {
-    FileSaveResult result = imageFileHandler->saveImage(info, imagesRepository);
+    FileSaveResult result = imageFileHandler->saveImage(info, images);
     if (result.isSaved) {
         notifyFileSavedSuccessfully(result.path);
     } else {
-        notifySaveFileFailed(result.path);
+        notifySavingFileFailed(result.path);
     }
 }
 
@@ -113,9 +103,9 @@ bool ImageFilesInteractors::unsubscribe(const IImageFilesInteractorListenerPtr l
     return listeners.removeOne(listener);
 }
 
-void ImageFilesInteractors::notifyComparedImagesOpened(IImagesRepositoryPtr imageRepository) {
+void ImageFilesInteractors::notifyImagesOpened(const ImagesPtr images) {
     foreach (auto listener, listeners) {
-        listener->onComparedImagesOpened(imageRepository);
+        listener->onImagesOpened(images);
     }
 }
 
@@ -125,39 +115,15 @@ void ImageFilesInteractors::notifyImagesClosed() {
     }
 }
 
-void ImageFilesInteractors::notifyComparisonResultImageOpened(IImagesRepositoryPtr imageRepository) {
+void ImageFilesInteractors::notifyImagesOpenFailed(const QString &error) {
     foreach (auto listener, listeners) {
-        listener->onComparisonResultImageOpened(imageRepository);
+        listener->onImagesOpenFailed(error);
     }
 }
 
-void ImageFilesInteractors::notifyComparedImagesUpdated(IImagesRepositoryPtr imageRepository) {
+void ImageFilesInteractors::notifySavingFileFailed(const QString &path) {
     foreach (auto listener, listeners) {
-        listener->onComparedImagesUpdated(imageRepository);
-    }
-}
-
-void ImageFilesInteractors::notifyComparedImagesOpenFailed(const QString &error) {
-    foreach (auto listener, listeners) {
-        listener->onComparedImagesOpenFailed(error);
-    }
-}
-
-void ImageFilesInteractors::notifyComparisonResultImageOpenedFailed(const QString &error) {
-    foreach (auto listener, listeners) {
-        listener->onComparisonResultImageOpenedFailed(error);
-    }
-}
-
-void ImageFilesInteractors::notifyComparedImagedsOpenFailed(const QString &error) {
-    foreach (auto listener, listeners) {
-        listener->onComparedImagedsOpenFailed(error);
-    }
-}
-
-void ImageFilesInteractors::notifySaveFileFailed(const QString &path) {
-    foreach (auto listener, listeners) {
-        listener->onSaveFileFailed(path);
+        listener->onSavingFileFailed(path);
     }
 }
 

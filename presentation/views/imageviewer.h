@@ -1,8 +1,9 @@
 #ifndef IMAGEVIEWER_H
 #define IMAGEVIEWER_H
 
+#include "domain/interfaces/imageprocessor.h"
+#include "domain/valueobjects/images.h"
 #include <domain/valueobjects/savefileinfo.h>
-#include <data/storage/repositories/imagesrepository.h>
 
 #include <qgraphicsview.h>
 
@@ -16,13 +17,9 @@ public:
 
     virtual ~ImageViewer();
     
-    void displayImages(QPixmapPtr image1,
-                       const QString &path,
-                       QPixmapPtr image2,
-                       const QString &path2
-                       );
+    void displayImages(const ImagesPtr images);
 
-    void showImageFromComparator(QPixmapPtr image, const QString& description);
+    void showImageFromComparator(const QPixmap &image, const QString& description);
 
     void cleanUp();
 
@@ -43,7 +40,7 @@ public:
 
     // Filters can be applied to modify images. This function removes
     // all filters applied to the compared images.
-    void replaceDisplayedImages(QPixmapPtr image1, QPixmapPtr image2);
+    void replaceDisplayedImages(const QPixmap &image1, const QPixmap &image2);
 
     void zoomIn();
     void zoomOut();
@@ -93,6 +90,9 @@ private:
                               QColor colorOfHiddenImage
                               );
     void setCenterToViewRectCenter();
+
+    // FIXME Refactoring
+    static QString savePixmapToTempDir(const QPixmap &pixmap, const QString &fileName);
 };
 
 

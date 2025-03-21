@@ -27,11 +27,12 @@ public:
     ImagesPtr openImages();
     ImagesPtr openImages(const QString &image1Path, const QString &image2Path);
     ImagesPtr openImages(const QList<QUrl> &urls);
-    bool validateFile(const QString &filePath);
-    FileSaveResult saveImage(const SaveImageInfo &info, const IImagesRepositoryPtr imagerepository);
+    FileSaveResult saveImage(const SaveImageInfo &saveImageInfo, const ImagesPtr images);
 
 private:
     static const std::string errorUnableToOpenImages;
+
+    bool validateFile(const QString &filePath);
 };
 
 #endif // IMAGEFILESHANDLER_H

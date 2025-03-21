@@ -1,5 +1,5 @@
 #include "mainwindow.h"
-#include "data/storage/repositories/imagesrepository.h"
+
 #include <QLabel>
 #include <QSplitter>
 #include <QVBoxLayout>
@@ -27,6 +27,7 @@
 #include <presentation/dialogs/propertyeditordialog.h>
 #include <data/storage/savefiledialoghandler.h>
 #include <presentation/colorpickercontroller.h>
+#include <business/imageanalysis/imageprocessinginteractor.h>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent),
@@ -41,7 +42,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     setAcceptDrops(true);
 
-    comparisionInteractor = new ComparisonInteractor(this);
+    comparisionInteractor = new ImageProcessingInteractor(this);
     colorPickerController = new ColorPickerController(this);
     imageProcessorsMenuController = new ImageProcessorsMenuController(this);
     imageView = new ImageViewer(this);

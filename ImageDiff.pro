@@ -10,7 +10,6 @@ CONFIG += c++17
 
 SOURCES += \
     business/getimagesfromvideosinteractor.cpp \
-    business/imageanalysis/comparisoninteractor.cpp \
     business/imageanalysis/comporators/colorssaturationcomporator.cpp \
     business/imageanalysis/comporators/contrastcomporator.cpp \
     business/imageanalysis/comporators/differenceinpixelvaluesasimage.cpp \
@@ -20,19 +19,18 @@ SOURCES += \
     business/imageanalysis/comporators/sharpnesscomparator.cpp \
     business/imageanalysis/filters/grayscalefilter.cpp \
     business/imageanalysis/filters/rgbfilter.cpp \
+    business/imageanalysis/imageprocessinginteractor.cpp \
     business/imageanalysis/imageprocessorsmanager.cpp \
     business/imagefilesinteractors.cpp \
     business/plugins/imageprocessordeserializer.cpp \
     business/plugins/pluginsmanager.cpp \
     business/imageanalysis/runallcomparatorsinteractor.cpp \
-    business/imageanalysis/setprocessorpropertiesinteractor.cpp \
     business/plugins/pythonscriptcomparator.cpp \
     business/plugins/pythonscriptfilter.cpp \
     business/pluginsettingsinteractor.cpp \
     business/recentfilesmanager.cpp \
     business/recentfilesinteractor.cpp \
     data/storage/imagefileshandler.cpp \
-    data/repositories/imagesrepository.cpp \
     data/repositories/pluginsrepository.cpp \
     data/storage/savefiledialoghandler.cpp \
     domain/valueobjects/comparableimage.cpp \
@@ -57,7 +55,6 @@ SOURCES += \
 
 HEADERS += \
     business/getimagesfromvideosinteractor.h \
-    business/imageanalysis/comparisoninteractor.h \
     business/imageanalysis/comporators/colorssaturationcomporator.h \
     business/imageanalysis/comporators/contrastcomporator.h \
     business/imageanalysis/comporators/differenceinpixelvaluesasimage.h \
@@ -67,28 +64,29 @@ HEADERS += \
     business/imageanalysis/comporators/sharpnesscomparator.h \
     business/imageanalysis/filters/grayscalefilter.h \
     business/imageanalysis/filters/rgbfilter.h \
+    business/imageanalysis/imageprocessinginteractor.h \
     business/imageanalysis/imageprocessorsmanager.h \
     business/imagefilesinteractors.h \
     business/plugins/imageprocessordeserializer.h \
     business/plugins/pluginsmanager.h \
     business/imageanalysis/runallcomparatorsinteractor.h \
-    business/imageanalysis/setprocessorpropertiesinteractor.h \
     business/plugins/pythonscriptcomparator.h \
     business/plugins/pythonscriptfilter.h \
     business/pluginsettingsinteractor.h \
     business/recentfilesmanager.h \
     business/recentfilesinteractor.h \
+    business/utils/imagesinfo.h \
     data/storage/imagefileshandler.h \
-    data/repositories/imagesrepository.h \
     data/repositories/pluginsrepository.h \
     data/storage/savefiledialoghandler.h \
+    domain/interfaces/colorundercursorchangelistener.h \
     domain/interfaces/comparator.h \
     domain/interfaces/filter.h \
     domain/interfaces/imagefilesinteractorlistener.h \
+    domain/interfaces/imageprocessinginteractorlistener.h \
     domain/interfaces/imageprocessor.h \
-    domain/interfaces/imagerepository.h \
     domain/interfaces/iprogressdialog.h \
-    domain/interfaces/mainwindowcallbacks.h \
+    domain/interfaces/processorpropertiesdialogcallback.h \
     domain/valueobjects/autocomparisonreportentry.h \
     domain/valueobjects/comparableimage.h \
     domain/valueobjects/comparisonresultvariant.h \
