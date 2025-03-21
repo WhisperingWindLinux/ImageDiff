@@ -36,23 +36,24 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
+    setAcceptDrops(true);
+
     setWindowTitle("Image Diff");
     resize(1380, 820);
     showNormal();
     restoreMainWindowPosition();
 
-    setAcceptDrops(true);
+    imageView = new ImageViewer(this, this);
+    setCentralWidget(imageView);
 
     imageFilesInteractor = new ImageFilesInteractor();
     colorPickerController = new ColorPickerController(this);
     imageProcessorsMenuController = new ImageProcessorsMenuController(this);
     recentFilesInteractor = new RecentFilesInteractor();
     imageProcessingInteractor = nullptr;
+    progressDialog = nullptr;
 
     imageFilesInteractor->subscribe(this);
-
-    imageView = new ImageViewer(this);
-    setCentralWidget(imageView);
 
     buildImageProcessorsMenu();
     makeConnections();
@@ -119,12 +120,12 @@ void MainWindow::enableImageProceesorsMenuItems(bool isEnabled) {
 }
 
 void MainWindow::updateRecentFilesMenu() {
-    QStringList recentFileMenuRecords = recentFilesInteractor->getRecentFileMenuRecords();
+    QStringList recentFileMenuRecords = recentFilesInteractor->getRecentFilesMenuRecords();
 
     ui->menuRecentFiles->clear();
 
     foreach (auto record, recentFileMenuRecords) {
-        QAction *action = new QAction(record, this);
+        QAction *action = new QAction(record, ui->menuRecentFiles);
         action->setData(record);
         connect(action, &QAction::triggered, this, &MainWindow::openRecentFile);
         ui->menuRecentFiles->addAction(action);
@@ -132,6 +133,12 @@ void MainWindow::updateRecentFilesMenu() {
 
     if (ui->menuRecentFiles->isEmpty()) {
         ui->menuRecentFiles->addAction("No Recent Files")->setEnabled(false);
+    } else {
+        ui->menuRecentFiles->addAction("")->setSeparator(true);
+
+        QAction *action = new QAction("Clear Menu", ui->menuRecentFiles);
+        connect(action, &QAction::triggered, this, &MainWindow::clearOpenRecentsMenu);
+        ui->menuRecentFiles->addAction(action);
     }
 }
 
@@ -158,6 +165,11 @@ void MainWindow::rescanPluginDir() {
     buildImageProcessorsMenu();
     makeConnections();
     enableImageProceesorsMenuItems(imageView->hasActiveSession());
+}
+
+void MainWindow::clearOpenRecentsMenu() {
+    recentFilesInteractor->clear();
+    updateRecentFilesMenu();
 }
 
 void MainWindow::imageZoomedToActualSize() {
@@ -299,9 +311,18 @@ void MainWindow::dragEnterEvent(QDragEnterEvent *event) {
 }
 
 void MainWindow::dropEvent(QDropEvent *event) {
+    if (!event->mimeData()->hasUrls()) {
+        event->ignore();
+        return;
+    }
+    event->acceptProposedAction();
+    QList<QUrl> urls = event->mimeData()->urls();
+    onDrop(urls);
+}
+
+// IDropListener interface
+void MainWindow::onDrop(QList<QUrl> urls) {
     try {
-        event->acceptProposedAction();
-        QList<QUrl> urls = event->mimeData()->urls();
         imageFilesInteractor->openImagesFromDragAndDrop(urls);
     } catch (std::runtime_error &e) {
         showError(e.what());
@@ -337,6 +358,9 @@ void MainWindow::onImagesOpened(const ImagesPtr images) {
     imageView->displayImages(images);
     colorPickerController->onImagesOpened();
     enableImageProceesorsMenuItems(true);
+    if (!images->getIsTemporaryFiles()) {
+        recentFilesInteractor->addRecentFilesRecord(images->path1, images->path2);
+    }
     updateRecentFilesMenu();
 }
 
@@ -346,11 +370,12 @@ void MainWindow::onImagesOpenFailed(const QString &error) {
         errorMsg = error;
     }
     showError(errorMsg);
+    onImagesClosed();
 }
 
 void MainWindow::onImagesClosed() {
     if (imageProcessingInteractor != nullptr) {
-        imageProcessingInteractor->subscribe(this);
+        imageProcessingInteractor->unsubscribe(this);
         delete imageProcessingInteractor;
         imageProcessingInteractor = nullptr;
 

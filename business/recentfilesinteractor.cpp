@@ -9,7 +9,7 @@ RecentFilesInteractor::RecentFilesInteractor() {
 
 // Open images from the recent files menu.
 // The menu item is formatted as "path to file 1 -> path to file 2".
-std::optional<QPair<QString, QString>> RecentFilesInteractor::getRecentFilePathsByRecentMenuRecord(
+std::optional<QPair<QString, QString>> RecentFilesInteractor::getRecentFilesPathsByRecentMenuRecord(
                                                                     const QString& recentFileMenuRecord
                                                                     )
 {
@@ -20,7 +20,7 @@ std::optional<QPair<QString, QString>> RecentFilesInteractor::getRecentFilePaths
     return pair;
 }
 
-QStringList RecentFilesInteractor::getRecentFileMenuRecords() {
+QStringList RecentFilesInteractor::getRecentFilesMenuRecords() {
     QStringList result;
     auto pairs = recentFilesManager->getAllPairs();
 
@@ -33,6 +33,14 @@ QStringList RecentFilesInteractor::getRecentFileMenuRecords() {
     }
 
     return result;
+}
+
+void RecentFilesInteractor::addRecentFilesRecord(const QString &file1, const QString &file2) {
+    recentFilesManager->addPair(file1, file2);
+}
+
+void RecentFilesInteractor::clear() {
+    recentFilesManager->clear();
 }
 
 // Converts a QPair<QString, QString> to a formatted QString

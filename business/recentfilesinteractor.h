@@ -8,8 +8,14 @@ class RecentFilesInteractor
 public:
     RecentFilesInteractor();
     
-    std::optional<QPair<QString, QString> > getRecentFilePathsByRecentMenuRecord(const QString &recentFileMenuRecord);
-    QStringList getRecentFileMenuRecords();
+    std::optional<QPair<QString, QString> > getRecentFilesPathsByRecentMenuRecord(const QString &recentFileMenuRecord);
+
+    QStringList getRecentFilesMenuRecords();
+
+    void addRecentFilesRecord(const QString &file1, const QString &file2);
+
+    void clear();
+
 private:
     std::unique_ptr<RecentFilesManager> recentFilesManager;
 

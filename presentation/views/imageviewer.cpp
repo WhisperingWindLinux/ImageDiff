@@ -13,12 +13,16 @@
 #include <presentation/mainwindow.h>
 #include <business/utils/imagesinfo.h>
 
-ImageViewer::ImageViewer(MainWindow *parent)
+
+ImageViewer::ImageViewer(IDropListener *dropListener, MainWindow *parent)
     : QGraphicsView(parent),
-    parent(parent)
+    parent(parent),
+    dropListener(dropListener)
 {
-    scene = new QGraphicsScene(this);
-    setScene(scene);
+    customScene = nullptr;
+    firstDisplayedImage = nullptr;
+    secondDisplayedImage = nullptr;
+    comparatorResultDisplayedImage = nullptr;
 
     QColor backgroundColor = QApplication::palette().color(QPalette::Window);
     setBackgroundBrush(backgroundColor);
@@ -51,6 +55,10 @@ void ImageViewer::onColorUnderCursorTrackingStatusChanged(bool isActivate) {
 /* Zoom { */
 
 void ImageViewer::wheelEvent(QWheelEvent *event) {
+    if (!hasActiveSession()) {
+        event->ignore();
+        return;
+    }
     if (event->angleDelta().y() > 0) {
         zoomIn();
     } else {
@@ -77,11 +85,17 @@ void ImageViewer::setCenterToViewRectCenter() {
 }
 
 void ImageViewer::setToActualSize() {
+    if (!hasActiveSession()) {
+        return;
+    }
     resetTransform();
     scaleFactor = 1.0;
 }
 
 void ImageViewer::setToFitImageInView() {
+    if (!hasActiveSession()) {
+        return;
+    }
     fitInView(firstDisplayedImage, Qt::KeepAspectRatio);
     fitInView(secondDisplayedImage, Qt::KeepAspectRatio);
     if (comparatorResultDisplayedImage != nullptr) {
@@ -95,11 +109,12 @@ void ImageViewer::setToFitImageInView() {
 /* Show images in QGraphicsView { */
 
 void ImageViewer::displayImages(const ImagesPtr images) {
+
+    cleanUp();
+
     if (images == nullptr) {
         return;
     }
-
-    cleanUp();
 
     ImagesInfo info { images };
 
@@ -110,23 +125,32 @@ void ImageViewer::displayImages(const ImagesPtr images) {
     secondImagePath = images->path2;
     firstImageName = image1Name;
     secondImageName = image2Name;
-    
-    firstDisplayedImage = scene->addPixmap(images->image1);
-    secondDisplayedImage = scene->addPixmap(images->image2);
+
+    firstDisplayedImage = new GraphicsPixmapItem(images->image1, dropListener);
+    secondDisplayedImage = new GraphicsPixmapItem(images->image2, dropListener);
+
+    setAcceptDrops(true);
+    customScene = new QGraphicsScene(this);
+    setScene(customScene);
+    customScene->addItem(firstDisplayedImage);
+    customScene->addItem(secondDisplayedImage);
+
     parent->showStatusMessage(firstImagePath);
     secondDisplayedImage->setVisible(false);
     setToFitImageInView();
 }
 
 void ImageViewer::showImageFromComparator(const QPixmap &image, const QString &description) {
-    if (image.isNull()) {
+    if (image.isNull() || !hasActiveSession()) {
         return;
     }
     if (comparatorResultDisplayedImage != nullptr) {
-        scene->removeItem(comparatorResultDisplayedImage);
+        customScene->removeItem(comparatorResultDisplayedImage);
         comparatorResultDisplayedImage = nullptr;
     }
-    comparatorResultDisplayedImage = scene->addPixmap(image);
+
+    comparatorResultDisplayedImage = new GraphicsPixmapItem(image, dropListener);
+    customScene->addItem(comparatorResultDisplayedImage);
     firstDisplayedImage->setVisible(false);
     secondDisplayedImage->setVisible(false);
     comparatorResultDisplayedImage->setVisible(true);
@@ -135,26 +159,26 @@ void ImageViewer::showImageFromComparator(const QPixmap &image, const QString &d
 
 void ImageViewer::replaceDisplayedImages(const QPixmap& image1, const QPixmap& image2) {
 
-    if (image1.isNull() || image2.isNull()) {
+    if (image1.isNull() || image2.isNull() || !hasActiveSession()) {
         return;
     }
 
     QRectF viewRect = mapToScene(viewport()->geometry()).boundingRect();
 
     if (firstDisplayedImage != nullptr) {
-        scene->removeItem(firstDisplayedImage);
+        customScene->removeItem(firstDisplayedImage);
         firstDisplayedImage = nullptr;
     }
     if (secondDisplayedImage != nullptr) {
-        scene->removeItem(secondDisplayedImage);
+        customScene->removeItem(secondDisplayedImage);
         secondDisplayedImage = nullptr;
     }
     if (comparatorResultDisplayedImage != nullptr) {
-        scene->removeItem(comparatorResultDisplayedImage);
+        customScene->removeItem(comparatorResultDisplayedImage);
         comparatorResultDisplayedImage = nullptr;
     }
-    firstDisplayedImage = scene->addPixmap(image1);
-    secondDisplayedImage = scene->addPixmap(image2);
+    firstDisplayedImage = customScene->addPixmap(image1);
+    secondDisplayedImage = customScene->addPixmap(image2);
     if (currentImageIndex == 0) {
         secondDisplayedImage->setVisible(false);
         parent->showStatusMessage(firstImagePath);
@@ -174,16 +198,21 @@ bool ImageViewer::hasActiveSession() {
 
 void ImageViewer::cleanUp() {
     if (firstDisplayedImage != nullptr) {
-        scene->removeItem(firstDisplayedImage);
+        customScene->removeItem(firstDisplayedImage);
         firstDisplayedImage = nullptr;
     }
     if (secondDisplayedImage != nullptr) {
-        scene->removeItem(secondDisplayedImage);
+        customScene->removeItem(secondDisplayedImage);
         secondDisplayedImage = nullptr;
     }
     if (comparatorResultDisplayedImage != nullptr) {
-        scene->removeItem(comparatorResultDisplayedImage);
+        customScene->removeItem(comparatorResultDisplayedImage);
         comparatorResultDisplayedImage = nullptr;
+    }
+    if (customScene != nullptr) {
+        setScene(nullptr);
+        delete customScene;
+        customScene = nullptr;
     }
     firstImagePath = "";
     secondImagePath = "";
@@ -213,10 +242,13 @@ void ImageViewer::cleanUp() {
  *  {   */
 
 void ImageViewer::toggleImage() {
+    if (!hasActiveSession()) {
+        return;
+    }
     QRectF viewRect = mapToScene(viewport()->geometry()).boundingRect();
 
     if (comparatorResultDisplayedImage != nullptr) {
-        scene->removeItem(comparatorResultDisplayedImage);
+        customScene->removeItem(comparatorResultDisplayedImage);
         comparatorResultDisplayedImage = nullptr;
         currentImageIndex == 1 ?
             currentImageIndex = 0 :
@@ -251,12 +283,11 @@ void ImageViewer::toggleImage() {
 // and visible area. In other words, everything outside the
 // currently visible area will be cropped.
 SaveImageInfo ImageViewer::getCurrentVisiableArea() {
-    if (scene == nullptr) {
+    if (!hasActiveSession()) {
         return {};
     }
 
-    QPixmap pixmap = ImageViewer::getVisiblePixmap(this);
-
+    QPixmap pixmap = getVisiblePixmap();
 
     SaveImageInfoType contentType = SaveImageInfoType::None;
     bool isComparisonImageShowing = (comparatorResultDisplayedImage != nullptr);
@@ -272,6 +303,9 @@ SaveImageInfo ImageViewer::getCurrentVisiableArea() {
 }
 
 SaveImageInfo ImageViewer::getImageShowedOnTheScreen() {
+    if (!hasActiveSession()) {
+        return {};
+    }
     bool isComparisonImageShowing = (comparatorResultDisplayedImage != nullptr);
     if (isComparisonImageShowing) {
         return SaveImageInfo(SaveImageInfoType::ComparisonImage, comparatorResultDisplayedImage->pixmap());
@@ -284,15 +318,12 @@ SaveImageInfo ImageViewer::getImageShowedOnTheScreen() {
 }
 
 // Function to get the visible portion of the image in QGraphicsView
-QPixmap ImageViewer::getVisiblePixmap(QGraphicsView* view) {
-    if (!view || !view->scene()) {
-        return QPixmap(); // Return an empty QPixmap if the view or scene is not set
-    }
+QPixmap ImageViewer::getVisiblePixmap() {
 
     // Get the visible area in scene coordinates
-    QRectF visibleSceneRect = view->mapToScene(view->viewport()->geometry()).boundingRect();
+    QRectF visibleSceneRect = mapToScene(viewport()->geometry()).boundingRect();
 
-    auto items = view->scene()->items(visibleSceneRect);
+    auto items = customScene->items(visibleSceneRect);
     QGraphicsPixmapItem* pixmapItem = nullptr;
 
     for (auto it = items.begin(); it != items.end(); ++it) {
@@ -326,9 +357,9 @@ QPixmap ImageViewer::getVisiblePixmap(QGraphicsView* view) {
         );
 
     // Create a new pixmap with the size of the visible area
-    QSize targetSize = view->viewport()->size();
+    QSize targetSize = viewport()->size();
     QPixmap result(targetSize);
-    result.fill(Qt::transparent); // Fill with a transparent color
+    result.fill(Qt::transparent);
 
     // Draw the portion of the image on the resulting QPixmap while preserving proportions
     QPainter painter(&result);
@@ -343,6 +374,7 @@ QPixmap ImageViewer::getVisiblePixmap(QGraphicsView* view) {
 }
 
 void ImageViewer::passCropedImageToOtherAppInstance(QRectF rect) {
+
     QRect selectionRect = rect.toAlignedRect();
 
     auto firstPixmap = firstDisplayedImage->pixmap();
@@ -375,7 +407,7 @@ QString ImageViewer::savePixmapToTempDir(const QPixmap &pixmap, const QString &f
 /* Events { */
 
 void ImageViewer::mouseMoveEvent(QMouseEvent* event) {
-    if (event == nullptr) {
+    if (event == nullptr || !hasActiveSession()) {
         return;
     }
     lastCursorPos = event->pos();
@@ -394,7 +426,7 @@ void ImageViewer::mouseMoveEvent(QMouseEvent* event) {
 }
 
 void ImageViewer::getPixelColorUnderCursor(std::optional<QPoint> cursorPos) {
-    if (!isColorUnderCursorTrackingActive || !cursorPos) {
+    if (!isColorUnderCursorTrackingActive || !cursorPos || !hasActiveSession()) {
         return;
     }
 
@@ -402,7 +434,7 @@ void ImageViewer::getPixelColorUnderCursor(std::optional<QPoint> cursorPos) {
     QPointF scenePos = mapToScene(cursorPos.value());
 
     // Get the item under the cursor (if any)
-    QGraphicsItem* item = scene->itemAt(scenePos, transform());
+    QGraphicsItem* item = customScene->itemAt(scenePos, transform());
     if (item) {
         // Check if the item is a pixmap (image)
         QGraphicsPixmapItem* pixmapItem = dynamic_cast<QGraphicsPixmapItem*>(item);
@@ -462,6 +494,9 @@ void ImageViewer::fillPixelColorValues(QString visibleImageName,
 
 // Implement zoom to selection
 void ImageViewer::mousePressEvent(QMouseEvent *event) {
+    if (!hasActiveSession()) {
+        return;
+    }
     auto shiftModifier = event->modifiers() & Qt::ShiftModifier;
     auto controlModifier = event->modifiers() & Qt::ControlModifier;
     if (event->button() == Qt::LeftButton && (shiftModifier || controlModifier)) {
@@ -475,6 +510,9 @@ void ImageViewer::mousePressEvent(QMouseEvent *event) {
 
 // Implement zoom to selection
 void ImageViewer::mouseReleaseEvent(QMouseEvent *event) {
+    if (!hasActiveSession()) {
+        return;
+    }
     if (selecting && event->button() == Qt::LeftButton) {
         selecting = false;
 
@@ -508,12 +546,33 @@ void ImageViewer::paintEvent(QPaintEvent *event) {
     // Call base class paint event first
     QGraphicsView::paintEvent(event);
 
+    if (!hasActiveSession()) {
+        return;
+    }
     // Draw the selection rectangle if it exists
     if (!selectionRect.isNull()) {
         QPainter painter(viewport());
         painter.setPen(QPen(Qt::blue, 1, Qt::DashLine)); // Dashed blue border for selection rectangle
-        painter.setBrush(QBrush(Qt::transparent));      // Transparent fill
+        painter.setBrush(QBrush(Qt::transparent));       // Transparent fill
         painter.drawRect(selectionRect);
+    }
+}
+
+void ImageViewer::dragEnterEvent(QDragEnterEvent *event) {
+    if (event->mimeData()->hasFormat("text/uri-list") && dropListener) {
+        event->acceptProposedAction();
+    } else {
+        event->ignore();
+    }
+}
+
+void ImageViewer::dropEvent(QDropEvent *event) {
+    if (!event->mimeData()->hasUrls() || !dropListener) {
+        event->ignore();
+    } else {
+        event->acceptProposedAction();
+        QList<QUrl> urls = event->mimeData()->urls();
+        dropListener->onDrop(urls);
     }
 }
 

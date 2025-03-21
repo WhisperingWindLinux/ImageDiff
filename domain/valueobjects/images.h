@@ -31,10 +31,14 @@ Images(QPixmap image1, QPixmap image2, QString path1, QString path2)
   const QString path1;
   const QString path2;
 
+  bool getIsTemporaryFiles() const { return isTemporaryFiles; }
+
 private:
   bool isTemporaryFiles;
 
 };
+
+
 
 typedef std::shared_ptr<Images> ImagesPtr;
 

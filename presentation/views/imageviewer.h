@@ -1,19 +1,20 @@
 #ifndef IMAGEVIEWER_H
 #define IMAGEVIEWER_H
 
-#include "domain/interfaces/imageprocessor.h"
 #include "domain/valueobjects/images.h"
+#include "graphicspixmapitem.h"
 #include <domain/valueobjects/savefileinfo.h>
 
 #include <qgraphicsview.h>
 
 class MainWindow;
+class IDropListener;
 
 class ImageViewer : public QGraphicsView {
     Q_OBJECT
 
 public:
-    explicit ImageViewer(MainWindow *parent = nullptr);
+    explicit ImageViewer(IDropListener *dropListener, MainWindow *parent);
 
     virtual ~ImageViewer();
     
@@ -55,10 +56,13 @@ protected:
     void mousePressEvent(QMouseEvent *event) override ;
     void mouseReleaseEvent(QMouseEvent *event) override;
     void paintEvent(QPaintEvent *event) override;
+    void dragEnterEvent(QDragEnterEvent *event) override;
+    void dropEvent(QDropEvent *event) override;
 
 private:
     MainWindow *parent;
-    QGraphicsScene *scene;
+    IDropListener *dropListener;
+    QGraphicsScene *customScene;
     QString firstImagePath;
     QString secondImagePath;
     QString firstImageName;
@@ -71,14 +75,13 @@ private:
     bool isColorUnderCursorTrackingActive;
     std::optional<QPoint> lastCursorPos;
 
-
     // Zoom to selection
     bool selecting;                         // Whether the user is currently selecting an area
     bool isZoomToSelectionEnabled;
     QPoint selectionStart;                  // Start point of the selection (in view coordinates)
     QRect selectionRect;                    // Rectangle being selected (in view coordinates)
 
-    static QPixmap getVisiblePixmap(QGraphicsView* view);
+    QPixmap getVisiblePixmap();
 
     void passCropedImageToOtherAppInstance(QRectF rect);
 

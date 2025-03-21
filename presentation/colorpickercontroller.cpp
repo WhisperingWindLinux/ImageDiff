@@ -8,6 +8,7 @@
 
 ColorPickerController::ColorPickerController(MainWindow *mainWindow)
     : mainWindow(mainWindow),
+    colorPickerHidedOnMainWindowMinimized(false),
     alignmentPercent(80)
 {
     colorPicker = std::make_unique<ColorPickerPanel>();
@@ -35,10 +36,14 @@ void ColorPickerController::onMainWindowClosed() {
 }
 
 void ColorPickerController::onMainWindowStateChanged(bool isMinimized) {
-    if (isMinimized) {
+    if (isMinimized && colorPicker->isVisible()) {
         colorPicker->hide();
-    } else {
-        colorPicker->show();
+        colorPickerHidedOnMainWindowMinimized = true;
+    } else if (!isMinimized && colorPickerHidedOnMainWindowMinimized){
+        if (colorPickerHidedOnMainWindowMinimized) {
+            colorPicker->show();
+            colorPickerHidedOnMainWindowMinimized = false;
+        }
     }
 }
 

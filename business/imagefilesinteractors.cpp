@@ -22,7 +22,7 @@ ImageFilesInteractor::~ImageFilesInteractor() {
 
 void ImageFilesInteractor::openImagesFromRecentMenu(const QString &recentFileMenuRecord) {
     try {
-        auto paths = recentFilesInteractor->getRecentFilePathsByRecentMenuRecord(recentFileMenuRecord);
+        auto paths = recentFilesInteractor->getRecentFilesPathsByRecentMenuRecord(recentFileMenuRecord);
         if (!paths) {
             throw std::runtime_error("Error: Unable to open images!");
         }

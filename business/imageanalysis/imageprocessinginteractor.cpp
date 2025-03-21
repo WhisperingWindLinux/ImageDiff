@@ -174,7 +174,12 @@ void ImageProcessingInteractor::callFilter(IFilterPtr filter) {
         throw std::runtime_error("Error: The filter returns an empty result.");
     }
 
-    notifyFilteredResultLoaded(pixmap1, pixmap2);
+    displayedImages = std::make_shared<Images>(pixmap1,
+                                               pixmap2,
+                                               displayedImages->path1,
+                                               displayedImages->path2);
+
+    notifyFilteredResultLoaded(displayedImages->image1, displayedImages->image2);
 }
 
 QList<ImageProcessorInfo> ImageProcessingInteractor::getImageProcessorsInfo() {

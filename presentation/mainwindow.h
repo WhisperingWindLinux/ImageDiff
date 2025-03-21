@@ -5,6 +5,7 @@
 #include <QMainWindow>
 #include <QProcess>
 #include <QProgressDialog>
+#include <domain/interfaces/IDropTarget.h>
 #include <domain/interfaces/colorundercursorchangelistener.h>
 #include <domain/interfaces/iprogressdialog.h>
 #include <domain/interfaces/processorpropertiesdialogcallback.h>
@@ -30,7 +31,8 @@ class MainWindow : public QMainWindow,
                    public IColorUnderCursorChangeListener,
                    public IPropcessorPropertiesDialogCallback,
                    public IImageFilesInteractorListener,
-                   public IImageProcessingInteractorListener
+                   public IImageProcessingInteractorListener,
+                   public IDropListener
 {
     Q_OBJECT
 
@@ -56,6 +58,7 @@ public slots:
     void runAllComparators();
     void changePluginsSettings();
     void rescanPluginDir();
+    void clearOpenRecentsMenu();
 
 public:
     MainWindow(QWidget *parent = nullptr);
@@ -105,6 +108,11 @@ public:
 
     void onFilteredResultLoaded(const QPixmap &firstImage, const QPixmap &secondImage) override;
     void onImageProcessorFailed(const QString &error) override;
+
+    // IDropListener interface
+
+    void onDrop(QList<QUrl> urls) override;
+
 
 protected:
     void closeEvent(QCloseEvent *event) override;

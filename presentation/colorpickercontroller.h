@@ -31,6 +31,7 @@ public:
 private:
     MainWindow *mainWindow;
     std::unique_ptr<ColorPickerPanel> colorPicker;
+    bool colorPickerHidedOnMainWindowMinimized;
 
     // A value of 50% places the color picker window centered
     // relative to the vertical axis of the main window

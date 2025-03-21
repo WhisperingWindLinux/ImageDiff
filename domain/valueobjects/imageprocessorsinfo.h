@@ -5,7 +5,11 @@
 #include <qstring.h>
 
 struct ImageProcessorInfo {
-  ImageProcessorInfo(QString name, QString description, QString hotkey, ImageProcessorType type)
+  ImageProcessorInfo(const QString &name,
+                       const QString &description,
+                       const QString &hotkey,
+                       ImageProcessorType type
+                       )
       : name(name), description(description),
         hotkey(hotkey), type(type) {}
   QString name;

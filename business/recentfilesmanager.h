@@ -9,7 +9,7 @@
 class RecentFilesManager {
 public:
     // Constructor
-    RecentFilesManager(const QString &organization, const QString &application, int maxPairs = 5);
+    RecentFilesManager(const QString &organization, const QString &application, int maxPairs = 8);
 
     // Adds a pair of files to the recent list
     void addPair(const QString &file1, const QString &file2);

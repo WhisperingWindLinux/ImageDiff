@@ -49,6 +49,7 @@ SOURCES += \
     presentation/mainwindow.cpp \
     presentation/presenters/htmlimageprocessorshelppresenter.cpp \
     presentation/presenters/htmlreportpresenter.cpp \
+    presentation/views/graphicspixmapitem.cpp \
     presentation/views/imageviewer.cpp \
     presentation/views/videoplayerwidget.cpp \
     domain/valueobjects/autocomparisonreportentry.cpp \
@@ -82,6 +83,7 @@ HEADERS += \
     domain/interfaces/colorundercursorchangelistener.h \
     domain/interfaces/comparator.h \
     domain/interfaces/filter.h \
+    domain/interfaces/idroptarget.h \
     domain/interfaces/imagefilesinteractorlistener.h \
     domain/interfaces/imageprocessinginteractorlistener.h \
     domain/interfaces/imageprocessor.h \
@@ -110,6 +112,7 @@ HEADERS += \
     presentation/presenters/htmlimageprocessorshelppresenter.h \
     presentation/presenters/htmlreportpresenter.h \
     presentation/valueobjects/rgbwidgets.h \
+    presentation/views/graphicspixmapitem.h \
     presentation/views/imageviewer.h \
     presentation/views/videoplayerwidget.h
 
