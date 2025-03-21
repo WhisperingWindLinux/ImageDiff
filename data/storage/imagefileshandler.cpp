@@ -6,7 +6,6 @@
 #include <business/recentfilesmanager.h>
 #include <business/imageanalysis/imageprocessinginteractor.h>
 #include <data/storage/savefiledialoghandler.h>
-#include <data/repositories/imagesrepository.h>
 #include <domain/valueobjects/images.h>
 #include <business/utils/imagesinfo.h>
 
@@ -56,7 +55,7 @@ ImagesPtr ImageFilesHandler::openImages(const QString &image1Path, const QString
                                  );
     }
 
-    QImage image1, image2;
+    QPixmap image1, image2;
     image1.load(image1Path);
     image2.load(image2Path);
 

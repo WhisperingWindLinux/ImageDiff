@@ -94,11 +94,12 @@ void ImageViewer::setToFitImageInView() {
 
 /* Show images in QGraphicsView { */
 
-void ImageViewer::displayImages(const ImagesPtr images)
-{
+void ImageViewer::displayImages(const ImagesPtr images) {
     if (images == nullptr) {
         return;
     }
+
+    cleanUp();
 
     ImagesInfo info { images };
 

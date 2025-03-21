@@ -1,15 +1,15 @@
 #include "imagefilesinteractors.h"
 
+#include "business/getimagesfromvideosinteractor.h"
 #include "recentfilesinteractor.h"
 #include <data/storage/imagefileshandler.h>
-#include <data/repositories/imagesrepository.h>
 
-ImageFilesInteractors::ImageFilesInteractors() {
+ImageFilesInteractor::ImageFilesInteractor() {
     imageFileHandler = new ImageFilesHandler();
     recentFilesInteractor = new RecentFilesInteractor();
 }
 
-ImageFilesInteractors::~ImageFilesInteractors() {
+ImageFilesInteractor::~ImageFilesInteractor() {
     if (recentFilesInteractor != nullptr) {
         delete recentFilesInteractor;
         recentFilesInteractor = nullptr;
@@ -20,7 +20,7 @@ ImageFilesInteractors::~ImageFilesInteractors() {
     }
 }
 
-void ImageFilesInteractors::openImagesFromRecentMenu(const QString &recentFileMenuRecord) {
+void ImageFilesInteractor::openImagesFromRecentMenu(const QString &recentFileMenuRecord) {
     try {
         auto paths = recentFilesInteractor->getRecentFilePathsByRecentMenuRecord(recentFileMenuRecord);
         if (!paths) {
@@ -36,7 +36,7 @@ void ImageFilesInteractors::openImagesFromRecentMenu(const QString &recentFileMe
     }
 }
 
-void ImageFilesInteractors::openImagesFromDragAndDrop(const QList<QUrl> &urls) {
+void ImageFilesInteractor::openImagesFromDragAndDrop(const QList<QUrl> &urls) {
     try {
         images = imageFileHandler->openImages(urls);
         if (images == nullptr) {
@@ -48,9 +48,24 @@ void ImageFilesInteractors::openImagesFromDragAndDrop(const QList<QUrl> &urls) {
     }
 }
 
-void ImageFilesInteractors::openImagesViaCommandLine(const QString &image1Path,
-                                                     const QString &image2Path
-                                                     )
+void ImageFilesInteractor::openImages(const QString &image1Path,
+                                      const QString &image2Path
+                                     )
+{
+    try {
+        ImagesPtr images = imageFileHandler->openImages(image1Path, image2Path);
+        if (images == nullptr) {
+            throw std::runtime_error("Unknown error.");
+        }
+        notifyImagesOpened(images);
+    } catch(std::runtime_error &e) {
+        notifyImagesOpenFailed(e.what());
+    }
+}
+
+void ImageFilesInteractor::openImagesViaCommandLine(const QString &image1Path,
+                                                    const QString &image2Path
+                                                   )
 {
     try {
         ImagesPtr images = imageFileHandler->openImages(image1Path, image2Path);
@@ -64,7 +79,7 @@ void ImageFilesInteractors::openImagesViaCommandLine(const QString &image1Path,
     }
 }
 
-void ImageFilesInteractors::openImagesViaOpenFilesDialog() {
+void ImageFilesInteractor::openImagesViaOpenFilesDialog() {
     try {
         ImagesPtr images = imageFileHandler->openImages();
         if (images == nullptr) {
@@ -76,7 +91,7 @@ void ImageFilesInteractors::openImagesViaOpenFilesDialog() {
     }
 }
 
-void ImageFilesInteractors::saveImage(const SaveImageInfo &info) {
+void ImageFilesInteractor::saveImage(const SaveImageInfo &info) {
     FileSaveResult result = imageFileHandler->saveImage(info, images);
     if (result.isSaved) {
         notifyFileSavedSuccessfully(result.path);
@@ -85,7 +100,7 @@ void ImageFilesInteractors::saveImage(const SaveImageInfo &info) {
     }
 }
 
-bool ImageFilesInteractors::subscribe(const IImageFilesInteractorListenerPtr listener) {
+bool ImageFilesInteractor::subscribe(IImageFilesInteractorListener *listener) {
     if (listener == nullptr) {
         return false;
     }
@@ -96,38 +111,52 @@ bool ImageFilesInteractors::subscribe(const IImageFilesInteractorListenerPtr lis
     return true;
 }
 
-bool ImageFilesInteractors::unsubscribe(const IImageFilesInteractorListenerPtr listener) {
+bool ImageFilesInteractor::unsubscribe(const IImageFilesInteractorListener *listener) {
     if (listener == nullptr) {
         return false;
     }
     return listeners.removeOne(listener);
 }
 
-void ImageFilesInteractors::notifyImagesOpened(const ImagesPtr images) {
+void ImageFilesInteractor::openImagesFromVideos() {
+    try {
+        GetImagesFromVideosInteractor getImagesFromVideosInteractor {};
+        ImagesPtr imagesPath = getImagesFromVideosInteractor.get();
+        ImagesPtr images = imageFileHandler->openImages(imagesPath->path1, imagesPath->path2);
+        if (images == nullptr) {
+            throw std::runtime_error("Unknown error.");
+        }
+        notifyImagesOpened(images);
+    } catch(std::runtime_error &e) {
+        notifyImagesOpenFailed(e.what());
+    }
+}
+
+void ImageFilesInteractor::notifyImagesOpened(const ImagesPtr images) {
     foreach (auto listener, listeners) {
         listener->onImagesOpened(images);
     }
 }
 
-void ImageFilesInteractors::notifyImagesClosed() {
+void ImageFilesInteractor::notifyImagesClosed() {
     foreach (auto listener, listeners) {
         listener->onImagesClosed();
     }
 }
 
-void ImageFilesInteractors::notifyImagesOpenFailed(const QString &error) {
+void ImageFilesInteractor::notifyImagesOpenFailed(const QString &error) {
     foreach (auto listener, listeners) {
         listener->onImagesOpenFailed(error);
     }
 }
 
-void ImageFilesInteractors::notifySavingFileFailed(const QString &path) {
+void ImageFilesInteractor::notifySavingFileFailed(const QString &path) {
     foreach (auto listener, listeners) {
         listener->onSavingFileFailed(path);
     }
 }
 
-void ImageFilesInteractors::notifyFileSavedSuccessfully(const QString &path) {
+void ImageFilesInteractor::notifyFileSavedSuccessfully(const QString &path) {
     foreach (auto listener, listeners) {
         listener->onFileSavedSuccessfully(path);
     }

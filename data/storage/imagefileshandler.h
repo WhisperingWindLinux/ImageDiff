@@ -1,7 +1,6 @@
 #ifndef IMAGEFILESHANDLER_H
 #define IMAGEFILESHANDLER_H
 
-#include <domain/interfaces/imagerepository.h>
 #include <domain/valueobjects/images.h>
 #include <qstring.h>
 #include <qurl.h>

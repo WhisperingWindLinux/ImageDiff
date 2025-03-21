@@ -65,8 +65,8 @@ optional<QString> PythonScriptComparator::validateText(QString &text) {
     return make_optional(validatedText);
 }
 
-shared_ptr<ComparisonResultVariant> PythonScriptComparator::compare(ComparableImage first,
-                                                                    ComparableImage second
+shared_ptr<ComparisonResultVariant> PythonScriptComparator::compare(const ComparableImage &first,
+                                                                    const ComparableImage &second
                                                                     )
 {
     QByteArray image1Data;

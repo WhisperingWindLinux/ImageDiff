@@ -12,6 +12,4 @@ public:
     virtual void onFileSavedSuccessfully(const QString &path) = 0;
 };
 
-typedef std::shared_ptr<IImageFilesInteractorListener> IImageFilesInteractorListenerPtr;
-
 #endif // IMAGEFILESINTERACTORLISTENER_H

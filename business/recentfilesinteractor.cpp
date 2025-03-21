@@ -3,11 +3,9 @@
 #include <qstring.h>
 #include <business/recentfilesmanager.h>
 
-
 RecentFilesInteractor::RecentFilesInteractor() {
     recentFilesManager = std::make_unique<RecentFilesManager>("com.whisperingwind", "ImageDiff");
 }
-
 
 // Open images from the recent files menu.
 // The menu item is formatted as "path to file 1 -> path to file 2".

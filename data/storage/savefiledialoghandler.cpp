@@ -129,7 +129,7 @@ OptionalStringPair SaveFileDialogHandler::getUserOpenTwoFilePaths(const QString 
         title1 = "Open First Video";
         title2 = "Open Second Video";
     } else {
-        throw runtime_error("Error: The app is trying to open a file of an unsupported type."
+        throw std::runtime_error("Error: The app is trying to open a file of an unsupported type."
                             " This error message is for the app developer.");
     }
 

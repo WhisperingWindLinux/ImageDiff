@@ -1,4 +1,5 @@
 #include "mainwindow.h"
+#include "business/recentfilesinteractor.h"
 
 #include <QLabel>
 #include <QSplitter>
@@ -42,9 +43,14 @@ MainWindow::MainWindow(QWidget *parent)
 
     setAcceptDrops(true);
 
-    comparisionInteractor = new ImageProcessingInteractor(this);
+    imageFilesInteractor = new ImageFilesInteractor();
     colorPickerController = new ColorPickerController(this);
     imageProcessorsMenuController = new ImageProcessorsMenuController(this);
+    recentFilesInteractor = new RecentFilesInteractor();
+    imageProcessingInteractor = nullptr;
+
+    imageFilesInteractor->subscribe(this);
+
     imageView = new ImageViewer(this);
     setCentralWidget(imageView);
 
@@ -52,7 +58,7 @@ MainWindow::MainWindow(QWidget *parent)
     makeConnections();
     enableImageProceesorsMenuItems(false);
 
-    coreUpdateRecentFilesMenu();
+    updateRecentFilesMenu();
 }
 
 MainWindow::~MainWindow() {
@@ -62,7 +68,7 @@ MainWindow::~MainWindow() {
 /*  Application menu settings { */
 
 void MainWindow::buildImageProcessorsMenu() {
-    auto imageProcessorsInfo = comparisionInteractor->getImageProcessorsInfo();
+    auto imageProcessorsInfo = ImageProcessingInteractor::getImageProcessorsInfo();
     QMenu *comparatorsMenu = ui->menuComparators;
     QMenu *filtersMenu = ui->menuFilters;
     imageProcessorsMenuController->buildFiltersAndComparatorsMenus(comparatorsMenu,
@@ -112,29 +118,35 @@ void MainWindow::enableImageProceesorsMenuItems(bool isEnabled) {
     ui->actionColorPicker->setDisabled(!isEnabled);
 }
 
+void MainWindow::updateRecentFilesMenu() {
+    QStringList recentFileMenuRecords = recentFilesInteractor->getRecentFileMenuRecords();
+
+    ui->menuRecentFiles->clear();
+
+    foreach (auto record, recentFileMenuRecords) {
+        QAction *action = new QAction(record, this);
+        action->setData(record);
+        connect(action, &QAction::triggered, this, &MainWindow::openRecentFile);
+        ui->menuRecentFiles->addAction(action);
+    }
+
+    if (ui->menuRecentFiles->isEmpty()) {
+        ui->menuRecentFiles->addAction("No Recent Files")->setEnabled(false);
+    }
+}
+
 /* } =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
 /* Event handlers for application menu interactions { */
 
 void MainWindow::grabImagesFromVideos() {
-    try {
-        GetImagesFromVideosInteractor grabImagesFromVideosInteractor{};
-        auto imagesPath = grabImagesFromVideosInteractor.grabImagesFromVideos();
-        if (!imagesPath) {
-            return;
-        }
-        comparisionInteractor->openImages(imagesPath->first,
-                                                          imagesPath->second,
-                                                          false,
-                                                          true
-                                                          );
-    } catch (std::runtime_error &e) {
-        showError(e.what());
-    }
+    imageFilesInteractor->openImagesFromVideos();
 }
 
 void MainWindow::runAllComparators() {
-    comparisionInteractor->runAllComparators();
+    if (imageProcessingInteractor != nullptr) {
+        imageProcessingInteractor->runAllComparators();
+    }
 }
 
 void MainWindow::changePluginsSettings() {
@@ -173,29 +185,15 @@ void MainWindow::openRecentFile() {
     if (!data.isValid()) {
         return;
     }
-    QString recentMenuRecord = data.toString();
-    if (recentMenuRecord.isEmpty()) {
-        return;
-    }
-    try {
-        comparisionInteractor->openImagesFromRecentMenu(recentMenuRecord, true);
-    } catch (std::runtime_error &e) {
-        showError(e.what());
-    }
+    imageFilesInteractor->openImagesFromRecentMenu(data.toString());
 }
 
 void MainWindow::openImages() {
-    try {
-        comparisionInteractor->getPathsFromUserAndOpenImages();
-    } catch (std::runtime_error &e) {
-        showError(e.what());
-    }
+    imageFilesInteractor->openImagesViaOpenFilesDialog();
 }
 
 void MainWindow::closeImages() {
-    colorPickerController->onImagesClosed();
-    imageView->cleanUp();
-    enableImageProceesorsMenuItems(false);
+    onImagesClosed();
 }
 
 void MainWindow::switchBetweenImages() {
@@ -203,28 +201,34 @@ void MainWindow::switchBetweenImages() {
 }
 
 void MainWindow::callImageProcessor() {
-    QAction *action = qobject_cast<QAction*>(sender());
-    try {
-        comparisionInteractor->callImageProcessor(action->data());
-    } catch (std::runtime_error &e) {
-        showError(e.what());
-    } catch (std::exception &e) {
-        qDebug() << e.what();
+    if (imageProcessingInteractor == nullptr) {
+        return;
     }
+    QAction *action = qobject_cast<QAction*>(sender());
+    if (action == nullptr) {
+        return;
+    }
+    auto data = action->data();
+    if (!data.isValid()) {
+        return;
+    }
+    imageProcessingInteractor->callImageProcessor(data.toString());
 }
 
 void MainWindow::callImageProcessorsHelp() {
-    comparisionInteractor->showImageProcessorsHelp();
+    if (imageProcessingInteractor != nullptr) {
+        imageProcessingInteractor->showImageProcessorsHelp();
+    }
 }
 
 void MainWindow::saveImageAs() {
     SaveImageInfo info = imageView->getImageShowedOnTheScreen();
-    comparisionInteractor->saveImage(info);
+    imageFilesInteractor->saveImage(info);
 }
 
 void MainWindow::saveVisibleAreaAs() {
     SaveImageInfo info = imageView->getCurrentVisiableArea();
-    comparisionInteractor->saveImage(info);
+    imageFilesInteractor->saveImage(info);
 }
 
 void MainWindow::showAboutDialog() {
@@ -233,7 +237,9 @@ void MainWindow::showAboutDialog() {
 }
 
 void MainWindow::showOriginalImages() {
-    comparisionInteractor->showOriginalImages();
+    if (imageProcessingInteractor != nullptr) {
+        imageProcessingInteractor->restoreOriginalImages();
+    }
 }
 
 void MainWindow::showColorPicker() {
@@ -296,7 +302,7 @@ void MainWindow::dropEvent(QDropEvent *event) {
     try {
         event->acceptProposedAction();
         QList<QUrl> urls = event->mimeData()->urls();
-        comparisionInteractor->openImagesFromDragAndDrop(urls);
+        imageFilesInteractor->openImagesFromDragAndDrop(urls);
     } catch (std::runtime_error &e) {
         showError(e.what());
     }
@@ -312,69 +318,101 @@ void MainWindow::closeEvent(QCloseEvent *) {
 }
 /* } =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
-/* Methods of the abstract class AMainWindowCallbacks { */
+/* Methods of the abstract class IColorUnderCursorChangeListener { */
 
-// These methods are called from ComparisonInteractor
-
-void MainWindow::onColorUnderCursorChanged(ImagePixelColor visibleImageRgbValue,
-                                           ImagePixelColor hiddenImageRgbValue
+void MainWindow::onColorUnderCursorChanged(const ImagePixelColor &visibleImageRgbValue,
+                                           const ImagePixelColor &hiddenImageRgbValue
                                            )
 {
     colorPickerController->onColorUnderCursorChanged(visibleImageRgbValue, hiddenImageRgbValue);
 }
 
-void MainWindow::displayImages(QPixmapPtr image1,
-                               const QString& path1,
-                               QPixmapPtr image2,
-                               const QString& path2
-                               )
-{
-    imageView->displayImages(image1, path1, image2, path2);
+/* } =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
+
+/* Methods of the abstract class IImageFilesInteractorListener { */
+
+void MainWindow::onImagesOpened(const ImagesPtr images) {
+    imageProcessingInteractor = new ImageProcessingInteractor(images, this, this);
+    imageProcessingInteractor->subscribe(this);
+    imageView->displayImages(images);
     colorPickerController->onImagesOpened();
     enableImageProceesorsMenuItems(true);
+    updateRecentFilesMenu();
 }
 
-void MainWindow::onImageResultFromComparatorReceived(const QPixmapPtr image,
-                                                     const QString& description
-                                                     )
-{
+void MainWindow::onImagesOpenFailed(const QString &error) {
+    QString errorMsg = "Unknow error!";
+    if (!error.isEmpty()) {
+        errorMsg = error;
+    }
+    showError(errorMsg);
+}
+
+void MainWindow::onImagesClosed() {
+    if (imageProcessingInteractor != nullptr) {
+        imageProcessingInteractor->subscribe(this);
+        delete imageProcessingInteractor;
+        imageProcessingInteractor = nullptr;
+
+    }
+    colorPickerController->onImagesClosed();
+    imageView->cleanUp();
+    enableImageProceesorsMenuItems(false);
+    showStatusMessage("");
+}
+
+void MainWindow::onSavingFileFailed(const QString &path) {
+    showError("Error: Unable to open  " + path + ".");
+}
+
+void MainWindow::onFileSavedSuccessfully(const QString &path) {
+    #ifdef QT_DEBUG
+        if (!path.isEmpty()) {
+            onMessage("File saved at path " + path + ".");
+        }
+    #endif
+}
+
+void MainWindow::onShowImageProcessorsHelp(const QString &html) {
+    HelpDialog dialog(html);
+    dialog.exec();
+}
+
+void MainWindow::onComparisonResultLoaded(const QPixmap &image, const QString &description) {
     imageView->showImageFromComparator(image, description);
 }
 
-void MainWindow::onTextResultFromComparatorReceived(const QString& message,
-                                                    const QString& comparatorFullName,
-                                                    const QString& comparatorDescription,
-                                                    const QString& firstImageFilePath,
-                                                    const QString& secondImageFilePath
-                                                    )
+void MainWindow::onComparisonResultLoaded(const QString &html,
+                                          const QString &comparatorFullName,
+                                          const QString &comparatorDescription,
+                                          const QString &firstImagePath,
+                                          const QString &secondImagePath
+                                          )
 {
-    ComparatorResultDialog dialog { message,
+    ComparatorResultDialog dialog { html,
                                     comparatorFullName,
                                     comparatorDescription,
-                                    firstImageFilePath,
-                                    secondImageFilePath
+                                    firstImagePath,
+                                    secondImagePath
                                   };
     dialog.exec();
 }
 
-void MainWindow::saveImage(const QPixmapPtr image, const QString& defaultPath) {
-
-    SaveFileDialogHandler fileDialogHandler;
-    auto savedFilePath = fileDialogHandler.getUserSaveImagePath(defaultPath);
-    if (!savedFilePath) {
-        return;
-    }
-    if (!image->save(savedFilePath.value())) {
-        QMessageBox::warning(this, "Error", "Failed to save the image.");
-    }
+void MainWindow::onFilteredResultLoaded(const QPixmap &firstImage, const QPixmap &secondImage) {
+    imageView->replaceDisplayedImages(firstImage, secondImage);
 }
 
-void MainWindow::showHelp(const QString& message) {
-    if (!message.isEmpty()) {
-        HelpDialog dialog(message);
-        dialog.exec();
+void MainWindow::onImageProcessorFailed(const QString &error) {
+    QString errorMsg = "Unknow error!";
+    if (!error.isEmpty()) {
+        errorMsg = error;
     }
+    showError(errorMsg);
 }
+
+/* } =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
+
+/* Methods of the abstract class IPropcessorPropertiesDialogCallback { */
 
 /*
  * Opens a dialog that displays all the properties of the image processor.
@@ -400,31 +438,6 @@ QList<Property> MainWindow::showImageProcessorPropertiesDialog(const QString& pr
          * is closed, if the user clicks Cancel.
          */
         throw std::exception();
-    }
-}
-
-void MainWindow::updateRecentFilesMenu() {
-    coreUpdateRecentFilesMenu();
-}
-
-void MainWindow::onDisplayedImagesShouldBeReplaced(const QPixmapPtr first, const QPixmapPtr second) {
-    imageView->replaceDisplayedImages(first, second);
-}
-
-void MainWindow::coreUpdateRecentFilesMenu() {
-    QStringList pairsfilesPath = comparisionInteractor->getRecentFiles();
-
-    ui->menuRecentFiles->clear();
-
-    foreach (auto pair, pairsfilesPath) {
-        QAction *action = new QAction(pair, this);
-        action->setData(pair);
-        connect(action, &QAction::triggered, this, &MainWindow::openRecentFile);
-        ui->menuRecentFiles->addAction(action);
-    }
-
-    if (ui->menuRecentFiles->isEmpty()) {
-        ui->menuRecentFiles->addAction("No Recent Files")->setEnabled(false);
     }
 }
 
@@ -473,9 +486,8 @@ void MainWindow::openImagesInOtherAppInstance(QString firstFilePath,
     }
 }
 
-void MainWindow::openImagesFromCommandLine(QString firstFilePath, QString secondFilePath)
-{
-    comparisionInteractor->openImages(firstFilePath, secondFilePath, true, false);
+void MainWindow::openImagesFromCommandLine(const QString &firstFilePath, const QString &secondFilePath) {
+    imageFilesInteractor->openImagesViaCommandLine(firstFilePath, secondFilePath);
 }
 
 /* } =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
@@ -483,7 +495,7 @@ void MainWindow::openImagesFromCommandLine(QString firstFilePath, QString second
 
 /* IProgressDialog interface {   */
 
-void MainWindow::showProgressDialog(QString caption, int totalSteps) {
+void MainWindow::showProgressDialog(const QString &caption, int totalSteps) {
     if (progressDialog != nullptr) {
         delete progressDialog;
     }
@@ -523,7 +535,7 @@ void MainWindow::onUpdateProgressValue(int value) {
     }
 }
 
-void MainWindow::onMessage(QString message) {
+void MainWindow::onMessage(const QString &message) {
     QMessageBox msgBox;
     msgBox.setIcon(QMessageBox::Information);
     msgBox.setText(message);
@@ -532,7 +544,7 @@ void MainWindow::onMessage(QString message) {
     msgBox.exec();
 }
 
-void MainWindow::onError(QString error) {
+void MainWindow::onError(const QString &error) {
     showError(error);
 }
 

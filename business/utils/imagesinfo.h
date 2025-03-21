@@ -37,6 +37,14 @@ public:
         return secondImagePath;
     }
 
+    const QString& getFirstImageName() const {
+        return firstImageName;
+    }
+
+    const QString& getSecondImageName() const {
+        return secondImageName;
+    }
+
     const QString& getFirstImageBaseName() const {
         return firstImageBaseName;
     }

@@ -15,9 +15,9 @@
 #include <business/imageanalysis/filters/rgbfilter.h>
 #include <data/storage/savefiledialoghandler.h>
 #include <presentation/presenters/htmlimageprocessorshelppresenter.h>
-#include <domain/interfaces/imagerepository.h>
 #include <domain/interfaces/imageprocessinginteractorlistener.h>
 #include <business/utils/imagesinfo.h>
+#include "domain/interfaces/processorpropertiesdialogcallback.h"
 #include "imageprocessorsmanager.h"
 #include "runallcomparatorsinteractor.h"
 
@@ -31,20 +31,9 @@ ImageProcessingInteractor::ImageProcessingInteractor(
     originalImages(images),
     displayedImages(images)
 {
-    pluginsManager = new PluginsManager();
-    processorsManager = ImageProcessorsManager::instance();
-    getImageProcessorsInfo();
 }
 
 ImageProcessingInteractor::~ImageProcessingInteractor() {
-    if (pluginsManager != nullptr) {
-        delete pluginsManager;
-        pluginsManager = nullptr;
-    }
-    if (processorsManager != nullptr) {
-        delete processorsManager;
-        processorsManager = nullptr;
-    }
     listeners.clear();
 }
 
@@ -53,6 +42,8 @@ void ImageProcessingInteractor::callImageProcessor(const QVariant &callerData) {
         coreCallImageProcessor(callerData);
     } catch(std::runtime_error &e) {
         notifyImageProcessorFailed(e.what());
+    } catch (std::exception &e) {
+        qDebug() << e.what();
     }
 }
 
@@ -91,7 +82,7 @@ void ImageProcessingInteractor::restoreOriginalImages() {
 }
 
 void ImageProcessingInteractor::showImageProcessorsHelp() {
-    auto processorsInfo = processorsManager->getAllProcessorsInfo();
+    auto processorsInfo = ImageProcessorsManager::instance()->getAllProcessorsInfo();
     if (processorsInfo.size() == 0) {
         return;
     }
@@ -124,9 +115,11 @@ void ImageProcessingInteractor::callComparator(IComparatorPtr comparator) {
     auto firstImagePath = displayedImages->path1;
     auto secondImage = displayedImages->image2;
     auto secondImagePath = displayedImages->path2;
+    auto firstImageName = info.getFirstImageName();
+    auto secondImageName = info.getSecondImageName();
 
-    ComparableImage comapableImage1{ firstImage, firstImagePath };
-    ComparableImage comapableImage2{ secondImage, secondImagePath };
+    ComparableImage comapableImage1 { firstImage, firstImageName };
+    ComparableImage comapableImage2 { secondImage, secondImageName };
 
     auto result = comparator->compare(comapableImage1, comapableImage2);
 
@@ -186,6 +179,8 @@ void ImageProcessingInteractor::callFilter(IFilterPtr filter) {
 
 QList<ImageProcessorInfo> ImageProcessingInteractor::getImageProcessorsInfo() {
 
+    PluginsManager *pluginsManager = new PluginsManager();
+    ImageProcessorsManager *processorsManager = ImageProcessorsManager::instance();
     processorsManager->clear();
 
     // add comparators
@@ -257,7 +252,7 @@ void ImageProcessingInteractor::runAllComparators() {
     runAllComparatorsInteractor.run();
 }
 
-bool ImageProcessingInteractor::subscribe(const IImageProcessorInteractorListenerPtr listener) {
+bool ImageProcessingInteractor::subscribe(IImageProcessingInteractorListener *listener) {
     if (listener == nullptr) {
         return false;
     }
@@ -268,7 +263,7 @@ bool ImageProcessingInteractor::subscribe(const IImageProcessorInteractorListene
     return true;
 }
 
-bool ImageProcessingInteractor::unsubscribe(const IImageProcessorInteractorListenerPtr listener) {
+bool ImageProcessingInteractor::unsubscribe(const IImageProcessingInteractorListener *listener) {
     if (listener == nullptr) {
         return false;
     }

@@ -20,6 +20,8 @@ class IPropcessorPropertiesDialogCallback;
 class ImageProcessingInteractor
 {
 public:
+    static QList<ImageProcessorInfo> getImageProcessorsInfo();
+
     ImageProcessingInteractor(const ImagesPtr images,
                               IPropcessorPropertiesDialogCallback *propertiesDialogCallback,
                               IProgressDialog *progressDialogCallback
@@ -31,14 +33,14 @@ public:
     void runAllComparators();
     void restoreOriginalImages();
     void showImageProcessorsHelp();
-    QList<ImageProcessorInfo> getImageProcessorsInfo();
+
+    bool subscribe(IImageProcessingInteractorListener *listener);
+    bool unsubscribe(const IImageProcessingInteractorListener *listener);
 
 private:
     IPropcessorPropertiesDialogCallback *propertiesDialogCallback;
     IProgressDialog *progressDialogCallback;
-    PluginsManager *pluginsManager;
-    ImageProcessorsManager *processorsManager;
-    QList<IImageProcessorInteractorListenerPtr> listeners;
+    QList<IImageProcessingInteractorListener*> listeners;
     ImagesPtr originalImages;
     ImagesPtr displayedImages;
 
@@ -46,9 +48,6 @@ private:
     void callComparator(IComparatorPtr comparator);
     void callFilter(IFilterPtr transformer);
     void handleProcessorPropertiesIfNeed(IImageProcessorPtr processor);
-
-    bool subscribe(const IImageProcessorInteractorListenerPtr listener);
-    bool unsubscribe(const IImageProcessorInteractorListenerPtr listener);
 
     void notifyShowImageProcessorsHelp(const QString &html);
     void notifyComparisonResultLoaded(const QPixmap &image, const QString &description);

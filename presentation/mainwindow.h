@@ -9,6 +9,7 @@
 #include <domain/interfaces/iprogressdialog.h>
 #include <domain/interfaces/processorpropertiesdialogcallback.h>
 #include <business/imageanalysis/imageprocessinginteractor.h>
+#include <business/imagefilesinteractors.h>
 #include "imageprocessorsmenucontroller.h"
 
 
@@ -27,7 +28,9 @@ QT_END_NAMESPACE
 class MainWindow : public QMainWindow,
                    public IProgressDialog,
                    public IColorUnderCursorChangeListener,
-                   public IPropcessorPropertiesDialogCallback
+                   public IPropcessorPropertiesDialogCallback,
+                   public IImageFilesInteractorListener,
+                   public IImageProcessingInteractorListener
 {
     Q_OBJECT
 
@@ -59,7 +62,7 @@ public:
     ~MainWindow();
     void showStatusMessage(QString message);
     void openImagesInOtherAppInstance(QString firstFilePath, QString secondFilePath);
-    void openImagesFromCommandLine(QString firstFilePath, QString secondFilePath);
+    void openImagesFromCommandLine(const QString &firstFilePath, const QString &secondFilePath);
     void onColorUnderCursorTrackingStatusChanged(bool isActive);
 
     // IProgressDialog interface
@@ -70,9 +73,38 @@ public:
     void onMessage(const QString &message) override;
     void onError(const QString &error) override;
 
-    // IMainWindow interface
-    // TBD Refactoring
+    // IColorUnderCursorChangeListener interface
 
+    void onColorUnderCursorChanged(const ImagePixelColor &visibleImageRgbValue,
+                                   const ImagePixelColor &hiddenImageRgbValue) override;
+
+    // IPropcessorPropertiesDialogCallback intergace
+
+    QList<Property> showImageProcessorPropertiesDialog(const QString &processorName,
+                                                       const QString &processorDescription,
+                                                       const QList<Property> &defaultProperties) override;
+
+
+    // IImageFilesInteractorListener interface
+
+    void onImagesOpened(const ImagesPtr images) override;
+    void onImagesOpenFailed(const QString &error) override;
+    void onImagesClosed() override;
+    void onSavingFileFailed(const QString &path) override;
+    void onFileSavedSuccessfully(const QString &path) override;
+
+    // IImageProcessingInteractorListener interface
+
+    void onShowImageProcessorsHelp(const QString &html) override;
+    void onComparisonResultLoaded(const QPixmap &image, const QString &description) override;
+
+    void onComparisonResultLoaded(const QString &html, const QString &comparatorFullName,
+                                  const QString &comparatorDescription,
+                                  const QString &firstImagePath,
+                                  const QString &secondImagePath) override;
+
+    void onFilteredResultLoaded(const QPixmap &firstImage, const QPixmap &secondImage) override;
+    void onImageProcessorFailed(const QString &error) override;
 
 protected:
     void closeEvent(QCloseEvent *event) override;
@@ -83,7 +115,8 @@ protected:
 private:
     Ui::MainWindow *ui;
     ImageViewer *imageView;
-    ImageProcessingInteractor *comparisionInteractor;
+    ImageFilesInteractor *imageFilesInteractor;
+    ImageProcessingInteractor *imageProcessingInteractor;
     ColorPickerController *colorPickerController;
     ImageProcessorsMenuController *imageProcessorsMenuController;
     RecentFilesInteractor *recentFilesInteractor;
@@ -97,7 +130,7 @@ private:
     void enableImageProceesorsMenuItems(bool isEnabled);
     void saveMainWindowPosition();
     void restoreMainWindowPosition();
-    void coreUpdateRecentFilesMenu();
+    void updateRecentFilesMenu();
 };
 #endif // MAINWINDOW_H
 

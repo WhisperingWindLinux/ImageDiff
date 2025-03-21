@@ -6,33 +6,34 @@
 
 #include <domain/valueobjects/savefileinfo.h>
 #include <domain/interfaces/imagefilesinteractorlistener.h>
-#include <data/repositories/imagesrepository.h>
 #include <domain/valueobjects/images.h>
 
 
 class RecentFilesInteractor;
 class ImageFilesHandler;
 
-class ImageFilesInteractors
+class ImageFilesInteractor
 {
 public:
-    ImageFilesInteractors();
-    ~ImageFilesInteractors();
+    ImageFilesInteractor();
+    ~ImageFilesInteractor();
 
+    void openImages(const QString &image1Path, const QString &image2Path);
     void openImagesFromRecentMenu(const QString &recentFileMenuRecord);
     void openImagesFromDragAndDrop(const QList<QUrl> &urls);
     void openImagesViaCommandLine(const QString &image1Path, const QString &image2Path);
     void openImagesViaOpenFilesDialog();
+    void openImagesFromVideos();
     void saveImage(const SaveImageInfo &info);
-
-    bool subscribe(const IImageFilesInteractorListenerPtr listener);
-    bool unsubscribe(const IImageFilesInteractorListenerPtr listener);
+    
+    bool subscribe(IImageFilesInteractorListener *listener);
+    bool unsubscribe(const IImageFilesInteractorListener *listener);
 
 private:
     ImagesPtr images;
     ImageFilesHandler *imageFileHandler;
     RecentFilesInteractor *recentFilesInteractor;
-    QList<IImageFilesInteractorListenerPtr> listeners;
+    QList<IImageFilesInteractorListener*> listeners;
 
     void notifyImagesOpened(const ImagesPtr images);
     void notifyImagesOpenFailed(const QString &error);

@@ -4,17 +4,17 @@
 #include <qstring.h>
 
 #include <presentation/dialogs/getimagesfromvideosdialog.h>
+#include <domain/valueobjects/images.h>
 
 class MainWindow;
 
 class GetImagesFromVideosInteractor
 {
 public:
-    GetImagesFromVideosInteractor();
-
-    std::optional<QPair<QString, QString> > grabImagesFromVideos();
-
-private:
+    GetImagesFromVideosInteractor() = default;
+    ~GetImagesFromVideosInteractor() = default;
+    
+    ImagesPtr get();
 };
 
 #endif // GETIMAGESFROMVIDEOSINTERACTOR_H

@@ -9,7 +9,9 @@ class IPluginsManagerCallbacks;
 class PluginsManager
 {
 public:
-    PluginsManager();
+    PluginsManager() = default;
+    ~PluginsManager() = default;
+
     QList<std::shared_ptr<IImageProcessor> > loadPlugins();
 };
 

@@ -2,26 +2,24 @@
 
 #include <data/storage/savefiledialoghandler.h>
 
-GetImagesFromVideosInteractor::GetImagesFromVideosInteractor() {}
-
-std::optional<QPair<QString, QString> > GetImagesFromVideosInteractor::grabImagesFromVideos() {
+ImagesPtr GetImagesFromVideosInteractor::get() {
     // Load videos for both players
     SaveFileDialogHandler service;
     auto pathsPair = service.getUserOpenTwoVideoPaths("");
     if (!pathsPair) {
-        return nullopt;
+        return nullptr; // the operation was canceled by the user
     }
 
-    auto videoFilePath1 = pathsPair->second;
-    auto videoFilePath2 = pathsPair->second;
+    QString videoFilePath1 = pathsPair->second;
+    QString videoFilePath2 = pathsPair->second;
 
     GrabImagesFromVideosDialog dialog {nullptr, videoFilePath1, videoFilePath2};
     dialog.exec();
     if (dialog.isCanceled()) {
-        return nullopt;
+        return nullptr; // the operation was canceled by the user
     }
     QString firstImagePath = dialog.getFirstScreenshotPath();
     QString secondImagePath = dialog.getSecondScreenshotPath();
 
-    return { { firstImagePath, secondImagePath } };
+    return std::make_shared<Images>(QPixmap(), QPixmap(), firstImagePath, secondImagePath);
 }

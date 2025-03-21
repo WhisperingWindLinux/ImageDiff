@@ -3,10 +3,6 @@
 #include <domain/valueobjects/pyscriptinfo.h>
 #include <business/pluginsettingsinteractor.h>
 
-PluginsManager::PluginsManager()
-{
-}
-
 QList<std::shared_ptr<IImageProcessor> > PluginsManager::loadPlugins() {
 
     QList<std::shared_ptr<IImageProcessor> > result;
