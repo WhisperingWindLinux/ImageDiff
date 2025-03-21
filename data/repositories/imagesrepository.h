@@ -4,20 +4,27 @@
 #include <qpixmap.h>
 #include <domain/interfaces/imagerepository.h>
 
+class ImageFilesHandler;
+
+// It stores two compared images and one image as the result of their
+// comparison (the result of the comparator's work), as well as some
+// metadata about the images, such as paths, names, etc.
 
 class ImagesRepository : public IImagesRepository
 {
 public:
-    ImagesRepository();
+    ImagesRepository(const QString &image1Path,
+                     const QString &image2Path,
+                     const QPixmap &image1,
+                     const QPixmap &image2
+                     );
 
-    bool update(const QString &image1Path, const QString &image2Path, bool isTemporaryFiles = false);
-    void update(const QPixmap &image1, const QPixmap &image2);
-    void update(const QPixmap &comparisonResultImage);
-    void clear();
+    virtual ~ImagesRepository();
 
+    void update(const QPixmap &image1, const QPixmap &image2) override;
+    void update(const QPixmap &comparisonResultImage) override;
+    void setDeleteFilesAfterClose();
     void restoreOriginalImages();
-
-    const QString& getDefaultImageExtention(bool includeDot = false) const;
 
     // IImageRepository interface
 
@@ -32,8 +39,6 @@ public:
     const QString& getSecondImageDir() const override;
 
 private:
-    QString imageExtentionWithoutDot;
-    QString imageExtentionWithDot;
     bool isTemporaryFiles;
     QString firstImagePath;
     QString secondImagePath;
@@ -49,5 +54,7 @@ private:
     QPixmap secondCurrentlyDisplayedImage;
     QPixmap displayedComparisonResultImage;
 };
+
+typedef std::shared_ptr<ImagesRepository> ImagesRepositoryPtr;
 
 #endif // IMAGESREPOSITORY_H

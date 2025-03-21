@@ -5,20 +5,17 @@
 #include <qmediaplayer.h>
 #include <qmessagebox.h>
 
-SaveFileDialogHandler::SaveFileDialogHandler() {
-}
-
-optional<QString> SaveFileDialogHandler::getUserSaveImagePath(QString path) {
+std::optional<QString> SaveFileDialogHandler::getUserSaveImagePath(const QString &path) {
     return getUserSaveFilePath(path, PathType::Image);
 }
 
-optional<QString> SaveFileDialogHandler::getUserSaveReportPath(QString path) {
+std::optional<QString> SaveFileDialogHandler::getUserSaveReportPath(const QString &path) {
     return getUserSaveFilePath(path, PathType::Report);
 }
 
-optional<QString> SaveFileDialogHandler::getUserSaveFilePath(QString path,
-                                                             PathType savedFileType
-                                                               )
+std::optional<QString> SaveFileDialogHandler::getUserSaveFilePath(const QString &path,
+                                                                  PathType savedFileType
+                                                                 )
 {
     QFileDialog dialog;
     QString filePath;
@@ -32,7 +29,7 @@ optional<QString> SaveFileDialogHandler::getUserSaveFilePath(QString path,
         filter = reportFilter;
         title = "Save Report";
     } else {
-        throw runtime_error("Error: The app is trying to save a file of an unsupported type."
+        throw std::runtime_error("Error: The app is trying to save a file of an unsupported type."
                             " This error message is for the app developer.");
     }
 
@@ -52,24 +49,23 @@ optional<QString> SaveFileDialogHandler::getUserSaveFilePath(QString path,
         QStringList fileNames = dialog.selectedFiles();
         if (fileNames.size() == 0) {
             showWarningMessage("You have not selected any path to save the file.");
-            return nullopt;
+            return std::nullopt;
         }
         else if (fileNames.size() == 1) {
             filePath = dialog.selectedFiles().constFirst();
         }
     } else {
-        return nullopt;
+        return std::nullopt;
     }
 
     if (filePath.isEmpty()) {
-        return nullopt;
+        return std::nullopt;
     }
 
-    return make_optional<QString>(filePath);
+    return std::make_optional<QString>(filePath);
 }
 
-std::optional<QString> SaveFileDialogHandler::getUserOpenImagePath(QString baseDir)
-{
+std::optional<QString> SaveFileDialogHandler::getUserOpenImagePath(const QString &baseDir) {
     QFileDialog dialog;
     QString firstPath;    
     dialog.setViewMode(QFileDialog::Detail);
@@ -98,21 +94,24 @@ std::optional<QString> SaveFileDialogHandler::getUserOpenImagePath(QString baseD
         return std::nullopt;
     }
     if (firstPath.isEmpty()) {
-        return nullopt;
+        return std::nullopt;
     }
 
-    return make_optional<QString>(firstPath);
+    return std::make_optional<QString>(firstPath);
 }
 
-OptionalPathPair SaveFileDialogHandler::getUserOpenTwoImagePaths(QString baseDir) {
+OptionalStringPair SaveFileDialogHandler::getUserOpenTwoImagePaths(const QString &baseDir) {
     return getUserOpenTwoFilePaths(baseDir, PathType::Image);
 }
 
-OptionalPathPair SaveFileDialogHandler::getUserOpenTwoVideoPaths(QString baseDir) {
+OptionalStringPair SaveFileDialogHandler::getUserOpenTwoVideoPaths(const QString &baseDir) {
     return getUserOpenTwoFilePaths(baseDir, PathType::Video);
 }
 
-OptionalPathPair SaveFileDialogHandler::getUserOpenTwoFilePaths(QString baseDir, PathType pathType) {
+OptionalStringPair SaveFileDialogHandler::getUserOpenTwoFilePaths(const QString &baseDir,
+                                                                  PathType pathType
+                                                                  )
+{
     QFileDialog dialog;
     QString firstFile;
     QString secondFile;
@@ -176,19 +175,19 @@ OptionalPathPair SaveFileDialogHandler::getUserOpenTwoFilePaths(QString baseDir,
     }
 
     if (firstFile.isEmpty() || secondFile.isEmpty()) {
-        return nullopt;
+        return std::nullopt;
     }
 
     if (pathType == PathType::Video) {
         bool isValid = validateVideoFile(firstFile);
         isValid &= validateVideoFile(secondFile);
-        if (!isValid) return nullopt;
+        if (!isValid) return std::nullopt;
     }
 
     return std::make_optional<QPair<QString, QString>>(firstFile, secondFile);
 }
 
-void SaveFileDialogHandler::showWarningMessage(QString msg) {
+void SaveFileDialogHandler::showWarningMessage(const QString &msg) {
     QMessageBox msgBox;
     msgBox.setIcon(QMessageBox::Warning);
     msgBox.setText(msg);
@@ -197,7 +196,7 @@ void SaveFileDialogHandler::showWarningMessage(QString msg) {
     msgBox.exec();
 }
 
-bool SaveFileDialogHandler::validateVideoFile(QString path) {
+bool SaveFileDialogHandler::validateVideoFile(const QString &path) {
     if (path.isEmpty()) {
         return false;
     }

@@ -41,7 +41,7 @@ void PythonScripFilter::setProperties(QList<Property> properties) {
     this->properties = properties;
 }
 
-QImage PythonScripFilter::filter(QImage image) {
+QImage PythonScripFilter::filter(const QImage &image) {
     QByteArray image1Data;
 
     QBuffer buffer1(&image1Data);

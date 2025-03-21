@@ -4,12 +4,12 @@ ComparisonResultVariant::ComparisonResultVariant(){
     this->_type = ComparisonResultVariantType::None;
 }
 
-ComparisonResultVariant::ComparisonResultVariant(QImage image) {
+ComparisonResultVariant::ComparisonResultVariant(const QImage &image) {
     this->image = image;
     this->_type = ComparisonResultVariantType::Image;
 }
 
-ComparisonResultVariant::ComparisonResultVariant(QString string) {
+ComparisonResultVariant::ComparisonResultVariant(const QString &string) {
     this->string = string;
     this->_type = ComparisonResultVariantType::String;
 }

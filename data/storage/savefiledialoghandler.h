@@ -4,26 +4,19 @@
 #include <qpixmap.h>
 #include <qstring.h>
 
-using namespace std;
-
-typedef optional<QPair<QString, QString>> OptionalPathPair;
-
-
+typedef std::optional<QPair<QString, QString>> OptionalStringPair;
 
 class SaveFileDialogHandler
 {
 public:
-    SaveFileDialogHandler();
+    SaveFileDialogHandler() = default;
+    ~SaveFileDialogHandler() = default;
 
-    optional<QString> getUserSaveImagePath(QString path);
-
-    optional<QString> getUserSaveReportPath(QString path);
-
-    OptionalPathPair getUserOpenTwoImagePaths(QString baseDir);
-
-    optional<QString> getUserOpenImagePath(QString baseDir);
-
-    OptionalPathPair getUserOpenTwoVideoPaths(QString baseDir);
+    std::optional<QString> getUserSaveImagePath(const QString &path);
+    std::optional<QString> getUserSaveReportPath(const QString &path);
+    OptionalStringPair getUserOpenTwoImagePaths(const QString &baseDir);
+    std::optional<QString> getUserOpenImagePath(const QString &baseDir);
+    OptionalStringPair getUserOpenTwoVideoPaths(const QString &baseDir);
 
 private:
     const QString reportFilter = "Report Files (*.html)";
@@ -32,11 +25,15 @@ private:
 
     enum class PathType { Image, Report, Video };
 
-    optional<QString> getUserSaveFilePath(QString path, PathType pathType);
-    OptionalPathPair getUserOpenTwoFilePaths(QString baseDir, PathType pathType);
-    void showWarningMessage(QString msg);
+    std::optional<QString> getUserSaveFilePath(const QString &path, PathType pathType);
 
-    bool validateVideoFile(QString path);
+    OptionalStringPair getUserOpenTwoFilePaths(const QString &baseDir,
+                                               PathType pathType
+                                               );
+
+    void showWarningMessage(const QString &msg);
+
+    bool validateVideoFile(const QString &path);
 
 };
 

@@ -20,7 +20,7 @@ public:
     QString getDescription() const override;
     QList<Property> getDefaultProperties() const override;
     void setProperties(QList<Property> properties) override;
-    QImage filter(QImage image) override;
+    QImage filter(const QImage &image) override;
 
 private:
     QString shortName;

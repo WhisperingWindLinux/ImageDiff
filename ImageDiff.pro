@@ -21,6 +21,7 @@ SOURCES += \
     business/imageanalysis/filters/grayscalefilter.cpp \
     business/imageanalysis/filters/rgbfilter.cpp \
     business/imageanalysis/imageprocessorsmanager.cpp \
+    business/imagefilesinteractors.cpp \
     business/plugins/imageprocessordeserializer.cpp \
     business/plugins/pluginsmanager.cpp \
     business/imageanalysis/runallcomparatorsinteractor.cpp \
@@ -67,6 +68,7 @@ HEADERS += \
     business/imageanalysis/filters/grayscalefilter.h \
     business/imageanalysis/filters/rgbfilter.h \
     business/imageanalysis/imageprocessorsmanager.h \
+    business/imagefilesinteractors.h \
     business/plugins/imageprocessordeserializer.h \
     business/plugins/pluginsmanager.h \
     business/imageanalysis/runallcomparatorsinteractor.h \
@@ -82,6 +84,7 @@ HEADERS += \
     data/storage/savefiledialoghandler.h \
     domain/interfaces/comparator.h \
     domain/interfaces/filter.h \
+    domain/interfaces/imagefilesinteractorlistener.h \
     domain/interfaces/imageprocessor.h \
     domain/interfaces/imagerepository.h \
     domain/interfaces/iprogressdialog.h \
@@ -91,6 +94,7 @@ HEADERS += \
     domain/valueobjects/comparisonresultvariant.h \
     domain/valueobjects/imagepixelcolor.h \
     domain/valueobjects/imageprocessorsinfo.h \
+    domain/valueobjects/images.h \
     domain/valueobjects/pluginssettings.h \
     domain/valueobjects/property.h \
     domain/valueobjects/pyscriptinfo.h \

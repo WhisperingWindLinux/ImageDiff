@@ -1,32 +1,37 @@
 #ifndef IMAGEFILESHANDLER_H
 #define IMAGEFILESHANDLER_H
 
+#include <domain/interfaces/imagerepository.h>
+#include <domain/valueobjects/images.h>
 #include <qstring.h>
 #include <qurl.h>
 #include <domain/valueobjects/savefileinfo.h>
-#include <data/storage/repositories/imagesrepository.h>
 
-class IMainWindowCallbacks;
-class RecentFilesManager;
+class ImagesRepository;
+
+struct FileSaveResult {
+  FileSaveResult(bool isSaved, const QString &path): isSaved(isSaved), path(path) {}
+  const bool isSaved;
+  const QString &path;
+};
 
 class ImageFilesHandler
 {
 public:
-    ImageFilesHandler(IMainWindowCallbacks *callbacks);
+    static const QString imageExtentionWithoutDot;
+    static const QString imageExtentionWithDot;
 
-    QStringList getRecentFiles();
-    void openImagesFromRecentMenu(QString recentFileMenuRecord, bool isUpdateRecentMenu);
-    void openImagesFromDragAndDrop(QList<QUrl> urls);
-    void getPathsFromUserAndOpenImages();
-    void openImages(QString &Image1Path, QString &Image2Path, bool removeImageFilesAtExit, bool isUpdateRecentMenu);
+    ImageFilesHandler() = default;
+    ~ImageFilesHandler() = default;
+
+    ImagesPtr openImages();
+    ImagesPtr openImages(const QString &image1Path, const QString &image2Path);
+    ImagesPtr openImages(const QList<QUrl> &urls);
     bool validateFile(const QString &filePath);
-    void saveImage(SaveImageInfo info);
+    FileSaveResult saveImage(const SaveImageInfo &info, const IImagesRepositoryPtr imagerepository);
 
 private:
-    IMainWindowCallbacks *callbacks;
-    std::unique_ptr<RecentFilesManager> recentFilesManager;
-    std::unique_ptr<ImagesRepository> imageRepository;
-    bool cleanUpImageFilesAtExit;
+    static const std::string errorUnableToOpenImages;
 };
 
 #endif // IMAGEFILESHANDLER_H

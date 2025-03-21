@@ -1,44 +1,24 @@
 #include "imagesrepository.h"
 
 #include <QtCore/qdir.h>
+#include <data/storage/imagefileshandler.h>
 #include <qfileinfo.h>
 
-ImagesRepository::ImagesRepository()
-    : imageExtentionWithoutDot("png"),
-    imageExtentionWithDot(QString(".") + imageExtentionWithoutDot)
+ImagesRepository::ImagesRepository(const QString &image1Path,
+                                   const QString &image2Path,
+                                   const QPixmap &image1,
+                                   const QPixmap &image2
+                                   )
+    : isTemporaryFiles(false)
 {
-}
-
-bool ImagesRepository::update(const QString &image1Path,
-                              const QString &image2Path,
-                              bool isTemporaryFiles
-                              )
-{
-    clear();
-
     QFileInfo firstImageInfo { image1Path };
     QFileInfo secondImageInfo { image2Path };
 
-    if (!firstImageInfo.isFile() || !secondImageInfo.isFile()) {
-        return false;
-    }
-
-    QString suffix1 = "." + firstImageInfo.suffix().toLower();
-    QString suffix2 = "." + secondImageInfo.suffix().toLower();
-    if (suffix1 != suffix2 || suffix1 != imageExtentionWithDot) {
-        return false;
-    }
-
-    originalFirstImage.load(image1Path);
-    originalSecondImage.load(image2Path);
-
-    if (originalFirstImage.isNull() || originalSecondImage.isNull()) {
-        clear();
-        return false;
-    }
-
     firstImagePath = image1Path;
     secondImagePath = image2Path;
+
+    originalFirstImage = image1;
+    originalSecondImage = image2;
     firstCurrentlyDisplayedImage = originalFirstImage;
     secondCurrentlyDisplayedImage = originalSecondImage;
 
@@ -48,20 +28,9 @@ bool ImagesRepository::update(const QString &image1Path,
     secondImageBaseName = secondImageInfo.baseName();
     firstImageDir = firstImageInfo.dir().absolutePath();
     secondImageDir = secondImageInfo.dir().absolutePath();
-    this->isTemporaryFiles = isTemporaryFiles;
-    return true;
 }
 
-void ImagesRepository::update(const QPixmap &image1, const QPixmap &image2) {
-    firstCurrentlyDisplayedImage = image1;
-    secondCurrentlyDisplayedImage = image2;
-}
-
-void ImagesRepository::update(const QPixmap &comparisonResultImage) {
-    displayedComparisonResultImage = comparisonResultImage;
-}
-
-void ImagesRepository::clear() {
+ImagesRepository::~ImagesRepository() {
     if (isTemporaryFiles) {
         QFile(firstImagePath).remove();
         QFile(secondImagePath).remove();
@@ -82,18 +51,37 @@ void ImagesRepository::clear() {
     secondImageDir = "";
 }
 
+// Replace the old two compared images with new ones that have image processing
+// algorithms (filters) applied. At the same time, we always keep a copy of
+// the original files so that all changes can be rolled back at the user's
+// request.
+void ImagesRepository::update(const QPixmap &image1, const QPixmap &image2) {
+    firstCurrentlyDisplayedImage = image1;
+    secondCurrentlyDisplayedImage = image2;
+}
+
+// The user applied an image processing algorithm (comparator) that
+// does not alter the two original compared images but creates a third
+// image, which is the result of comparing the two originals.
+// It is displayed as an additional (third) image in the viewer.
+void ImagesRepository::update(const QPixmap &comparisonResultImage) {
+    displayedComparisonResultImage = comparisonResultImage;
+}
+
+// When the user selects an area of the image with the mouse while holding
+// down Command, a new instance of the application opens with cropped images.
+// These images are saved in the Temp folder and will be deleted upon closing
+// the application unless the user saves them.
+void ImagesRepository::setDeleteFilesAfterClose() {
+    isTemporaryFiles = true;
+}
+
+// The user requested the removal of all applied filters
+// from the two compared images.
 void ImagesRepository::restoreOriginalImages() {
     firstCurrentlyDisplayedImage = originalFirstImage;
     secondCurrentlyDisplayedImage = originalFirstImage;
     displayedComparisonResultImage = {};
-}
-
-const QString& ImagesRepository::getDefaultImageExtention(bool includeDot) const {
-    if (includeDot) {
-        return imageExtentionWithDot;
-    } else {
-        return imageExtentionWithoutDot;
-    }
 }
 
 const QString& ImagesRepository::getFirstImagePath() const {

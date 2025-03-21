@@ -12,8 +12,8 @@ RecentFilesInteractor::RecentFilesInteractor() {
 // Open images from the recent files menu.
 // The menu item is formatted as "path to file 1 -> path to file 2".
 std::optional<QPair<QString, QString>> RecentFilesInteractor::getRecentFilePathsByRecentMenuRecord(
-                                                                        QString& recentFileMenuRecord
-                                                                        )
+                                                                    const QString& recentFileMenuRecord
+                                                                    )
 {
     auto pair = stringToPair(recentFileMenuRecord);
     if (!pair) {
