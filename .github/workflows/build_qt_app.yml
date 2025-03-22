@@ -14,11 +14,13 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+
+      - name: Set up environment
+        run: |
+          export SHELL=/bin/bash
       
       - name: Build project
         run: |
-          export PATH=/opt/homebrew/opt/ncurses/bin:$PATH
-          export DYLD_LIBRARY_PATH=/opt/homebrew/lib:$DYLD_LIBRARY_PATH
           mkdir build
           cd build
           qmake ../ImageDiff.pro
