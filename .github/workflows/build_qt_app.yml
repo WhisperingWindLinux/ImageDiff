@@ -19,14 +19,27 @@ jobs:
         run: |
           export SHELL=/bin/bash
       
-      - name: Build project
+      - name: Build universal binary
         run: |
-          mkdir build
-          cd build
-          qmake ../ImageDiff.pro
+          mkdir -p build-arm64 build-x86_64
+          
+          cd build-arm64
+          arch -arm64 qmake ../ImageDiff.pro
           make
+          cd ..
+      
+          cd build-x86_64
+          arch -x86_64 qmake ../ImageDiff.pro
+          make
+          cd ..
+      
+          lipo -create -output build-universal/ImageDiff \
+            build-arm64/ImageDiff \
+            build-x86_64/ImageDiff
+
+          file build-universal/ImageDiff
 
       - name: Package application into tar.gz
         run: |
           cd build
-          tar -czvf ImageDiff.tar.gz ImageDiff.app
+          tar -czvf ImageDiff-macOS-arm64.tar.gz ImageDiff.app
