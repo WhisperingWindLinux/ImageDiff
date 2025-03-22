@@ -3,10 +3,10 @@ name: Build and Package Qt Application
 on:
   push:
     branches:
-      - develop
+      - ga-build
   pull_request:
     branches:
-      - develop
+      - ga-build
 
 jobs:
   build:
