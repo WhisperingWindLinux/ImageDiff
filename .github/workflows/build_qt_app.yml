@@ -1,49 +1,39 @@
 name: Build and Package Qt Application
 
 on:
-  push:
-    branches:
-      - develop
-  pull_request:
-    branches:
-      - develop
+  workflow_dispatch:
+  #push:
+    #branches:
+      #- develop
+  #pull_request:
+    #branches:
+      #- develop
 
 jobs:
   build:
-    runs-on: macos-14
+    runs-on: self-hosted
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Install dependencies
+      - name: Set up environment
         run: |
-          brew update
-          brew install qt
-
-      - name: Set up Qt environment
-        run: |
-          echo "Setting up Qt environment"
-          export PATH="/usr/local/opt/qt/bin:$PATH"
-          qmake --version
-
+          export SHELL=/bin/bash
+      
       - name: Build project
         run: |
           mkdir build
           cd build
           qmake ../ImageDiff.pro
-          make
+          make -j8
 
       - name: Package application into tar.gz
         run: |
           cd build
-          tar -czvf ImageDiff.tar.gz ImageDiff.app
-
+          tar -czvf ImageDiff-macOS-arm64.tar.gz ImageDiff.app
+          
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
-          name: ImageDiff
-          path: build/ImageDiff.tar.gz
-      - name: Run a multi-line script
-        run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
+          name: built-app
+          path: build/ImageDiff-macOS-arm64.tar.gz
