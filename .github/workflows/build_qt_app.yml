@@ -39,4 +39,5 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           name: ImageDiff-macOS-arm64
-          path: build
+          path: build/ImageDiff.app
+
