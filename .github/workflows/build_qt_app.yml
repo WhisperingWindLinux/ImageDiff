@@ -33,11 +33,13 @@ jobs:
       - name: Package application into tar.gz
         run: |
           cd build
+          mkdir qt-app
+          cp ./ImageDiff-macOS-arm64.tar.gz ./qt-app/
           tar -czvf ImageDiff-macOS-arm64.tar.gz ImageDiff.app
           
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           name: ImageDiff-macOS-arm64
-          path: build/ImageDiff-macOS-arm64.tar.gz
+          path: build/qt-app/ImageDiff-macOS-arm64.tar.gz
 
