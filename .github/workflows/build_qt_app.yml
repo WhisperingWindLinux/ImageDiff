@@ -14,12 +14,15 @@ jobs:
     runs-on: self-hosted
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up environment
         run: |
           export SHELL=/bin/bash
-      
+          
+      - name: Install gtar
+        run: brew install gnu-tar
+        
       - name: Build project
         run: |
           mkdir build
