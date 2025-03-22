@@ -17,6 +17,7 @@ jobs:
       
       - name: Build project
         run: |
+          export PATH=/opt/homebrew/opt/ncurses/bin:/opt/homebrew/opt/ncurses/bin:$PATH
           mkdir build
           cd build
           qmake ../ImageDiff.pro
