@@ -13,7 +13,7 @@ public:
 
     void buildFiltersAndComparatorsMenus(QMenu *comparatorsMenu,
                                          QMenu *filtersMenu,
-                                         QList<ImageProcessorInfo> imageProcessorsInfo
+                                         const QList<ImageProcessorInfo> &imageProcessorsInfo
                                          );
 private:
     MainWindow *mainWindow;

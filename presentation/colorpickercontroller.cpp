@@ -14,8 +14,8 @@ ColorPickerController::ColorPickerController(MainWindow *mainWindow)
     colorPicker = std::make_unique<ColorPickerPanel>();
 }
 
-void ColorPickerController::onColorUnderCursorChanged(ImagePixelColor visibleImagePixelColor,
-                                                      ImagePixelColor hiddenImagePixelColor
+void ColorPickerController::onColorUnderCursorChanged(const ImagePixelColor &visibleImagePixelColor,
+                                                      const ImagePixelColor &hiddenImagePixelColor
                                                       )
 {
     colorPicker->update(visibleImagePixelColor, hiddenImagePixelColor);

@@ -102,7 +102,7 @@ RgbWidgets ColorPickerPanel::createPanel() {
     return { fileNameLabel, panelLayout, colorSquare, rLabel, gLabel, bLabel };
 }
 
-void ColorPickerPanel::updateTopPanelOnly(ImagePixelColor visibleImageColor) {
+void ColorPickerPanel::updateTopPanelOnly(const ImagePixelColor &visibleImageColor) {
     // Set the file name in the top panel
     firstFileNameLabel->setText(visibleImageColor.getImageName());
 
@@ -135,9 +135,9 @@ void ColorPickerPanel::updateTopPanelOnly(ImagePixelColor visibleImageColor) {
     }
 }
 
-void ColorPickerPanel::update(ImagePixelColor visibleImageColor,
-                            std::optional<ImagePixelColor> hiddenImageColor
-                            )
+void ColorPickerPanel::update(const ImagePixelColor &visibleImageColor,
+                              std::optional<ImagePixelColor> hiddenImageColor
+                             )
 {
     if (!isTwoPanelMode) {
         updateTopPanelOnly(visibleImageColor);

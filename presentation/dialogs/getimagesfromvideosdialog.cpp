@@ -2,8 +2,8 @@
 
 
 GrabImagesFromVideosDialog::GrabImagesFromVideosDialog(QWidget *parent,
-                                                       QString videoFilePath1,
-                                                       QString videoFilePath2)
+                                                       const QString &videoFilePath1,
+                                                       const QString &videoFilePath2)
     : QDialog(parent),
     videoFilePath1(videoFilePath1),
     videoFilePath2(videoFilePath2),

@@ -18,7 +18,7 @@ ImageViewer::ImageViewer(IDropListener *dropListener, MainWindow *parent)
     : QGraphicsView(parent),
     parent(parent),
     dropListener(dropListener)
-{
+{    
     customScene = nullptr;
     firstDisplayedImage = nullptr;
     secondDisplayedImage = nullptr;
@@ -132,6 +132,7 @@ void ImageViewer::displayImages(const ImagesPtr images) {
     setAcceptDrops(true);
     customScene = new QGraphicsScene(this);
     setScene(customScene);
+
     customScene->addItem(firstDisplayedImage);
     customScene->addItem(secondDisplayedImage);
 
@@ -373,7 +374,7 @@ QPixmap ImageViewer::getVisiblePixmap() {
     return result;
 }
 
-void ImageViewer::passCropedImageToOtherAppInstance(QRectF rect) {
+ImagesPtr ImageViewer::getCroppedImages(QRectF rect) {
 
     QRect selectionRect = rect.toAlignedRect();
 
@@ -384,22 +385,7 @@ void ImageViewer::passCropedImageToOtherAppInstance(QRectF rect) {
     QRect boundedRect2 = selectionRect.intersected(secondPixmap.rect());
     QPixmap croppedPixmap2 = secondPixmap.copy(boundedRect2);
 
-    QString path1 = savePixmapToTempDir(croppedPixmap1, firstImageName);
-    QString path2 = savePixmapToTempDir(croppedPixmap2, secondImageName);
-
-    parent->openImagesInOtherAppInstance(path1, path2);
-}
-
-QString ImageViewer::savePixmapToTempDir(const QPixmap &pixmap, const QString &fileName) {
-    QString tempDir = QDir::tempPath();
-
-    QString filePath = QDir(tempDir).filePath(QString(fileName) + ".png");
-
-    if (pixmap.save(filePath)) {
-        return filePath;
-    } else {
-        return {};
-    }
+    return std::make_shared<Images>(croppedPixmap1,croppedPixmap2,  firstImageName, secondImageName);
 }
 
 /* } =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
@@ -532,7 +518,8 @@ void ImageViewer::mouseReleaseEvent(QMouseEvent *event) {
                  event->modifiers() & Qt::ControlModifier
                  )
         {
-            passCropedImageToOtherAppInstance(sceneSelectionRect);
+            ImagesPtr images = getCroppedImages(sceneSelectionRect);
+            parent->onImagesCropped(images);
         }
         selectionRect = QRect(); // Clear the selection rectangle
         viewport()->update();    // Request a repaint of the view

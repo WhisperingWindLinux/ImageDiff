@@ -3,9 +3,9 @@
 #include <data/storage/savefiledialoghandler.h>
 
 
-PropertyEditorDialog::PropertyEditorDialog(QString processorName,
-                                           QString processorDescription,
-                                           QList<Property> properties,
+PropertyEditorDialog::PropertyEditorDialog(const QString &processorName,
+                                           const QString &processorDescription,
+                                           const QList<Property> &properties,
                                            QWidget *parent)
 
     : QDialog(parent), deafultProperties(properties) {
@@ -75,7 +75,7 @@ PropertyEditorDialog::PropertyEditorDialog(QString processorName,
             QPushButton *fileButton = new QPushButton("...", this);
             fileLayout->addWidget(fileButton);
 
-            connect(fileButton, &QPushButton::clicked, this, [this, filePathEdit]() {
+            connect(fileButton, &QPushButton::clicked, this, [filePathEdit]() {
                 SaveFileDialogHandler service;
                 auto filePath =service.getUserOpenImagePath("");
                 if (filePath) {

@@ -16,9 +16,9 @@ ImageProcessorsMenuController::ImageProcessorsMenuController(MainWindow *mainWin
 // imageprocessormanager/imageprocessormanager.cpp
 
 void ImageProcessorsMenuController::buildFiltersAndComparatorsMenus(QMenu *comparatorsMenu,
-                                                                  QMenu *filtersMenu,
-                                                                  QList<ImageProcessorInfo> imageProcessorsInfo
-                                                                  )
+                                                                    QMenu *filtersMenu,
+                                                                    const QList<ImageProcessorInfo> &imageProcessorsInfo
+                                                                    )
 {
     comparatorsMenu->clear();
     filtersMenu->clear();

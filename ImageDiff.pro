@@ -22,6 +22,7 @@ SOURCES += \
     business/imageanalysis/imageprocessinginteractor.cpp \
     business/imageanalysis/imageprocessorsmanager.cpp \
     business/imagefilesinteractors.cpp \
+    business/otherappinstancesinteractor.cpp \
     business/plugins/imageprocessordeserializer.cpp \
     business/plugins/pluginsmanager.cpp \
     business/imageanalysis/runallcomparatorsinteractor.cpp \
@@ -69,6 +70,7 @@ HEADERS += \
     business/imageanalysis/imageprocessinginteractor.h \
     business/imageanalysis/imageprocessorsmanager.h \
     business/imagefilesinteractors.h \
+    business/otherappinstancesinteractor.h \
     business/plugins/imageprocessordeserializer.h \
     business/plugins/pluginsmanager.h \
     business/imageanalysis/runallcomparatorsinteractor.h \
@@ -89,6 +91,8 @@ HEADERS += \
     domain/interfaces/imageprocessinginteractorlistener.h \
     domain/interfaces/imageprocessor.h \
     domain/interfaces/iprogressdialog.h \
+    domain/interfaces/oncropimageslistener.h \
+    domain/interfaces/otherappinstancesinteractorcallback.h \
     domain/interfaces/processorpropertiesdialogcallback.h \
     domain/valueobjects/autocomparisonreportentry.h \
     domain/valueobjects/comparableimage.h \

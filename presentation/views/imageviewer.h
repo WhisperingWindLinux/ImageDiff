@@ -83,7 +83,7 @@ private:
 
     QPixmap getVisiblePixmap();
 
-    void passCropedImageToOtherAppInstance(QRectF rect);
+    ImagesPtr getCroppedImages(QRectF rect);
 
     void getPixelColorUnderCursor(std::optional<QPoint> cursorPos);
 
@@ -93,9 +93,6 @@ private:
                               QColor colorOfHiddenImage
                               );
     void setCenterToViewRectCenter();
-
-    // FIXME Refactoring
-    static QString savePixmapToTempDir(const QPixmap &pixmap, const QString &fileName);
 };
 
 

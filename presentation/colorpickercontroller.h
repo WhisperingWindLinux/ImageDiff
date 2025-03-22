@@ -23,8 +23,8 @@ public:
     void onMainWindowClosed();
     void onImagesClosed();
     void onImagesOpened();
-    void onColorUnderCursorChanged(ImagePixelColor visibleImageRgbValue,
-                                   ImagePixelColor hiddenImageRgbValue
+    void onColorUnderCursorChanged(const ImagePixelColor &visibleImageRgbValue,
+                                   const ImagePixelColor &hiddenImageRgbValue
                                    );
     void onMainWindowStateChanged(bool isMinimized);
 

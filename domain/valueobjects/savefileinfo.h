@@ -3,7 +3,6 @@
 
 #include <qpixmap.h>
 
-
 enum class SaveImageInfoType {
     None,
     FirstImage,
@@ -13,6 +12,7 @@ enum class SaveImageInfoType {
     ComparisonImage,
     ComparisonImageArea
 };
+
 struct SaveImageInfo {
     SaveImageInfo(SaveImageInfoType saveImageInfoType, const QPixmap &image) :
         saveImageInfoType(saveImageInfoType), image(std::move(image)) {}

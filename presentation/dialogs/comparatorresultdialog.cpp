@@ -4,11 +4,11 @@
 #include <presentation/presenters/htmlreportpresenter.h>
 
 
-ComparatorResultDialog::ComparatorResultDialog(const QString& message,
-                                               const QString& comparatorFullName,
-                                               const QString& comparatorDescription,
-                                               const QString& firstImageFilePath,
-                                               const QString& secondImageFilePath,
+ComparatorResultDialog::ComparatorResultDialog(const QString &message,
+                                               const QString &comparatorFullName,
+                                               const QString &comparatorDescription,
+                                               const QString &firstImageFilePath,
+                                               const QString &secondImageFilePath,
                                                QWidget *parent
                                                )
     : QDialog(parent),

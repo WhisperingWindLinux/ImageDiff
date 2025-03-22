@@ -4,8 +4,8 @@
 #include <float.h>
 
 // Constructor for real property
-Property::Property(QString propertyName,
-                   QString propertyDescription,
+Property::Property(const QString &propertyName,
+                   const QString &propertyDescription,
                    double defaultValue,
                    double minValue,
                    double maxValue)
@@ -17,8 +17,8 @@ Property::Property(QString propertyName,
     min(minValue) {}
 
 // Constructor for integer property
-Property::Property(QString propertyName,
-                   QString propertyDescription,
+Property::Property(const QString &propertyName,
+                   const QString &propertyDescription,
                    int defaultValue,
                    int minValue,
                    int maxValue)
@@ -29,9 +29,9 @@ Property::Property(QString propertyName,
     max(static_cast<double>(maxValue)),
     min(static_cast<double>(minValue)) {}
 
-Property::Property(QString propertyName,
-                   QString propertyDescription,
-                   QString defaultValue)
+Property::Property(const QString &propertyName,
+                   const QString &propertyDescription,
+                   const QString &defaultValue)
     : propertyType(Type::FilePath),
      propertyName(propertyName),
      propertyDescription(propertyDescription),
@@ -39,8 +39,8 @@ Property::Property(QString propertyName,
 
 
 // Static method to create an integer property without min/max constraints
-Property Property::createIntProperty(QString propertyName,
-                                     QString propertyDescription,
+Property Property::createIntProperty(const QString &propertyName,
+                                     const QString &propertyDescription,
                                      int defaultValue
                                      )
 {
@@ -54,8 +54,8 @@ Property Property::createIntProperty(QString propertyName,
 
 
 // Static method to create an integer property with min/max constraints
-Property Property::createIntProperty(QString propertyName,
-                                     QString propertyDescription,
+Property Property::createIntProperty(const QString &propertyName,
+                                     const QString &propertyDescription,
                                      int defaultValue,
                                      int minValue,
                                      int maxValue
@@ -71,8 +71,8 @@ Property Property::createIntProperty(QString propertyName,
 
 
 // Static method to create a real property without min/max constraints
-Property Property::createRealProperty(QString propertyName,
-                                      QString propertyDescription,
+Property Property::createRealProperty(const QString &propertyName,
+                                      const QString &propertyDescription,
                                       int defaultValue
                                       )
 {
@@ -86,8 +86,8 @@ Property Property::createRealProperty(QString propertyName,
 
 
 // Static method to create a real property with min/max constraints
-Property Property::createRealProperty(QString propertyName,
-                                      QString propertyDescription,
+Property Property::createRealProperty(const QString &propertyName,
+                                      const QString &propertyDescription,
                                       double defaultValue,
                                       double minValue,
                                       double maxValue
@@ -102,11 +102,11 @@ Property Property::createRealProperty(QString propertyName,
 }
 
 // Static method to create a string property with alternativesValue
-Property Property::createAlternativesProperty(QString propertyName,
-                                        QString propertyDescription,
-                                        QStringList alternatives,
-                                        int defaultValueIndex
-                                        )
+Property Property::createAlternativesProperty(const QString &propertyName,
+                                              const QString &propertyDescription,
+                                              const QStringList &alternatives,
+                                              int defaultValueIndex
+                                             )
 {
     if (alternatives.isEmpty()) {
         throw std::invalid_argument("Alternatives list cannot be empty");
@@ -124,9 +124,9 @@ Property Property::createAlternativesProperty(QString propertyName,
     return prop;
 }
 
-Property Property::createFilePathProperty(QString propertyName,
-                                          QString propertyDescription,
-                                          QString defaultValue
+Property Property::createFilePathProperty(const QString &propertyName,
+                                          const QString &propertyDescription,
+                                          const QString &defaultValue
                                           )
 {
     return Property(propertyName, propertyDescription, defaultValue);

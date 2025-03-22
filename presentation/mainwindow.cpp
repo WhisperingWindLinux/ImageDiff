@@ -29,6 +29,7 @@
 #include <data/storage/savefiledialoghandler.h>
 #include <presentation/colorpickercontroller.h>
 #include <business/imageanalysis/imageprocessinginteractor.h>
+#include <domain/interfaces/otherappinstancesinteractorcallback.h>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent),
@@ -50,6 +51,7 @@ MainWindow::MainWindow(QWidget *parent)
     colorPickerController = new ColorPickerController(this);
     imageProcessorsMenuController = new ImageProcessorsMenuController(this);
     recentFilesInteractor = new RecentFilesInteractor();
+    otherAppInstanceInteractor = new OtherAppInstancesInteractor(this);
     imageProcessingInteractor = nullptr;
     progressDialog = nullptr;
 
@@ -331,6 +333,30 @@ void MainWindow::onDrop(QList<QUrl> urls) {
 
 /* } =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
+/* If the user selects a part of the image while holding down Command,
+ * we copy the selected part and open it in a new instance of the application
+ * for further analysis. Parts from both images are copied.
+ *  {   */
+
+void MainWindow::onImagesCropped(ImagesPtr images) {
+    otherAppInstanceInteractor->openNewAppInstance(images);
+}
+
+void MainWindow::onOtherAppInstanceOpened() {
+    showMinimized();
+}
+
+void MainWindow::showError(const QString &errorMessage) {
+    QMessageBox msgBox;
+    msgBox.setIcon(QMessageBox::Critical);
+    msgBox.setText(errorMessage);
+    msgBox.setStandardButtons(QMessageBox::Ok);
+    msgBox.setDefaultButton(QMessageBox::Ok);
+    msgBox.exec();
+}
+
+/* } =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
+
 /* MainWindow' close event { */
 
 void MainWindow::closeEvent(QCloseEvent *) {
@@ -477,18 +503,7 @@ QList<Property> MainWindow::showImageProcessorPropertiesDialog(const QString& pr
 
 /* } =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
-/* Show messages { */
-
-void MainWindow::showError(const QString &errorMessage) {
-    qDebug() << errorMessage;
-
-    QMessageBox msgBox;
-    msgBox.setIcon(QMessageBox::Critical);
-    msgBox.setText(errorMessage);
-    msgBox.setStandardButtons(QMessageBox::Ok);
-    msgBox.setDefaultButton(QMessageBox::Ok);
-    msgBox.exec();
-}
+/* { */
 
 void MainWindow::showStatusMessage(QString message) {
     statusBar()->showMessage(message);
@@ -496,29 +511,7 @@ void MainWindow::showStatusMessage(QString message) {
 
 /* } =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
-/* If the user selects a part of the image while holding down Control,
- * we copy the selected part and open it in a new instance of the application
- * for further analysis. Parts from both images are copied.
- *  {   */
-
-void MainWindow::openImagesInOtherAppInstance(QString firstFilePath,
-                                              QString secondFilePath
-                                             )
-{
-    // FIXME find the finished processes and remove these from the collection
-    auto process = make_shared<QProcess>();
-    instances.append(process);
-
-    QString program = QCoreApplication::applicationFilePath();
-    QStringList arguments;
-    arguments << firstFilePath << secondFilePath;
-
-    if (process->startDetached(program, arguments)) {
-        showMinimized();
-    } else {
-        showError("Failed to start process: " + process->errorString());
-    }
-}
+/*  {   */
 
 void MainWindow::openImagesFromCommandLine(const QString &firstFilePath, const QString &secondFilePath) {
     imageFilesInteractor->openImagesViaCommandLine(firstFilePath, secondFilePath);

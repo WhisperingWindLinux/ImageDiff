@@ -18,9 +18,9 @@ class PropertyEditorDialog : public QDialog {
     Q_OBJECT
 
 public:
-    explicit PropertyEditorDialog(QString processorName,
-                                  QString processorDescription,
-                                  QList<Property> properties,
+    explicit PropertyEditorDialog(const QString &processorName,
+                                  const QString &processorDescription,
+                                  const QList<Property> &properties,
                                   QWidget *parent = nullptr
                                   );
 

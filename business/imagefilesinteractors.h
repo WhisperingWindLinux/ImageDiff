@@ -1,6 +1,8 @@
 #ifndef IMAGEFILESINTERACTORS_H
 #define IMAGEFILESINTERACTORS_H
 
+#include "otherappinstancesinteractor.h"
+
 #include <qstring.h>
 #include <qurl.h>
 
@@ -36,6 +38,8 @@ private:
     ImageFilesHandler *imageFileHandler;
     RecentFilesInteractor *recentFilesInteractor;
     QList<IImageFilesInteractorListener*> listeners;
+
+    std::optional<QString> savePixmapToTempDir(const QPixmap &pixmap, const QString &fileName);
 
     void notifyImagesOpened(const ImagesPtr images);
     void notifyImagesOpenFailed(const QString &error);

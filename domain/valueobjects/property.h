@@ -9,41 +9,41 @@ using namespace std;
 class Property {
 public:
     enum class Type { Integer, Real, Alternatives, FilePath };
-
-    static Property createIntProperty(QString propertyName,
-                                      QString propertyDescription,
+    
+    static Property createIntProperty(const QString &propertyName,
+                                      const QString &propertyDescription,
                                       int defaultValue
                                       );
-
-    static Property createIntProperty(QString propertyName,
-                                      QString propertyDescription,
+    
+    static Property createIntProperty(const QString &propertyName,
+                                      const QString &propertyDescription,
                                       int defaultValue,
                                       int minValue,
                                       int maxValue
                                       );
-
-    static Property createRealProperty(QString propertyName,
-                                      QString propertyDescription,
-                                      int defaultValue
-                                      );
-
-    static Property createRealProperty(QString propertyName,
-                                       QString propertyDescription,
+    
+    static Property createRealProperty(const QString &propertyName,
+                                       const QString &propertyDescription,
+                                       int defaultValue
+                                       );
+    
+    static Property createRealProperty(const QString &propertyName,
+                                       const QString &propertyDescription,
                                        double defaultValue,
                                        double minValue,
                                        double maxValue
                                        );
-
-    static Property createAlternativesProperty(QString propertyName,
-                                         QString propertyDescription,
-                                         QStringList alternatives,
-                                         int deafultValueIndex
-                                         );
-
-    static Property createFilePathProperty(QString propertyName,
-                                           QString propertyDescription,
-                                           QString defaultValue
-                                          );
+    
+    static Property createAlternativesProperty(const QString &propertyName,
+                                               const QString &propertyDescription,
+                                               const QStringList &alternatives,
+                                               int deafultValueIndex
+                                               );
+    
+    static Property createFilePathProperty(const QString &propertyName,
+                                           const QString &propertyDescription,
+                                           const QString &defaultValue
+                                           );
 
 
     Type getPropertyType() const;
@@ -66,24 +66,24 @@ private:
     QStringList alternativesValue;
     QString filePathValue;
     double max, min;
-
-    Property(QString propertyName,
-             QString propertyDescription,
+    
+    Property(const QString &propertyName,
+             const QString &propertyDescription,
              double defaultValue,
              double minValue,
              double maxValue
              );
-
-    Property(QString propertyName,
-             QString propertyDescription,
+    
+    Property(const QString &propertyName,
+             const QString &propertyDescription,
              int defaultValue,
              int minValue,
              int maxValue
              );
-
-    Property(QString propertyName,
-             QString propertyDescription,
-             QString defaultValue
+    
+    Property(const QString &propertyName,
+             const QString &propertyDescription,
+             const QString &defaultValue
              );
 };
 

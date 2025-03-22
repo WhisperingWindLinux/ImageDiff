@@ -6,8 +6,10 @@
 #include <QProcess>
 #include <QProgressDialog>
 #include <domain/interfaces/IDropTarget.h>
+#include <domain/interfaces/otherappinstancesinteractorcallback.h>
 #include <domain/interfaces/colorundercursorchangelistener.h>
 #include <domain/interfaces/iprogressdialog.h>
+#include <domain/interfaces/oncropimageslistener.h>
 #include <domain/interfaces/processorpropertiesdialogcallback.h>
 #include <business/imageanalysis/imageprocessinginteractor.h>
 #include <business/imagefilesinteractors.h>
@@ -19,6 +21,7 @@ class ColorPickerPanel;
 class ColorPickerController;
 class RecentFilesInteractor;
 class ImageProcessingInteractor;
+class OtherAppInstancesInteractor;
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -32,7 +35,9 @@ class MainWindow : public QMainWindow,
                    public IPropcessorPropertiesDialogCallback,
                    public IImageFilesInteractorListener,
                    public IImageProcessingInteractorListener,
-                   public IDropListener
+                   public IDropListener,
+                   public OnCropImageListener,
+                   public OtherAppInstancesInteractorCallback
 {
     Q_OBJECT
 
@@ -113,6 +118,14 @@ public:
 
     void onDrop(QList<QUrl> urls) override;
 
+    // OnCropImageListener interface
+
+    void onImagesCropped(ImagesPtr images) override;
+
+    // OpenImagesInOtherAppInstanceInteractorCallback interface
+
+    void onOtherAppInstanceOpened() override;
+    void showError(const QString &errorMessage) override;
 
 protected:
     void closeEvent(QCloseEvent *event) override;
@@ -128,17 +141,17 @@ private:
     ColorPickerController *colorPickerController;
     ImageProcessorsMenuController *imageProcessorsMenuController;
     RecentFilesInteractor *recentFilesInteractor;
+    OtherAppInstancesInteractor *otherAppInstanceInteractor;
     QProgressDialog *progressDialog;
     QList<shared_ptr<QProcess> > instances;
 
     void buildImageProcessorsMenu();
     void makeConnections();
     void loadTwoImagesBeingCompared();
-    void showError(const QString &errorMessage);
     void enableImageProceesorsMenuItems(bool isEnabled);
     void saveMainWindowPosition();
     void restoreMainWindowPosition();
-    void updateRecentFilesMenu();
+    void updateRecentFilesMenu();    
 };
 #endif // MAINWINDOW_H
 

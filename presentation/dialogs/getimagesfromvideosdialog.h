@@ -10,7 +10,8 @@
 class GrabImagesFromVideosDialog : public QDialog {
     Q_OBJECT
 
-public:GrabImagesFromVideosDialog(QWidget *parent, QString videoFilePath1, QString videoFilePath2);
+public:
+    GrabImagesFromVideosDialog(QWidget *parent, const QString &videoFilePath1, const QString &videoFilePath2);
 
     QString getFirstScreenshotPath();
 

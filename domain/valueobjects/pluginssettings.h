@@ -5,9 +5,13 @@
 
 struct PluginsSettings {
 
-  PluginsSettings(QString pythonInterpreterPath, QString pluginsDirectoryPath)
+  PluginsSettings(QString&& pythonInterpreterPath, QString&& pluginsDirectoryPath)
       : pythonInterpreterPath(std::move(pythonInterpreterPath)),
         pluginsDirectoryPath(std::move(pluginsDirectoryPath)) {}
+
+  PluginsSettings(const QString &pythonInterpreterPath, const QString &pluginsDirectoryPath)
+      : pythonInterpreterPath(pythonInterpreterPath),
+      pluginsDirectoryPath(pluginsDirectoryPath) {}
 
   const QString pythonInterpreterPath;
   const QString pluginsDirectoryPath;

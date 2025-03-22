@@ -21,8 +21,8 @@ public:
     // One panel displays the RGB values only for the visible image.
     // The second panel is for the second (hidden) image.
     explicit ColorPickerPanel(bool isTwoPanelMode = true);
-
-    void update(ImagePixelColor visibleImageColor, std::optional<ImagePixelColor> hiddenImageColor);
+    
+    void update(const ImagePixelColor &visibleImageColor, std::optional<ImagePixelColor> hiddenImageColor);
 
     void reset();
 
@@ -44,8 +44,8 @@ private:
 
     bool isTwoPanelMode;
     bool isReserveSpaceForLayoutStability;
-
-    void updateTopPanelOnly(ImagePixelColor firstPanelValue);
+    
+    void updateTopPanelOnly(const ImagePixelColor &firstPanelValue);
 };
 
 
