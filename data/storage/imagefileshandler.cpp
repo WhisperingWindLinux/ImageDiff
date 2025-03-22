@@ -75,7 +75,9 @@ FileSaveResult ImageFilesHandler::saveImage(const SaveImageInfo &saveImageInfo,
                                            )
 {
     if (saveImageInfo.saveImageInfoType == SaveImageInfoType::None ||
-        saveImageInfo.image.isNull())
+        saveImageInfo.image.isNull() ||
+        images == nullptr
+        )
     {
         return { false, "unknown" };
     }

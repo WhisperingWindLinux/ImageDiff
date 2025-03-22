@@ -7,9 +7,12 @@ class ComparableImage {
 
 public:
     ComparableImage(const QImage &image, const QString &name);
+    ComparableImage(QImage &&image, QString &&name);
+
     ComparableImage(const QPixmap &image, const QString &name);
-    QImage getImage() const;
-    QString getName() const;
+
+    const QImage& getImage() const;
+    const QString& getName() const;
 
     friend class ComparableImageTests;
 

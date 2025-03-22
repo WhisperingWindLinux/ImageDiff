@@ -14,15 +14,14 @@ enum class SaveImageInfoType {
     ComparisonImageArea
 };
 struct SaveImageInfo {
-    SaveImageInfo(SaveImageInfoType saveImageInfoType, QPixmap image) :
-        saveImageInfoType(saveImageInfoType), image(image) {}
+    SaveImageInfo(SaveImageInfoType saveImageInfoType, const QPixmap &image) :
+        saveImageInfoType(saveImageInfoType), image(std::move(image)) {}
 
-    SaveImageInfo() {
-        saveImageInfoType = SaveImageInfoType::None;
+    SaveImageInfo() : saveImageInfoType(SaveImageInfoType::None) {
     }
 
-    SaveImageInfoType saveImageInfoType;
-    QPixmap image;
+    const SaveImageInfoType saveImageInfoType;
+    const QPixmap image;
 };
 
 #endif // SAVEFILEINFO_H

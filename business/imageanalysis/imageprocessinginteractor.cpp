@@ -35,6 +35,10 @@ ImageProcessingInteractor::ImageProcessingInteractor(
 
 ImageProcessingInteractor::~ImageProcessingInteractor() {
     listeners.clear();
+    originalImages = nullptr;
+    displayedImages = nullptr;
+    propertiesDialogCallback = nullptr;
+    progressDialogCallback = nullptr;
 }
 
 void ImageProcessingInteractor::callImageProcessor(const QVariant &callerData) {
@@ -174,10 +178,7 @@ void ImageProcessingInteractor::callFilter(IFilterPtr filter) {
         throw std::runtime_error("Error: The filter returns an empty result.");
     }
 
-    displayedImages = std::make_shared<Images>(pixmap1,
-                                               pixmap2,
-                                               displayedImages->path1,
-                                               displayedImages->path2);
+    displayedImages = std::make_shared<Images>(pixmap1, pixmap2, displayedImages->path1, displayedImages->path2);
 
     notifyFilteredResultLoaded(displayedImages->image1, displayedImages->image2);
 }

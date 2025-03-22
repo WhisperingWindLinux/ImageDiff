@@ -35,6 +35,7 @@ SOURCES += \
     data/storage/savefiledialoghandler.cpp \
     domain/valueobjects/comparableimage.cpp \
     domain/valueobjects/comparisonresultvariant.cpp \
+    domain/valueobjects/images.cpp \
     domain/valueobjects/property.cpp \
     main.cpp \
     presentation/colorpickercontroller.cpp \

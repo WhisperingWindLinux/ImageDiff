@@ -29,6 +29,8 @@ public:
     bool subscribe(IImageFilesInteractorListener *listener);
     bool unsubscribe(const IImageFilesInteractorListener *listener);
 
+    void cleanup();
+
 private:
     ImagesPtr images;
     ImageFilesHandler *imageFileHandler;

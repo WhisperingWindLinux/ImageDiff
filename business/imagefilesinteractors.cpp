@@ -18,6 +18,7 @@ ImageFilesInteractor::~ImageFilesInteractor() {
         delete imageFileHandler;
         imageFileHandler = nullptr;
     }
+    images = nullptr;
 }
 
 void ImageFilesInteractor::openImagesFromRecentMenu(const QString &recentFileMenuRecord) {
@@ -32,7 +33,9 @@ void ImageFilesInteractor::openImagesFromRecentMenu(const QString &recentFileMen
         }
         notifyImagesOpened(images);
     } catch(std::runtime_error &e) {
+        cleanup();
         notifyImagesOpenFailed(e.what());
+        notifyImagesClosed();
     }
 }
 
@@ -44,7 +47,9 @@ void ImageFilesInteractor::openImagesFromDragAndDrop(const QList<QUrl> &urls) {
         }
         notifyImagesOpened(images);
     } catch(std::runtime_error &e) {
+        cleanup();
         notifyImagesOpenFailed(e.what());
+        notifyImagesClosed();
     }
 }
 
@@ -59,7 +64,9 @@ void ImageFilesInteractor::openImages(const QString &image1Path,
         }
         notifyImagesOpened(images);
     } catch(std::runtime_error &e) {
+        cleanup();
         notifyImagesOpenFailed(e.what());
+        notifyImagesClosed();
     }
 }
 
@@ -75,7 +82,9 @@ void ImageFilesInteractor::openImagesViaCommandLine(const QString &image1Path,
         images->markAsTemporary();
         notifyImagesOpened(images);
     } catch(std::runtime_error &e) {
+        cleanup();
         notifyImagesOpenFailed(e.what());
+        notifyImagesClosed();
     }
 }
 
@@ -87,7 +96,9 @@ void ImageFilesInteractor::openImagesViaOpenFilesDialog() {
         }
         notifyImagesOpened(images);
     } catch(std::runtime_error &e) {
+        cleanup();
         notifyImagesOpenFailed(e.what());
+        notifyImagesClosed();
     }
 }
 
@@ -118,17 +129,23 @@ bool ImageFilesInteractor::unsubscribe(const IImageFilesInteractorListener *list
     return listeners.removeOne(listener);
 }
 
+void ImageFilesInteractor::cleanup() {
+    images = nullptr;
+}
+
 void ImageFilesInteractor::openImagesFromVideos() {
     try {
         GetImagesFromVideosInteractor getImagesFromVideosInteractor {};
         ImagesPtr imagesPath = getImagesFromVideosInteractor.get();
-        ImagesPtr images = imageFileHandler->openImages(imagesPath->path1, imagesPath->path2);
+        images = imageFileHandler->openImages(imagesPath->path1, imagesPath->path2);
         if (images == nullptr) {
             throw std::runtime_error("Unknown error.");
         }
         notifyImagesOpened(images);
     } catch(std::runtime_error &e) {
+        cleanup();
         notifyImagesOpenFailed(e.what());
+        notifyImagesClosed();
     }
 }
 

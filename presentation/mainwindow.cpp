@@ -353,6 +353,15 @@ void MainWindow::onColorUnderCursorChanged(const ImagePixelColor &visibleImageRg
 /* Methods of the abstract class IImageFilesInteractorListener { */
 
 void MainWindow::onImagesOpened(const ImagesPtr images) {
+    if (imageProcessingInteractor != nullptr) {
+        imageProcessingInteractor->unsubscribe(this);
+        delete imageProcessingInteractor;
+        imageProcessingInteractor = nullptr;
+
+    }
+    imageView->cleanUp();
+    showStatusMessage("");
+
     imageProcessingInteractor = new ImageProcessingInteractor(images, this, this);
     imageProcessingInteractor->subscribe(this);
     imageView->displayImages(images);
@@ -370,7 +379,6 @@ void MainWindow::onImagesOpenFailed(const QString &error) {
         errorMsg = error;
     }
     showError(errorMsg);
-    onImagesClosed();
 }
 
 void MainWindow::onImagesClosed() {
@@ -380,6 +388,7 @@ void MainWindow::onImagesClosed() {
         imageProcessingInteractor = nullptr;
 
     }
+    imageFilesInteractor->cleanup();
     colorPickerController->onImagesClosed();
     imageView->cleanUp();
     enableImageProceesorsMenuItems(false);
