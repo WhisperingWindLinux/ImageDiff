@@ -1,0 +1,49 @@
+name: Build and Package Qt Application
+
+on:
+  push:
+    branches:
+      - develop
+  pull_request:
+    branches:
+      - develop
+
+jobs:
+  build:
+    runs-on: macos-14
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: |
+          brew update
+          brew install qt
+
+      - name: Set up Qt environment
+        run: |
+          echo "Setting up Qt environment"
+          export PATH="/usr/local/opt/qt/bin:$PATH"
+          qmake --version
+
+      - name: Build project
+        run: |
+          mkdir build
+          cd build
+          qmake ../ImageDiff.pro
+          make
+
+      - name: Package application into tar.gz
+        run: |
+          cd build
+          tar -czvf ImageDiff.tar.gz ImageDiff.app
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: ImageDiff
+          path: build/ImageDiff.tar.gz
+      - name: Run a multi-line script
+        run: |
+          echo Add other actions to build,
+          echo test, and deploy your project.
