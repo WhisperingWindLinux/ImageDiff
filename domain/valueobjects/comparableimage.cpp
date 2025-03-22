@@ -20,10 +20,10 @@ ComparableImage::ComparableImage(const QPixmap &image, const QString &name) {
     this->name = name;
 }
 
-const QImage& ComparableImage::getImage() const {
+QImage ComparableImage::getImage() const {
     return image;
 }
 
-const QString& ComparableImage::getName() const {
+QString ComparableImage::getName() const {
     return name;
 }

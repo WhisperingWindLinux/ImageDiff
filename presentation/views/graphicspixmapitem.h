@@ -16,6 +16,7 @@ public:
                        IDropListener *dropListener,
                        QGraphicsItem *parent = nullptr
                        );
+    virtual ~GraphicsPixmapItem();
 
 protected:
     void dragEnterEvent(QGraphicsSceneDragDropEvent *event) override;

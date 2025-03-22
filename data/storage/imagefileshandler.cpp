@@ -70,9 +70,9 @@ ImagesPtr ImageFilesHandler::openImages(const QString &image1Path, const QString
 }
 
 
-FileSaveResult ImageFilesHandler::saveImage(const SaveImageInfo &saveImageInfo,
-                                            const ImagesPtr images
-                                           )
+FileSaveResult ImageFilesHandler::saveImageAs(const SaveImageInfo &saveImageInfo,
+                                              const ImagesPtr images
+                                             )
 {
     if (saveImageInfo.saveImageInfoType == SaveImageInfoType::None ||
         saveImageInfo.image.isNull() ||
@@ -89,40 +89,43 @@ FileSaveResult ImageFilesHandler::saveImage(const SaveImageInfo &saveImageInfo,
     const QString &path1 = imagesInfo.getFirstImagePath();
     const QString &path2 = imagesInfo.getSecondImagePath();
     const QString &file1DirPath = imagesInfo.getFirstImageDir();
-    const QString &file2DirPath = imagesInfo.getSecondImageDir();
     QDir file1Dir { file1DirPath };
-    QDir file2Dir { file2DirPath };
     QString fileName, fullPath;
-
-    bool isSaved = false;
 
     switch (saveImageInfo.saveImageInfoType) {
     case SaveImageInfoType::FirstImage:
         fullPath = path1;
-        isSaved = saveImageInfo.image.save(fullPath);
+        break;
     case SaveImageInfoType::SecondImage:
         fullPath = path2;
-        isSaved = saveImageInfo.image.save(fullPath);
+        break;
     case SaveImageInfoType::FirstImageArea:
         fileName = file1Name + "_area" + imageExtentionWithDot;
         fullPath = file1Dir.filePath(fileName);
-        isSaved = saveImageInfo.image.save(fullPath);
+        break;
     case SaveImageInfoType::SecondImageArea:
         fileName = file2Name + "_area" + imageExtentionWithDot;
         fullPath = file1Dir.filePath(fileName);
-        isSaved = saveImageInfo.image.save(fullPath);
+        break;
     case SaveImageInfoType::ComparisonImage:
         fileName = QString("%1_vs_%2_comparison%3")
                        .arg(file1Name, file2Name, imageExtentionWithDot);
         fullPath = file1Dir.filePath(fileName);
-        isSaved = saveImageInfo.image.save(fullPath);
+        break;
     case SaveImageInfoType::ComparisonImageArea:
         fileName = QString("%1_vs_%2_area_comparison%3")
                        .arg(file1Name, file2Name, imageExtentionWithDot);
         fullPath = file1Dir.filePath(fileName);
-        isSaved = saveImageInfo.image.save(fullPath);
+        break;
     default:
         break;
+    }
+
+    bool isSaved = false;
+    SaveFileDialogHandler saveFileDialog {};
+    auto savePath = saveFileDialog.getUserSaveImagePath(fullPath);
+    if (savePath) {
+        isSaved = saveImageInfo.image.save(fullPath);
     }
 
     return { isSaved, fullPath };

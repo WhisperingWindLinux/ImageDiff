@@ -13,6 +13,10 @@ GraphicsPixmapItem::GraphicsPixmapItem(const QPixmap &pixmap,
     setAcceptDrops(true);
 }
 
+GraphicsPixmapItem::~GraphicsPixmapItem() {
+
+}
+
 void GraphicsPixmapItem::dragEnterEvent(QGraphicsSceneDragDropEvent *event) {
     if (event->mimeData()->hasFormat("text/uri-list") && dropListener) {
         event->acceptProposedAction();

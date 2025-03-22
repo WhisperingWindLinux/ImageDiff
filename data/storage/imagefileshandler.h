@@ -11,7 +11,7 @@ class ImagesRepository;
 struct FileSaveResult {
   FileSaveResult(bool isSaved, const QString &path): isSaved(isSaved), path(path) {}
   const bool isSaved;
-  const QString &path;
+  const QString path;
 };
 
 class ImageFilesHandler
@@ -26,7 +26,7 @@ public:
     ImagesPtr openImages();
     ImagesPtr openImages(const QString &image1Path, const QString &image2Path);
     ImagesPtr openImages(const QList<QUrl> &urls);
-    FileSaveResult saveImage(const SaveImageInfo &saveImageInfo, const ImagesPtr images);
+    FileSaveResult saveImageAs(const SaveImageInfo &saveImageInfo, const ImagesPtr images);
 
 private:
     static const std::string errorUnableToOpenImages;

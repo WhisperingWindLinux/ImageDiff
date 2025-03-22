@@ -103,7 +103,16 @@ void ImageFilesInteractor::openImagesViaOpenFilesDialog() {
 }
 
 void ImageFilesInteractor::saveImage(const SaveImageInfo &info) {
-    FileSaveResult result = imageFileHandler->saveImage(info, images);
+    FileSaveResult result = imageFileHandler->saveImageAs(info, images);
+    if (result.isSaved) {
+        notifyFileSavedSuccessfully(result.path);
+    } else {
+        notifySavingFileFailed(result.path);
+    }
+}
+
+void ImageFilesInteractor::saveImageAs(const SaveImageInfo &info) {
+    FileSaveResult result = imageFileHandler->saveImageAs(info, images);
     if (result.isSaved) {
         notifyFileSavedSuccessfully(result.path);
     } else {

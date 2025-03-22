@@ -27,6 +27,7 @@ public:
     void openImagesViaOpenFilesDialog();
     void openImagesFromVideos();
     void saveImage(const SaveImageInfo &info);
+    void saveImageAs(const SaveImageInfo &info);
     
     bool subscribe(IImageFilesInteractorListener *listener);
     bool unsubscribe(const IImageFilesInteractorListener *listener);

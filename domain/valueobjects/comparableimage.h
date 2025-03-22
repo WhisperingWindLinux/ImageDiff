@@ -11,8 +11,8 @@ public:
 
     ComparableImage(const QPixmap &image, const QString &name);
 
-    const QImage& getImage() const;
-    const QString& getName() const;
+    QImage getImage() const;
+    QString getName() const;
 
     friend class ComparableImageTests;
 

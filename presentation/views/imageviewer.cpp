@@ -178,8 +178,12 @@ void ImageViewer::replaceDisplayedImages(const QPixmap& image1, const QPixmap& i
         customScene->removeItem(comparatorResultDisplayedImage);
         comparatorResultDisplayedImage = nullptr;
     }
-    firstDisplayedImage = customScene->addPixmap(image1);
-    secondDisplayedImage = customScene->addPixmap(image2);
+
+    firstDisplayedImage = new GraphicsPixmapItem(image1, dropListener);
+    secondDisplayedImage = new GraphicsPixmapItem(image2, dropListener);
+    customScene->addItem(firstDisplayedImage);
+    customScene->addItem(secondDisplayedImage);
+
     if (currentImageIndex == 0) {
         secondDisplayedImage->setVisible(false);
         parent->showStatusMessage(firstImagePath);
