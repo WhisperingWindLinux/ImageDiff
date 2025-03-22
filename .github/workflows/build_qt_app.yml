@@ -33,7 +33,7 @@ jobs:
           tar -czvf ImageDiff-macOS-arm64.tar.gz ImageDiff.app
           
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-pages-artifact@v3
         with:
           name: built-app
           path: build/ImageDiff-macOS-arm64.tar.gz
