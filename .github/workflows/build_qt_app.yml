@@ -41,5 +41,5 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           name: ImageDiff-macOS-arm64
-          path: build/qt-app/ImageDiff-macOS-arm64.tar.gz
+          path: build/qt-app
 
