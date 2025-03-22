@@ -37,13 +37,3 @@ jobs:
         run: |
           cd build
           tar -czvf ImageDiff.tar.gz ImageDiff.app
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: ImageDiff
-          path: build/ImageDiff.tar.gz
-      - name: Run a multi-line script
-        run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
