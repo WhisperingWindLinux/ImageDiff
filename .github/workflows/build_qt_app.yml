@@ -1,13 +1,13 @@
 name: Build and Package Qt Application
 
 on:
-  #workflow_dispatch:
-  push:
-    branches:
-      - develop
-  pull_request:
-    branches:
-      - develop
+  workflow_dispatch:
+  #push:
+    #branches:
+      #- develop
+  #pull_request:
+    #branches:
+      #- develop
 
 jobs:
   build:
@@ -33,13 +33,5 @@ jobs:
       - name: Package application into tar.gz
         run: |
           cd build
-          mkdir qt-app
           tar -czvf ImageDiff-macOS-arm64.tar.gz ImageDiff.app
-          cp ./ImageDiff-macOS-arm64.tar.gz ./qt-app/
-          
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          name: ImageDiff-macOS-arm64
-          path: build/qt-app
-
+          mv ImageDiff-macOS-arm64.tar.gz ImageDiff.app ../ 
