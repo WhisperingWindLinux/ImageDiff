@@ -1,13 +1,13 @@
 name: Build and Package Qt Application
 
 on:
-  workflow_dispatch:
-  #push:
-    #branches:
-      #- develop
-  #pull_request:
-    #branches:
-      #- develop
+  #workflow_dispatch:
+  push:
+    branches:
+      - develop
+  pull_request:
+    branches:
+      - develop
 
 jobs:
   build:
