@@ -30,14 +30,14 @@ jobs:
           qmake ../ImageDiff.pro
           make -j8
 
-      #- name: Package application into tar.gz
-        #run: |
-          #cd build
-          #tar -czvf ImageDiff-macOS-arm64.tar.gz ImageDiff.app
+      - name: Package application into tar.gz
+        run: |
+          cd build
+          tar -czvf ImageDiff-macOS-arm64.tar.gz ImageDiff.app
           
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           name: ImageDiff-macOS-arm64
-          path: build/ImageDiff.app
+          path: build/ImageDiff-macOS-arm64.tar.gz
 
