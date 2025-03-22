@@ -17,8 +17,8 @@ jobs:
       
       - name: Build project
         run: |
-          export PATH=/opt/homebrew/opt/ncurses/bin:/opt/homebrew/opt/ncurses/bin:$PATH
-          java -version
+          export PATH=/opt/homebrew/opt/ncurses/bin:$PATH
+          export DYLD_LIBRARY_PATH=/opt/homebrew/lib:$DYLD_LIBRARY_PATH
           mkdir build
           cd build
           qmake ../ImageDiff.pro
