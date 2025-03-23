@@ -124,7 +124,7 @@
   </widget>
   <action name="actionOpenImages">
    <property name="text">
-    <string>&amp;Open Images</string>
+    <string>Open Images</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+O</string>
@@ -132,7 +132,7 @@
   </action>
   <action name="actionCloseImages">
    <property name="text">
-    <string>&amp;Close Images</string>
+    <string>Close Images</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+C</string>

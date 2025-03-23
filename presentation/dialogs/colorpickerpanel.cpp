@@ -57,35 +57,6 @@ void ColorPickerPanel::setLayout() {
     mainLayout->addSpacing(10);
 }
 
-void ColorPickerPanel::removeLayout(QLayout *layout) {
-    if (!layout) {
-        return;
-    }
-    while (QLayoutItem *item = layout->takeAt(0)) {
-        if (QWidget *widget = item->widget()) {
-            // printObjectInfo(widget);
-            widget->hide();
-            widget->setParent(nullptr);
-            delete widget;
-        }
-        if (QLayout *childLayout = item->layout()) {
-            removeLayout(childLayout);
-        }
-
-    }
-    delete layout;
-}
-
-void ColorPickerPanel::printObjectInfo(QObject *object) {
-    if (!object) {
-        qDebug() << "Object is null.";
-        return;
-    }
-
-    qDebug() << "Object class name:" << object->metaObject()->className();
-    qDebug() << "Object name:" << object->objectName();
-}
-
 RgbWidgets ColorPickerPanel::createPanel() {
     // Create a vertical layout for this specific panel
     QVBoxLayout *panelLayout = new QVBoxLayout();
@@ -101,7 +72,7 @@ RgbWidgets ColorPickerPanel::createPanel() {
     auto rLabel = new QLabel("R: 0", this);
     auto gLabel = new QLabel("G: 0", this);
     auto bLabel = new QLabel("B: 0", this);
-    rLabel->setMinimumWidth(80);
+    rLabel->setMinimumWidth(75);
 
     // Align the text to the center-left
     rLabel->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
@@ -210,16 +181,11 @@ void ColorPickerPanel::update(const ImagePixelColor &visibleImageColor,
                                QLabel* bottomLabel
                                )
     {
-        const QString reservedSpace = " ";
         // Check if values are out of range
         if (topValue < 0 || topValue > 255 || bottomValue < 0 || bottomValue > 255) {
             // Display "n/a" for invalid values
-            topLabel->setText(QString("%1: n/a%2")
-                                  .arg(componentName)
-                                  .arg(reservedSpace));
-            bottomLabel->setText(QString("%1: n/a%2")
-                                     .arg(componentName)
-                                     .arg(reservedSpace));
+            topLabel->setText(QString("%1: n/a").arg(componentName));
+            bottomLabel->setText(QString("%1: n/a").arg(componentName));
             topLabel->setStyleSheet("color: black;");
             bottomLabel->setStyleSheet("color: black;");
             firstColorSquare->setStyleSheet("background-color: gray;");
@@ -232,48 +198,20 @@ void ColorPickerPanel::update(const ImagePixelColor &visibleImageColor,
 
         if (topValue > bottomValue) {
             // Top value is greater
-            topLabel->setText(QString("%1: %2 | %3%4")
-                                  .arg(componentName)
-                                  .arg(topValue)
-                                  .arg(difference)
-                                  .arg(reservedSpace)
-                              );
-            bottomLabel->setText(QString("%1: %2 | %3%4")
-                                     .arg(componentName)
-                                     .arg(bottomValue)
-                                     .arg(difference)
-                                     .arg(reservedSpace)
-                                 );
+            topLabel->setText(format(componentName, topValue, difference));
+            bottomLabel->setText(format(componentName, bottomValue, difference));
             topLabel->setStyleSheet("color: green;");
             bottomLabel->setStyleSheet("color: red;");
         } else if (topValue < bottomValue) {
             // Bottom value is greater
-            topLabel->setText(QString("%1: %2 | %3%4")
-                                  .arg(componentName)
-                                  .arg(topValue)
-                                  .arg(difference)
-                                  .arg(reservedSpace)
-                              );
-            bottomLabel->setText(QString("%1: %2 | %3%4")
-                                     .arg(componentName)
-                                     .arg(bottomValue)
-                                     .arg(difference)
-                                     .arg(reservedSpace)
-                                 );
+            topLabel->setText(format(componentName, topValue, difference));
+            bottomLabel->setText(format(componentName, bottomValue, difference));
             topLabel->setStyleSheet("color: red;");
             bottomLabel->setStyleSheet("color: green;");
         } else {
             // Values are equal, no difference to show
-            topLabel->setText(QString("%1: %2%3")
-                                  .arg(componentName)
-                                  .arg(topValue)
-                                  .arg(reservedSpace)
-                              );
-            bottomLabel->setText(QString("%1: %2%3")
-                                     .arg(componentName)
-                                     .arg(bottomValue)
-                                     .arg(reservedSpace)
-                                 );
+            topLabel->setText(format(componentName, topValue, difference));
+            bottomLabel->setText(format(componentName, bottomValue, difference));
             topLabel->setStyleSheet("color: black;");
             bottomLabel->setStyleSheet("color: black;");
         }
@@ -303,3 +241,45 @@ void ColorPickerPanel::update(const ImagePixelColor &visibleImageColor,
                     secondBLabel
                     );
 }
+
+QString ColorPickerPanel::format(const QString &colorComponemt,
+                                 int color,
+                                 int diff,
+                                 bool alignColorValueLeft,
+                                 bool alignDiffValueLeft
+                                 )
+{
+    const int maxNumberWidth = 3;
+    const QString separator = "  |  ";
+
+    QString strColor = QString::number(color);
+
+    QString formattedColor = alignColorValueLeft ? strColor.leftJustified(maxNumberWidth, ' ') :
+                             strColor.rightJustified(maxNumberWidth, ' ');
+
+    if (diff == 0) {
+        return QString(colorComponemt) + ":  " + formattedColor;
+    } else {
+        QString strDiff = QString::number(diff);
+        QString formattedDiff = alignDiffValueLeft ? strDiff.leftJustified(maxNumberWidth, ' ') :
+                                    strDiff.rightJustified(maxNumberWidth, ' ');
+
+        return QString(colorComponemt) + ":  " + formattedColor + separator + formattedDiff;
+    }
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

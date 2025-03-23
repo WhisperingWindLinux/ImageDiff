@@ -47,10 +47,14 @@ private:
     QLayout *panelMainLayout;
     
     void updateTopPanelOnly(const ImagePixelColor &firstPanelValue);
-    void removeLayout();
-    void removeLayout(QLayout *layout);
-    void printObjectInfo(QObject *object);
     void setLayout();
+
+    QString format(const QString &colorComponemt,
+                   int color,
+                   int diff,
+                   bool alignColorValueLeft = true,
+                   bool alignDiffValueLeft = true
+                   );
 };
 
 

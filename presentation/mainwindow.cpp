@@ -160,11 +160,11 @@ void MainWindow::runAllComparators() {
 void MainWindow::changePluginsSettings() {
     PluginsSettingsDialog dialog {};
     dialog.exec();
+    rescanPluginDir();
 }
 
 void MainWindow::rescanPluginDir() {
     buildImageProcessorsMenu();
-    makeConnections();
     enableImageProceesorsMenuItems(imageView->hasActiveSession());
 }
 
