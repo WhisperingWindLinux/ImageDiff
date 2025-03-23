@@ -103,20 +103,26 @@ void ImageFilesInteractor::openImagesViaOpenFilesDialog() {
 }
 
 void ImageFilesInteractor::saveImage(const SaveImageInfo &info) {
-    FileSaveResult result = imageFileHandler->saveImageAs(info, images);
-    if (result.isSaved) {
-        notifyFileSavedSuccessfully(result.path);
+    auto result = imageFileHandler->saveImageAs(info, images);
+    if (result.has_value()) {
+        return;
+    }
+    if (result.value().isSaved) {
+        notifyFileSavedSuccessfully(result.value().path);
     } else {
-        notifySavingFileFailed(result.path);
+        notifySavingFileFailed(result.value().path);
     }
 }
 
 void ImageFilesInteractor::saveImageAs(const SaveImageInfo &info) {
-    FileSaveResult result = imageFileHandler->saveImageAs(info, images);
-    if (result.isSaved) {
-        notifyFileSavedSuccessfully(result.path);
+    auto result = imageFileHandler->saveImageAs(info, images);
+    if (result.has_value()) {
+        return;
+    }
+    if (result.value().isSaved) {
+        notifyFileSavedSuccessfully(result.value().path);
     } else {
-        notifySavingFileFailed(result.path);
+        notifySavingFileFailed(result.value().path);
     }
 }
 

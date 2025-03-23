@@ -26,7 +26,7 @@ public:
     ImagesPtr openImages();
     ImagesPtr openImages(const QString &image1Path, const QString &image2Path);
     ImagesPtr openImages(const QList<QUrl> &urls);
-    FileSaveResult saveImageAs(const SaveImageInfo &saveImageInfo, const ImagesPtr images);
+    std::optional<FileSaveResult> saveImageAs(const SaveImageInfo &saveImageInfo, const ImagesPtr images);
 
 private:
     static const std::string errorUnableToOpenImages;

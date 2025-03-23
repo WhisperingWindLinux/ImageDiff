@@ -70,7 +70,7 @@ ImagesPtr ImageFilesHandler::openImages(const QString &image1Path, const QString
 }
 
 
-FileSaveResult ImageFilesHandler::saveImageAs(const SaveImageInfo &saveImageInfo,
+std::optional<FileSaveResult> ImageFilesHandler::saveImageAs(const SaveImageInfo &saveImageInfo,
                                               const ImagesPtr images
                                              )
 {
@@ -79,7 +79,7 @@ FileSaveResult ImageFilesHandler::saveImageAs(const SaveImageInfo &saveImageInfo
         images == nullptr
         )
     {
-        return { false, "unknown" };
+        return std::make_optional<FileSaveResult>(false, "unknown");
     }
 
     ImagesInfo imagesInfo { images };
@@ -125,8 +125,8 @@ FileSaveResult ImageFilesHandler::saveImageAs(const SaveImageInfo &saveImageInfo
     SaveFileDialogHandler saveFileDialog {};
     auto savePath = saveFileDialog.getUserSaveImagePath(fullPath);
     if (savePath) {
-        isSaved = saveImageInfo.image.save(fullPath);
+        isSaved = saveImageInfo.image.save(savePath.value());
     }
 
-    return { isSaved, fullPath };
+    return std::make_optional<FileSaveResult>(isSaved, fullPath);
 }

@@ -20,6 +20,9 @@ ColorPickerController::~ColorPickerController() {
 }
 
 void ColorPickerController::onDockLocationChanged(Qt::DockWidgetArea area) {
+    if (!colorPicker) {
+        return;
+    }
     if (area == Qt::LeftDockWidgetArea) {
         colorPicker = new ColorPickerPanel(false);
         setWidget(colorPicker);
@@ -35,28 +38,43 @@ void ColorPickerController::onDockLocationChanged(Qt::DockWidgetArea area) {
 }
 
 void ColorPickerController::openColorPickerDialog() {
+    if (!colorPicker) {
+        return;
+    }
     mainWindow->addDockWidget(Qt::RightDockWidgetArea, this);
     show();
     mainWindow->onColorUnderCursorTrackingStatusChanged(true);
 }
 
 void ColorPickerController::placeColorPickerToRightSideOfMainWindow() {
+    if (!colorPicker) {
+        return;
+    }
     if (isVisible()) {
         mainWindow->addDockWidget(Qt::RightDockWidgetArea, this);
     }
 }
 
 void ColorPickerController::placeColorPickerToLeftSideOfMainWindow() {
+    if (!colorPicker) {
+        return;
+    }
     if (isVisible()) {
         mainWindow->addDockWidget(Qt::LeftDockWidgetArea, this);
     }
 }
 
 void ColorPickerController::onImagesClosed() {
+    if (!colorPicker) {
+        return;
+    }
     colorPicker->reset();
 }
 
 void ColorPickerController::onImagesOpened() {
+    if (!colorPicker) {
+        return;
+    }
     if (isVisible()) {
         mainWindow->onColorUnderCursorTrackingStatusChanged(true);
     }
@@ -66,5 +84,8 @@ void ColorPickerController::onColorUnderCursorChanged(const ImagePixelColor &vis
                                                      const ImagePixelColor &hiddenImageRgbValue
                                                      )
 {
+    if (!colorPicker) {
+        return;
+    }
     colorPicker->update(visibleImageRgbValue, hiddenImageRgbValue);
 }
