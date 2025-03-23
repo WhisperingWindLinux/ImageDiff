@@ -20,6 +20,24 @@ def parse_color(color_name):
     }
     return colors.get(color_name.lower(), (0, 0, 0))
 
+
+def compare_images(img1, img2, color):
+    # Ensure both images are of the same size
+    if img1.shape != img2.shape:
+        raise ValueError("Images must have the same dimensions")
+
+    # Create a copy of the first image to draw differences
+    result_img = img1.copy()
+
+    # Find the differences between the two images
+    diff_mask = np.any(img1 != img2, axis=-1)  # Mask of differing pixels
+
+    # Apply the specified color to the differing pixels
+    result_img[diff_mask] = color
+
+    return result_img
+
+
 def main():
     if len(sys.argv) != 5:
         print("Usage: script.py <name1> <name2> <color> <show_image: Yes/No>", file=sys.stderr)
@@ -35,6 +53,9 @@ def main():
         sys.exit(1)
 
     try:
+        # Get the color to use for highlighting differences
+        selected_color = parse_color(color_name)
+
         my_variable = os.getenv("Runner")
         if my_variable == "ImageDiff":
             # Read the first image's size and data from stdin
@@ -54,27 +75,12 @@ def main():
             print("Failed to decode images", file=sys.stderr)
             sys.exit(1)
 
-        # Ensure both images have the same dimensions
         if image1.shape != image2.shape:
             print("Images must have the same dimensions", file=sys.stderr)
             sys.exit(1)
 
-        # Compute the absolute difference between the two images
-        diff = cv2.absdiff(image1, image2)
-
-        # Create a mask for non-zero differences (pixels that differ)
-        mask = cv2.cvtColor(diff, cv2.COLOR_BGR2GRAY)
-        _, mask = cv2.threshold(mask, 1, 255, cv2.THRESH_BINARY)
-
-        # Create an output image with an alpha channel (transparency)
-        result_image = np.zeros_like(image1, dtype=np.uint8)
-
-        # Get the selected color for differences
-        selected_color = parse_color(color_name)
-
-        # Apply the selected color to differing pixels
-        for i in range(3):  # Apply BGR channels
-            result_image[:, :, i] = np.where(mask == 255, selected_color[i], image1[:, :, i])
+        # Compare the images and get the result
+        result_image = compare_images(image1, image2, selected_color)
 
         if show_image == "yes":
             # Encode the resulting image to PNG format
@@ -83,27 +89,27 @@ def main():
             if my_variable == "ImageDiff":
                 sys.stdout.buffer.write(encoded_image.tobytes())
             else:
-                cv2.imshow("", result_image)
+                cv2.imshow("Differences", result_image)
                 cv2.waitKey(0)
                 cv2.destroyAllWindows()
-
         else:  # Show with white background
-            white_background = np.full_like(image1, fill_value=255)
-            for i in range(3):
-                white_background[:, :, i] = np.where(mask == 255, selected_color[i], white_background[:, :, i])
+            white_background = np.full_like(image1, fill_value=255)  # Create a white background
+            diff_mask = np.any(image1 != image2, axis=-1)  # Mask of differing pixels
+            for i in range(3):  # Apply selected color to differences on white background
+                white_background[:, :, i] = np.where(diff_mask, selected_color[i], white_background[:, :, i])
             result_image = white_background
+
             # Encode the resulting image to PNG format
             _, encoded_image = cv2.imencode('.png', result_image)
             # Write the encoded image to stdout
             if my_variable == "ImageDiff":
                 sys.stdout.buffer.write(encoded_image.tobytes())
             else:
-                cv2.imshow("", result_image)
+                cv2.imshow("Differences on White Background", result_image)
                 cv2.waitKey(0)
                 cv2.destroyAllWindows()
-
     except Exception as e:
-        print(f"Error processing images: {e}", file=sys.stderr)
+        print(f"An error occurred: {e}", file=sys.stderr)
         sys.exit(1)
 
 
