@@ -17,8 +17,7 @@
 
 
 class ImageViewer;
-class ColorPickerPanel;
-class ColorPickerController;
+class IColorPickerController;
 class RecentFilesInteractor;
 class ImageProcessingInteractor;
 class OtherAppInstancesInteractor;
@@ -50,7 +49,7 @@ public slots:
     void saveImageAs();
     void saveVisibleAreaAs();
     void showAboutDialog();
-    void showColorPicker();
+    void showDockedColorPicker();
     void showOriginalImages();
     void imageZoomedToActualSize();
     void imageZoomIn();
@@ -131,14 +130,13 @@ protected:
     void closeEvent(QCloseEvent *event) override;
     void dragEnterEvent(QDragEnterEvent *event) override;
     void dropEvent(QDropEvent *event) override;
-    bool event(QEvent *event) override;
 
 private:
     Ui::MainWindow *ui;
     ImageViewer *imageView;
     ImageFilesInteractor *imageFilesInteractor;
     ImageProcessingInteractor *imageProcessingInteractor;
-    ColorPickerController *colorPickerController;
+    IColorPickerController *colorPickerController;
     ImageProcessorsMenuController *imageProcessorsMenuController;
     RecentFilesInteractor *recentFilesInteractor;
     OtherAppInstancesInteractor *otherAppInstanceInteractor;

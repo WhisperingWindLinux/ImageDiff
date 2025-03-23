@@ -19,6 +19,7 @@
 #include <QMimeData>
 #include <qprocess.h>
 #include <ui_mainwindow.h>
+#include <presentation/colorpickercontroller.h>
 #include <business/getimagesfromvideosinteractor.h>
 #include <presentation/views/imageviewer.h>
 #include <presentation/dialogs/aboutdialog.h>
@@ -27,7 +28,6 @@
 #include <presentation/dialogs/pluginssettingsdialog.h>
 #include <presentation/dialogs/propertyeditordialog.h>
 #include <data/storage/savefiledialoghandler.h>
-#include <presentation/colorpickercontroller.h>
 #include <business/imageanalysis/imageprocessinginteractor.h>
 #include <domain/interfaces/otherappinstancesinteractorcallback.h>
 
@@ -44,16 +44,16 @@ MainWindow::MainWindow(QWidget *parent)
     showNormal();
     restoreMainWindowPosition();
 
-    imageView = new ImageViewer(this, this);
-    setCentralWidget(imageView);
-
-    imageFilesInteractor = new ImageFilesInteractor();
     colorPickerController = new ColorPickerController(this);
+    imageView = new ImageViewer(this, this);
+    imageFilesInteractor = new ImageFilesInteractor();
     imageProcessorsMenuController = new ImageProcessorsMenuController(this);
     recentFilesInteractor = new RecentFilesInteractor();
     otherAppInstanceInteractor = new OtherAppInstancesInteractor(this);
     imageProcessingInteractor = nullptr;
     progressDialog = nullptr;
+
+    setCentralWidget(imageView);
 
     imageFilesInteractor->subscribe(this);
 
@@ -86,7 +86,7 @@ void MainWindow::makeConnections() {
     connect(ui->actionSwitchBetweenImages, &QAction::triggered, this, &MainWindow::switchBetweenImages);
     connect(ui->actionSaveVisibleAreaAs, &QAction::triggered, this, &MainWindow::saveVisibleAreaAs);
     connect(ui->actionAbout, &QAction::triggered, this, &MainWindow::showAboutDialog);
-    connect(ui->actionColorPicker, &QAction::triggered, this, &MainWindow::showColorPicker);
+    connect(ui->actionColorPicker, &QAction::triggered, this, &MainWindow::showDockedColorPicker);
     connect(ui->actionShowOriginalImage, &QAction::triggered, this, &MainWindow::showOriginalImages);
     connect(ui->actionActualSize, &QAction::triggered, this, &MainWindow::imageZoomedToActualSize);
     connect(ui->actionFitInView, &QAction::triggered, this, &MainWindow::imagFitInView);
@@ -117,7 +117,6 @@ void MainWindow::enableImageProceesorsMenuItems(bool isEnabled) {
     ui->actionPlaceColorPickerOnLeft->setDisabled(!isEnabled);
     ui->actionPlaceColorPickerOnRight->setDisabled(!isEnabled);
     ui->actionFitInView->setDisabled(!isEnabled);
-    ui->actionAdvancedColorPicker->setDisabled(!isEnabled);
     ui->actionColorPicker->setDisabled(!isEnabled);
 }
 
@@ -256,7 +255,7 @@ void MainWindow::showOriginalImages() {
     }
 }
 
-void MainWindow::showColorPicker() {
+void MainWindow::showDockedColorPicker() {
     colorPickerController->openColorPickerDialog();
 }
 
@@ -271,14 +270,6 @@ void MainWindow::placeColorPickerOnLeft() {
 /* } =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
 /* Color Picker dialog { */
-
-bool MainWindow::event(QEvent *event) {
-    if (event->type() == QEvent::WindowStateChange) {
-        bool isMinimized = this->windowState() & Qt::WindowMinimized;
-        colorPickerController->onMainWindowStateChanged(isMinimized);
-    }
-    return QMainWindow::event(event);
-}
 
 void MainWindow::onColorUnderCursorTrackingStatusChanged(bool isActive) {
     imageView->onColorUnderCursorTrackingStatusChanged(isActive);
@@ -361,7 +352,6 @@ void MainWindow::showError(const QString &errorMessage) {
 
 void MainWindow::closeEvent(QCloseEvent *) {
     saveMainWindowPosition();
-    colorPickerController->onMainWindowClosed();
 }
 /* } =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 

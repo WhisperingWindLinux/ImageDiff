@@ -3,15 +3,26 @@
 #include <qboxlayout.h>
 #include <qlineedit.h>
 
-ColorPickerPanel::ColorPickerPanel(bool isTwoPanelMode)
-    : QWidget{nullptr},
-    isTwoPanelMode(isTwoPanelMode),
-    isReserveSpaceForLayoutStability(true)
+ColorPickerPanel::ColorPickerPanel(QWidget *parent, bool isTwoPanelMode)
+    : QWidget(parent),
+    isTwoPanelMode(isTwoPanelMode)
 {
     setWindowTitle("Color Picker");
+    setLayout();
+    reset();
 
+    setWindowFlags(Qt::Window |
+                   Qt::WindowStaysOnTopHint |
+                   Qt::WindowDoesNotAcceptFocus |
+                   Qt::WindowTitleHint |
+                   Qt::CustomizeWindowHint |
+                   Qt::WindowCloseButtonHint
+                   );
+}
+
+void ColorPickerPanel::setLayout() {
     QVBoxLayout* mainLayout = new QVBoxLayout(this);
-    mainLayout->setContentsMargins(10, 10, 10, 10);
+    mainLayout->setContentsMargins(12, 10, 10, 10);
     mainLayout->setSpacing(10);
 
     // Create the first panel (visible image panel)
@@ -42,25 +53,42 @@ ColorPickerPanel::ColorPickerPanel(bool isTwoPanelMode)
     }
 
     // Add a spacer to push everything to the top of the panel
-    mainLayout->addStretch();
-
-    setWindowFlags(Qt::Window |
-                   Qt::WindowStaysOnTopHint |
-                   Qt::WindowDoesNotAcceptFocus |
-                   Qt::WindowTitleHint |
-                   Qt::CustomizeWindowHint |
-                   Qt::WindowCloseButtonHint
-                   );
+    mainLayout->addStretch(1000);
+    mainLayout->addSpacing(10);
 }
 
-void ColorPickerPanel::reset() {
-    ImagePixelColor emptyData =  { "n/a", -1, -1, -1 };
-    update(emptyData, emptyData);
+void ColorPickerPanel::removeLayout(QLayout *layout) {
+    if (!layout) {
+        return;
+    }
+    while (QLayoutItem *item = layout->takeAt(0)) {
+        if (QWidget *widget = item->widget()) {
+            // printObjectInfo(widget);
+            widget->hide();
+            widget->setParent(nullptr);
+            delete widget;
+        }
+        if (QLayout *childLayout = item->layout()) {
+            removeLayout(childLayout);
+        }
+
+    }
+    delete layout;
+}
+
+void ColorPickerPanel::printObjectInfo(QObject *object) {
+    if (!object) {
+        qDebug() << "Object is null.";
+        return;
+    }
+
+    qDebug() << "Object class name:" << object->metaObject()->className();
+    qDebug() << "Object name:" << object->objectName();
 }
 
 RgbWidgets ColorPickerPanel::createPanel() {
     // Create a vertical layout for this specific panel
-    QVBoxLayout* panelLayout = new QVBoxLayout();
+    QVBoxLayout *panelLayout = new QVBoxLayout();
 
     auto fileNameLabel = new QLabel(this);
     panelLayout->addWidget(fileNameLabel);
@@ -73,6 +101,7 @@ RgbWidgets ColorPickerPanel::createPanel() {
     auto rLabel = new QLabel("R: 0", this);
     auto gLabel = new QLabel("G: 0", this);
     auto bLabel = new QLabel("B: 0", this);
+    rLabel->setMinimumWidth(80);
 
     // Align the text to the center-left
     rLabel->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
@@ -88,18 +117,27 @@ RgbWidgets ColorPickerPanel::createPanel() {
     rgbLabelsLayout->addStretch();
 
     // Create the color square (a fixed-size frame)
+    auto colorSquareLayout = new QVBoxLayout();
     auto colorSquare = new QFrame(this);
     colorSquare->setFixedSize(70, 70); // Set fixed size for the square
     colorSquare->setStyleSheet("background-color: rgb(0, 0, 0);"); // Default black color
+    colorSquareLayout->addWidget(colorSquare);
+    colorSquareLayout->addStretch();
 
     // Add RGB labels and color square to the horizontal layout
     topLayout->addLayout(rgbLabelsLayout);
-    topLayout->addWidget(colorSquare);
+    topLayout->addLayout(colorSquareLayout);
+    topLayout->addStretch();
 
     // Add the horizontal layout to the panel layout
     panelLayout->addLayout(topLayout);
 
     return { fileNameLabel, panelLayout, colorSquare, rLabel, gLabel, bLabel };
+}
+
+void ColorPickerPanel::reset() {
+    ImagePixelColor emptyData =  { "n/a", -1, -1, -1 };
+    update(emptyData, emptyData);
 }
 
 void ColorPickerPanel::updateTopPanelOnly(const ImagePixelColor &visibleImageColor) {
@@ -172,12 +210,7 @@ void ColorPickerPanel::update(const ImagePixelColor &visibleImageColor,
                                QLabel* bottomLabel
                                )
     {
-        QString reservedSpace = "       ";
-        if (!isReserveSpaceForLayoutStability) {
-            reservedSpace = " ";
-        }
-        isReserveSpaceForLayoutStability = false;
-
+        const QString reservedSpace = " ";
         // Check if values are out of range
         if (topValue < 0 || topValue > 255 || bottomValue < 0 || bottomValue > 255) {
             // Display "n/a" for invalid values

@@ -1,44 +1,40 @@
 #ifndef COLORPICKERCONTROLLER_H
 #define COLORPICKERCONTROLLER_H
 
-#include <domain/valueobjects/imagepixelcolor.h>
+#include <QDockWidget>
+#include <QObject>
+#include <QWidget>
 
-class MainWindow;
+#include <domain/interfaces/icolorpickercontroller.h>
+
 class ColorPickerPanel;
+class MainWindow;
 
-// Methods related to working with ColorPickerPanel
-
-class ColorPickerController
+class ColorPickerController : public QDockWidget, public IColorPickerController
 {
-    enum class PositionColorPickerWindow { Left, Right };
+    Q_OBJECT
+
+public slots:
+    void onDockLocationChanged(Qt::DockWidgetArea);
 
 public:
     ColorPickerController(MainWindow *mainWindow);
 
-    void openColorPickerDialog();
-    void closeColorPickerDialog();
-    void placeColorPickerToRightSideOfMainWindow();
-    void placeColorPickerToLeftSideOfMainWindow();
+    virtual ~ColorPickerController();
 
-    void onMainWindowClosed();
-    void onImagesClosed();
-    void onImagesOpened();
+    void openColorPickerDialog() override;
+    void placeColorPickerToRightSideOfMainWindow() override;
+    void placeColorPickerToLeftSideOfMainWindow() override;
+
+    void onImagesClosed() override;
+    void onImagesOpened() override;
+
     void onColorUnderCursorChanged(const ImagePixelColor &visibleImageRgbValue,
-                                   const ImagePixelColor &hiddenImageRgbValue
-                                   );
-    void onMainWindowStateChanged(bool isMinimized);
+                                   const ImagePixelColor &hiddenImageRgbValue) override;
 
 private:
     MainWindow *mainWindow;
-    std::unique_ptr<ColorPickerPanel> colorPicker;
-    bool colorPickerHidedOnMainWindowMinimized;
-
-    // A value of 50% places the color picker window centered
-    // relative to the vertical axis of the main window
-    int alignmentPercent;
-
-    // Moves the panel to the right or left side of the application window
-    void moveColorPickerPanel(PositionColorPickerWindow position);
+    ColorPickerPanel *colorPicker;
 };
 
 #endif // COLORPICKERCONTROLLER_H

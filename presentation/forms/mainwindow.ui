@@ -189,14 +189,6 @@
     <string>C</string>
    </property>
   </action>
-  <action name="actionAdvancedColorPicker">
-   <property name="text">
-    <string>Advanced Color Picker</string>
-   </property>
-   <property name="shortcut">
-    <string>A</string>
-   </property>
-  </action>
   <action name="actionActualSize">
    <property name="text">
     <string>Actual Size</string>

@@ -44,7 +44,7 @@ ImageViewer::~ImageViewer() {
 void ImageViewer::onColorUnderCursorTrackingStatusChanged(bool isActivate) {
     if (isActivate) {
         isColorUnderCursorTrackingActive = true;
-        getPixelColorUnderCursor(lastCursorPos);
+        sendPixelColorUnderCursor(lastCursorPos);
     } else {
         isColorUnderCursorTrackingActive = false;
     }
@@ -71,12 +71,14 @@ void ImageViewer::zoomIn() {
     setCenterToViewRectCenter();
     scale(1.25, 1.25);
     scaleFactor *= 1.25;
+    sendPixelColorUnderCursor(lastCursorPos);
 }
 
 void ImageViewer::zoomOut() {
     setCenterToViewRectCenter();
     scale(0.8, 0.8);
     scaleFactor *= 0.8;
+    sendPixelColorUnderCursor(lastCursorPos);
 }
 
 void ImageViewer::setCenterToViewRectCenter() {
@@ -193,7 +195,7 @@ void ImageViewer::replaceDisplayedImages(const QPixmap& image1, const QPixmap& i
     }
     centerOn(viewRect.center());
     if (lastCursorPos) {
-        getPixelColorUnderCursor(lastCursorPos.value());
+        sendPixelColorUnderCursor(lastCursorPos.value());
     }
 }
 
@@ -274,7 +276,7 @@ void ImageViewer::toggleImage() {
 
     centerOn(viewRect.center());
     if (lastCursorPos) {
-        getPixelColorUnderCursor(lastCursorPos.value());
+        sendPixelColorUnderCursor(lastCursorPos.value());
     }
 }
 
@@ -389,7 +391,7 @@ ImagesPtr ImageViewer::getCroppedImages(QRectF rect) {
     QRect boundedRect2 = selectionRect.intersected(secondPixmap.rect());
     QPixmap croppedPixmap2 = secondPixmap.copy(boundedRect2);
 
-    return std::make_shared<Images>(croppedPixmap1,croppedPixmap2,  firstImageName, secondImageName);
+    return std::make_shared<Images>(croppedPixmap1, croppedPixmap2,  firstImageName, secondImageName);
 }
 
 /* } =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
@@ -412,10 +414,10 @@ void ImageViewer::mouseMoveEvent(QMouseEvent* event) {
     }
 
     // Implement RGB values tracking under the mouse cursor. It needs for Color Picker.
-    getPixelColorUnderCursor(event->pos());
+    sendPixelColorUnderCursor(event->pos());
 }
 
-void ImageViewer::getPixelColorUnderCursor(std::optional<QPoint> cursorPos) {
+void ImageViewer::sendPixelColorUnderCursor(std::optional<QPoint> cursorPos) {
     if (!isColorUnderCursorTrackingActive || !cursorPos || !hasActiveSession()) {
         return;
     }
@@ -454,16 +456,16 @@ void ImageViewer::getPixelColorUnderCursor(std::optional<QPoint> cursorPos) {
                     visibleImageName = secondImageName;
                     hiddenImageName = firstImageName;
                 }
-                fillPixelColorValues(visibleImageName, colorOfVisibleImage, hiddenImageName, colorOfHiddenImage);
+                sendPixelColorValues(visibleImageName, colorOfVisibleImage, hiddenImageName, colorOfHiddenImage);
             }
         }
     }
 }
 
-void ImageViewer::fillPixelColorValues(QString visibleImageName,
-                                       QColor colorOfVisibleImage,
-                                       QString hiddenImageName,
-                                       QColor colorOfHiddenImage
+void ImageViewer::sendPixelColorValues(const QString &visibleImageName,
+                                       const QColor &colorOfVisibleImage,
+                                       const QString &hiddenImageName,
+                                       const QColor &colorOfHiddenImage
                                        )
 {
     ImagePixelColor pixelValueOfVisibleImage = {
