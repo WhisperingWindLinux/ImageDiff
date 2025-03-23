@@ -5,8 +5,11 @@
 #endif
 
 Images::Images(const QPixmap &image1, const QPixmap &image2, const QString &path1, const QString &path2)
-    : image1(std::move(image1)), image2(std::move(image2)),
-    path1(std::move(path1)), path2(std::move(path2)), isTemporaryFiles(false)
+        : image1(image1),
+        image2(image2),
+        path1(path1),
+        path2(path2),
+        isTemporaryFiles(false)
 {
     #ifdef QT_DEBUG
         currentGeneration = ++generation;
