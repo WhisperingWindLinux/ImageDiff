@@ -10,13 +10,13 @@
       "name": "Dot Color",
       "type": "alternatives",
       "alternatives": ["black","red", "green", "blue", "yellow", "cyan", "magenta", "white", "orange", "purple", "lime"],
-      "defaultIndex": 4
+      "defaultIndex": 0
     },
     {
       "name": "Show Image",
       "type": "alternatives",
       "alternatives": ["yes", "no"],
-      "defaultIndex": 0
+      "defaultIndex": 1
     }
   ]
 }

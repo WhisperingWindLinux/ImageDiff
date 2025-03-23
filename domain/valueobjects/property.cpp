@@ -109,11 +109,11 @@ Property Property::createAlternativesProperty(const QString &propertyName,
                                              )
 {
     if (alternatives.isEmpty()) {
-        throw std::invalid_argument("Alternatives list cannot be empty");
+        throw std::runtime_error("An internal error occurred: alternatives list cannot be empty");
     }
 
     if (defaultValueIndex < 0 || defaultValueIndex >= alternatives.size()) {
-        throw std::out_of_range("Default value index is out of range");
+        throw std::runtime_error("An internal error occurred: default value index is out of range");
     }
 
     Property prop(std::move(propertyName), std::move(propertyDescription), 0.0, 0.0, 0.0);
@@ -155,14 +155,14 @@ QString Property::getFilePath() const {
 
 QStringList Property::getAlternatives() const {
     if (propertyType != Type::Alternatives) {
-        throw std::logic_error("This property type does not have alternatives");
+        throw std::runtime_error("An internal error occurred: this property type does not have alternatives");
     }
     return alternativesValue;
 }
 
 double Property::getMinValue() const {
     if (propertyType == Type::Alternatives || propertyType == Type::FilePath) {
-        throw std::logic_error("This property type does not have min/max values");
+        throw std::runtime_error("An internal error occurred: this property type does not have min/max values");
     }
     return min;
 }
@@ -189,7 +189,7 @@ QString Property::getAnyValueAsString() const {
 
 double Property::getMaxValue() const {
     if (propertyType == Type::Alternatives || propertyType == Type::FilePath) {
-        throw std::logic_error("This property type does not have min/max values");
+        throw std::runtime_error("An internal error occurred: this property type does not have min/max values.");
     }
     return max;
 }

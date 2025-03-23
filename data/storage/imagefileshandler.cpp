@@ -8,22 +8,21 @@
 #include <data/storage/savefiledialoghandler.h>
 #include <domain/valueobjects/images.h>
 #include <business/utils/imagesinfo.h>
+#include <business/imageanalysis/validation/imagevalidationrulesfactory.h>
 
-
-const QString ImageFilesHandler::imageExtentionWithoutDot = "png";
-const QString ImageFilesHandler::imageExtentionWithDot = QString(".") + imageExtentionWithoutDot;
-const std::string ImageFilesHandler::errorUnableToOpenImages = "Error: Unable to load images!";
 
 ImagesPtr ImageFilesHandler::openImages(const QList<QUrl> &urls) {
     if (urls.size() != 2) {
-        throw std::runtime_error(errorUnableToOpenImages);
+        QString err = QString("Invalid number of images. ")
+                      + "Drag and drop two images in PNG format.";
+        throw std::runtime_error(err.toStdString());
     }
     if (urls[0].isLocalFile() && urls[1].isLocalFile()) {
         const QString file1 = urls[0].toLocalFile();
         const QString file2 = urls[1].toLocalFile();
         return openImages(file1, file2);
     }
-    throw std::runtime_error(errorUnableToOpenImages);
+    throw std::runtime_error("Incorrect path to one or both images.");
 }
 
 ImagesPtr ImageFilesHandler::openImages() {
@@ -37,38 +36,45 @@ ImagesPtr ImageFilesHandler::openImages() {
                      );
 }
 
+// The function never returns nullptr; if an error occurs,
+// a runtime_error with its description will be thrown.
 ImagesPtr ImageFilesHandler::openImages(const QString &image1Path, const QString &image2Path) {
     QFileInfo firstImageInfo { image1Path };
     QFileInfo secondImageInfo { image2Path };
 
-    if (!firstImageInfo.isFile() || !secondImageInfo.isFile()) {
-        throw std::runtime_error("Error: Unable to load images; "
-                                 "one or both files do not exist!"
-                                 );
-    }
+    QString error = "%1 file does not exist or this is not a PNG image. Please select an image in PNG format.";
 
-    QString suffix1 = "." + firstImageInfo.suffix().toLower();
-    QString suffix2 = "." + secondImageInfo.suffix().toLower();
-    if (suffix1 != suffix2 || suffix1 != imageExtentionWithDot) {
-        throw std::runtime_error("Error: Unable to load images; "
-                                 "one or both images have an unsupported format!"
-                                 );
+    if (!firstImageInfo.isFile()) {
+        throw std::runtime_error(error.arg(image1Path).toStdString());
+    }
+    if (!secondImageInfo.isFile()) {
+        throw std::runtime_error(error.arg(image2Path).toStdString());
+    }
+    if (firstImageInfo.suffix() != "png" ||
+        secondImageInfo.suffix() != "png") {
+        throw std::runtime_error(error.arg(image1Path).toStdString());
     }
 
     QPixmap image1, image2;
     image1.load(image1Path);
     image2.load(image2Path);
 
-    if (image1.isNull() || image2.isNull()) {
-        throw std::runtime_error(errorUnableToOpenImages);
-    }
+    auto images = std::make_shared<Images>(image1, image2, image1Path, image2Path);
 
-    if (image1.size() != image2.size()) {
-        throw std::runtime_error("Error: Unable to load images; Images must have the same resolution!");
-    }
-    return std::make_shared<Images>(image1, image2, image1Path, image2Path);
+    validateImages(images);
+
+    return images;
 }
 
+void ImageFilesHandler::validateImages(ImagesPtr images) {
+    auto validationRules = ImageValidationRulesFactory::create(images);
+    auto error = validationRules->isValid();
+    if (error == std::nullopt) {
+        return; // images are valid
+    }
+    std::string strError = error->toStdString();
+    throw std::runtime_error(strError);
+}
 
 std::optional<FileSaveResult> ImageFilesHandler::saveImageAs(const SaveImageInfo &saveImageInfo,
                                               const ImagesPtr images
@@ -79,7 +85,10 @@ std::optional<FileSaveResult> ImageFilesHandler::saveImageAs(const SaveImageInfo
         images == nullptr
         )
     {
-        return std::make_optional<FileSaveResult>(false, "unknown");
+        return std::make_optional<FileSaveResult>(false, QString("An internal error occurred: ")
+                                                         + "the app is trying to save an "
+                                                         + "image of an unsupported type "
+                                                         + "or an empty image.");
     }
 
     ImagesInfo imagesInfo { images };
@@ -100,21 +109,21 @@ std::optional<FileSaveResult> ImageFilesHandler::saveImageAs(const SaveImageInfo
         fullPath = path2;
         break;
     case SaveImageInfoType::FirstImageArea:
-        fileName = file1Name + "_area" + imageExtentionWithDot;
+        fileName = file1Name + "_area.png";
         fullPath = file1Dir.filePath(fileName);
         break;
     case SaveImageInfoType::SecondImageArea:
-        fileName = file2Name + "_area" + imageExtentionWithDot;
+        fileName = file2Name + "_area.png";
         fullPath = file1Dir.filePath(fileName);
         break;
     case SaveImageInfoType::ComparisonImage:
-        fileName = QString("%1_vs_%2_comparison%3")
-                       .arg(file1Name, file2Name, imageExtentionWithDot);
+        fileName = QString("%1_vs_%2_comparison.png")
+                       .arg(file1Name, file2Name);
         fullPath = file1Dir.filePath(fileName);
         break;
     case SaveImageInfoType::ComparisonImageArea:
-        fileName = QString("%1_vs_%2_area_comparison%3")
-                       .arg(file1Name, file2Name, imageExtentionWithDot);
+        fileName = QString("%1_vs_%2_area_comparison.png")
+                       .arg(file1Name, file2Name);
         fullPath = file1Dir.filePath(fileName);
         break;
     default:

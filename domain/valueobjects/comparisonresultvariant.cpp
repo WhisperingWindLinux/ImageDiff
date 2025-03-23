@@ -16,7 +16,7 @@ ComparisonResultVariant::ComparisonResultVariant(const QString &string) {
 
 QImage ComparisonResultVariant::imageResult() {
     if (_type != ComparisonResultVariantType::Image) {
-        throw std::runtime_error("An incorrect ComparisionResultVariant type.");
+        throw std::runtime_error("An internal error occurred: an incorrect ComparisionResultVariant type.");
     } else {
         return image;
     }
@@ -24,7 +24,7 @@ QImage ComparisonResultVariant::imageResult() {
 
 QString ComparisonResultVariant::stringResult() {
     if (_type != ComparisonResultVariantType::String) {
-        throw std::runtime_error("An incorrect ComparisionResultVariant type.");
+        throw std::runtime_error("An internal error occurred: an incorrect ComparisionResultVariant type.");
     } else {
         return string;
     }

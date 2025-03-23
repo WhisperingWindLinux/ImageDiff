@@ -17,21 +17,20 @@ struct FileSaveResult {
 class ImageFilesHandler
 {
 public:
-    static const QString imageExtentionWithoutDot;
-    static const QString imageExtentionWithDot;
-
     ImageFilesHandler() = default;
     ~ImageFilesHandler() = default;
 
+    // The openImages functions never returns nullptr; if an error occurs,
+    // a runtime_error with its description will be thrown.
     ImagesPtr openImages();
     ImagesPtr openImages(const QString &image1Path, const QString &image2Path);
     ImagesPtr openImages(const QList<QUrl> &urls);
+
     std::optional<FileSaveResult> saveImageAs(const SaveImageInfo &saveImageInfo, const ImagesPtr images);
 
 private:
-    static const std::string errorUnableToOpenImages;
-
     bool validateFile(const QString &filePath);
+    void validateImages(ImagesPtr images);
 };
 
 #endif // IMAGEFILESHANDLER_H

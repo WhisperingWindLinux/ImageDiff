@@ -74,6 +74,6 @@ void RunAllComparatorsInteractor::generateReports(QList<AutocomparisonReportEntr
         callback->onMessage("The report saved to " + reportDirPath + ".");
         QDesktopServices::openUrl("file://" + reportDirPath + QDir::separator() + "report.html");
     } else {
-        callback->onError("Error: Unable to generate the report.");
+        callback->onError("Unable to generate the report.");
     }
 }

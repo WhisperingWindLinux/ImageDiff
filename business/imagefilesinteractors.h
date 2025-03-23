@@ -9,6 +9,7 @@
 #include <domain/valueobjects/savefileinfo.h>
 #include <domain/interfaces/imagefilesinteractorlistener.h>
 #include <domain/valueobjects/images.h>
+#include <business/imageanalysis/validation/imagevalidationrules.h>
 
 
 class RecentFilesInteractor;
@@ -39,6 +40,8 @@ private:
     ImageFilesHandler *imageFileHandler;
     RecentFilesInteractor *recentFilesInteractor;
     QList<IImageFilesInteractorListener*> listeners;
+
+    void validateImages(ImagesPtr images);
 
     std::optional<QString> savePixmapToTempDir(const QPixmap &pixmap, const QString &fileName);
 

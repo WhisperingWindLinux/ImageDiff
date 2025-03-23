@@ -3,6 +3,7 @@
 #include "business/getimagesfromvideosinteractor.h"
 #include "recentfilesinteractor.h"
 #include <data/storage/imagefileshandler.h>
+#include <business/imageanalysis/validation/imagevalidationrulesfactory.h>
 
 ImageFilesInteractor::ImageFilesInteractor() {
     imageFileHandler = new ImageFilesHandler();
@@ -25,12 +26,9 @@ void ImageFilesInteractor::openImagesFromRecentMenu(const QString &recentFileMen
     try {
         auto paths = recentFilesInteractor->getRecentFilesPathsByRecentMenuRecord(recentFileMenuRecord);
         if (!paths) {
-            throw std::runtime_error("Error: Unable to open images!");
+            throw std::runtime_error("Incorrect path to one or both images.");
         }
         images = imageFileHandler->openImages(paths->first, paths->second);
-        if (images == nullptr) {
-            throw std::runtime_error("Unknown error.");
-        }
         notifyImagesOpened(images);
     } catch(std::runtime_error &e) {
         cleanup();
@@ -42,9 +40,6 @@ void ImageFilesInteractor::openImagesFromRecentMenu(const QString &recentFileMen
 void ImageFilesInteractor::openImagesFromDragAndDrop(const QList<QUrl> &urls) {
     try {
         images = imageFileHandler->openImages(urls);
-        if (images == nullptr) {
-            throw std::runtime_error("Unknown error.");
-        }
         notifyImagesOpened(images);
     } catch(std::runtime_error &e) {
         cleanup();
@@ -58,10 +53,7 @@ void ImageFilesInteractor::openImages(const QString &image1Path,
                                      )
 {
     try {
-        ImagesPtr images = imageFileHandler->openImages(image1Path, image2Path);
-        if (images == nullptr) {
-            throw std::runtime_error("Unknown error.");
-        }
+        images = imageFileHandler->openImages(image1Path, image2Path);
         notifyImagesOpened(images);
     } catch(std::runtime_error &e) {
         cleanup();
@@ -75,10 +67,7 @@ void ImageFilesInteractor::openImagesViaCommandLine(const QString &image1Path,
                                                    )
 {
     try {
-        ImagesPtr images = imageFileHandler->openImages(image1Path, image2Path);
-        if (images == nullptr) {
-            throw std::runtime_error("Unknown error.");
-        }
+        images = imageFileHandler->openImages(image1Path, image2Path);
         images->markAsTemporary();
         notifyImagesOpened(images);
     } catch(std::runtime_error &e) {
@@ -90,10 +79,23 @@ void ImageFilesInteractor::openImagesViaCommandLine(const QString &image1Path,
 
 void ImageFilesInteractor::openImagesViaOpenFilesDialog() {
     try {
-        ImagesPtr images = imageFileHandler->openImages();
-        if (images == nullptr) {
+        images = imageFileHandler->openImages();
+        notifyImagesOpened(images);
+    } catch(std::runtime_error &e) {
+        cleanup();
+        notifyImagesOpenFailed(e.what());
+        notifyImagesClosed();
+    }
+}
+
+void ImageFilesInteractor::openImagesFromVideos() {
+    try {
+        GetImagesFromVideosInteractor getImagesFromVideosInteractor {};
+        ImagesPtr imagesPath = getImagesFromVideosInteractor.get();
+        if (imagesPath == nullptr) {
             return;
         }
+        images = imageFileHandler->openImages(imagesPath->path1, imagesPath->path2);
         notifyImagesOpened(images);
     } catch(std::runtime_error &e) {
         cleanup();
@@ -146,25 +148,6 @@ bool ImageFilesInteractor::unsubscribe(const IImageFilesInteractorListener *list
 
 void ImageFilesInteractor::cleanup() {
     images = nullptr;
-}
-
-void ImageFilesInteractor::openImagesFromVideos() {
-    try {
-        GetImagesFromVideosInteractor getImagesFromVideosInteractor {};
-        ImagesPtr imagesPath = getImagesFromVideosInteractor.get();
-        if (imagesPath == nullptr) {
-            return;
-        }
-        images = imageFileHandler->openImages(imagesPath->path1, imagesPath->path2);
-        if (images == nullptr) {
-            throw std::runtime_error("Error: Unable to open images.");
-        }
-        notifyImagesOpened(images);
-    } catch(std::runtime_error &e) {
-        cleanup();
-        notifyImagesOpenFailed(e.what());
-        notifyImagesClosed();
-    }
 }
 
 void ImageFilesInteractor::notifyImagesOpened(const ImagesPtr images) {

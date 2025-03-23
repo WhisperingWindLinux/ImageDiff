@@ -1,0 +1,30 @@
+What needs to be done for the beta release
+
+1) Integration tests.
+
+2) Test cases for a manual testing.
+
+3) A full app build for mac arm64 / x86_64 on GitHub Actions.
+
+
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+
+This needs to be done, but it's not mandatory for the beta release
+
+1) Validation that images have a PNG extension is implemented in several places with different pieces of code;
+it needs to be consolidated into one place.
+
+2) Remove the entry from the recent menu if an error occurs when opening the file from the recent menu.
+
+3) There are memory leaks when working with images.
+
+
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+
+It would be good to have it in the future
+
+1) Support for RGB(A) 10-bit PNG images.
+
+2) Support for named parameters in Python plugins. Right now, all parameters are positional.

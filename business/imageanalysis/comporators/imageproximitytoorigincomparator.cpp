@@ -15,7 +15,7 @@ ImageProximityToOriginResult ImageProximityToOriginComparator::compareImages(con
 {
     // Ensure all images have the same size
     if (image1.size() != image2.size() || image1.size() != originalImage.size()) {
-        throw runtime_error("Error: Images have different sizes. Comparison is not possible.");
+        throw runtime_error("Images have different sizes. Comparison is not possible.");
     }
 
     // Calculate the total difference for each image compared to the original
@@ -72,22 +72,13 @@ QList<Property> ImageProximityToOriginComparator::getDefaultProperties() const {
 
 void ImageProximityToOriginComparator::setProperties(QList<Property> properties) {
 
-    #ifdef QT_DEBUG
-    if (!pathToOriginalImage.isEmpty()) {
-        throw runtime_error("Error: Unabel to load the image.");
-    }
-    #endif
-
     if (properties.size() != 1) {
-        return;
+        throw runtime_error("Unabel to open the original image.");
     }
     QString filePath = properties[0].getFilePath();
-    if (filePath.isEmpty()) {
-        return;
-    }
     QFileInfo filePathInfo {filePath};
     if (!filePathInfo.isFile() || !filePathInfo.exists()) {
-        return;
+        throw runtime_error("Unabel to open the original image.");
     }
 
     pathToOriginalImage = filePath;

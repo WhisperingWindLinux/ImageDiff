@@ -29,8 +29,7 @@ std::optional<QString> SaveFileDialogHandler::getUserSaveFilePath(const QString 
         filter = reportFilter;
         title = "Save Report";
     } else {
-        throw std::runtime_error("Error: The app is trying to save a file of an unsupported type."
-                            " This error message is for the app developer.");
+        throw std::runtime_error("An internal error occurred: the app is trying to save a file of an unsupported type.");
     }
 
     dialog.setViewMode(QFileDialog::Detail);
@@ -129,8 +128,9 @@ OptionalStringPair SaveFileDialogHandler::getUserOpenTwoFilePaths(const QString 
         title1 = "Open First Video";
         title2 = "Open Second Video";
     } else {
-        throw std::runtime_error("Error: The app is trying to open a file of an unsupported type."
-                            " This error message is for the app developer.");
+        QString err = QString("An internal error occurred: the app is trying to open a file of an unsupported type.")
+                      + " This error message is for the app developer.";
+        throw std::runtime_error(err.toStdString());
     }
 
     dialog.setViewMode(QFileDialog::Detail);
