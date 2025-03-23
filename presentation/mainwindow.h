@@ -102,7 +102,6 @@ public:
 
     // IImageProcessingInteractorListener interface
 
-    void onShowImageProcessorsHelp(const QString &html) override;
     void onComparisonResultLoaded(const QPixmap &image, const QString &description) override;
 
     void onComparisonResultLoaded(const QString &html, const QString &comparatorFullName,

@@ -85,13 +85,12 @@ void ImageProcessingInteractor::restoreOriginalImages() {
     notifyFilteredResultLoaded(displayedImages->image1, displayedImages->image2);
 }
 
-void ImageProcessingInteractor::showImageProcessorsHelp() {
+QString ImageProcessingInteractor::showImageProcessorsHelp() {
     auto processorsInfo = ImageProcessorsManager::instance()->getAllProcessorsInfo();
     if (processorsInfo.size() == 0) {
-        return;
+        return {};
     }
-    auto helpHtml = HtmlImageProcessorsHelpPresenter::formatToHTML(processorsInfo);
-    notifyShowImageProcessorsHelp(helpHtml);
+    return HtmlImageProcessorsHelpPresenter::formatToHTML(processorsInfo);
 }
 
 void ImageProcessingInteractor::handleProcessorPropertiesIfNeed(IImageProcessorPtr processor) {
@@ -236,17 +235,17 @@ void ImageProcessingInteractor::runAllComparators() {
 
     auto image1 = displayedImages->image1;
     auto image2 = displayedImages->image2;
-    auto name1 = info.getFirstImageBaseName();
-    auto name2 = info.getSecondImageBaseName();
-    auto path1 = info.getFirstImagePath();
-    auto path2 = info.getSecondImagePath();
+    auto baseName1 = info.getFirstImageBaseName();
+    auto baseName2 = info.getSecondImageBaseName();
+    auto fullName1 = info.getFirstImageName();
+    auto fullName2 = info.getSecondImageName();
 
-    QString reportDirName = QString("%1_vs_%2_comparison_report").arg(name1, name2);
+    QString reportDirName = QString("%1_vs_%2_comparison_report").arg(baseName1, baseName2);
 
     QString saveReportDirPath = info.getFirstImageDir() + QDir::separator() + reportDirName;
 
-    ComparableImage firstComparableImage {image1, path1};
-    ComparableImage secondComparableImage {image2, path2};
+    ComparableImage firstComparableImage {image1, fullName1};
+    ComparableImage secondComparableImage {image2, fullName2};
 
     RunAllComparatorsInteractor runAllComparatorsInteractor {
                                             progressDialogCallback,
@@ -274,12 +273,6 @@ bool ImageProcessingInteractor::unsubscribe(const IImageProcessingInteractorList
         return false;
     }
     return listeners.removeOne(listener);
-}
-
-void ImageProcessingInteractor::notifyShowImageProcessorsHelp(const QString &html) {
-    foreach (auto listener, listeners) {
-        listener->onShowImageProcessorsHelp(html);
-    }
 }
 
 void ImageProcessingInteractor::notifyComparisonResultLoaded(const QPixmap &image,

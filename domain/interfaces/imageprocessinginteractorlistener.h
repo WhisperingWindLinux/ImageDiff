@@ -5,7 +5,6 @@
 
 class IImageProcessingInteractorListener {
 public:
-    virtual void onShowImageProcessorsHelp(const QString &html) = 0;
     virtual void onComparisonResultLoaded(const QPixmap &image, const QString &description) = 0;
 
     virtual void onComparisonResultLoaded(const QString &html,

@@ -29,10 +29,11 @@ public:
 
     ~ImageProcessingInteractor();
 
+    static QString showImageProcessorsHelp();
+
     void callImageProcessor(const QVariant &callerData);
     void runAllComparators();
     void restoreOriginalImages();
-    void showImageProcessorsHelp();
 
     bool subscribe(IImageProcessingInteractorListener *listener);
     bool unsubscribe(const IImageProcessingInteractorListener *listener);
@@ -49,7 +50,6 @@ private:
     void callFilter(IFilterPtr transformer);
     void handleProcessorPropertiesIfNeed(IImageProcessorPtr processor);
 
-    void notifyShowImageProcessorsHelp(const QString &html);
     void notifyComparisonResultLoaded(const QPixmap &image, const QString &description);
 
     void notifyComparisonResultLoaded(const QString &html,

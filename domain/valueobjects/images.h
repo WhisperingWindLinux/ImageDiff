@@ -7,8 +7,7 @@
 
 struct Images {
 
-Images(const QPixmap &image1, const QPixmap &image2, const QString &path1, const QString &path2);
-
+    Images(const QPixmap &image1, const QPixmap &image2, const QString &path1, const QString &path2);
     ~Images();
 
     // When the user selects an area of the image with the mouse while holding

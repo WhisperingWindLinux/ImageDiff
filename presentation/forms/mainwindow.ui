@@ -83,8 +83,8 @@
     <property name="title">
      <string>Window</string>
     </property>
-    <addaction name="actionPlaceColorPickerOnRight"/>
     <addaction name="actionPlaceColorPickerOnLeft"/>
+    <addaction name="actionPlaceColorPickerOnRight"/>
    </widget>
    <widget class="QMenu" name="menuTools">
     <property name="title">

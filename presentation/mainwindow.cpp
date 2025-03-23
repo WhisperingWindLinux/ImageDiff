@@ -229,9 +229,12 @@ void MainWindow::callImageProcessor() {
 }
 
 void MainWindow::callImageProcessorsHelp() {
-    if (imageProcessingInteractor != nullptr) {
-        imageProcessingInteractor->showImageProcessorsHelp();
+    QString html = ImageProcessingInteractor::showImageProcessorsHelp();
+    if (html.isEmpty()) {
+        html = "Hmm, strange, but there's nothing here. Most likely, it's a bug.";
     }
+    HelpDialog dialog(html);
+    dialog.exec();
 }
 
 void MainWindow::saveImageAs() {
@@ -421,11 +424,6 @@ void MainWindow::onFileSavedSuccessfully(const QString &path) {
             onMessage("File saved at path " + path + ".");
         }
     #endif
-}
-
-void MainWindow::onShowImageProcessorsHelp(const QString &html) {
-    HelpDialog dialog(html);
-    dialog.exec();
 }
 
 void MainWindow::onComparisonResultLoaded(const QPixmap &image, const QString &description) {

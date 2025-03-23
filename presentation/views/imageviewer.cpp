@@ -9,6 +9,7 @@
 #include <qapplication.h>
 #include <qprocess.h>
 #include <qlabel.h>
+#include <QTimer>
 #include <QGraphicsView>
 #include <presentation/mainwindow.h>
 #include <business/utils/imagesinfo.h>
@@ -140,7 +141,10 @@ void ImageViewer::displayImages(const ImagesPtr images) {
 
     parent->showStatusMessage(firstImagePath);
     secondDisplayedImage->setVisible(false);
-    setToFitImageInView();
+
+    QTimer::singleShot(0, this, [this]() {
+        setToFitImageInView();
+    });
 }
 
 void ImageViewer::showImageFromComparator(const QPixmap &image, const QString &description) {

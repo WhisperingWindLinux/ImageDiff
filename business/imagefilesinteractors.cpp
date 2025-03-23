@@ -92,7 +92,7 @@ void ImageFilesInteractor::openImagesViaOpenFilesDialog() {
     try {
         ImagesPtr images = imageFileHandler->openImages();
         if (images == nullptr) {
-            throw std::runtime_error("Unknown error.");
+            return;
         }
         notifyImagesOpened(images);
     } catch(std::runtime_error &e) {
@@ -146,9 +146,12 @@ void ImageFilesInteractor::openImagesFromVideos() {
     try {
         GetImagesFromVideosInteractor getImagesFromVideosInteractor {};
         ImagesPtr imagesPath = getImagesFromVideosInteractor.get();
+        if (imagesPath == nullptr) {
+            return;
+        }
         images = imageFileHandler->openImages(imagesPath->path1, imagesPath->path2);
         if (images == nullptr) {
-            throw std::runtime_error("Unknown error.");
+            throw std::runtime_error("Error: Unable to open images.");
         }
         notifyImagesOpened(images);
     } catch(std::runtime_error &e) {
