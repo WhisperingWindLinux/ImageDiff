@@ -1,24 +1,28 @@
 name: Build and Package Qt Application
 
 on:
-  push:
-    branches:
-      - ga-build
-  pull_request:
-    branches:
-      - ga-build
+  workflow_dispatch:
+  #push:
+    #branches:
+      #- develop
+  #pull_request:
+    #branches:
+      #- develop
 
 jobs:
   build:
     runs-on: self-hosted
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up environment
         run: |
           export SHELL=/bin/bash
-      
+          
+      #- name: Install gtar
+        #run: brew install gnu-tar
+        
       - name: Build project
         run: |
           mkdir build
@@ -30,3 +34,5 @@ jobs:
         run: |
           cd build
           tar -czvf ImageDiff-macOS-arm64.tar.gz ImageDiff.app
+
+          mv ImageDiff-macOS-arm64.tar.gz ImageDiff.app ../
