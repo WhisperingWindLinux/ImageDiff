@@ -3,15 +3,26 @@
 #include <qboxlayout.h>
 #include <qlineedit.h>
 
-ColorPickerPanel::ColorPickerPanel(bool isTwoPanelMode)
-    : QWidget{nullptr},
-    isTwoPanelMode(isTwoPanelMode),
-    isReserveSpaceForLayoutStability(true)
+ColorPickerPanel::ColorPickerPanel(QWidget *parent, bool isTwoPanelMode)
+    : QWidget(parent),
+    isTwoPanelMode(isTwoPanelMode)
 {
     setWindowTitle("Color Picker");
+    setLayout();
+    reset();
 
+    setWindowFlags(Qt::Window |
+                   Qt::WindowStaysOnTopHint |
+                   Qt::WindowDoesNotAcceptFocus |
+                   Qt::WindowTitleHint |
+                   Qt::CustomizeWindowHint |
+                   Qt::WindowCloseButtonHint
+                   );
+}
+
+void ColorPickerPanel::setLayout() {
     QVBoxLayout* mainLayout = new QVBoxLayout(this);
-    mainLayout->setContentsMargins(10, 10, 10, 10);
+    mainLayout->setContentsMargins(12, 10, 10, 10);
     mainLayout->setSpacing(10);
 
     // Create the first panel (visible image panel)
@@ -42,25 +53,13 @@ ColorPickerPanel::ColorPickerPanel(bool isTwoPanelMode)
     }
 
     // Add a spacer to push everything to the top of the panel
-    mainLayout->addStretch();
-
-    setWindowFlags(Qt::Window |
-                   Qt::WindowStaysOnTopHint |
-                   Qt::WindowDoesNotAcceptFocus |
-                   Qt::WindowTitleHint |
-                   Qt::CustomizeWindowHint |
-                   Qt::WindowCloseButtonHint
-                   );
-}
-
-void ColorPickerPanel::reset() {
-    ImagePixelColor emptyData =  { "n/a", -1, -1, -1 };
-    update(emptyData, emptyData);
+    mainLayout->addStretch(1000);
+    mainLayout->addSpacing(10);
 }
 
 RgbWidgets ColorPickerPanel::createPanel() {
     // Create a vertical layout for this specific panel
-    QVBoxLayout* panelLayout = new QVBoxLayout();
+    QVBoxLayout *panelLayout = new QVBoxLayout();
 
     auto fileNameLabel = new QLabel(this);
     panelLayout->addWidget(fileNameLabel);
@@ -73,6 +72,7 @@ RgbWidgets ColorPickerPanel::createPanel() {
     auto rLabel = new QLabel("R: 0", this);
     auto gLabel = new QLabel("G: 0", this);
     auto bLabel = new QLabel("B: 0", this);
+    rLabel->setMinimumWidth(75);
 
     // Align the text to the center-left
     rLabel->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
@@ -88,18 +88,27 @@ RgbWidgets ColorPickerPanel::createPanel() {
     rgbLabelsLayout->addStretch();
 
     // Create the color square (a fixed-size frame)
+    auto colorSquareLayout = new QVBoxLayout();
     auto colorSquare = new QFrame(this);
     colorSquare->setFixedSize(70, 70); // Set fixed size for the square
     colorSquare->setStyleSheet("background-color: rgb(0, 0, 0);"); // Default black color
+    colorSquareLayout->addWidget(colorSquare);
+    colorSquareLayout->addStretch();
 
     // Add RGB labels and color square to the horizontal layout
     topLayout->addLayout(rgbLabelsLayout);
-    topLayout->addWidget(colorSquare);
+    topLayout->addLayout(colorSquareLayout);
+    topLayout->addStretch();
 
     // Add the horizontal layout to the panel layout
     panelLayout->addLayout(topLayout);
 
     return { fileNameLabel, panelLayout, colorSquare, rLabel, gLabel, bLabel };
+}
+
+void ColorPickerPanel::reset() {
+    ImagePixelColor emptyData =  { "n/a", -1, -1, -1 };
+    update(emptyData, emptyData);
 }
 
 void ColorPickerPanel::updateTopPanelOnly(const ImagePixelColor &visibleImageColor) {
@@ -172,21 +181,11 @@ void ColorPickerPanel::update(const ImagePixelColor &visibleImageColor,
                                QLabel* bottomLabel
                                )
     {
-        QString reservedSpace = "       ";
-        if (!isReserveSpaceForLayoutStability) {
-            reservedSpace = " ";
-        }
-        isReserveSpaceForLayoutStability = false;
-
         // Check if values are out of range
         if (topValue < 0 || topValue > 255 || bottomValue < 0 || bottomValue > 255) {
             // Display "n/a" for invalid values
-            topLabel->setText(QString("%1: n/a%2")
-                                  .arg(componentName)
-                                  .arg(reservedSpace));
-            bottomLabel->setText(QString("%1: n/a%2")
-                                     .arg(componentName)
-                                     .arg(reservedSpace));
+            topLabel->setText(QString("%1: n/a").arg(componentName));
+            bottomLabel->setText(QString("%1: n/a").arg(componentName));
             topLabel->setStyleSheet("color: black;");
             bottomLabel->setStyleSheet("color: black;");
             firstColorSquare->setStyleSheet("background-color: gray;");
@@ -199,48 +198,20 @@ void ColorPickerPanel::update(const ImagePixelColor &visibleImageColor,
 
         if (topValue > bottomValue) {
             // Top value is greater
-            topLabel->setText(QString("%1: %2 | %3%4")
-                                  .arg(componentName)
-                                  .arg(topValue)
-                                  .arg(difference)
-                                  .arg(reservedSpace)
-                              );
-            bottomLabel->setText(QString("%1: %2 | %3%4")
-                                     .arg(componentName)
-                                     .arg(bottomValue)
-                                     .arg(difference)
-                                     .arg(reservedSpace)
-                                 );
+            topLabel->setText(format(componentName, topValue, difference));
+            bottomLabel->setText(format(componentName, bottomValue, difference));
             topLabel->setStyleSheet("color: green;");
             bottomLabel->setStyleSheet("color: red;");
         } else if (topValue < bottomValue) {
             // Bottom value is greater
-            topLabel->setText(QString("%1: %2 | %3%4")
-                                  .arg(componentName)
-                                  .arg(topValue)
-                                  .arg(difference)
-                                  .arg(reservedSpace)
-                              );
-            bottomLabel->setText(QString("%1: %2 | %3%4")
-                                     .arg(componentName)
-                                     .arg(bottomValue)
-                                     .arg(difference)
-                                     .arg(reservedSpace)
-                                 );
+            topLabel->setText(format(componentName, topValue, difference));
+            bottomLabel->setText(format(componentName, bottomValue, difference));
             topLabel->setStyleSheet("color: red;");
             bottomLabel->setStyleSheet("color: green;");
         } else {
             // Values are equal, no difference to show
-            topLabel->setText(QString("%1: %2%3")
-                                  .arg(componentName)
-                                  .arg(topValue)
-                                  .arg(reservedSpace)
-                              );
-            bottomLabel->setText(QString("%1: %2%3")
-                                     .arg(componentName)
-                                     .arg(bottomValue)
-                                     .arg(reservedSpace)
-                                 );
+            topLabel->setText(format(componentName, topValue, difference));
+            bottomLabel->setText(format(componentName, bottomValue, difference));
             topLabel->setStyleSheet("color: black;");
             bottomLabel->setStyleSheet("color: black;");
         }
@@ -270,3 +241,45 @@ void ColorPickerPanel::update(const ImagePixelColor &visibleImageColor,
                     secondBLabel
                     );
 }
+
+QString ColorPickerPanel::format(const QString &colorComponemt,
+                                 int color,
+                                 int diff,
+                                 bool alignColorValueLeft,
+                                 bool alignDiffValueLeft
+                                 )
+{
+    const int maxNumberWidth = 3;
+    const QString separator = "  |  ";
+
+    QString strColor = QString::number(color);
+
+    QString formattedColor = alignColorValueLeft ? strColor.leftJustified(maxNumberWidth, ' ') :
+                             strColor.rightJustified(maxNumberWidth, ' ');
+
+    if (diff == 0) {
+        return QString(colorComponemt) + ":  " + formattedColor;
+    } else {
+        QString strDiff = QString::number(diff);
+        QString formattedDiff = alignDiffValueLeft ? strDiff.leftJustified(maxNumberWidth, ' ') :
+                                    strDiff.rightJustified(maxNumberWidth, ' ');
+
+        return QString(colorComponemt) + ":  " + formattedColor + separator + formattedDiff;
+    }
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

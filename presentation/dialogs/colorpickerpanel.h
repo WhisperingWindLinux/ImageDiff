@@ -20,7 +20,7 @@ class ColorPickerPanel : public QWidget
 public:
     // One panel displays the RGB values only for the visible image.
     // The second panel is for the second (hidden) image.
-    explicit ColorPickerPanel(bool isTwoPanelMode = true);
+    explicit ColorPickerPanel(QWidget *parent = nullptr, bool isTwoPanelMode = true);
     
     void update(const ImagePixelColor &visibleImageColor, std::optional<ImagePixelColor> hiddenImageColor);
 
@@ -43,9 +43,18 @@ private:
     QLabel* secondBLabel = nullptr;      // Label for B value (second panel)
 
     bool isTwoPanelMode;
-    bool isReserveSpaceForLayoutStability;
+
+    QLayout *panelMainLayout;
     
     void updateTopPanelOnly(const ImagePixelColor &firstPanelValue);
+    void setLayout();
+
+    QString format(const QString &colorComponemt,
+                   int color,
+                   int diff,
+                   bool alignColorValueLeft = true,
+                   bool alignDiffValueLeft = true
+                   );
 };
 
 

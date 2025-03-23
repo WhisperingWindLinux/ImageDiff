@@ -86,6 +86,7 @@ HEADERS += \
     domain/interfaces/colorundercursorchangelistener.h \
     domain/interfaces/comparator.h \
     domain/interfaces/filter.h \
+    domain/interfaces/icolorpickercontroller.h \
     domain/interfaces/idroptarget.h \
     domain/interfaces/imagefilesinteractorlistener.h \
     domain/interfaces/imageprocessinginteractorlistener.h \

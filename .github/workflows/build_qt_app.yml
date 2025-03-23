@@ -20,8 +20,8 @@ jobs:
         run: |
           export SHELL=/bin/bash
           
-      - name: Install gtar
-        run: brew install gnu-tar
+      #- name: Install gtar
+        #run: brew install gnu-tar
         
       - name: Build project
         run: |
@@ -34,4 +34,5 @@ jobs:
         run: |
           cd build
           tar -czvf ImageDiff-macOS-arm64.tar.gz ImageDiff.app
-          mv ImageDiff-macOS-arm64.tar.gz ImageDiff.app ../ 
+
+          mv ImageDiff-macOS-arm64.tar.gz ImageDiff.app ../

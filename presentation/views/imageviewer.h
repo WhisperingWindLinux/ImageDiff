@@ -85,12 +85,12 @@ private:
 
     ImagesPtr getCroppedImages(QRectF rect);
 
-    void getPixelColorUnderCursor(std::optional<QPoint> cursorPos);
+    void sendPixelColorUnderCursor(std::optional<QPoint> cursorPos);
 
-    void fillPixelColorValues(QString visibleImageName,
-                              QColor colorOfVisibleImage,
-                              QString hiddenImageName,
-                              QColor colorOfHiddenImage
+    void sendPixelColorValues(const QString &visibleImageName,
+                              const QColor &colorOfVisibleImage,
+                              const QString &hiddenImageName,
+                              const QColor &colorOfHiddenImage
                               );
     void setCenterToViewRectCenter();
 };

@@ -45,8 +45,3 @@ void ImageProcessorsMenuController::buildFiltersAndComparatorsMenus(QMenu *compa
                             );
     }
 }
-
-
-
-
-

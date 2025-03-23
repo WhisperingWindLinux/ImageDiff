@@ -58,7 +58,7 @@ Dummy comparator (Comparator; For Testing Purposes Only)                        
 
 Color picker                                                                       P
 
-Advanced Color Picker                                                              A
+Docked Color Picker                                                                A
 
 Show Original Image (Filter)                                                       C
 
