@@ -35,6 +35,8 @@ public:
 private:
     MainWindow *mainWindow;
     ColorPickerPanel *colorPicker;
+
+    void createColorPicker();
 };
 
 #endif // COLORPICKERCONTROLLER_H
