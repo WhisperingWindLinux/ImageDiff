@@ -3,12 +3,12 @@
 #include <qboxlayout.h>
 #include <qlineedit.h>
 
-ColorPickerPanel::ColorPickerPanel(QWidget *parent, bool isTwoPanelMode)
+ColorPickerPanel::ColorPickerPanel(bool isForRightPosition, QWidget *parent, bool isTwoPanelMode)
     : QWidget(parent),
     isTwoPanelMode(isTwoPanelMode)
 {
     setWindowTitle("Color Picker");
-    setLayout();
+    setLayout(isForRightPosition);
     reset();
 
     setWindowFlags(Qt::Window |
@@ -20,13 +20,13 @@ ColorPickerPanel::ColorPickerPanel(QWidget *parent, bool isTwoPanelMode)
                    );
 }
 
-void ColorPickerPanel::setLayout() {
+void ColorPickerPanel::setLayout(bool isForRightPosition) {
     QVBoxLayout* mainLayout = new QVBoxLayout(this);
     mainLayout->setContentsMargins(12, 10, 10, 10);
     mainLayout->setSpacing(10);
 
     // Create the first panel (visible image panel)
-    auto rgbWidgets = createPanel();
+    auto rgbWidgets = createPanel(isForRightPosition);
     mainLayout->addLayout(rgbWidgets.panelLayout);
     firstFileNameLabel = rgbWidgets.fileNamelabel;
     firstColorSquare = rgbWidgets.colorSquare;
@@ -40,7 +40,7 @@ void ColorPickerPanel::setLayout() {
         mainLayout->addSpacing(20);
 
         // Create the second panel
-        auto rgbWidgets = createPanel();
+        auto rgbWidgets = createPanel(isForRightPosition);
 
         mainLayout->addLayout(rgbWidgets.panelLayout);
 
@@ -57,7 +57,7 @@ void ColorPickerPanel::setLayout() {
     mainLayout->addSpacing(10);
 }
 
-RgbWidgets ColorPickerPanel::createPanel() {
+RgbWidgets ColorPickerPanel::createPanel(bool isForRightPosition) {
     // Create a vertical layout for this specific panel
     QVBoxLayout *panelLayout = new QVBoxLayout();
 
@@ -72,7 +72,9 @@ RgbWidgets ColorPickerPanel::createPanel() {
     auto rLabel = new QLabel("R: 0", this);
     auto gLabel = new QLabel("G: 0", this);
     auto bLabel = new QLabel("B: 0", this);
-    rLabel->setMinimumWidth(75);
+    rLabel->setMinimumWidth(85);
+    gLabel->setMinimumWidth(85);
+    bLabel->setMinimumWidth(85);
 
     // Align the text to the center-left
     rLabel->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
@@ -96,8 +98,14 @@ RgbWidgets ColorPickerPanel::createPanel() {
     colorSquareLayout->addStretch();
 
     // Add RGB labels and color square to the horizontal layout
-    topLayout->addLayout(rgbLabelsLayout);
-    topLayout->addLayout(colorSquareLayout);
+    if (isForRightPosition) {
+        topLayout->addLayout(rgbLabelsLayout);
+        topLayout->addLayout(colorSquareLayout);
+    } else {
+        colorSquareLayout->setContentsMargins(0, 0, 10, 0);
+        topLayout->addLayout(colorSquareLayout);
+        topLayout->addLayout(rgbLabelsLayout);
+    }
     topLayout->addStretch();
 
     // Add the horizontal layout to the panel layout

@@ -7,9 +7,6 @@ ColorPickerController::ColorPickerController(MainWindow *mainWindow)
     : QDockWidget(nullptr),
     mainWindow(mainWindow)
 {
-    colorPicker = new ColorPickerPanel();
-    setWidget(colorPicker);
-
     setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 
     QObject::connect(this, &QDockWidget::dockLocationChanged, this, &ColorPickerController::onDockLocationChanged);
@@ -23,6 +20,13 @@ ColorPickerController::~ColorPickerController() {
 }
 
 void ColorPickerController::onDockLocationChanged(Qt::DockWidgetArea area) {
+    if (area == Qt::LeftDockWidgetArea) {
+        colorPicker = new ColorPickerPanel(false);
+        setWidget(colorPicker);
+    } else {
+        colorPicker = new ColorPickerPanel(true);
+        setWidget(colorPicker);
+    }
     if (area == Qt::NoDockWidgetArea) {
         adjustSize();
     } else {
