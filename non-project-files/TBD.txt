@@ -12,10 +12,7 @@ What needs to be done for the beta release
 
 This needs to be done, but it's not mandatory for the beta release
 
-1) Validation that images have a PNG extension is implemented in several places with different pieces of code;
-it needs to be consolidated into one place.
-
-2) Remove the entry from the recent menu if an error occurs when opening the file from the recent menu.
+1) Remove the entry from the recent menu if an error occurs when opening the file from the recent menu.
 
 3) There are memory leaks when working with images.
 
