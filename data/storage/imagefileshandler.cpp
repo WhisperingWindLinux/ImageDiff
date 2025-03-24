@@ -14,8 +14,8 @@
 ImagesPtr ImageFilesHandler::openImages(const QList<QUrl> &urls) {
     if (urls.size() != 2) {
 
-        auto validationRules = ImageValidationRulesFactory::createImageExtentionValidator();
-        auto exts = validationRules->getAllExtentionsForUserMessages(true);
+        auto validationRules = ImageValidationRulesFactory::createImageExtensionValidator();
+        auto exts = validationRules->getAllExtensionsForUserMessages(true);
 
         QString err = QString("Invalid number of images. ")
                       + QString("Drag and drop two images in %1 format.").arg(exts);
@@ -46,8 +46,8 @@ ImagesPtr ImageFilesHandler::openImages(const QString &image1Path, const QString
     QFileInfo firstImageInfo { image1Path };
     QFileInfo secondImageInfo { image2Path };
 
-    auto extentionValidator = ImageValidationRulesFactory::createImageExtentionValidator();
-    QString exts = extentionValidator->getAllExtentionsForUserMessages(true);
+    auto extentionValidator = ImageValidationRulesFactory::createImageExtensionValidator();
+    QString exts = extentionValidator->getAllExtensionsForUserMessages(true);
 
     auto error = QString("One or both of the %1 files do not exist, or these are not a %1 images. "
                          "Please select images in %1 format.")
@@ -98,8 +98,8 @@ std::optional<FileSaveResult> ImageFilesHandler::saveImageAs(const SaveImageInfo
 
     ImagesInfo imagesInfo { images };
 
-    auto extentionValidator = ImageValidationRulesFactory::createImageExtentionValidator();
-    QString ext = extentionValidator->getDeafaultSaveExtention(true);
+    auto extentionValidator = ImageValidationRulesFactory::createImageExtensionValidator();
+    QString ext = extentionValidator->getDeafaultSaveExtension(true);
 
     const QString &file1Name = imagesInfo.getFirstImageBaseName();
     const QString &file2Name = imagesInfo.getSecondImageBaseName();

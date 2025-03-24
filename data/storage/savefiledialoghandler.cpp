@@ -8,7 +8,7 @@
 #include <business/validation/imagevalidationrulesfactory.h>
 
 SaveFileDialogHandler::SaveFileDialogHandler() {
-    auto validationRules = ImageValidationRulesFactory::createImageExtentionValidator();
+    auto validationRules = ImageValidationRulesFactory::createImageExtensionValidator();
     imageFilter = validationRules->createFilter();
 }
 

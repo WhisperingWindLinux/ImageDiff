@@ -25,8 +25,8 @@ PythonScriptComparator::PythonScriptComparator(const QString &pyScriptPath,
     m_isPartOfAutoReportingToolbox(isPartOfAutoReportingToolbox),
     pyScriptPath(pyScriptPath)
 {
-    auto validationRules = ImageValidationRulesFactory::createImageExtentionValidator();
-    QString ext = validationRules->getDeafaultSaveExtention(false);
+    auto validationRules = ImageValidationRulesFactory::createImageExtensionValidator();
+    QString ext = validationRules->getDeafaultSaveExtension(false);
     defaultSaveImageExtention = ext.toUpper().toStdString();
 }
 
