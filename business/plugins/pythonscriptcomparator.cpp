@@ -6,6 +6,7 @@
 #include <qprocess.h>
 #include <QtCore/qdebug.h>
 #include <business/pluginsettingsinteractor.h>
+#include <business/validation/imagevalidationrulesfactory.h>
 
 
 PythonScriptComparator::PythonScriptComparator(const QString &pyScriptPath,
@@ -24,7 +25,9 @@ PythonScriptComparator::PythonScriptComparator(const QString &pyScriptPath,
     m_isPartOfAutoReportingToolbox(isPartOfAutoReportingToolbox),
     pyScriptPath(pyScriptPath)
 {
-
+    auto validationRules = ImageValidationRulesFactory::createImageExtentionValidator();
+    QString ext = validationRules->getDeafaultSaveExtention(false);
+    defaultSaveImageExtention = ext.toUpper().toStdString();
 }
 
 QString PythonScriptComparator::getShortName() const {
@@ -78,7 +81,9 @@ shared_ptr<ComparisonResultVariant> PythonScriptComparator::compare(const Compar
     buffer1.open(QIODevice::WriteOnly);
     buffer2.open(QIODevice::WriteOnly);
 
-    if (!first.getImage().save(&buffer1, "PNG") || !second.getImage().save(&buffer2, "PNG")) {
+    if (!first.getImage().save(&buffer1, defaultSaveImageExtention.c_str()) ||
+        !second.getImage().save(&buffer2, defaultSaveImageExtention.c_str()))
+    {
         throw runtime_error("Failed to encode images to bytes array.");
     }
 
@@ -127,7 +132,9 @@ shared_ptr<ComparisonResultVariant> PythonScriptComparator::compare(const Compar
 
     QByteArray output = process.readAllStandardOutput();
     QImage resultImage;
-    if (resultImage.loadFromData(output, "PNG") && !resultImage.isNull()) {
+    if (resultImage.loadFromData(output, defaultSaveImageExtention.c_str()) &&
+        !resultImage.isNull())
+    {
         return make_shared<ComparisonResultVariant>(resultImage);
     }
 

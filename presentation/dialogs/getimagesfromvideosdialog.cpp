@@ -1,7 +1,7 @@
 #include "getimagesfromvideosdialog.h"
 
 
-GrabImagesFromVideosDialog::GrabImagesFromVideosDialog(QWidget *parent,
+GetImagesFromVideosDialog::GetImagesFromVideosDialog(QWidget *parent,
                                                        const QString &videoFilePath1,
                                                        const QString &videoFilePath2)
     : QDialog(parent),
@@ -27,23 +27,23 @@ GrabImagesFromVideosDialog::GrabImagesFromVideosDialog(QWidget *parent,
     }
 
     // Connect screenshot signals from both players
-    connect(player1, &VideoPlayerWidget::screenshotTaken, this, &GrabImagesFromVideosDialog::handleScreenshotTaken);
-    connect(player2, &VideoPlayerWidget::screenshotTaken, this, &GrabImagesFromVideosDialog::handleScreenshotTaken);
+    connect(player1, &VideoPlayerWidget::screenshotTaken, this, &GetImagesFromVideosDialog::handleScreenshotTaken);
+    connect(player2, &VideoPlayerWidget::screenshotTaken, this, &GetImagesFromVideosDialog::handleScreenshotTaken);
 }
 
-QString GrabImagesFromVideosDialog::getFirstScreenshotPath() {
+QString GetImagesFromVideosDialog::getFirstScreenshotPath() {
     return player1->getCurrentScreenshotPath();
 }
 
-QString GrabImagesFromVideosDialog::getSecondScreenshotPath() {
+QString GetImagesFromVideosDialog::getSecondScreenshotPath() {
     return player2->getCurrentScreenshotPath();
 }
 
-bool GrabImagesFromVideosDialog::isCanceled() {
+bool GetImagesFromVideosDialog::isCanceled() {
     return totalScreenshotsTaken < 2;
 }
 
-void GrabImagesFromVideosDialog::handleScreenshotTaken() {
+void GetImagesFromVideosDialog::handleScreenshotTaken() {
     totalScreenshotsTaken++;
     if (totalScreenshotsTaken >= 2) {
         close(); // Close the dialog after two screenshots are taken

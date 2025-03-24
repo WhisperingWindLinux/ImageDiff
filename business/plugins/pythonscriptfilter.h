@@ -28,6 +28,7 @@ private:
     QString description;
     QList<Property> properties;
     QString pyScriptPath;
+    std::string defaultSaveImageExtention;
 };
 
 #endif // PYTHONSCRIPFILTER_H

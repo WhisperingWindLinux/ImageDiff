@@ -21,7 +21,8 @@ SOURCES += \
     business/imageanalysis/filters/rgbfilter.cpp \
     business/imageanalysis/imageprocessinginteractor.cpp \
     business/imageanalysis/imageprocessorsmanager.cpp \
-    business/imageanalysis/validation/imagevalidationrules.cpp \
+    business/validation/imagevalidationrules.cpp \
+    business/validation/imageextentionvalidator.cpp \
     business/imagefilesinteractors.cpp \
     business/otherappinstancesinteractor.cpp \
     business/plugins/imageprocessordeserializer.cpp \
@@ -54,6 +55,7 @@ SOURCES += \
     presentation/presenters/htmlreportpresenter.cpp \
     presentation/views/graphicspixmapitem.cpp \
     presentation/views/imageviewer.cpp \
+    presentation/views/videodialogslider.cpp \
     presentation/views/videoplayerwidget.cpp \
     domain/valueobjects/autocomparisonreportentry.cpp \
 
@@ -70,9 +72,11 @@ HEADERS += \
     business/imageanalysis/filters/rgbfilter.h \
     business/imageanalysis/imageprocessinginteractor.h \
     business/imageanalysis/imageprocessorsmanager.h \
-    business/imageanalysis/validation/imagevalidationrules.h \
-    business/imageanalysis/validation/imagevalidationrulesfactory.h \
-    business/imageanalysis/validation/interfaces/iimagevalidationrules.h \
+    business/validation/imagevalidationrules.h \
+    business/validation/imagevalidationrulesfactory.h \
+    business/validation/interfaces/iimageextentionvalidator.h \
+    business/validation/interfaces/iimagevalidationrules.h \
+    business/validation/imageextentionvalidator.h \
     business/imagefilesinteractors.h \
     business/otherappinstancesinteractor.h \
     business/plugins/imageprocessordeserializer.h \
@@ -124,6 +128,7 @@ HEADERS += \
     presentation/valueobjects/rgbwidgets.h \
     presentation/views/graphicspixmapitem.h \
     presentation/views/imageviewer.h \
+    presentation/views/videodialogslider.h \
     presentation/views/videoplayerwidget.h
 
 FORMS += \

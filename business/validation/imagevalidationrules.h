@@ -3,7 +3,7 @@
 
 #include "domain/valueobjects/images.h"
 #include <qfileinfo.h>
-#include <business/imageanalysis/validation/interfaces/iimagevalidationrules.h>
+#include <business/validation/interfaces/iimagevalidationrules.h>
 
 // Since we will be comparing the images pixel by pixel, we need to ensure
 // that they have the same characteristics (color depth, format, etc.).
@@ -12,7 +12,7 @@ class ImageValidationRules : public IImageValidationRules
 {
 public:
     ImageValidationRules(const ImagesPtr images);
-    ~ImageValidationRules();
+    virtual ~ImageValidationRules();
 
     // If all checks pass, return nullopt
     std::optional<QString> isValid() override;

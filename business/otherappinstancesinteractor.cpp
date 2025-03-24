@@ -6,6 +6,8 @@
 #include <qdir.h>
 #include <qprocess.h>
 
+#include <business/validation/imagevalidationrulesfactory.h>
+
 OtherAppInstancesInteractor::OtherAppInstancesInteractor(
                                                 OtherAppInstancesInteractorCallback *callback)
     : callback(callback)
@@ -74,7 +76,9 @@ std::optional<QString> OtherAppInstancesInteractor::saveImageInTempDir(const QPi
                                                                        )
 {
     QString tempDir = QDir::tempPath();
-    QString filePath = QDir(tempDir).filePath(QString(fileName) + ".png");
+    auto validationRules = ImageValidationRulesFactory::createImageExtentionValidator();
+    auto ext = validationRules->getDeafaultSaveExtention(true);
+    QString filePath = QDir(tempDir).filePath(QString(fileName) + ext);
     if (pixmap.save(filePath)) {
         return filePath;
     } else {

@@ -7,6 +7,8 @@
 
 #include <domain/valueobjects/comparisonresultvariant.h>
 
+#include <business/validation/imagevalidationrulesfactory.h>
+
 PythonScripFilter::PythonScripFilter(const QString& pyScriptPath,
                                      const QString &shortName,
                                      const QString &hotkey,
@@ -18,7 +20,9 @@ PythonScripFilter::PythonScripFilter(const QString& pyScriptPath,
     properties(properties),
     pyScriptPath(pyScriptPath)
 {
-
+    auto validationRules = ImageValidationRulesFactory::createImageExtentionValidator();
+    QString ext = validationRules->getDeafaultSaveExtention(false);
+    defaultSaveImageExtention = ext.toUpper().toStdString();
 }
 
 QString PythonScripFilter::getShortName() const {
@@ -48,7 +52,7 @@ QImage PythonScripFilter::filter(const QImage &image) {
 
     buffer1.open(QIODevice::WriteOnly);
 
-    if (!image.save(&buffer1, "PNG")) {
+    if (!image.save(&buffer1, defaultSaveImageExtention.c_str())) {
         throw runtime_error("Failed to encode images to bytes array.");
     }
 
@@ -94,7 +98,8 @@ QImage PythonScripFilter::filter(const QImage &image) {
 
     QByteArray output = process.readAllStandardOutput();
     QImage resultImage;
-    if (!resultImage.loadFromData(output, "PNG") && !resultImage.isNull()) {
+    if (!resultImage.loadFromData(output, defaultSaveImageExtention.c_str()) &&
+        !resultImage.isNull()) {
         throw runtime_error("Error! The script returned '" +
                             process.readAllStandardError() + "'");
     }
