@@ -48,6 +48,7 @@ QList<AutocomparisonReportEntry> RunAllComparatorsInteractor::executeAllComparat
             return {};
         }
         try {
+            comparator->reset();
             auto result = comparator->compare(firstImage, secondImage);
             if (result != nullptr) {
                 entries.append({result, comparator->getFullName(), comparator->getDescription()});

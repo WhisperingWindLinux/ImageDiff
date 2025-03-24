@@ -13,6 +13,7 @@ SOURCES += \
     business/imageanalysis/comporators/colorssaturationcomporator.cpp \
     business/imageanalysis/comporators/contrastcomporator.cpp \
     business/imageanalysis/comporators/differenceinpixelvaluesasimage.cpp \
+    business/imageanalysis/comporators/formatters/pixelsabsolutvaluescomparatorformatter.cpp \
     business/imageanalysis/comporators/imageproximitytoorigincomparator.cpp \
     business/imageanalysis/comporators/pixelsabsolutevaluecomparator.cpp \
     business/imageanalysis/comporators/pixelsbrightnesscomparator.cpp \
@@ -64,6 +65,7 @@ HEADERS += \
     business/imageanalysis/comporators/colorssaturationcomporator.h \
     business/imageanalysis/comporators/contrastcomporator.h \
     business/imageanalysis/comporators/differenceinpixelvaluesasimage.h \
+    business/imageanalysis/comporators/formatters/pixelsabsolutvaluescomparatorformatter.h \
     business/imageanalysis/comporators/imageproximitytoorigincomparator.h \
     business/imageanalysis/comporators/pixelsabsolutevaluecomparator.h \
     business/imageanalysis/comporators/pixelsbrightnesscomparator.h \
@@ -109,6 +111,7 @@ HEADERS += \
     domain/valueobjects/imagepixelcolor.h \
     domain/valueobjects/imageprocessorsinfo.h \
     domain/valueobjects/images.h \
+    domain/valueobjects/pixeldiffrencerange.h \
     domain/valueobjects/pluginssettings.h \
     domain/valueobjects/property.h \
     domain/valueobjects/pyscriptinfo.h \
