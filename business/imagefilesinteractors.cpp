@@ -3,7 +3,6 @@
 #include "business/getimagesfromvideosinteractor.h"
 #include "recentfilesinteractor.h"
 #include <data/storage/imagefileshandler.h>
-#include <business/imageanalysis/validation/imagevalidationrulesfactory.h>
 
 ImageFilesInteractor::ImageFilesInteractor() {
     imageFileHandler = new ImageFilesHandler();

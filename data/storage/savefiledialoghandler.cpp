@@ -5,6 +5,13 @@
 #include <qmediaplayer.h>
 #include <qmessagebox.h>
 
+#include <business/validation/imagevalidationrulesfactory.h>
+
+SaveFileDialogHandler::SaveFileDialogHandler() {
+    auto validationRules = ImageValidationRulesFactory::createImageExtensionValidator();
+    imageFilter = validationRules->createFilter();
+}
+
 std::optional<QString> SaveFileDialogHandler::getUserSaveImagePath(const QString &path) {
     return getUserSaveFilePath(path, PathType::Image);
 }

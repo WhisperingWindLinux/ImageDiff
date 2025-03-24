@@ -16,6 +16,8 @@
 #include <qlabel.h>
 #include <qmediametadata.h>
 
+class VideoDialogSlider;
+
 class VideoPlayerWidget : public QWidget {
     Q_OBJECT
 
@@ -47,7 +49,7 @@ private:
     QVideoWidget *videoWidget;
     QPushButton *playPauseButton; // Single button for Play/Pause
     QPushButton *screenshotButton;
-    QSlider *slider;
+    VideoDialogSlider *slider;
     QLabel *frameLabel; // Displays the current frame number
     QLabel *timeLabel;  // Displays the current timestamp in milliseconds
     QString currentVideoPath;

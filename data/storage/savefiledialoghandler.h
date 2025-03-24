@@ -9,7 +9,7 @@ typedef std::optional<QPair<QString, QString>> OptionalStringPair;
 class SaveFileDialogHandler
 {
 public:
-    SaveFileDialogHandler() = default;
+    SaveFileDialogHandler();
     ~SaveFileDialogHandler() = default;
 
     std::optional<QString> getUserSaveImagePath(const QString &path);
@@ -19,8 +19,8 @@ public:
     OptionalStringPair getUserOpenTwoVideoPaths(const QString &baseDir);
 
 private:
+    QString imageFilter;
     const QString reportFilter = "Report Files (*.html)";
-    const QString imageFilter = "Image Files (*.png)";
     const QString videoFilter = "Video Files (*.mp4 *.avi *.mkv *.mov *.wmv *.flv *.webm)";
 
     enum class PathType { Image, Report, Video };

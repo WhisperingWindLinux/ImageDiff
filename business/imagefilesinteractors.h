@@ -9,7 +9,7 @@
 #include <domain/valueobjects/savefileinfo.h>
 #include <domain/interfaces/imagefilesinteractorlistener.h>
 #include <domain/valueobjects/images.h>
-#include <business/imageanalysis/validation/imagevalidationrules.h>
+#include <business/validation/imagevalidationrules.h>
 
 
 class RecentFilesInteractor;

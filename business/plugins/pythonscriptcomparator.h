@@ -35,6 +35,8 @@ private:
     QString fullName;
     bool m_isPartOfAutoReportingToolbox;
     QString pyScriptPath;
+    std::string defaultSaveImageExtention;
+
     optional<QString> validateText(QString &text);
 };
 

@@ -13,7 +13,7 @@ ImagesPtr GetImagesFromVideosInteractor::get() {
     QString videoFilePath1 = pathsPair->second;
     QString videoFilePath2 = pathsPair->second;
 
-    GrabImagesFromVideosDialog dialog {nullptr, videoFilePath1, videoFilePath2};
+    GetImagesFromVideosDialog dialog {nullptr, videoFilePath1, videoFilePath2};
     dialog.exec();
     if (dialog.isCanceled()) {
         return nullptr; // the operation was canceled by the user

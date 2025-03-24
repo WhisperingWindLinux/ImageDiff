@@ -1,10 +1,11 @@
 #include "videoplayerwidget.h"
 
 #include <qmessagebox.h>
+#include <presentation/views/videodialogslider.h>
+#include <business/validation/imagevalidationrulesfactory.h>
 
 VideoPlayerWidget::VideoPlayerWidget(QWidget *parent)
     : QWidget(parent), screenshotCounter(0), frameRate(INFINITY), currentPosition(0) {
-    // Set minimum size to prevent hidden widgets
     setMinimumSize(600, 600);
 
     // Main layout for the video player widget
@@ -12,7 +13,7 @@ VideoPlayerWidget::VideoPlayerWidget(QWidget *parent)
 
     // Video widget
     videoWidget = new QVideoWidget(this);
-    layout->addWidget(videoWidget, 1); // Set stretch factor to 1 (takes all available space)
+    layout->addWidget(videoWidget, 1);
 
     // Control buttons (Play/Pause and Screenshot)
     QHBoxLayout *controlsLayout = new QHBoxLayout();
@@ -23,7 +24,7 @@ VideoPlayerWidget::VideoPlayerWidget(QWidget *parent)
     layout->addLayout(controlsLayout);
 
     // Slider for seeking through the video
-    slider = new QSlider(Qt::Horizontal, this);
+    slider = new VideoDialogSlider(Qt::Horizontal, this);
     layout->addWidget(slider);
 
     // Frame number and timestamp display
@@ -44,14 +45,14 @@ VideoPlayerWidget::VideoPlayerWidget(QWidget *parent)
     mediaPlayer = new QMediaPlayer(this);
     mediaPlayer->setVideoOutput(videoWidget);
 
-    // Connect signals and slots
     connect(playPauseButton, &QPushButton::clicked, this, &VideoPlayerWidget::togglePlayPause);
     connect(screenshotButton, &QPushButton::clicked, this, &VideoPlayerWidget::takeScreenshot);
     connect(mediaPlayer, &QMediaPlayer::durationChanged, this, &VideoPlayerWidget::updateSliderRange);
     connect(mediaPlayer, &QMediaPlayer::positionChanged, this, &VideoPlayerWidget::updateSliderPosition);
     connect(slider, &QSlider::sliderMoved, mediaPlayer, &QMediaPlayer::setPosition);
+    connect(slider, &VideoDialogSlider::sliderClicked, mediaPlayer, &QMediaPlayer::setPosition);
 
-    connect(mediaPlayer, &QMediaPlayer::metaDataChanged, [&]() {
+    connect(mediaPlayer, &QMediaPlayer::metaDataChanged, this, [&]() {
         if (mediaPlayer->metaData().keys().contains(QMediaMetaData::VideoFrameRate)) {
             QVariant frameRate = mediaPlayer->metaData().value(QMediaMetaData::VideoFrameRate);
             this->frameRate = frameRate.toDouble();
@@ -113,9 +114,11 @@ void VideoPlayerWidget::takeScreenshot() {
 
     QString timePos = currentTimePositionAsString();
 
-    QString screenshotFileName = QString("%1_screenshot_%2.png")
-                                     .arg(baseName)
-                                     .arg(timePos);
+    auto extentionValidator = ImageValidationRulesFactory::createImageExtensionValidator();
+    QString ext = extentionValidator->getDeafaultSaveExtension(true);
+
+    QString screenshotFileName = QString("%1_screenshot_%2%3")
+                                     .arg(baseName, timePos, ext);
 
     // Save the screenshot in the same folder as the video
     currentScreenshotPath = fileInfo.absolutePath() + "/" + screenshotFileName;

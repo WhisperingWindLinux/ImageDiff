@@ -21,7 +21,6 @@ struct Images {
     QPixmap image1;
     QPixmap image2;
     QString path1;
-
     QString path2;
 
 private:

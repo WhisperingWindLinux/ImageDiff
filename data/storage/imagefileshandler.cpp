@@ -8,13 +8,17 @@
 #include <data/storage/savefiledialoghandler.h>
 #include <domain/valueobjects/images.h>
 #include <business/utils/imagesinfo.h>
-#include <business/imageanalysis/validation/imagevalidationrulesfactory.h>
+#include <business//validation/imagevalidationrulesfactory.h>
 
 
 ImagesPtr ImageFilesHandler::openImages(const QList<QUrl> &urls) {
     if (urls.size() != 2) {
+
+        auto validationRules = ImageValidationRulesFactory::createImageExtensionValidator();
+        auto exts = validationRules->getAllExtensionsForUserMessages(true);
+
         QString err = QString("Invalid number of images. ")
-                      + "Drag and drop two images in PNG format.";
+                      + QString("Drag and drop two images in %1 format.").arg(exts);
         throw std::runtime_error(err.toStdString());
     }
     if (urls[0].isLocalFile() && urls[1].isLocalFile()) {
@@ -42,17 +46,18 @@ ImagesPtr ImageFilesHandler::openImages(const QString &image1Path, const QString
     QFileInfo firstImageInfo { image1Path };
     QFileInfo secondImageInfo { image2Path };
 
-    QString error = "%1 file does not exist or this is not a PNG image. Please select an image in PNG format.";
+    auto extentionValidator = ImageValidationRulesFactory::createImageExtensionValidator();
+    QString exts = extentionValidator->getAllExtensionsForUserMessages(true);
 
-    if (!firstImageInfo.isFile()) {
+    auto error = QString("One or both of the %1 files do not exist, or these are not a %1 images. "
+                         "Please select images in %1 format.")
+                     .arg(exts);
+
+    if (!extentionValidator->canOpen(image1Path) || !firstImageInfo.isFile()) {
         throw std::runtime_error(error.arg(image1Path).toStdString());
     }
-    if (!secondImageInfo.isFile()) {
+    if (!extentionValidator->canOpen(image2Path) || !secondImageInfo.isFile() ) {
         throw std::runtime_error(error.arg(image2Path).toStdString());
-    }
-    if (firstImageInfo.suffix() != "png" ||
-        secondImageInfo.suffix() != "png") {
-        throw std::runtime_error(error.arg(image1Path).toStdString());
     }
 
     QPixmap image1, image2;
@@ -67,7 +72,7 @@ ImagesPtr ImageFilesHandler::openImages(const QString &image1Path, const QString
 }
 
 void ImageFilesHandler::validateImages(ImagesPtr images) {
-    auto validationRules = ImageValidationRulesFactory::create(images);
+    auto validationRules = ImageValidationRulesFactory::createImageFormatValidator(images);
     auto error = validationRules->isValid();
     if (error == std::nullopt) {
         return; // images are valid
@@ -93,6 +98,9 @@ std::optional<FileSaveResult> ImageFilesHandler::saveImageAs(const SaveImageInfo
 
     ImagesInfo imagesInfo { images };
 
+    auto extentionValidator = ImageValidationRulesFactory::createImageExtensionValidator();
+    QString ext = extentionValidator->getDeafaultSaveExtension(true);
+
     const QString &file1Name = imagesInfo.getFirstImageBaseName();
     const QString &file2Name = imagesInfo.getSecondImageBaseName();
     const QString &path1 = imagesInfo.getFirstImagePath();
@@ -109,21 +117,21 @@ std::optional<FileSaveResult> ImageFilesHandler::saveImageAs(const SaveImageInfo
         fullPath = path2;
         break;
     case SaveImageInfoType::FirstImageArea:
-        fileName = file1Name + "_area.png";
+        fileName = QString("%1_area%2").arg(file1Name, ext);
         fullPath = file1Dir.filePath(fileName);
         break;
     case SaveImageInfoType::SecondImageArea:
-        fileName = file2Name + "_area.png";
+        fileName = QString("%1_area%2").arg(file2Name, ext);
         fullPath = file1Dir.filePath(fileName);
         break;
     case SaveImageInfoType::ComparisonImage:
-        fileName = QString("%1_vs_%2_comparison.png")
-                       .arg(file1Name, file2Name);
+        fileName = QString("%1_vs_%2_comparison%3")
+                       .arg(file1Name, file2Name, ext);
         fullPath = file1Dir.filePath(fileName);
         break;
     case SaveImageInfoType::ComparisonImageArea:
-        fileName = QString("%1_vs_%2_area_comparison.png")
-                       .arg(file1Name, file2Name);
+        fileName = QString("%1_vs_%2_area_comparison%3")
+                       .arg(file1Name, file2Name, ext);
         fullPath = file1Dir.filePath(fileName);
         break;
     default:
