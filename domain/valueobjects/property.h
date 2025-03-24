@@ -9,6 +9,9 @@ using namespace std;
 class Property {
 public:
     enum class Type { Integer, Real, Alternatives, FilePath };
+
+    // FIXME Remove this dependency by refactoring the HelpHtmlFormatter class.
+    friend class HelpHtmlFormatter;
     
     static Property createIntProperty(const QString &propertyName,
                                       const QString &propertyDescription,

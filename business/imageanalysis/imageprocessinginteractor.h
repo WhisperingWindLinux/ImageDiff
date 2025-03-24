@@ -29,7 +29,7 @@ public:
 
     ~ImageProcessingInteractor();
 
-    static QString showImageProcessorsHelp();
+    static QList<ImageProcessorInfo> showImageProcessorsHelp();
 
     void callImageProcessor(const QVariant &callerData);
     void runAllComparators();
@@ -54,7 +54,6 @@ private:
 
     void notifyComparisonResultLoaded(const QString &html,
                                       const QString &comporatorFullName,
-                                      const QString &comporatorDescription,
                                       const QString &firstImagePath,
                                       const QString &secondImagePath);
 

@@ -108,7 +108,7 @@ QString ImageProximityToOriginComparator::getHotkey() const {
 QString ImageProximityToOriginComparator::getDescription() const {
     return QString("This algorithm calculates the total difference between two ")
                     + "images using the squares of the differences in color "
-                    + "component values (R, G, B) of each pixel. "
+                    + "component values of each pixel. "
                     + "According to this criterion, the closeness "
                     + "of each of the two images to the original is evaluated.";
 }

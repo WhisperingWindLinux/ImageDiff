@@ -13,7 +13,8 @@ SOURCES += \
     business/imageanalysis/comporators/colorssaturationcomporator.cpp \
     business/imageanalysis/comporators/contrastcomporator.cpp \
     business/imageanalysis/comporators/differenceinpixelvaluesasimage.cpp \
-    business/imageanalysis/comporators/formatters/pixelsabsolutvaluescomparatorformatter.cpp \
+    business/imageanalysis/comporators/formatters/pixelsabsolutevalueformatter.cpp \
+    business/imageanalysis/comporators/helpers/pixelsasolutvaluehelper.cpp \
     business/imageanalysis/comporators/imageproximitytoorigincomparator.cpp \
     business/imageanalysis/comporators/pixelsabsolutevaluecomparator.cpp \
     business/imageanalysis/comporators/pixelsbrightnesscomparator.cpp \
@@ -46,14 +47,14 @@ SOURCES += \
     presentation/dialogs/aboutdialog.cpp \
     presentation/dialogs/colorpickerpanel.cpp \
     presentation/dialogs/comparatorresultdialog.cpp \
+    presentation/dialogs/formatters/helphtmlformatter.cpp \
     presentation/dialogs/getimagesfromvideosdialog.cpp \
     presentation/dialogs/helpdialog.cpp \
     presentation/dialogs/pluginssettingsdialog.cpp \
     presentation/dialogs/propertyeditordialog.cpp \
     presentation/imageprocessorsmenucontroller.cpp \
     presentation/mainwindow.cpp \
-    presentation/presenters/htmlimageprocessorshelppresenter.cpp \
-    presentation/presenters/htmlreportpresenter.cpp \
+    business/imageanalysis/comporators/formatters/htmlreportpresenter.cpp \
     presentation/views/graphicspixmapitem.cpp \
     presentation/views/imageviewer.cpp \
     presentation/views/videodialogslider.cpp \
@@ -65,7 +66,8 @@ HEADERS += \
     business/imageanalysis/comporators/colorssaturationcomporator.h \
     business/imageanalysis/comporators/contrastcomporator.h \
     business/imageanalysis/comporators/differenceinpixelvaluesasimage.h \
-    business/imageanalysis/comporators/formatters/pixelsabsolutvaluescomparatorformatter.h \
+    business/imageanalysis/comporators/formatters/pixelsabsolutevalueformatter.h \
+    business/imageanalysis/comporators/helpers/pixelsasolutvaluehelper.h \
     business/imageanalysis/comporators/imageproximitytoorigincomparator.h \
     business/imageanalysis/comporators/pixelsabsolutevaluecomparator.h \
     business/imageanalysis/comporators/pixelsbrightnesscomparator.h \
@@ -120,14 +122,14 @@ HEADERS += \
     presentation/dialogs/aboutdialog.h \
     presentation/dialogs/colorpickerpanel.h \
     presentation/dialogs/comparatorresultdialog.h \
+    presentation/dialogs/formatters/helphtmlformatter.h \
     presentation/dialogs/getimagesfromvideosdialog.h \
     presentation/dialogs/helpdialog.h \
     presentation/dialogs/pluginssettingsdialog.h \
     presentation/dialogs/propertyeditordialog.h \
     presentation/imageprocessorsmenucontroller.h \
     presentation/mainwindow.h \
-    presentation/presenters/htmlimageprocessorshelppresenter.h \
-    presentation/presenters/htmlreportpresenter.h \
+    business/imageanalysis/comporators/formatters/htmlreportpresenter.h \
     presentation/valueobjects/rgbwidgets.h \
     presentation/views/graphicspixmapitem.h \
     presentation/views/imageviewer.h \

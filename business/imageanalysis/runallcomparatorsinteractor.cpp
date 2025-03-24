@@ -5,10 +5,10 @@
 #include <QtCore/qdebug.h>
 #include <QtGui/qpainter.h>
 #include <QDesktopServices>
-#include <presentation/presenters/htmlreportpresenter.h>
 #include <domain/valueobjects/autocomparisonreportentry.h>
 #include <domain/interfaces/iprogressdialog.h>
 #include <business/utils/imagesinfo.h>
+#include <business/imageanalysis/comporators/formatters/htmlreportpresenter.h>
 #include "imageprocessorsmanager.h"
 
 RunAllComparatorsInteractor::RunAllComparatorsInteractor(IProgressDialog *callback,
@@ -51,7 +51,8 @@ QList<AutocomparisonReportEntry> RunAllComparatorsInteractor::executeAllComparat
             comparator->reset();
             auto result = comparator->compare(firstImage, secondImage);
             if (result != nullptr) {
-                entries.append({result, comparator->getFullName(), comparator->getDescription()});
+                auto proicessorInfo = manager->getProcessorInfoByProcessorShortName(comparator->getShortName());
+                entries.append({ result, proicessorInfo });
             }
         } catch(runtime_error &e) {
             qDebug() << e.what();

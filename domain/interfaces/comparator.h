@@ -22,9 +22,6 @@ public:
 
     ImageProcessorType getType() const override { return ImageProcessorType::Comparator; }
 
-    // The full name to be printed in an HTML report.
-    virtual QString getFullName() const = 0;
-
     // The user can generate a report by running all supported comparators
     // in automatic mode through the menu Analysis -> Run Analysis.
     // In this case, all comparators that return true will be executed.

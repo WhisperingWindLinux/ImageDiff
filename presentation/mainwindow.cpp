@@ -229,11 +229,8 @@ void MainWindow::callImageProcessor() {
 }
 
 void MainWindow::callImageProcessorsHelp() {
-    QString html = ImageProcessingInteractor::showImageProcessorsHelp();
-    if (html.isEmpty()) {
-        html = "Hmm, strange, but there's nothing here. Most likely, it's a bug.";
-    }
-    HelpDialog dialog(html);
+    QList<ImageProcessorInfo> info = ImageProcessingInteractor::showImageProcessorsHelp();
+    HelpDialog dialog(info);
     dialog.exec();
 }
 
@@ -432,14 +429,12 @@ void MainWindow::onComparisonResultLoaded(const QPixmap &image, const QString &d
 
 void MainWindow::onComparisonResultLoaded(const QString &html,
                                           const QString &comparatorFullName,
-                                          const QString &comparatorDescription,
                                           const QString &firstImagePath,
                                           const QString &secondImagePath
                                           )
 {
     ComparatorResultDialog dialog { html,
                                     comparatorFullName,
-                                    comparatorDescription,
                                     firstImagePath,
                                     secondImagePath
                                   };

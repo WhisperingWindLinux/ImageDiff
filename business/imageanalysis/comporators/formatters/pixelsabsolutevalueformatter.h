@@ -1,16 +1,17 @@
-#ifndef PIXELSABSOLUTVALUESCOMPARATORFORMATTER_H
-#define PIXELSABSOLUTVALUESCOMPARATORFORMATTER_H
+#ifndef PIXELSABSOLUTEVALUEFORMATTER_H
+#define PIXELSABSOLUTEVALUEFORMATTER_H
 
 #include <QString>
 
 #include <domain/valueobjects/pixeldiffrencerange.h>
+
 #include <business/imageanalysis/comporators/pixelsabsolutevaluecomparator.h>
 
-class PixelsAbsolutValuesComparatorFormatter
+class PixelsAbsolutValueFormatter
 {
 public:
-    PixelsAbsolutValuesComparatorFormatter() = delete;
-    ~PixelsAbsolutValuesComparatorFormatter() = delete;
+    PixelsAbsolutValueFormatter() = delete;
+    ~PixelsAbsolutValueFormatter() = delete;
 
     static QString formatResultToHtml(QList<PixelDifferenceRange> &result,
                                       QString comporatorFullName,
@@ -19,4 +20,4 @@ public:
 
 };
 
-#endif // PIXELSABSOLUTVALUESCOMPARATORFORMATTER_H
+#endif // PIXELSABSOLUTEVALUEFORMATTER_H

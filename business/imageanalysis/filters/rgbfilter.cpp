@@ -18,6 +18,10 @@ QString GenericRgbFilter::getShortName() const {
     throw std::runtime_error("Error: an incorrect RGB chnannel in GenericRgbTransformer.");
 }
 
+QString GenericRgbFilter::getFullName() const {
+    return getShortName();
+}
+
 QString GenericRgbFilter::getHotkey() const {
     switch(channel) {
     case RgbChannel::R:

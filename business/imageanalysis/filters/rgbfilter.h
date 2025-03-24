@@ -12,7 +12,7 @@ public:
     GenericRgbFilter(RgbChannel channel);
     virtual ~GenericRgbFilter() = default;
 
-// ATransformer interface
+// IFilter interface
     QString getShortName() const override;
     QString getHotkey() const override;
     QString getDescription() const override;
@@ -20,6 +20,7 @@ public:
     QList<Property> getDefaultProperties() const override;
     void setProperties(QList<Property> properties) override;
     void reset() override;
+    QString getFullName() const override;
 
 private:
     RgbChannel channel;

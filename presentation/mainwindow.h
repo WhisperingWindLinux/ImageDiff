@@ -105,7 +105,6 @@ public:
     void onComparisonResultLoaded(const QPixmap &image, const QString &description) override;
 
     void onComparisonResultLoaded(const QString &html, const QString &comparatorFullName,
-                                  const QString &comparatorDescription,
                                   const QString &firstImagePath,
                                   const QString &secondImagePath) override;
 

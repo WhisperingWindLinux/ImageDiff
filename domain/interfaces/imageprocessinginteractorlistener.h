@@ -9,7 +9,6 @@ public:
 
     virtual void onComparisonResultLoaded(const QString &html,
                                           const QString &comparatorFullName,
-                                          const QString &comparatorDescription,
                                           const QString &firstImagePath,
                                           const QString &secondImagePath) = 0;
 

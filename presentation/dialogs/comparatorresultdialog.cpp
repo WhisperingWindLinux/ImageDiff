@@ -1,12 +1,11 @@
 #include "comparatorresultdialog.h"
 #include <QtWidgets/qmessagebox.h>
+#include <business/imageanalysis/comporators/formatters/htmlreportpresenter.h>
 #include <data/storage/savefiledialoghandler.h>
-#include <presentation/presenters/htmlreportpresenter.h>
 
 
 ComparatorResultDialog::ComparatorResultDialog(const QString &message,
                                                const QString &comparatorFullName,
-                                               const QString &comparatorDescription,
                                                const QString &firstImageFilePath,
                                                const QString &secondImageFilePath,
                                                QWidget *parent
@@ -55,7 +54,6 @@ void ComparatorResultDialog::onSaveClicked() {
         bool isOk = HtmlReportPresenter::createSimpleReportPage(savedPath.value(),
                                                                 firstFilePath,
                                                                 secondFilePath,
-                                                                comparatorDescription,
                                                                 message);
         if (!isOk) {
             QMessageBox msgBox;

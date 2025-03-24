@@ -3,10 +3,7 @@
 #include "comparisonresultvariant.h"
 
 AutocomparisonReportEntry::AutocomparisonReportEntry(std::shared_ptr<ComparisonResultVariant> result,
-                                                     const QString &comporatorFullName,
-                                                     const QString &comporatorDescription)
-    : comporatorFullName(comporatorFullName),
-    comporatorDescription(comporatorDescription)
+                                                     std::optional<ImageProcessorInfo> imageProcessorInfo)
 {
     if (result == nullptr) {
         return;
@@ -16,6 +13,7 @@ AutocomparisonReportEntry::AutocomparisonReportEntry(std::shared_ptr<ComparisonR
     } else if (result->type() == ComparisonResultVariantType::Image) {
         imageReport = result->imageResult();
     }
+    this->imageProcessorInfo = imageProcessorInfo;
 }
 
 std::optional<QString> AutocomparisonReportEntry::getTextReport() const {
@@ -26,10 +24,6 @@ std::optional<QImage> AutocomparisonReportEntry::getImagereport() const {
     return imageReport;
 }
 
-QString AutocomparisonReportEntry::getComporatorFullName() const {
-    return comporatorFullName;
-}
-
-QString AutocomparisonReportEntry::getComporatorDescription() const {
-    return comporatorDescription;
+std::optional<ImageProcessorInfo> AutocomparisonReportEntry::getImageProcessorInfo() const {
+    return imageProcessorInfo;
 }

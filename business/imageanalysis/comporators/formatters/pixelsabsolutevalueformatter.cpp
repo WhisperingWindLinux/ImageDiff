@@ -1,14 +1,12 @@
-#include "pixelsabsolutvaluescomparatorformatter.h"
+#include "pixelsabsolutevalueformatter.h"
 
 #include <qlocale.h>
 
-#include <business/imageanalysis/comporators/pixelsabsolutevaluecomparator.h>
 
-
-QString PixelsAbsolutValuesComparatorFormatter::formatResultToHtml(QList<PixelDifferenceRange> &result,
-                                                                   QString comporatorFullName,
-                                                                   PixelsAbsoluteValueComparator::Mode currentMode
-                                                                   )
+QString PixelsAbsolutValueFormatter::formatResultToHtml(QList<PixelDifferenceRange> &result,
+                                                        QString comporatorFullName,
+                                                        PixelsAbsoluteValueComparator::Mode currentMode
+                                                        )
 {
     QLocale locale = QLocale::system();
 

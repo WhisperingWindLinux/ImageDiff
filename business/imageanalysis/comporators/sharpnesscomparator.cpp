@@ -69,7 +69,8 @@ QString SharpnessComparator::getDescription() const {
     return QString("This algorithm compares the sharpness of two images by calculating ")
            + "their sharpness values based on the gradient magnitude of pixel intensity "
            + "differences in both the horizontal and vertical directions."
-           + " Where higher values indicate a more sharper image.";
+           + " The range of coefficient values is approx [0.0, 1.414]. Where higher "
+             "values indicate a more sharper image.";
 }
 
 std::shared_ptr<ComparisonResultVariant> SharpnessComparator::compare(const ComparableImage &first,
@@ -102,7 +103,7 @@ QString SharpnessComparator::formatResultToHtml(const SharpnessComparisonResult 
     html += "</table>";
     html += "<br /><br />";
     html += QString("The range of coefficient values is approx [0.0, 1.414]. ")
-            + "Higher values indicate a more sharper image.";
+            + "Where higher values indicate a more sharper image.";
 
     return html;
 }

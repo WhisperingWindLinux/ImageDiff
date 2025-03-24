@@ -2,18 +2,30 @@
 #define HELPDIALOG_H
 
 #include <QDialog>
+#include <QListWidget>
 #include <QObject>
+#include <qboxlayout.h>
+#include <qlabel.h>
+#include <qtextbrowser.h>
+
+#include <domain/valueobjects/imageprocessorsinfo.h>
+
+#include <presentation/dialogs/formatters/helphtmlformatter.h>
 
 class QTextEdit;
 
 class HelpDialog : public QDialog
 {
-    Q_OBJECT
 public:
-    HelpDialog(const QString &helpMessage);
+    explicit HelpDialog(const QList<ImageProcessorInfo> &algorithms, QWidget *parent = nullptr);
+
+private slots:
+    void onAlgorithmSelected(int index);
 
 private:
-    QTextEdit *textEdit;
+    QList<ImageProcessorInfo> algorithms;
+    QListWidget *listWidget;
+    QTextBrowser *infoBrowser;
 };
 
 #endif // HELPDIALOG_H

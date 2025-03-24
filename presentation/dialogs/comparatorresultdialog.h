@@ -13,7 +13,6 @@ class ComparatorResultDialog : public QDialog {
 public:
     ComparatorResultDialog(const QString& message,
                            const QString& comparatorFullName,
-                           const QString& comparatorDescription,
                            const QString& firstImageFilePath,
                            const QString& secondImageFilePath,
                            QWidget *parent = nullptr

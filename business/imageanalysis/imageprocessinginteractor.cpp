@@ -14,7 +14,6 @@
 #include <business/imageanalysis/filters/grayscalefilter.h>
 #include <business/imageanalysis/filters/rgbfilter.h>
 #include <data/storage/savefiledialoghandler.h>
-#include <presentation/presenters/htmlimageprocessorshelppresenter.h>
 #include <domain/interfaces/imageprocessinginteractorlistener.h>
 #include <business/utils/imagesinfo.h>
 #include "domain/interfaces/processorpropertiesdialogcallback.h"
@@ -58,7 +57,7 @@ void ImageProcessingInteractor::coreCallImageProcessor(const QVariant &callerDat
 
     QString processorName = callerData.toString();
 
-    auto processor = ImageProcessorsManager::instance()->findProcessor(processorName);
+    auto processor = ImageProcessorsManager::instance()->findProcessorByShortName(processorName);
 
     if (processor == nullptr) {
         throw std::runtime_error("Error: Unable to find the requested image processor.");
@@ -85,12 +84,8 @@ void ImageProcessingInteractor::restoreOriginalImages() {
     notifyFilteredResultLoaded(displayedImages->image1, displayedImages->image2);
 }
 
-QString ImageProcessingInteractor::showImageProcessorsHelp() {
-    auto processorsInfo = ImageProcessorsManager::instance()->getAllProcessorsInfo();
-    if (processorsInfo.size() == 0) {
-        return {};
-    }
-    return HtmlImageProcessorsHelpPresenter::formatToHTML(processorsInfo);
+QList<ImageProcessorInfo> ImageProcessingInteractor::showImageProcessorsHelp() {
+    return ImageProcessorsManager::instance()->getAllProcessorsInfo();
 }
 
 void ImageProcessingInteractor::handleProcessorPropertiesIfNeed(IImageProcessorPtr processor) {
@@ -145,7 +140,6 @@ void ImageProcessingInteractor::callComparator(IComparatorPtr comparator) {
         }
         notifyComparisonResultLoaded(stringResult,
                                      comparator->getFullName(),
-                                     comparator->getDescription(),
                                      firstImagePath,
                                      secondImagePath
                                     );
@@ -287,7 +281,6 @@ void ImageProcessingInteractor::notifyComparisonResultLoaded(const QPixmap &imag
 // TBD Refactoring
 void ImageProcessingInteractor::notifyComparisonResultLoaded(const QString &html,
                                                              const QString &comporatorFullName,
-                                                             const QString &comporatorDescription,
                                                              const QString &firstImagePath,
                                                              const QString &secondImagePath
                                                             )
@@ -295,7 +288,6 @@ void ImageProcessingInteractor::notifyComparisonResultLoaded(const QString &html
     foreach (auto listener, listeners) {
         listener->onComparisonResultLoaded(html,
                                            comporatorFullName,
-                                           comporatorDescription,
                                            firstImagePath,
                                            secondImagePath
                                            );

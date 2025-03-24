@@ -16,6 +16,7 @@ public:
     virtual ~PythonScripFilter() = default;
 
     QString getShortName() const override;
+    QString getFullName() const override;
     QString getHotkey() const override;
     QString getDescription() const override;
     QList<Property> getDefaultProperties() const override;

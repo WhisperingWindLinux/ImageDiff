@@ -29,6 +29,10 @@ QString PythonScripFilter::getShortName() const {
     return shortName;
 }
 
+QString PythonScripFilter::getFullName() const {
+    return getShortName();
+}
+
 QString PythonScripFilter::getHotkey() const {
     return hotkey;
 }

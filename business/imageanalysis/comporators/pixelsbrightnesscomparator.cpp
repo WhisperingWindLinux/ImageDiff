@@ -123,7 +123,7 @@ QString PixelsBrightnessComparator::formatResultToHtml(const PixelsBrightnessCom
     html += QString("<h2 style=\"line-height: 2;\">%1</h2>").arg(getFullName());
     html += "<table border=\"1\" cellspacing=\"0\" cellpadding=\"5\">";
 
-    html += QString("<tr><td align=\"center\">%1</td><td align=\"center\">%2</td><td align=\"center\">%3</td></tr>")
+    html += QString("<tr><td align=\"center\"><b>%1</b></td><td align=\"center\"><b>%2</b></td><td align=\"center\"><b>%3</b></td></tr>")
                 .arg("Parameter")
                 .arg("Pixel Count")
                 .arg("Pixel Count (%)");
@@ -148,7 +148,7 @@ QString PixelsBrightnessComparator::formatResultToHtml(const PixelsBrightnessCom
     html += "<br/>";
 
     html += "<table border=\"1\" cellspacing=\"0\" cellpadding=\"5\">";
-    html += QString("<tr><td align=\"center\">%1</td><td align=\"center\">%2</td></tr>")
+    html += QString("<tr><td align=\"center\"><b>%1</b></td><td align=\"center\"><b>%2</b></td></tr>")
                 .arg("Parameter")
                 .arg("Value");
     html += QString("<tr><td>Overall brightness %1</td><td align=\"right\">%2</td></tr>")

@@ -27,7 +27,6 @@ public:
     static bool createSimpleReportPage(const QString &filePath,
                                        const QString &firstOriginalImageName,
                                        const QString &secondOriginalImageName,
-                                       const QString &comparatorDescription,
                                        const QString &reportText
                                        );
 };

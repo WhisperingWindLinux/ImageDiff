@@ -6,7 +6,6 @@
 #include <business/imageanalysis/comporators/contrastcomporator.h>
 #include <business/imageanalysis/comporators/differenceinpixelvaluesasimage.h>
 #include <business/imageanalysis/comporators/imageproximitytoorigincomparator.h>
-#include <business/imageanalysis/comporators/pixelsabsolutevaluecomparator.h>
 #include <business/imageanalysis/comporators/pixelsbrightnesscomparator.h>
 #include <business/imageanalysis/comporators/sharpnesscomparator.h>
 #include <business/imageanalysis/filters/grayscalefilter.h>
@@ -52,7 +51,7 @@ void ImageProcessorsManager::removeProcessor(QString name) {
     }
 }
 
-shared_ptr<IImageProcessor> ImageProcessorsManager::findProcessor(QString name) {
+shared_ptr<IImageProcessor> ImageProcessorsManager::findProcessorByShortName(const QString &name) {
     for (auto it = processors.begin(); it != processors.end(); ++it) {
         if ((*it)->getShortName() == name) {
             return *it;
@@ -61,13 +60,30 @@ shared_ptr<IImageProcessor> ImageProcessorsManager::findProcessor(QString name) 
     return nullptr;
 }
 
+std::optional<ImageProcessorInfo> ImageProcessorsManager::getProcessorInfoByProcessorShortName(const QString &name) {
+    auto processor = findProcessorByShortName(name);
+    if (processor == nullptr) {
+        return std::nullopt;
+    }
+    ImageProcessorInfo processorInfo(processor->getShortName(),
+                                     processor->getFullName(),
+                                     processor->getDescription(),
+                                     processor->getHotkey(),
+                                     processor->getType(),
+                                     processor->getDefaultProperties()
+                                     );
+    return processorInfo;
+}
+
 QList<ImageProcessorInfo> ImageProcessorsManager::getAllProcessorsInfo() {
     QList<ImageProcessorInfo> processorsInfo;
     for (auto it = processors.begin(); it != processors.end(); ++it) {
         ImageProcessorInfo processorInfo((*it)->getShortName(),
+                                         (*it)->getFullName(),
                                          (*it)->getDescription(),
                                          (*it)->getHotkey(),
-                                         (*it)->getType()
+                                         (*it)->getType(),
+                                         (*it)->getDefaultProperties()
                                          );
         processorsInfo.append(processorInfo);
     }

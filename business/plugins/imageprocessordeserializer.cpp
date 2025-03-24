@@ -83,13 +83,14 @@ QList<Property> ImageProcessorDeserializer::parseProperties(const QJsonArray &ar
         QJsonObject propertyObj = value.toObject();
         QString name = propertyObj.value("name").toString();
         QString type = propertyObj.value("type").toString();
+        QString description = propertyObj.value("description").toString();
 
         if (type.compare("Integer", Qt::CaseInsensitive) == 0) {
             int defaultValue = propertyObj.value("defaultValue").toInt();
             int minValue = propertyObj.value("minValue").toInt();
             int maxValue = propertyObj.value("maxValue").toInt();
             properties.append(Property::createIntProperty(name,
-                                                          "",
+                                                          description,
                                                           defaultValue,
                                                           minValue,
                                                           maxValue)
@@ -99,7 +100,7 @@ QList<Property> ImageProcessorDeserializer::parseProperties(const QJsonArray &ar
             double minValue = propertyObj.value("minValue").toDouble();
             double maxValue = propertyObj.value("maxValue").toDouble();
             properties.append(Property::createRealProperty(name,
-                                                           "",
+                                                           description,
                                                            defaultValue,
                                                            minValue,
                                                            maxValue)
@@ -111,13 +112,16 @@ QList<Property> ImageProcessorDeserializer::parseProperties(const QJsonArray &ar
             }
             int defaultIndex = propertyObj.value("defaultIndex").toInt();
             properties.append(Property::createAlternativesProperty(name,
-                                                                   "",
+                                                                   description,
                                                                    alternatives,
                                                                    defaultIndex)
                               );
         } else if (type.compare("FilePath", Qt::CaseInsensitive) == 0) {
             QString defaultValue = propertyObj.value("defaultValue").toString();
-            properties.append(Property::createFilePathProperty(name, "", defaultValue));
+            properties.append(Property::createFilePathProperty(name,
+                                                               description,
+                                                               defaultValue)
+                              );
         }
     }
 
