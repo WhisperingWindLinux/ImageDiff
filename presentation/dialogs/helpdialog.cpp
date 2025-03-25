@@ -5,7 +5,7 @@ HelpDialog::HelpDialog(const QList<ImageProcessorInfo> &algorithms, QWidget *par
     : QDialog(parent), algorithms(algorithms) {
 
     setWindowTitle("Help");
-    resize(800, 600);
+    resize(1000, 600);
 
     // Создаем виджеты
     QLabel *instructionLabel = new QLabel("Select an algorithm from the list to see its reference information.");

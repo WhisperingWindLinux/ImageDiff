@@ -13,13 +13,13 @@
 #include <business/imageanalysis/comporators/helpers/pixelsasolutvaluehelper.h>
 
 
-PixelsAbsoluteValueComparator::PixelsAbsoluteValueComparator() {
+PixelsAbsoluteValueComparator::PixelsAbsoluteValueComparator(Result result) {
     currentMode = Mode::DifferenceBySingleLargestComponent;
-    expectedResult = Result::Text;
+    expectedResult = result;
 }
 
 void PixelsAbsoluteValueComparator::setProperties(QList<Property> properties) {
-    if (properties.size() != 2) {
+    if (properties.size() != 1) {
         QString error = "Got an error from %1: an incorrect number of properties.";
         error = error.arg(getShortName());
         throw std::runtime_error(error.toStdString());
@@ -30,13 +30,6 @@ void PixelsAbsoluteValueComparator::setProperties(QList<Property> properties) {
                        Mode::DifferenceBySingleLargestComponent :
                        Mode::DifferenceByAllComponents
                    );
-
-    int prop2Index = properties[1].getValue();
-
-    expectedResult = (prop2Index == 0 ?
-                          Result::Text :
-                          Result::Image
-                      );
 }
 
 QList<Property> PixelsAbsoluteValueComparator::getDefaultProperties() const {
@@ -50,42 +43,49 @@ QList<Property> PixelsAbsoluteValueComparator::getDefaultProperties() const {
 
     QList<QString> prop1Alternatives = { "DifferenceBySingleLargestComponent", "DifferenceByAllComponents" };
     auto prop1 = Property::createAlternativesProperty("Mode", prop1Description, prop1Alternatives, 0);
-
-    QString prop2Description = "Show the result in text form or as an image.";
-    QList<QString> prop2Alternatives = { "Text", "Image" };
-
-    auto prop2 = Property::createAlternativesProperty("Comparison Result",
-                                                      prop2Description,
-                                                      prop2Alternatives,
-                                                      0
-                                                      );
-
-    return { prop1, prop2 };
+    return { prop1 };
 }
 
 void PixelsAbsoluteValueComparator::reset() {
     currentMode = Mode::DifferenceBySingleLargestComponent;
-    expectedResult = Result::Text;
 }
 
 QString PixelsAbsoluteValueComparator::getShortName() const {
-    return "Pixels Difference Mapping";
+    if (expectedResult == Result::Text) {
+        return "Pixels Difference Mapping (Text)";
+    } else {
+        return "Pixels Difference Mapping (Image)";
+    }
 }
 
 QString PixelsAbsoluteValueComparator::getFullName() const {
-    return "The difference in color for each pixel between two images";
+    if (expectedResult == Result::Text) {
+        return "The difference in color for each pixel between two images as a text";
+    } else {
+        return "The difference in color for each pixel between two images as an image";
+    }
 }
 
 QString PixelsAbsoluteValueComparator::getHotkey() const {
-    return "M";
+    return (expectedResult == Result::Text ? "v" : "m");
 }
 
 QString PixelsAbsoluteValueComparator::getDescription() const {
-    return QString("This algorithm compares two images by analyzing ") +
-           "the difference in the colors of each pixel. For each pixel, the " +
-           "difference in color brightness (red, green, blue) is calculated, " +
-           "and based on these differences, the pixels are categorized into " +
-           "predefined ranges.";
+    QString baseHelpTxt = QString("This algorithm compares two images by analyzing ") +
+                          "the difference in the colors of each pixel. For each pixel, the " +
+                          "difference in color brightness (red, green, blue) is calculated, " +
+                          "and based on these differences, the pixels are categorized into " +
+                          "predefined ranges.";
+
+    if (expectedResult == Result::Text) {
+        return baseHelpTxt + " It shows the result in text form.";
+    } else {
+        QString colorRangeDexcription = PixelsAbsolutValueHelper::getColorRangeDescription();
+        baseHelpTxt += " It shows the result as an image. As pecific color is used to indicate "
+                       "the pixel's belonging to a particular range.<br/>";
+        baseHelpTxt += colorRangeDexcription;
+        return baseHelpTxt;
+    }
 }
 
 ComparisonResultVariantPtr PixelsAbsoluteValueComparator::compare(const ComparableImage &first,

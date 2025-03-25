@@ -29,7 +29,7 @@ void ImageProcessorsManager::clear() {
 
 void ImageProcessorsManager::addProcessor(shared_ptr<IImageProcessor> processor) {
     if (processor != nullptr) {
-        if (hotkeys.contains(processor->getHotkey())) {
+        if (hotkeys.contains(processor->getHotkey()) && !processor->getHotkey().isEmpty()) {
             QString errorMsg = QString("It is not possible to add ") +
                                        "two IImageProcessors with the same hotkey value.";
             throw runtime_error(errorMsg.toStdString());

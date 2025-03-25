@@ -13,7 +13,7 @@ public:
 
     QList<PixelDifferenceRange> generateDifferenceStringResult(const QImage &image1, const QImage &image2);
     QImage generateDifferenceImage(const QImage &image1, const QImage &image2);
-    QString getColorRangeDescription(bool asHtml);
+    static QString getColorRangeDescription();
 
 private:
     PixelsAbsoluteValueComparator::Mode currentMode;

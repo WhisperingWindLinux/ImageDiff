@@ -187,7 +187,12 @@ QList<ImageProcessorInfo> ImageProcessingInteractor::getImageProcessorsInfo() {
     auto imageComparator = make_shared<DifferenceInPixelValuesAsImageComporator>();
     auto imageSaturationComporator = make_shared<ColorsSaturationComporator>();
     auto imageContrastComporator = make_shared<ContrastComporator>();
-    auto imagePixelsAbsoluteValueComparator = make_shared<PixelsAbsoluteValueComparator>();
+    auto imagePixelsAbsoluteValueComparatorTxt = make_shared<PixelsAbsoluteValueComparator>(
+                                                            PixelsAbsoluteValueComparator::Result::Text
+                                                                );
+    auto imagePixelsAbsoluteValueComparatorImg = make_shared<PixelsAbsoluteValueComparator>(
+                                                            PixelsAbsoluteValueComparator::Result::Image
+                                                            );
     auto imagePixelsBrightnessComparator = make_shared<PixelsBrightnessComparator>();
     auto sharpnessComparator = make_shared<SharpnessComparator>();
     auto imageProximityComparator = make_shared<ImageProximityToOriginComparator>();
@@ -195,7 +200,8 @@ QList<ImageProcessorInfo> ImageProcessingInteractor::getImageProcessorsInfo() {
     processorsManager->addProcessor(imageComparator);
     processorsManager->addProcessor(imageSaturationComporator);
     processorsManager->addProcessor(imageContrastComporator);
-    processorsManager->addProcessor(imagePixelsAbsoluteValueComparator);
+    processorsManager->addProcessor(imagePixelsAbsoluteValueComparatorTxt);
+    processorsManager->addProcessor(imagePixelsAbsoluteValueComparatorImg);
     processorsManager->addProcessor(imagePixelsBrightnessComparator);
     processorsManager->addProcessor(sharpnessComparator);
     processorsManager->addProcessor(imageProximityComparator);

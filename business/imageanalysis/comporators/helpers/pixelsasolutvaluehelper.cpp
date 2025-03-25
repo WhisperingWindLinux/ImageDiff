@@ -73,22 +73,19 @@ int PixelsAbsolutValueHelper::calculateDiff(QColor color1, QColor color2)
 std::map<int, QColor> PixelsAbsolutValueHelper::generateColorMap(const QList<PixelDifferenceRange>& ranges) {
     std::map<int, QColor> colorMap;
     QList<QColor> colors = {
-        QColor(255, 0, 0),    // Red
-        QColor(0, 255, 0),    // Green
-        QColor(0, 0, 255),    // Blue
-        QColor(255, 255, 0),  // Yellow
-        QColor(255, 0, 255),  // Magenta
-        QColor(0, 255, 255),  // Cyan
-        QColor(128, 0, 128),  // Purple
-        QColor(128, 128, 0),  // Olive
-        QColor(0, 128, 128),  // Teal
-        QColor(255, 165, 0),  // Orange
-        QColor(75, 0, 130),   // Indigo
-        QColor(139, 69, 19),  // Brown
-        QColor(220, 20, 60),  // Crimson
-        QColor(0, 100, 0),    // Dark Green
-        QColor(0, 0, 128),    // Navy
-        QColor(128, 128, 128) // Gray
+        QColor(255, 255, 255), // White
+        QColor(255, 0, 0),     // Red
+        QColor(0, 255, 0),     // Green
+        QColor(0, 0, 255),     // Blue
+        QColor(255, 255, 0),   // Yellow
+        QColor(255, 0, 255),   // Magenta
+        QColor(0, 255, 255),   // Cyan
+        QColor(128, 0, 128),   // Purple
+        QColor(255, 165, 0),   // Orange
+        QColor(139, 69, 19),   // Brown
+        QColor(0, 100, 0),     // Dark Green
+        QColor(128, 128, 128), // Gray
+        QColor(0, 0, 0)        // Black
     };
 
     int colorIndex = 0;
@@ -99,47 +96,33 @@ std::map<int, QColor> PixelsAbsolutValueHelper::generateColorMap(const QList<Pix
     return colorMap;
 }
 
-QString PixelsAbsolutValueHelper::getColorRangeDescription(bool asHtml) {
-    QString description;
-    if (asHtml) {
-        description =
-            "<html>"
-            "1. <span style='color: rgb(255, 0, 0);'>Red</span> (255, 0, 0) - Corresponds to Difference Range: 0-0<br>"
-            "2. <span style='color: rgb(0, 255, 0);'>Green</span> (0, 255, 0) - Corresponds to Difference Range: 1-1<br>"
-            "3. <span style='color: rgb(0, 0, 255);'>Blue</span> (0, 0, 255) - Corresponds to Difference Range: 2-2<br>"
-            "4. <span style='color: rgb(255, 255, 0);'>Yellow</span> (255, 255, 0) - Corresponds to Difference Range: 3-3<br>"
-            "5. <span style='color: rgb(255, 0, 255);'>Magenta</span> (255, 0, 255) - Corresponds to Difference Range: 4-4<br>"
-            "6. <span style='color: rgb(0, 255, 255);'>Cyan</span> (0, 255, 255) - Corresponds to Difference Range: 5-5<br>"
-            "7. <span style='color: rgb(128, 0, 128);'>Purple</span> (128, 0, 128) - Corresponds to Difference Range: 6-10<br>"
-            "8. <span style='color: rgb(128, 128, 0);'>Olive</span> (128, 128, 0) - Corresponds to Difference Range: 11-15<br>"
-            "9. <span style='color: rgb(0, 128, 128);'>Teal</span> (0, 128, 128) - Corresponds to Difference Range: 16-20<br>"
-            "10. <span style='color: rgb(255, 165, 0);'>Orange</span> (255, 165, 0) - Corresponds to Difference Range: 21-30<br>"
-            "11. <span style='color: rgb(75, 0, 130);'>Indigo</span> (75, 0, 130) - Corresponds to Difference Range: 31-40<br>"
-            "12. <span style='color: rgb(139, 69, 19);'>Brown</span> (139, 69, 19) - Corresponds to Difference Range: 41-50<br>"
-            "13. <span style='color: rgb(220, 20, 60);'>Crimson</span> (220, 20, 60) - Corresponds to Difference Range: 51-60<br>"
-            "14. <span style='color: rgb(0, 100, 0);'>Dark Green</span> (0, 100, 0) - Corresponds to Difference Range: 61-70<br>"
-            "15. <span style='color: rgb(0, 0, 128);'>Navy Blue</span> (0, 0, 128) - Corresponds to Difference Range: 71-80<br>"
-            "16. <span style='color: rgb(128, 128, 128);'>Gray</span> (128, 128, 128) - Corresponds to Difference Range: >80"
-            "</html>";
-    } else {
-        description =
-            "1. Red (255, 0, 0) - Corresponds to Difference Range: 0-0\n"
-            "2. Green (0, 255, 0) - Corresponds to Difference Range: 1-1\n"
-            "3. Blue (0, 0, 255) - Corresponds to Difference Range: 2-2\n"
-            "4. Yellow (255, 255, 0) - Corresponds to Difference Range: 3-3\n"
-            "5. Magenta (255, 0, 255) - Corresponds to Difference Range: 4-4\n"
-            "6. Cyan (0, 255, 255) - Corresponds to Difference Range: 5-5\n"
-            "7. Purple (128, 0, 128) - Corresponds to Difference Range: 6-10\n"
-            "8. Olive (128, 128, 0) - Corresponds to Difference Range: 11-15\n"
-            "9. Teal (0, 128, 128) - Corresponds to Difference Range: 16-20\n"
-            "10. Orange (255, 165, 0) - Corresponds to Difference Range: 21-30\n"
-            "11. Indigo (75, 0, 130) - Corresponds to Difference Range: 31-40\n"
-            "12. Brown (139, 69, 19) - Corresponds to Difference Range: 41-50\n"
-            "13. Crimson (220, 20, 60) - Corresponds to Difference Range: 51-60\n"
-            "14. Dark Green (0, 100, 0) - Corresponds to Difference Range: 61-70\n"
-            "15. Navy Blue (0, 0, 128) - Corresponds to Difference Range: 71-80\n"
-            "16. Gray (128, 128, 128) - Corresponds to Difference Range: >80";
-    }
+QString PixelsAbsolutValueHelper::getColorRangeDescription() {
+    QString description =
+        "<html>"
+        "<style>"
+        //"  .color-box {"
+        //"    font-weight: bold;"
+        //"  }"
+        "  .example {"
+        "    font-style: italic;"
+        "  }"
+        "</style>"
+        "<body>"
+        "1. <span class='color-box' style='color: black;'>White</span> - Range: 0-0. Example: <span class='example' style='color: rgb(255, 255, 255); background-color: black;'>RGB(255, 255, 255)</span><br>"
+        "2. <span class='color-box' style='color: black;'>Red</span> - Range: 1-1. Example: <span class='example' style='color: rgb(255, 0, 0);'>RGB(255, 0, 0).</span><br/>"
+        "3. <span class='color-box' style='color: black;'>Green</span> - Range: 2-2. Example: <span class='example' style='color: rgb(0, 255, 0);'>RGB(0, 255, 0).</span><br/>"
+        "4. <span class='color-box' style='color: black;'>Blue</span> - Range: 3-3. Example: <span class='example' style='color: rgb(0, 0, 255);'>RGB(0, 0, 255).</span><br/>"
+        "5. <span class='color-box' style='color: black;'>Yellow</span> - Range: 4-4. Example: <span class='example' style='color: rgb(255, 255, 0);'>RGB(255, 255, 0).</span><br/>"
+        "6. <span class='color-box' style='color: black;'>Magenta</span> - Range: 5-5. Example: <span class='example' style='color: rgb(255, 0, 255);'>RGB(255, 0, 255).</span><br/>"
+        "7. <span class='color-box' style='color: black;'>Cyan</span> - Range: 6-10. Example: <span class='example' style='color: rgb(0, 255, 255);'>RGB(0, 255, 255).</span><br/>"
+        "8. <span class='color-box' style='color: black;'>Purple</span> - Range: 11-15. Example: <span class='example' style='color: rgb(128, 0, 128);'>RGB(128, 0, 128).</span><br/>"
+        "9. <span class='color-box' style='color: black;'>Orange</span> - Range: 16-20. Example: <span class='example' style='color: rgb(255, 165, 0);'>RGB(255, 165, 0).</span><br/>"
+        "10. <span class='color-box' style='color: black;'>Brown</span> - Range: 21-30. Example: <span class='example' style='color: rgb(139, 69, 19);'>RGB(139, 69, 19).</span><br/>"
+        "11. <span class='color-box' style='color: black;'>Dark Green</span> - Range: 31-40. Example: <span class='example' style='color: rgb(0, 100, 0);'>RGB(0, 100, 0).</span><br/>"
+        "12. <span class='color-box' style='color: black;'>Gray</span> - Range: 41-50. Example: <span class='example' style='color: rgb(128, 128, 128);'>RGB(128, 128, 128).</span><br/>"
+        "13. <span class='color-box' style='color: black;'>Black</span> - Range: 51-255. Example: <span class='example' style='color: rgb(0, 0, 0);'>RGB(0, 0, 0).</span>"
+        "</body>"
+        "</html>";
     return description;
 }
 

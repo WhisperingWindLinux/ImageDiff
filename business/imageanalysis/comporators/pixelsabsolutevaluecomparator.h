@@ -13,7 +13,7 @@ public:
     enum class Result { Text, Image };
 
 public:
-    PixelsAbsoluteValueComparator();
+    PixelsAbsoluteValueComparator(PixelsAbsoluteValueComparator::Result result);
     virtual ~PixelsAbsoluteValueComparator() = default;
 
     // AComparator interface

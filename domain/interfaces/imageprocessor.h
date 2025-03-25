@@ -49,7 +49,9 @@ Switch between images being compared                                            
 
 Show the difference in pixel values as an image (Comparator)                       D
 
-Show the absolute difference statistics for pixel values (Comparator)              V
+Show the absolute difference statistics for pixel values (Text) (Comparator)       V
+
+Show the absolute difference statistics for pixel values (Image) (Comparator)      M
 
 Show pixels' brigthness difference statistics (Comparator)                         N
 
