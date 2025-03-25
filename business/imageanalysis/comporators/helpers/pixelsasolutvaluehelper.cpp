@@ -2,7 +2,7 @@
 
 #include <domain/valueobjects/pixeldiffrencerange.h>
 
-PixelsAbsolutValueHelper::PixelsAbsolutValueHelper(PixelsAbsoluteValueComparator::Mode mode)
+PixelsAbsolutValueHelper::PixelsAbsolutValueHelper(AdvancedDifferenceInPixelValuesComporator::Mode mode)
     : currentMode(mode)
 {
 }
@@ -54,12 +54,12 @@ QList<PixelDifferenceRange> PixelsAbsolutValueHelper::generateDifferenceStringRe
 
 int PixelsAbsolutValueHelper::calculateDiff(QColor color1, QColor color2)
 {
-    if (currentMode == PixelsAbsoluteValueComparator::Mode::DifferenceBySingleLargestComponent) {
+    if (currentMode == AdvancedDifferenceInPixelValuesComporator::Mode::DifferenceBySingleLargestComponent) {
         int diffR = std::abs(color1.red() - color2.red());
         int diffG = std::abs(color1.green() - color2.green());
         int diffB = std::abs(color1.blue() - color2.blue());
         return std::max({diffR, diffG, diffB});
-    } else if (currentMode == PixelsAbsoluteValueComparator::Mode::DifferenceByAllComponents) {
+    } else if (currentMode == AdvancedDifferenceInPixelValuesComporator::Mode::DifferenceByAllComponents) {
         int diff1 = color1.red() + color1.green() + color1.blue();
         int diff2 = color2.red() + color2.green() + color2.blue();
         return std::abs(diff1 - diff2);

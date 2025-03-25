@@ -10,15 +10,15 @@ CONFIG += c++17
 
 SOURCES += \
     business/getimagesfromvideosinteractor.cpp \
+    business/imageanalysis/comporators/advanceddifferenceInpixelvaluescomporator.cpp \
     business/imageanalysis/comporators/colorssaturationcomporator.cpp \
     business/imageanalysis/comporators/contrastcomporator.cpp \
-    business/imageanalysis/comporators/differenceinpixelvaluesasimage.cpp \
     business/imageanalysis/comporators/formatters/pixelsabsolutevalueformatter.cpp \
     business/imageanalysis/comporators/helpers/pixelsasolutvaluehelper.cpp \
     business/imageanalysis/comporators/imageproximitytoorigincomparator.cpp \
-    business/imageanalysis/comporators/pixelsabsolutevaluecomparator.cpp \
     business/imageanalysis/comporators/pixelsbrightnesscomparator.cpp \
     business/imageanalysis/comporators/sharpnesscomparator.cpp \
+    business/imageanalysis/comporators/simpledifferenceinpixelvaluescomporator.cpp \
     business/imageanalysis/filters/grayscalefilter.cpp \
     business/imageanalysis/filters/rgbfilter.cpp \
     business/imageanalysis/imageprocessinginteractor.cpp \
@@ -63,15 +63,15 @@ SOURCES += \
 
 HEADERS += \
     business/getimagesfromvideosinteractor.h \
+    business/imageanalysis/comporators/advanceddifferenceInpixelvaluescomporator.h \
     business/imageanalysis/comporators/colorssaturationcomporator.h \
     business/imageanalysis/comporators/contrastcomporator.h \
-    business/imageanalysis/comporators/differenceinpixelvaluesasimage.h \
     business/imageanalysis/comporators/formatters/pixelsabsolutevalueformatter.h \
     business/imageanalysis/comporators/helpers/pixelsasolutvaluehelper.h \
     business/imageanalysis/comporators/imageproximitytoorigincomparator.h \
-    business/imageanalysis/comporators/pixelsabsolutevaluecomparator.h \
     business/imageanalysis/comporators/pixelsbrightnesscomparator.h \
     business/imageanalysis/comporators/sharpnesscomparator.h \
+    business/imageanalysis/comporators/simpledifferenceinpixelvaluescomporator.h \
     business/imageanalysis/filters/grayscalefilter.h \
     business/imageanalysis/filters/rgbfilter.h \
     business/imageanalysis/imageprocessinginteractor.h \

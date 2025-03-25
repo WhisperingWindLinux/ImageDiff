@@ -3,9 +3,9 @@
 #include <QFileInfo>
 #include <QDebug>
 
-#include "differenceinpixelvaluesasimage.h"
+#include "simpledifferenceinpixelvaluescomporator.h"
 
-QImage DifferenceInPixelValuesAsImageComporator::compareImages(const QImage &image1,
+QImage SimpleDifferenceInPixelValuesComporator::compareImages(const QImage &image1,
                                                                const QImage &image2
                                                                )
 {
@@ -31,24 +31,24 @@ QImage DifferenceInPixelValuesAsImageComporator::compareImages(const QImage &ima
     return resultImg;
 }
 
-QString DifferenceInPixelValuesAsImageComporator::getShortName() const {
-    return "Difference In Pixel Values As An Image";
+QString SimpleDifferenceInPixelValuesComporator::getShortName() const {
+    return "Difference In Pixel Values v.1 (Image)";
 }
 
-QString DifferenceInPixelValuesAsImageComporator::getFullName() const {
-    return "Difference in pixel values as an image";
+QString SimpleDifferenceInPixelValuesComporator::getFullName() const {
+    return "Difference In Pixel Values v.1 (Image)";
 }
 
-QString DifferenceInPixelValuesAsImageComporator::getHotkey() const {
+QString SimpleDifferenceInPixelValuesComporator::getHotkey() const {
     return "D";
 }
 
-QString DifferenceInPixelValuesAsImageComporator::getDescription() const {
+QString SimpleDifferenceInPixelValuesComporator::getDescription() const {
     return QString("Show the difference in pixel values as an image. "
                    "Pixels that differ are marked with red dots.");
 }
 
-ComparisonResultVariantPtr DifferenceInPixelValuesAsImageComporator::compare(const ComparableImage &first,
+ComparisonResultVariantPtr SimpleDifferenceInPixelValuesComporator::compare(const ComparableImage &first,
                                                                              const ComparableImage &second
                                                                              )
 {

@@ -1,20 +1,20 @@
-#ifndef PIXELSABSOLUTEVALUECOMPARATOR_H
-#define PIXELSABSOLUTEVALUECOMPARATOR_H
+#ifndef ADVANCEDDIFFERENCEINPIXELVALUESCOMPORATOR_H
+#define ADVANCEDDIFFERENCEINPIXELVALUESCOMPORATOR_H
 
 #include "domain/valueobjects/comparisonresultvariant.h"
 #include <domain/valueobjects/pixeldiffrencerange.h>
 #include <domain/valueobjects/property.h>
 #include <domain/interfaces/comparator.h>
 
-class PixelsAbsoluteValueComparator : public IComparator
+class AdvancedDifferenceInPixelValuesComporator : public IComparator
 {
 public:
     enum class Mode { DifferenceBySingleLargestComponent, DifferenceByAllComponents };
     enum class Result { Text, Image };
 
 public:
-    PixelsAbsoluteValueComparator(PixelsAbsoluteValueComparator::Result result);
-    virtual ~PixelsAbsoluteValueComparator() = default;
+    AdvancedDifferenceInPixelValuesComporator(AdvancedDifferenceInPixelValuesComporator::Result result);
+    virtual ~AdvancedDifferenceInPixelValuesComporator() = default;
 
     // AComparator interface
 
@@ -34,6 +34,6 @@ private:
     int calculateDiff(QColor color1, QColor color2);
 };
 
-#endif // PIXELSABSOLUTEVALUECOMPARATOR_H
+#endif // ADVANCEDDIFFERENCEINPIXELVALUESCOMPORATOR_H
 
 

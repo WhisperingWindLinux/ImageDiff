@@ -6,9 +6,9 @@
 #include <qfileinfo.h>
 #include <business/imageanalysis/comporators/colorssaturationcomporator.h>
 #include <business/imageanalysis/comporators/contrastcomporator.h>
-#include <business/imageanalysis/comporators/differenceinpixelvaluesasimage.h>
+#include <business/imageanalysis/comporators/simpledifferenceinpixelvaluescomporator.h>
 #include <business/imageanalysis/comporators/imageproximitytoorigincomparator.h>
-#include <business/imageanalysis/comporators/pixelsabsolutevaluecomparator.h>
+#include <business/imageanalysis/comporators/advanceddifferenceInpixelvaluescomporator.h>
 #include <business/imageanalysis/comporators/pixelsbrightnesscomparator.h>
 #include <business/imageanalysis/comporators/sharpnesscomparator.h>
 #include <business/imageanalysis/filters/grayscalefilter.h>
@@ -184,14 +184,14 @@ QList<ImageProcessorInfo> ImageProcessingInteractor::getImageProcessorsInfo() {
 
     // add comparators
 
-    auto imageComparator = make_shared<DifferenceInPixelValuesAsImageComporator>();
+    auto imageComparator = make_shared<SimpleDifferenceInPixelValuesComporator>();
     auto imageSaturationComporator = make_shared<ColorsSaturationComporator>();
     auto imageContrastComporator = make_shared<ContrastComporator>();
-    auto imagePixelsAbsoluteValueComparatorTxt = make_shared<PixelsAbsoluteValueComparator>(
-                                                            PixelsAbsoluteValueComparator::Result::Text
+    auto imagePixelsAbsoluteValueComparatorTxt = make_shared<AdvancedDifferenceInPixelValuesComporator>(
+                                                            AdvancedDifferenceInPixelValuesComporator::Result::Text
                                                                 );
-    auto imagePixelsAbsoluteValueComparatorImg = make_shared<PixelsAbsoluteValueComparator>(
-                                                            PixelsAbsoluteValueComparator::Result::Image
+    auto imagePixelsAbsoluteValueComparatorImg = make_shared<AdvancedDifferenceInPixelValuesComporator>(
+                                                            AdvancedDifferenceInPixelValuesComporator::Result::Image
                                                             );
     auto imagePixelsBrightnessComparator = make_shared<PixelsBrightnessComparator>();
     auto sharpnessComparator = make_shared<SharpnessComparator>();

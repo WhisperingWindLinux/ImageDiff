@@ -1,4 +1,4 @@
-#include "pixelsabsolutevaluecomparator.h"
+#include "advanceddifferenceInpixelvaluescomporator.h"
 
 #include <QCoreApplication>
 #include <QImage>
@@ -13,12 +13,12 @@
 #include <business/imageanalysis/comporators/helpers/pixelsasolutvaluehelper.h>
 
 
-PixelsAbsoluteValueComparator::PixelsAbsoluteValueComparator(Result result) {
+AdvancedDifferenceInPixelValuesComporator::AdvancedDifferenceInPixelValuesComporator(Result result) {
     currentMode = Mode::DifferenceBySingleLargestComponent;
     expectedResult = result;
 }
 
-void PixelsAbsoluteValueComparator::setProperties(QList<Property> properties) {
+void AdvancedDifferenceInPixelValuesComporator::setProperties(QList<Property> properties) {
     if (properties.size() != 1) {
         QString error = "Got an error from %1: an incorrect number of properties.";
         error = error.arg(getShortName());
@@ -32,7 +32,7 @@ void PixelsAbsoluteValueComparator::setProperties(QList<Property> properties) {
                    );
 }
 
-QList<Property> PixelsAbsoluteValueComparator::getDefaultProperties() const {
+QList<Property> AdvancedDifferenceInPixelValuesComporator::getDefaultProperties() const {
     QString prop1Description = "There are two modes of operation for the algorithm: "
                                "DifferenceBySingleLargestComponent and DifferenceByAllComponents. "
                                "In the first case, the algorithm calculates the absolute difference "
@@ -46,31 +46,31 @@ QList<Property> PixelsAbsoluteValueComparator::getDefaultProperties() const {
     return { prop1 };
 }
 
-void PixelsAbsoluteValueComparator::reset() {
+void AdvancedDifferenceInPixelValuesComporator::reset() {
     currentMode = Mode::DifferenceBySingleLargestComponent;
 }
 
-QString PixelsAbsoluteValueComparator::getShortName() const {
+QString AdvancedDifferenceInPixelValuesComporator::getShortName() const {
     if (expectedResult == Result::Text) {
-        return "Pixels Difference Mapping (Text)";
+        return "Difference In Pixel Values v.2 (Text)";
     } else {
-        return "Pixels Difference Mapping (Image)";
+        return "Difference In Pixel Values v.2 (Image)";
     }
 }
 
-QString PixelsAbsoluteValueComparator::getFullName() const {
+QString AdvancedDifferenceInPixelValuesComporator::getFullName() const {
     if (expectedResult == Result::Text) {
-        return "The difference in color for each pixel between two images as a text";
+        return "Difference In Pixel Values v.2 (Text)";
     } else {
-        return "The difference in color for each pixel between two images as an image";
+        return "Difference In Pixel Values v.2 (Image)";
     }
 }
 
-QString PixelsAbsoluteValueComparator::getHotkey() const {
+QString AdvancedDifferenceInPixelValuesComporator::getHotkey() const {
     return (expectedResult == Result::Text ? "v" : "m");
 }
 
-QString PixelsAbsoluteValueComparator::getDescription() const {
+QString AdvancedDifferenceInPixelValuesComporator::getDescription() const {
     QString baseHelpTxt = QString("This algorithm compares two images by analyzing ") +
                           "the difference in the colors of each pixel. For each pixel, the " +
                           "difference in color brightness (red, green, blue) is calculated, " +
@@ -88,7 +88,7 @@ QString PixelsAbsoluteValueComparator::getDescription() const {
     }
 }
 
-ComparisonResultVariantPtr PixelsAbsoluteValueComparator::compare(const ComparableImage &first,
+ComparisonResultVariantPtr AdvancedDifferenceInPixelValuesComporator::compare(const ComparableImage &first,
                                                                   const ComparableImage &second
                                                                   )
 {

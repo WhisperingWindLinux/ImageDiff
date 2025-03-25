@@ -5,7 +5,7 @@
 
 #include <domain/valueobjects/pixeldiffrencerange.h>
 
-#include <business/imageanalysis/comporators/pixelsabsolutevaluecomparator.h>
+#include <business/imageanalysis/comporators/advanceddifferenceInpixelvaluescomporator.h>
 
 class PixelsAbsolutValueFormatter
 {
@@ -15,7 +15,7 @@ public:
 
     static QString formatResultToHtml(QList<PixelDifferenceRange> &result,
                                       QString comporatorFullName,
-                                      PixelsAbsoluteValueComparator::Mode currentMode
+                                      AdvancedDifferenceInPixelValuesComporator::Mode currentMode
                                       );
 
 };

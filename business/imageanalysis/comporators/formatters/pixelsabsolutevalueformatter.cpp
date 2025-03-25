@@ -5,7 +5,7 @@
 
 QString PixelsAbsolutValueFormatter::formatResultToHtml(QList<PixelDifferenceRange> &result,
                                                         QString comporatorFullName,
-                                                        PixelsAbsoluteValueComparator::Mode currentMode
+                                                        AdvancedDifferenceInPixelValuesComporator::Mode currentMode
                                                         )
 {
     QLocale locale = QLocale::system();
@@ -55,7 +55,7 @@ QString PixelsAbsolutValueFormatter::formatResultToHtml(QList<PixelDifferenceRan
     html += "</table>";
 
     html += "<br /><br />";
-    if (currentMode == PixelsAbsoluteValueComparator::Mode::DifferenceBySingleLargestComponent) {
+    if (currentMode == AdvancedDifferenceInPixelValuesComporator::Mode::DifferenceBySingleLargestComponent) {
         html += QString("Range contains the absolute values by which the pixels differ ") +
                 "in any of the R, G, or B components. The mode is DifferenceBySingleLargestComponent.";
     } else {
