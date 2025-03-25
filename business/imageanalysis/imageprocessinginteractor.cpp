@@ -6,11 +6,12 @@
 #include <qfileinfo.h>
 #include <business/imageanalysis/comporators/colorssaturationcomporator.h>
 #include <business/imageanalysis/comporators/contrastcomporator.h>
-#include <business/imageanalysis/comporators/simpledifferenceinpixelvaluescomporator.h>
+#include <business/imageanalysis/comporators/monocoloreddifferenceinpixelvaluescomporator.h>
 #include <business/imageanalysis/comporators/imageproximitytoorigincomparator.h>
-#include <business/imageanalysis/comporators/advanceddifferenceInpixelvaluescomporator.h>
+#include <business/imageanalysis/comporators/coloreddifferenceInpixelvaluescomporator.h>
 #include <business/imageanalysis/comporators/pixelsbrightnesscomparator.h>
 #include <business/imageanalysis/comporators/sharpnesscomparator.h>
+#include <business/imageanalysis/comporators/customrangeddifferenceinpixelvaluescomparator.h>
 #include <business/imageanalysis/filters/grayscalefilter.h>
 #include <business/imageanalysis/filters/rgbfilter.h>
 #include <data/storage/savefiledialoghandler.h>
@@ -184,18 +185,19 @@ QList<ImageProcessorInfo> ImageProcessingInteractor::getImageProcessorsInfo() {
 
     // add comparators
 
-    auto imageComparator = make_shared<SimpleDifferenceInPixelValuesComporator>();
+    auto imageComparator = make_shared<MonoColoredDifferenceInPixelValuesComporator>();
     auto imageSaturationComporator = make_shared<ColorsSaturationComporator>();
     auto imageContrastComporator = make_shared<ContrastComporator>();
-    auto imagePixelsAbsoluteValueComparatorTxt = make_shared<AdvancedDifferenceInPixelValuesComporator>(
-                                                            AdvancedDifferenceInPixelValuesComporator::Result::Text
+    auto imagePixelsAbsoluteValueComparatorTxt = make_shared<ColoredDifferenceInPixelValuesComporator>(
+                                                            ColoredDifferenceInPixelValuesComporator::Result::Text
                                                                 );
-    auto imagePixelsAbsoluteValueComparatorImg = make_shared<AdvancedDifferenceInPixelValuesComporator>(
-                                                            AdvancedDifferenceInPixelValuesComporator::Result::Image
+    auto imagePixelsAbsoluteValueComparatorImg = make_shared<ColoredDifferenceInPixelValuesComporator>(
+                                                            ColoredDifferenceInPixelValuesComporator::Result::Image
                                                             );
     auto imagePixelsBrightnessComparator = make_shared<PixelsBrightnessComparator>();
     auto sharpnessComparator = make_shared<SharpnessComparator>();
     auto imageProximityComparator = make_shared<ImageProximityToOriginComparator>();
+    auto customRangedPixelsComparatorImg = make_shared<CustomRangedDifferenceInPixelValuesComparator>();
 
     processorsManager->addProcessor(imageComparator);
     processorsManager->addProcessor(imageSaturationComporator);
@@ -205,6 +207,7 @@ QList<ImageProcessorInfo> ImageProcessingInteractor::getImageProcessorsInfo() {
     processorsManager->addProcessor(imagePixelsBrightnessComparator);
     processorsManager->addProcessor(sharpnessComparator);
     processorsManager->addProcessor(imageProximityComparator);
+    processorsManager->addProcessor(customRangedPixelsComparatorImg);
 
     // add filters
 

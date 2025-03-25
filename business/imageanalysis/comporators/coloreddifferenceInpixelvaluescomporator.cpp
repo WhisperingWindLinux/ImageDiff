@@ -1,4 +1,4 @@
-#include "advanceddifferenceInpixelvaluescomporator.h"
+#include "coloreddifferenceInpixelvaluescomporator.h"
 
 #include <QCoreApplication>
 #include <QImage>
@@ -13,12 +13,12 @@
 #include <business/imageanalysis/comporators/helpers/pixelsasolutvaluehelper.h>
 
 
-AdvancedDifferenceInPixelValuesComporator::AdvancedDifferenceInPixelValuesComporator(Result result) {
-    currentMode = Mode::DifferenceBySingleLargestComponent;
+ColoredDifferenceInPixelValuesComporator::ColoredDifferenceInPixelValuesComporator(Result result) {
+    currentMode = PixelsDifferenceCalculationMode::DifferenceBySingleLargestComponent;
     expectedResult = result;
 }
 
-void AdvancedDifferenceInPixelValuesComporator::setProperties(QList<Property> properties) {
+void ColoredDifferenceInPixelValuesComporator::setProperties(QList<Property> properties) {
     if (properties.size() != 1) {
         QString error = "Got an error from %1: an incorrect number of properties.";
         error = error.arg(getShortName());
@@ -27,12 +27,12 @@ void AdvancedDifferenceInPixelValuesComporator::setProperties(QList<Property> pr
     int prop1Index = properties[0].getValue();
 
     currentMode = (prop1Index == 0 ?
-                       Mode::DifferenceBySingleLargestComponent :
-                       Mode::DifferenceByAllComponents
+                       PixelsDifferenceCalculationMode::DifferenceBySingleLargestComponent :
+                       PixelsDifferenceCalculationMode::DifferenceByAllComponents
                    );
 }
 
-QList<Property> AdvancedDifferenceInPixelValuesComporator::getDefaultProperties() const {
+QList<Property> ColoredDifferenceInPixelValuesComporator::getDefaultProperties() const {
     QString prop1Description = "There are two modes of operation for the algorithm: "
                                "DifferenceBySingleLargestComponent and DifferenceByAllComponents. "
                                "In the first case, the algorithm calculates the absolute difference "
@@ -46,31 +46,31 @@ QList<Property> AdvancedDifferenceInPixelValuesComporator::getDefaultProperties(
     return { prop1 };
 }
 
-void AdvancedDifferenceInPixelValuesComporator::reset() {
-    currentMode = Mode::DifferenceBySingleLargestComponent;
+void ColoredDifferenceInPixelValuesComporator::reset() {
+    currentMode = PixelsDifferenceCalculationMode::DifferenceBySingleLargestComponent;
 }
 
-QString AdvancedDifferenceInPixelValuesComporator::getShortName() const {
+QString ColoredDifferenceInPixelValuesComporator::getShortName() const {
     if (expectedResult == Result::Text) {
         return "Difference In Pixel Values v.2 (Text)";
     } else {
-        return "Difference In Pixel Values v.2 (Image)";
+        return "Difference In Pixel Values v.2 (Image, Multicolor)";
     }
 }
 
-QString AdvancedDifferenceInPixelValuesComporator::getFullName() const {
+QString ColoredDifferenceInPixelValuesComporator::getFullName() const {
     if (expectedResult == Result::Text) {
         return "Difference In Pixel Values v.2 (Text)";
     } else {
-        return "Difference In Pixel Values v.2 (Image)";
+        return "Difference In Pixel Values v.2 (Image, Multicolor)";
     }
 }
 
-QString AdvancedDifferenceInPixelValuesComporator::getHotkey() const {
+QString ColoredDifferenceInPixelValuesComporator::getHotkey() const {
     return (expectedResult == Result::Text ? "v" : "m");
 }
 
-QString AdvancedDifferenceInPixelValuesComporator::getDescription() const {
+QString ColoredDifferenceInPixelValuesComporator::getDescription() const {
     QString baseHelpTxt = QString("This algorithm compares two images by analyzing ") +
                           "the difference in the colors of each pixel. For each pixel, the " +
                           "difference in color brightness (red, green, blue) is calculated, " +
@@ -88,7 +88,7 @@ QString AdvancedDifferenceInPixelValuesComporator::getDescription() const {
     }
 }
 
-ComparisonResultVariantPtr AdvancedDifferenceInPixelValuesComporator::compare(const ComparableImage &first,
+ComparisonResultVariantPtr ColoredDifferenceInPixelValuesComporator::compare(const ComparableImage &first,
                                                                   const ComparableImage &second
                                                                   )
 {

@@ -29,7 +29,7 @@ public:
     SharpnessComparator() = default;
     virtual ~SharpnessComparator() = default;
 
-    // AComparator interface
+    // IComparator interface
 
     QString getShortName() const override;
     QString getHotkey() const override;

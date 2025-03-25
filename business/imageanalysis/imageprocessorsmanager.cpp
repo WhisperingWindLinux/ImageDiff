@@ -4,7 +4,7 @@
 
 #include <business/imageanalysis/comporators/colorssaturationcomporator.h>
 #include <business/imageanalysis/comporators/contrastcomporator.h>
-#include <business/imageanalysis/comporators/simpledifferenceinpixelvaluescomporator.h>
+#include <business/imageanalysis/comporators/monocoloreddifferenceinpixelvaluescomporator.h>
 #include <business/imageanalysis/comporators/imageproximitytoorigincomparator.h>
 #include <business/imageanalysis/comporators/pixelsbrightnesscomparator.h>
 #include <business/imageanalysis/comporators/sharpnesscomparator.h>

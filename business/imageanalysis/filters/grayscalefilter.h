@@ -10,7 +10,7 @@ public:
     GrayscaleFilter() = default;
     virtual ~GrayscaleFilter() = default;
 
-    // ATransformer interface
+    // IFilter interface
 
     QString getShortName() const override;
     QString getHotkey() const override;

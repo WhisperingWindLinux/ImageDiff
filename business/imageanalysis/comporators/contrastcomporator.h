@@ -28,7 +28,7 @@ public:
     ContrastComporator() = default;
     virtual ~ContrastComporator() = default;
 
-    // AComparator interface
+    // IComparator interface
 
     QString getShortName() const override;
     QString getHotkey() const override;

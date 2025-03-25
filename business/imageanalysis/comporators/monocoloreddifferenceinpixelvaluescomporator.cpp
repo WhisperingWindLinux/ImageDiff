@@ -3,9 +3,9 @@
 #include <QFileInfo>
 #include <QDebug>
 
-#include "simpledifferenceinpixelvaluescomporator.h"
+#include "monocoloreddifferenceinpixelvaluescomporator.h"
 
-QImage SimpleDifferenceInPixelValuesComporator::compareImages(const QImage &image1,
+QImage MonoColoredDifferenceInPixelValuesComporator::compareImages(const QImage &image1,
                                                                const QImage &image2
                                                                )
 {
@@ -31,24 +31,24 @@ QImage SimpleDifferenceInPixelValuesComporator::compareImages(const QImage &imag
     return resultImg;
 }
 
-QString SimpleDifferenceInPixelValuesComporator::getShortName() const {
-    return "Difference In Pixel Values v.1 (Image)";
+QString MonoColoredDifferenceInPixelValuesComporator::getShortName() const {
+    return "Difference In Pixel Values v.1 (Image, Single Color)";
 }
 
-QString SimpleDifferenceInPixelValuesComporator::getFullName() const {
-    return "Difference In Pixel Values v.1 (Image)";
+QString MonoColoredDifferenceInPixelValuesComporator::getFullName() const {
+    return "Difference In Pixel Values v.1 (Image, Single Color)";
 }
 
-QString SimpleDifferenceInPixelValuesComporator::getHotkey() const {
+QString MonoColoredDifferenceInPixelValuesComporator::getHotkey() const {
     return "D";
 }
 
-QString SimpleDifferenceInPixelValuesComporator::getDescription() const {
+QString MonoColoredDifferenceInPixelValuesComporator::getDescription() const {
     return QString("Show the difference in pixel values as an image. "
                    "Pixels that differ are marked with red dots.");
 }
 
-ComparisonResultVariantPtr SimpleDifferenceInPixelValuesComporator::compare(const ComparableImage &first,
+ComparisonResultVariantPtr MonoColoredDifferenceInPixelValuesComporator::compare(const ComparableImage &first,
                                                                              const ComparableImage &second
                                                                              )
 {

@@ -11,15 +11,16 @@ CONFIG += c++17
 
 SOURCES += \
     business/getimagesfromvideosinteractor.cpp \
-    business/imageanalysis/comporators/advanceddifferenceInpixelvaluescomporator.cpp \
+    business/imageanalysis/comporators/coloreddifferenceInpixelvaluescomporator.cpp \
     business/imageanalysis/comporators/colorssaturationcomporator.cpp \
     business/imageanalysis/comporators/contrastcomporator.cpp \
+    business/imageanalysis/comporators/customrangeddifferenceinpixelvaluescomparator.cpp \
     business/imageanalysis/comporators/formatters/pixelsabsolutevalueformatter.cpp \
     business/imageanalysis/comporators/helpers/pixelsasolutvaluehelper.cpp \
     business/imageanalysis/comporators/imageproximitytoorigincomparator.cpp \
+    business/imageanalysis/comporators/monocoloreddifferenceinpixelvaluescomporator.cpp \
     business/imageanalysis/comporators/pixelsbrightnesscomparator.cpp \
     business/imageanalysis/comporators/sharpnesscomparator.cpp \
-    business/imageanalysis/comporators/simpledifferenceinpixelvaluescomporator.cpp \
     business/imageanalysis/filters/grayscalefilter.cpp \
     business/imageanalysis/filters/rgbfilter.cpp \
     business/imageanalysis/imageprocessinginteractor.cpp \
@@ -64,15 +65,16 @@ SOURCES += \
 
 HEADERS += \
     business/getimagesfromvideosinteractor.h \
-    business/imageanalysis/comporators/advanceddifferenceInpixelvaluescomporator.h \
+    business/imageanalysis/comporators/coloreddifferenceInpixelvaluescomporator.h \
     business/imageanalysis/comporators/colorssaturationcomporator.h \
     business/imageanalysis/comporators/contrastcomporator.h \
+    business/imageanalysis/comporators/customrangeddifferenceinpixelvaluescomparator.h \
     business/imageanalysis/comporators/formatters/pixelsabsolutevalueformatter.h \
     business/imageanalysis/comporators/helpers/pixelsasolutvaluehelper.h \
     business/imageanalysis/comporators/imageproximitytoorigincomparator.h \
+    business/imageanalysis/comporators/monocoloreddifferenceinpixelvaluescomporator.h \
     business/imageanalysis/comporators/pixelsbrightnesscomparator.h \
     business/imageanalysis/comporators/sharpnesscomparator.h \
-    business/imageanalysis/comporators/simpledifferenceinpixelvaluescomporator.h \
     business/imageanalysis/filters/grayscalefilter.h \
     business/imageanalysis/filters/rgbfilter.h \
     business/imageanalysis/imageprocessinginteractor.h \
@@ -104,7 +106,7 @@ HEADERS += \
     domain/interfaces/business/ifilter.h \
     domain/interfaces/presentation/imagefilesinteractorlistener.h \
     domain/interfaces/presentation/imageprocessinginteractorlistener.h \
-    domain/interfaces/presentation/imageprocessor.h \
+    domain/interfaces/business/imageprocessor.h \
     domain/interfaces/presentation/ioncropimageslistener.h \
     domain/interfaces/presentation/iotherappinstancesinteractorcallback.h \
     domain/interfaces/presentation/iprocessorpropertiesdialogcallback.h \

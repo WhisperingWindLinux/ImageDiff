@@ -37,7 +37,7 @@ public:
     PixelsBrightnessComparator() = default;
     virtual ~PixelsBrightnessComparator() = default;
 
-    // AComparator interface
+    // IComparator interface
 
     QString getShortName() const override;
     QString getHotkey() const override;

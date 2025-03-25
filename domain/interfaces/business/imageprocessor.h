@@ -41,45 +41,47 @@ typedef std::optional<QString> QStringOptional;
 
 The hotkeys table
 
------------------------------------------------------------------------------------------------
-|      a image processor name                                          |   a hotkey (one key) |
------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------
+|      a image processor name                                                              |   a hotkey (one key) |
+-------------------------------------------------------------------------------------------------------------------
 
-Switch between images being compared                                               S
+Switch between images being compared                                                                    S
 
-Show the difference in pixel values as an image (Comparator)                       D
+Show the absolute difference statistics for pixel values (Image, Momocolored) (Comparator)              D
 
-Show the absolute difference statistics for pixel values (Text) (Comparator)       V
+Show the absolute difference statistics for pixel values (Text) (Comparator)                            V
 
-Show the absolute difference statistics for pixel values (Image) (Comparator)      M
+Show the absolute difference statistics for pixel values (Image, Colored) (Comparator)                  M
 
-Show pixels' brigthness difference statistics (Comparator)                         N
+Show the absolute custom ranged difference for pixel values (Image, Colored) (Comparator)               U
 
-Show pixels' contrast difference statistics (Comparator)                           K
+Show pixels' brigthness difference statistics (Comparator)                                              N
 
-Show pixels' saturation difference statistics (Comparator)                         T
+Show pixels' contrast difference statistics (Comparator)                                                K
 
-Dummy comparator (Comparator; For Testing Purposes Only)                           X
+Show pixels' saturation difference statistics (Comparator)                                              T
 
-Color picker                                                                       P
+Dummy comparator (Comparator; For Testing Purposes Only)                                                X
 
-Docked Color Picker                                                                A
+Color picker                                                                                            P
 
-Show Original Image (Filter)                                                       C
+Docked Color Picker                                                                                     A
 
-Show Grayscale Image (Filter)                                                      L
+Show Original Image (Filter)                                                                            C
 
-Show Red channel only (Filter)                                                     R
+Show Grayscale Image (Filter)                                                                           L
 
-Show Green channel only (Filter)                                                   G
+Show Red channel only (Filter)                                                                          R
 
-Show Blue channel only (Filter)                                                    B
+Show Green channel only (Filter)                                                                        G
 
-Sharpness comporator                                                               H
+Show Blue channel only (Filter)                                                                         B
 
-Compare the proximity of two images to an original image                           Y
+Sharpness comporator                                                                                    H
 
-Fit In View                                                                        F
+Compare the proximity of two images to an original image                                                Y
+
+Fit In View                                                                                             F
 
 
 */

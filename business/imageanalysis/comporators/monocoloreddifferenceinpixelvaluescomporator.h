@@ -1,5 +1,5 @@
-#ifndef SIMPLEDIFFERENCEINPIXELVALUESCOMPORATOR_H
-#define SIMPLEDIFFERENCEINPIXELVALUESCOMPORATOR_H
+#ifndef MONOCOLOREDDIFFERENCEINPIXELVALUESCOMPORATOR_H
+#define MONOCOLOREDDIFFERENCEINPIXELVALUESCOMPORATOR_H
 
 #include <qimage.h>
 #include <qstring.h>
@@ -9,13 +9,13 @@
 // This class shows the difference in pixel values as an image.
 // Pixels that differ are marked with red dots.
 
-class SimpleDifferenceInPixelValuesComporator : public IComparator
+class MonoColoredDifferenceInPixelValuesComporator : public IComparator
 {
 public:
-    SimpleDifferenceInPixelValuesComporator() = default;
-    virtual ~SimpleDifferenceInPixelValuesComporator() = default;
+    MonoColoredDifferenceInPixelValuesComporator() = default;
+    virtual ~MonoColoredDifferenceInPixelValuesComporator() = default;
 
-    // AComparator interface
+    // IComparator interface
 
     QString getShortName() const override;
     QString getHotkey() const override;
@@ -28,4 +28,4 @@ private:
     QImage compareImages(const QImage &image1, const QImage &image2);
 };
 
-#endif // SIMPLEDIFFERENCEINPIXELVALUESCOMPORATOR_H
+#endif // MONOCOLOREDDIFFERENCEINPIXELVALUESCOMPORATOR_H
