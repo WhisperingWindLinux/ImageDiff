@@ -1,7 +1,7 @@
 #ifndef PYTHONSCRIPFILTER_H
 #define PYTHONSCRIPFILTER_H
 
-#include <domain/interfaces/filter.h>
+#include <domain/interfaces/business/ifilter.h>
 
 
 class PythonScripFilter : public IFilter {

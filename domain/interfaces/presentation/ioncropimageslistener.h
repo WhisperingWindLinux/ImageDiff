@@ -1,5 +1,5 @@
-#ifndef ONCROPIMAGESLISTENER_H
-#define ONCROPIMAGESLISTENER_H
+#ifndef IONCROPIMAGESLISTENER_H
+#define IONCROPIMAGESLISTENER_H
 
 #include "domain/valueobjects/images.h"
 
@@ -8,4 +8,4 @@ public:
     virtual void onImagesCropped(ImagesPtr images) = 0;
 };
 
-#endif // ONCROPIMAGESLISTENER_H
+#endif // IONCROPIMAGESLISTENER_H

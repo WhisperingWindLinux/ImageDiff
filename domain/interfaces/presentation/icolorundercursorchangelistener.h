@@ -1,5 +1,5 @@
-#ifndef COLORUNDERCURSORCHANGELISTENER_H
-#define COLORUNDERCURSORCHANGELISTENER_H
+#ifndef ICOLORUNDERCURSORCHANGELISTENER_H
+#define ICOLORUNDERCURSORCHANGELISTENER_H
 
 #include <domain/valueobjects/imagepixelcolor.h>
 
@@ -9,4 +9,4 @@ public:
                                            const ImagePixelColor &hiddenImageRgbValue) = 0;
 };
 
-#endif // COLORUNDERCURSORCHANGELISTENER_H
+#endif // ICOLORUNDERCURSORCHANGELISTENER_H

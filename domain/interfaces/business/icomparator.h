@@ -1,11 +1,11 @@
-#ifndef COMPARATOR_H
-#define COMPARATOR_H
+#ifndef ICOMPARATOR_H
+#define ICOMPARATOR_H
 
 #include <qstring.h>
 
 #include <domain/valueobjects/comparableimage.h>
 #include <domain/valueobjects/comparisonresultvariant.h>
-#include <domain/interfaces/imageprocessor.h>
+#include <domain/interfaces/business/imageprocessor.h>
 
 /*
  * A base class for all comparators' interfaces in the app
@@ -32,6 +32,6 @@ public:
 
 typedef std::shared_ptr<IComparator> IComparatorPtr;
 
-#endif // COMPARATOR_H
+#endif // ICOMPARATOR_H
 
 

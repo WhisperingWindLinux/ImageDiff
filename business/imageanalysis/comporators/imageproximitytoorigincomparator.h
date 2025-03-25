@@ -1,7 +1,7 @@
 #ifndef IMAGEPROXIMITYTOORIGINCOMPARATOR_H
 #define IMAGEPROXIMITYTOORIGINCOMPARATOR_H
 
-#include <domain/interfaces/comparator.h>
+#include <domain/interfaces/business/icomparator.h>
 
 
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-

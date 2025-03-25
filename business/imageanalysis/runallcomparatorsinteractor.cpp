@@ -6,7 +6,7 @@
 #include <QtGui/qpainter.h>
 #include <QDesktopServices>
 #include <domain/valueobjects/autocomparisonreportentry.h>
-#include <domain/interfaces/iprogressdialog.h>
+#include <domain/interfaces/presentation/iprogressdialog.h>
 #include <business/utils/imagesinfo.h>
 #include <business/imageanalysis/comporators/formatters/htmlreportpresenter.h>
 #include "imageprocessorsmanager.h"

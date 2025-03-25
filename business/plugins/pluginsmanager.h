@@ -1,7 +1,7 @@
 #ifndef PLUGINMANAGER_H
 #define PLUGINMANAGER_H
 
-#include <domain/interfaces/imageprocessor.h>
+#include <domain/interfaces/business/imageprocessor.h>
 
 
 class IPluginsManagerCallbacks;

@@ -1,7 +1,7 @@
 #ifndef PYTHONSCRIPTCOMPARATOR_H
 #define PYTHONSCRIPTCOMPARATOR_H
 
-#include <domain/interfaces/comparator.h>
+#include <domain/interfaces/business/icomparator.h>
 
 class PythonScriptComparator : public IComparator {
 public:

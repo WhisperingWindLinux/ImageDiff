@@ -1,7 +1,7 @@
 #ifndef RGBFILTER_H
 #define RGBFILTER_H
 
-#include <domain/interfaces/filter.h>
+#include <domain/interfaces/business/ifilter.h>
 
 class GenericRgbFilter : public IFilter
 {

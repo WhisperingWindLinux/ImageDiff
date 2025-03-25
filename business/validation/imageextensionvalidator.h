@@ -2,7 +2,7 @@
 #define IMAGEEXTENSIONVALIDATOR_H
 
 #include <qstring.h>
-#include <qlist>
+#include <QList>
 
 #include <business/validation/interfaces/iimageextentionvalidator.h>
 

@@ -3,8 +3,8 @@
 
 #include <QSet>
 #include <business/plugins/pluginsmanager.h>
-#include <domain/interfaces/comparator.h>
-#include <domain/interfaces/imageprocessor.h>
+#include <domain/interfaces/business/icomparator.h>
+#include <domain/interfaces/business/imageprocessor.h>
 #include <domain/valueobjects/imageprocessorsinfo.h>
 
 class ImageProcessorsManager

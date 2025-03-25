@@ -5,7 +5,7 @@
 #include <QObject>
 #include <QWidget>
 
-#include <domain/interfaces/icolorpickercontroller.h>
+#include <domain/interfaces/presentation/icolorpickercontroller.h>
 
 class ColorPickerPanel;
 class MainWindow;

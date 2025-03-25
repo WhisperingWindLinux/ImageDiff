@@ -2,7 +2,7 @@
 
 #include <qpixmap.h>
 
-#include <domain/interfaces/filter.h>
+#include <domain/interfaces/business/ifilter.h>
 
 class GrayscaleFilter : public IFilter
 {

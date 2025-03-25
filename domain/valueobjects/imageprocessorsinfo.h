@@ -1,7 +1,7 @@
 #ifndef IMAGEPROCESSORSINFO_H
 #define IMAGEPROCESSORSINFO_H
 
-#include "domain/interfaces/imageprocessor.h"
+#include "domain/interfaces/business/imageprocessor.h"
 #include <qstring.h>
 
 struct ImageProcessorInfo {

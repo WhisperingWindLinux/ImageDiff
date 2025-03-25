@@ -1,7 +1,7 @@
 #ifndef SHARPNESSCOMPARATOR_H
 #define SHARPNESSCOMPARATOR_H
 
-#include <domain/interfaces/comparator.h>
+#include <domain/interfaces/business/icomparator.h>
 
 
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-

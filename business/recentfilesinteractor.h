@@ -1,14 +1,19 @@
 #ifndef RECENTFILESINTERACTOR_H
 #define RECENTFILESINTERACTOR_H
 
-#include <business/recentfilesmanager.h>
+#include "business/recentfilesmanager.h"
+
+class IRecentFilesManager;
 
 class RecentFilesInteractor
 {
-public:
+public:   
     RecentFilesInteractor();
+    virtual ~RecentFilesInteractor();
+
+    RecentFilesInteractor(IRecentFilesManager *manager); // Needed for unit tests
     
-    std::optional<QPair<QString, QString> > getRecentFilesPathsByRecentMenuRecord(const QString &recentFileMenuRecord);
+    std::optional<QStringPair> getRecentFilesPathsByRecentMenuRecord(const QString &recentFileMenuRecord);
 
     QStringList getRecentFilesMenuRecords();
 
@@ -17,11 +22,11 @@ public:
     void clear();
 
 private:
-    std::unique_ptr<RecentFilesManager> recentFilesManager;
+    IRecentFilesManager *recentFilesManager;
 
-    QString pairToString(const QPair<QString, QString> &pair);
-    std::optional<QPair<QString, QString> > splitString(const QString &str, const QString &separator);
-    std::optional<QPair<QString, QString> > stringToPair(const QString &str);
+    QString pairToString(const QStringPair &pair);
+    std::optional<QStringPair> splitString(const QString &str, const QString &separator);
+    std::optional<QStringPair> stringToPair(const QString &str);
 };
 
 #endif // RECENTFILESINTERACTOR_H

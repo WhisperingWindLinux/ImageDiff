@@ -23,5 +23,3 @@ This needs to be done, but it's not mandatory for the beta release
 It would be good to have it in the future
 
 1) Support for RGB(A) 10-bit PNG images.
-
-2) Support for named parameters in Python plugins. Right now, all parameters are positional.

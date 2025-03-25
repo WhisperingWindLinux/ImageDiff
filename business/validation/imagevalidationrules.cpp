@@ -19,16 +19,6 @@ std::optional<QString> ImageValidationRules::isValid() {
         return "One or both images are empty.";
     }
 
-    // Check if the first image has an RGB color space
-    if (!isImageColorSpaceRgb(images->image1)) {
-        return "The first image does not use an RGB color space.";
-    }
-
-    // Check if the second image has an RGB color space
-    if (!isImageColorSpaceRgb(images->image2)) {
-        return "The second image does not use an RGB color space.";
-    }
-
     // Check if the first image is 8-bit
     if (!isImage8Bit(images->image1)) {
         return "The first image is not 8-bit.";
@@ -49,32 +39,9 @@ std::optional<QString> ImageValidationRules::isValid() {
         return "The images do not have the same dimensions.";
     }
 
-    // Check if both images have the same format
-    if (images->image1.toImage().format() != images->image2.toImage().format()) {
-        return "The images do not have the same format.";
-    }
-
-    // Check if both images have the same alpha channel property
-    if (images->image1.hasAlphaChannel() != images->image2.hasAlphaChannel()) {
-        return "The images do not have the same alpha channel property.";
-    }
-
     return std::nullopt;
 }
 
-bool ImageValidationRules::isImageColorSpaceRgb(const QPixmap &pixmap) {
-    QImage image = pixmap.toImage();
-
-    // Check the image format
-    switch (image.format()) {
-    case QImage::Format_RGB32:
-    case QImage::Format_ARGB32:
-    case QImage::Format_RGB888:
-        return true;
-    default:
-        return false;
-    }
-}
 
 bool ImageValidationRules::isImage8Bit(const QPixmap &pixmap) {
     QImage image = pixmap.toImage();

@@ -1,6 +1,6 @@
 #include "graphicspixmapitem.h"
 
-#include <domain/interfaces/IDropTarget.h>
+#include <domain/interfaces/presentation/idroptarget.h>
 
 
 GraphicsPixmapItem::GraphicsPixmapItem(const QPixmap &pixmap,

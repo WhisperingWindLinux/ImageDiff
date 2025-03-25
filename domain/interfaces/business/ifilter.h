@@ -1,7 +1,7 @@
-#ifndef FILTER_H
-#define FILTER_H
+#ifndef IFILTER_H
+#define IFILTER_H
 
-#include <domain/interfaces/imageprocessor.h>
+#include <domain/interfaces/business/imageprocessor.h>
 
 #include <qimage.h>
 #include <qstring.h>
@@ -23,4 +23,4 @@ public:
 
 typedef std::shared_ptr<IFilter> IFilterPtr;
 
-#endif // FILTER_H
+#endif // IFILTER_H

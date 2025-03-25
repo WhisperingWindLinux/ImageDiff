@@ -1,5 +1,5 @@
 #include "imageprocessorsmenucontroller.h"
-#include <domain/interfaces/imageprocessor.h>
+#include <domain/interfaces/business/imageprocessor.h>
 #include <business/imageanalysis/imageprocessorsmanager.h>
 #include <presentation/mainwindow.h>
 #include <qmenu.h>

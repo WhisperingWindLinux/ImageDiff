@@ -1,8 +1,9 @@
-QT       += core gui testlib multimedia multimediawidgets
+QT       += core gui multimedia multimediawidgets
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++17
+
 
 # You can make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -59,7 +60,7 @@ SOURCES += \
     presentation/views/imageviewer.cpp \
     presentation/views/videodialogslider.cpp \
     presentation/views/videoplayerwidget.cpp \
-    domain/valueobjects/autocomparisonreportentry.cpp \
+    domain/valueobjects/autocomparisonreportentry.cpp
 
 HEADERS += \
     business/getimagesfromvideosinteractor.h \
@@ -95,18 +96,19 @@ HEADERS += \
     data/storage/imagefileshandler.h \
     data/repositories/pluginsrepository.h \
     data/storage/savefiledialoghandler.h \
-    domain/interfaces/colorundercursorchangelistener.h \
-    domain/interfaces/comparator.h \
-    domain/interfaces/filter.h \
-    domain/interfaces/icolorpickercontroller.h \
-    domain/interfaces/idroptarget.h \
-    domain/interfaces/imagefilesinteractorlistener.h \
-    domain/interfaces/imageprocessinginteractorlistener.h \
-    domain/interfaces/imageprocessor.h \
-    domain/interfaces/iprogressdialog.h \
-    domain/interfaces/oncropimageslistener.h \
-    domain/interfaces/otherappinstancesinteractorcallback.h \
-    domain/interfaces/processorpropertiesdialogcallback.h \
+    domain/interfaces/business/irecentfilesmanager.h \
+    domain/interfaces/presentation/icolorpickercontroller.h \
+    domain/interfaces/presentation/icolorundercursorchangelistener.h \
+    domain/interfaces/business/icomparator.h \
+    domain/interfaces/business/idroptarget.h \
+    domain/interfaces/business/ifilter.h \
+    domain/interfaces/presentation/imagefilesinteractorlistener.h \
+    domain/interfaces/presentation/imageprocessinginteractorlistener.h \
+    domain/interfaces/presentation/imageprocessor.h \
+    domain/interfaces/presentation/ioncropimageslistener.h \
+    domain/interfaces/presentation/iotherappinstancesinteractorcallback.h \
+    domain/interfaces/presentation/iprocessorpropertiesdialogcallback.h \
+    domain/interfaces/presentation/iprogressdialog.h \
     domain/valueobjects/autocomparisonreportentry.h \
     domain/valueobjects/comparableimage.h \
     domain/valueobjects/comparisonresultvariant.h \

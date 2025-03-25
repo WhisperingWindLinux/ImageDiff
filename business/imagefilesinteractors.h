@@ -7,7 +7,7 @@
 #include <qurl.h>
 
 #include <domain/valueobjects/savefileinfo.h>
-#include <domain/interfaces/imagefilesinteractorlistener.h>
+#include <domain/interfaces/presentation/imagefilesinteractorlistener.h>
 #include <domain/valueobjects/images.h>
 #include <business/validation/imagevalidationrules.h>
 

@@ -11,9 +11,9 @@
 #include <memory>
 
 #include <domain/valueobjects/pyscriptinfo.h>
-#include <domain/interfaces/comparator.h>
-#include <domain/interfaces/filter.h>
-#include <domain/interfaces/imageprocessor.h>
+#include <domain/interfaces/business/icomparator.h>
+#include <domain/interfaces/business/ifilter.h>
+#include <domain/interfaces/business/imageprocessor.h>
 
 class ImageProcessorDeserializer {
 public:

@@ -3,13 +3,13 @@
 
 #include <QtCore/qvariant.h>
 #include <qpixmap.h>
-#include <domain/interfaces/imagefilesinteractorlistener.h>
-#include <domain/interfaces/comparator.h>
-#include <domain/interfaces/filter.h>
+#include <domain/interfaces/presentation/imagefilesinteractorlistener.h>
+#include <domain/interfaces/business/icomparator.h>
+#include <domain/interfaces/business/ifilter.h>
 #include <domain/valueobjects/imageprocessorsinfo.h>
 #include <domain/valueobjects/savefileinfo.h>
 #include <business/recentfilesmanager.h>
-#include <domain/interfaces/imageprocessinginteractorlistener.h>
+#include <domain/interfaces/presentation/imageprocessinginteractorlistener.h>
 
 
 class PluginsManager;

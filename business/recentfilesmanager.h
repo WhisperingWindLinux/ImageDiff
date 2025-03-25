@@ -6,38 +6,34 @@
 #include <QPair>
 #include <QSettings>
 
-class RecentFilesManager {
+#include <domain/interfaces/business/irecentfilesmanager.h>
+
+// Manages a list of recently opened files. The application opens two files at a time,
+// so the record of opened files is stored in the format '/path/to/file1.png -> /path/to/file2.png'.
+
+class RecentFilesManager : public IRecentFilesManager {
 public:
-    // Constructor
     RecentFilesManager(const QString &organization, const QString &application, int maxPairs = 8);
+    virtual ~RecentFilesManager() = default;
 
-    // Adds a pair of files to the recent list
-    void addPair(const QString &file1, const QString &file2);
+    // IRecentFilesManager interface
 
-    // Clears all recent file pairs
-    void clear();
-
-    // Retrieves all recent file pairs
-    QList<QPair<QString, QString>> getAllPairs() const;
-
-    friend class RecentFileManagerTest;
+    void addPair(const QString &file1, const QString &file2) override;
+    QList<QStringPair> getAllPairs() const override;
+    void clear() override;
 
 private:
-    // Saves the current list of recent file pairs to QSettings
+    static const QString SETTINGS_KEY;  // Key used to store recent files in QSettings
+
+    // A list of recent file pairs, such as '/path/to/file1.png -> /path/to/file2.png'
+    QList<QStringPair> recentPairs;
+
+    int maxRecentPairs;   // Maximum number of recent file pairs
+    QSettings settings;   // QSettings instance for persistent storage
+
     void saveToSettings();
-
-    // Loads the list of recent file pairs from QSettings
     void loadFromSettings();
-
-    // Removes excess file pairs if the list exceeds the maximum allowed size
-    void trimExcessPairs();
-
-private:
-    QList<QPair<QString, QString>> recentPairs;  // List of recent file pairs
-    int maxRecentPairs;                          // Maximum number of recent file pairs
-    QSettings settings;                          // QSettings instance for persistent storage
-
-    static const QString SETTINGS_KEY;           // Key used to store recent files in QSettings
+    void trimExcessPairs();    // Removes excess file pairs if the list exceeds the maximum allowed size
 };
 
-#endif // RECENTFILESMANAGER_H
+#endif // RECENTFILESMANAGER_

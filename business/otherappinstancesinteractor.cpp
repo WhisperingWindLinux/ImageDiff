@@ -1,6 +1,6 @@
 #include "otherappinstancesinteractor.h"
 #include "business/utils/imagesinfo.h"
-#include "domain/interfaces/otherappinstancesinteractorcallback.h"
+#include "domain/interfaces/presentation/iotherappinstancesinteractorcallback.h"
 
 #include <qcoreapplication.h>
 #include <qdir.h>

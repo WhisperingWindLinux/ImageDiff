@@ -4,7 +4,7 @@
 #include "domain/valueobjects/comparisonresultvariant.h"
 #include <domain/valueobjects/pixeldiffrencerange.h>
 #include <domain/valueobjects/property.h>
-#include <domain/interfaces/comparator.h>
+#include <domain/interfaces/business/icomparator.h>
 
 class AdvancedDifferenceInPixelValuesComporator : public IComparator
 {

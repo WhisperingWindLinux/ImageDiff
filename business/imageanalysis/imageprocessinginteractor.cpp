@@ -14,9 +14,9 @@
 #include <business/imageanalysis/filters/grayscalefilter.h>
 #include <business/imageanalysis/filters/rgbfilter.h>
 #include <data/storage/savefiledialoghandler.h>
-#include <domain/interfaces/imageprocessinginteractorlistener.h>
+#include <domain/interfaces/presentation/imageprocessinginteractorlistener.h>
 #include <business/utils/imagesinfo.h>
-#include "domain/interfaces/processorpropertiesdialogcallback.h"
+#include "domain/interfaces/presentation/iprocessorpropertiesdialogcallback.h"
 #include "imageprocessorsmanager.h"
 #include "runallcomparatorsinteractor.h"
 

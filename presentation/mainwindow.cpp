@@ -29,7 +29,7 @@
 #include <presentation/dialogs/propertyeditordialog.h>
 #include <data/storage/savefiledialoghandler.h>
 #include <business/imageanalysis/imageprocessinginteractor.h>
-#include <domain/interfaces/otherappinstancesinteractorcallback.h>
+#include <domain/interfaces/presentation/iotherappinstancesinteractorcallback.h>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent),

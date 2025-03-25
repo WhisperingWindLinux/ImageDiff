@@ -1,17 +1,31 @@
 #include "recentfilesinteractor.h"
 
 #include <qstring.h>
-#include <business/recentfilesmanager.h>
+#include "business/recentfilesmanager.h"
+
+// Needed for unit tests
+RecentFilesInteractor::RecentFilesInteractor(IRecentFilesManager *manager) {
+    recentFilesManager = manager;
+}
+
 
 RecentFilesInteractor::RecentFilesInteractor() {
-    recentFilesManager = std::make_unique<RecentFilesManager>("com.whisperingwind", "ImageDiff");
+    recentFilesManager = new RecentFilesManager("com.whisperingwind", "ImageDiff");
 }
+
+RecentFilesInteractor::~RecentFilesInteractor() {
+    if (recentFilesManager != nullptr) {
+        delete recentFilesManager;
+        recentFilesManager = nullptr;
+    }
+}
+
 
 // Open images from the recent files menu.
 // The menu item is formatted as "path to file 1 -> path to file 2".
-std::optional<QPair<QString, QString>> RecentFilesInteractor::getRecentFilesPathsByRecentMenuRecord(
+std::optional<QStringPair> RecentFilesInteractor::getRecentFilesPathsByRecentMenuRecord(
                                                                     const QString& recentFileMenuRecord
-                                                                    )
+                                                                        )
 {
     auto pair = stringToPair(recentFileMenuRecord);
     if (!pair) {
@@ -44,7 +58,7 @@ void RecentFilesInteractor::clear() {
 }
 
 // Converts a QPair<QString, QString> to a formatted QString
-QString RecentFilesInteractor::pairToString(const QPair<QString, QString>& pair) {
+QString RecentFilesInteractor::pairToString(const QStringPair& pair) {
     if (pair.first.isEmpty() || pair.second.isEmpty()) {
         return QString();
     }
@@ -52,7 +66,7 @@ QString RecentFilesInteractor::pairToString(const QPair<QString, QString>& pair)
 }
 
 // Converts a formatted QString back to a QPair<QString, QString>
-std::optional<QPair<QString, QString>> RecentFilesInteractor::stringToPair(const QString& str) {
+std::optional<QStringPair> RecentFilesInteractor::stringToPair(const QString& str) {
     if (str.isEmpty()) {
         return std::nullopt;
     }
@@ -60,9 +74,9 @@ std::optional<QPair<QString, QString>> RecentFilesInteractor::stringToPair(const
 }
 
 // Helper method to split a string with a specific separator
-std::optional<QPair<QString, QString>> RecentFilesInteractor::splitString(const QString& str,
-                                                                          const QString& separator
-                                                                          )
+std::optional<QStringPair> RecentFilesInteractor::splitString(const QString& str,
+                                                              const QString& separator
+                                                              )
 {
     int separatorIndex = str.indexOf(separator);
 
@@ -77,5 +91,5 @@ std::optional<QPair<QString, QString>> RecentFilesInteractor::splitString(const 
         return std::nullopt;
     }
 
-    return QPair<QString, QString>(firstPart, secondPart);
+    return QStringPair(firstPart, secondPart);
 }

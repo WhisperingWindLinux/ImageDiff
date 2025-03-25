@@ -1,5 +1,5 @@
-#ifndef PROCESSORPROPERTIESDIALOGCALLBACK_H
-#define PROCESSORPROPERTIESDIALOGCALLBACK_H
+#ifndef IPROCESSORPROPERTIESDIALOGCALLBACK_H
+#define IPROCESSORPROPERTIESDIALOGCALLBACK_H
 
 #include <domain/valueobjects/property.h>
 
@@ -10,4 +10,4 @@ public:
                                                                const QList<Property> &defaultProperties) = 0;
 };
 
-#endif // PROCESSORPROPERTIESDIALOGCALLBACK_H
+#endif // IPROCESSORPROPERTIESDIALOGCALLBACK_H
