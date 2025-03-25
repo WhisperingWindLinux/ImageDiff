@@ -102,7 +102,7 @@ HEADERS += \
     domain/interfaces/presentation/icolorpickercontroller.h \
     domain/interfaces/presentation/icolorundercursorchangelistener.h \
     domain/interfaces/business/icomparator.h \
-    domain/interfaces/business/idroptarget.h \
+    domain/interfaces/presentation/idroptarget.h \
     domain/interfaces/business/ifilter.h \
     domain/interfaces/presentation/imagefilesinteractorlistener.h \
     domain/interfaces/presentation/imageprocessinginteractorlistener.h \
