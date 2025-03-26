@@ -23,7 +23,6 @@ private:
     QString firstFilePath;
     QString secondFilePath;
     QString comparatorFullName;
-    QString comparatorDescription;
 
     QLabel *label;
     QPushButton *closeButton;

@@ -14,9 +14,7 @@ ComparatorResultDialog::ComparatorResultDialog(const QString &message,
     message(message),
     firstFilePath(firstImageFilePath),
     secondFilePath(secondImageFilePath),
-    comparatorFullName(comparatorFullName),
-    comparatorDescription(comparatorDescription)
-{
+    comparatorFullName(comparatorFullName){
     setupUI();
 }
 
