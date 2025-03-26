@@ -9,6 +9,7 @@
 
 class MainWindow;
 class IDropListener;
+class QPixmap;
 
 class ImageViewer : public QGraphicsView {
     Q_OBJECT
@@ -26,6 +27,9 @@ public:
 
     void toggleImage();
 
+    void showFirstImage();
+
+    void showSecondImage();
 
     // Implementation of a method to capture the image displayed
     // in QGraphicsView, taking into account the current scale (zoom)

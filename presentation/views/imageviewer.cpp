@@ -284,6 +284,24 @@ void ImageViewer::toggleImage() {
     }
 }
 
+void ImageViewer::showFirstImage() {
+    if (comparatorResultDisplayedImage != nullptr) {
+        currentImageIndex = 0;
+    } else {
+        currentImageIndex = 1;
+    }
+    toggleImage();
+}
+
+void ImageViewer::showSecondImage() {
+    if (comparatorResultDisplayedImage != nullptr) {
+        currentImageIndex = 1;
+    } else {
+        currentImageIndex = 0;
+    }
+    toggleImage();
+}
+
 /* } =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
 /* Saving an image (or an area of the image) to disk { */

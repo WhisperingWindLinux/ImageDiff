@@ -117,6 +117,7 @@ HEADERS += \
     domain/valueobjects/imagepixelcolor.h \
     domain/valueobjects/imageprocessorsinfo.h \
     domain/valueobjects/images.h \
+    domain/valueobjects/lastdisplayedcomparisonresult.h \
     domain/valueobjects/pixeldiffrencerange.h \
     domain/valueobjects/pluginssettings.h \
     domain/valueobjects/property.h \

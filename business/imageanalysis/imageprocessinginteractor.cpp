@@ -39,6 +39,7 @@ ImageProcessingInteractor::~ImageProcessingInteractor() {
     displayedImages = nullptr;
     propertiesDialogCallback = nullptr;
     progressDialogCallback = nullptr;
+    clearLastComparisonImage();
 }
 
 void ImageProcessingInteractor::callImageProcessor(const QVariant &callerData) {
@@ -77,11 +78,30 @@ void ImageProcessingInteractor::coreCallImageProcessor(const QVariant &callerDat
     }
 }
 
+void ImageProcessingInteractor::clearLastComparisonImage() {
+    lastDisplayedComparisonResult.clear();
+    notifyFastSwitchingToComparisonImageStatusChanged(false);
+}
+
+void ImageProcessingInteractor::setLastComparisonImage(const QPixmap &pixmap, const QString &description) {
+    lastDisplayedComparisonResult.set(pixmap, description);
+    notifyFastSwitchingToComparisonImageStatusChanged(true);
+}
+
+void ImageProcessingInteractor::showLastComparisonImage() {
+    if (lastDisplayedComparisonResult.hasLastDisplayedComparisonResult()) {
+        notifyComparisonResultLoaded(lastDisplayedComparisonResult.getImage(),
+                                     lastDisplayedComparisonResult.getDescription()
+                                     );
+    }
+}
+
 void ImageProcessingInteractor::restoreOriginalImages() {
     if (originalImages == nullptr) {
         return;
     }
     displayedImages = originalImages;
+    clearLastComparisonImage();
     notifyFilteredResultLoaded(displayedImages->image1, displayedImages->image2);
 }
 
@@ -132,6 +152,7 @@ void ImageProcessingInteractor::callComparator(IComparatorPtr comparator) {
         if (pixmap.isNull()) {
             throw std::runtime_error("Error: The comparator returns an empty result.");
         }
+        setLastComparisonImage(pixmap, comparator->getShortName());
         notifyComparisonResultLoaded(pixmap, comparator->getShortName());
     }
     else if (result->type() == ComparisonResultVariantType::String) {
@@ -173,7 +194,7 @@ void ImageProcessingInteractor::callFilter(IFilterPtr filter) {
     }
 
     displayedImages = std::make_shared<Images>(pixmap1, pixmap2, displayedImages->path1, displayedImages->path2);
-
+    clearLastComparisonImage();
     notifyFilteredResultLoaded(displayedImages->image1, displayedImages->image2);
 }
 
@@ -268,6 +289,9 @@ bool ImageProcessingInteractor::subscribe(IImageProcessingInteractorListener *li
         return false;
     }
     listeners.append(listener);
+    notifyFastSwitchingToComparisonImageStatusChanged(
+                        lastDisplayedComparisonResult.hasLastDisplayedComparisonResult()
+                                );
     return true;
 }
 
@@ -275,6 +299,7 @@ bool ImageProcessingInteractor::unsubscribe(const IImageProcessingInteractorList
     if (listener == nullptr) {
         return false;
     }
+    notifyFastSwitchingToComparisonImageStatusChanged(false);
     return listeners.removeOne(listener);
 }
 
@@ -315,5 +340,11 @@ void ImageProcessingInteractor::notifyFilteredResultLoaded(const QPixmap &firstI
 void ImageProcessingInteractor::notifyImageProcessorFailed(const QString &error) {
     foreach (auto listener, listeners) {
         listener->onImageProcessorFailed(error);
+    }
+}
+
+void ImageProcessingInteractor::notifyFastSwitchingToComparisonImageStatusChanged(bool isSwitchingAvailable) {
+    foreach (auto listener, listeners) {
+        listener->onFastSwitchingToComparisonImageStatusChanged(isSwitchingAvailable);
     }
 }

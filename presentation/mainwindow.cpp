@@ -68,6 +68,10 @@ MainWindow::~MainWindow() {
     delete ui;
 }
 
+void MainWindow::showEvent(QShowEvent *) {
+    onFastSwitchingToComparisonImageStatusChanged(false);
+}
+
 /*  Application menu settings { */
 
 void MainWindow::buildImageProcessorsMenu() {
@@ -87,7 +91,7 @@ void MainWindow::makeConnections() {
     connect(ui->actionSaveVisibleAreaAs, &QAction::triggered, this, &MainWindow::saveVisibleAreaAs);
     connect(ui->actionAbout, &QAction::triggered, this, &MainWindow::showAboutDialog);
     connect(ui->actionColorPicker, &QAction::triggered, this, &MainWindow::showDockedColorPicker);
-    connect(ui->actionShowOriginalImage, &QAction::triggered, this, &MainWindow::showOriginalImages);
+    connect(ui->actionShowOriginalImage, &QAction::triggered, this, &MainWindow::reloadImagesFromDisk);
     connect(ui->actionActualSize, &QAction::triggered, this, &MainWindow::imageZoomedToActualSize);
     connect(ui->actionFitInView, &QAction::triggered, this, &MainWindow::imagFitInView);
     connect(ui->actionZoomIn, &QAction::triggered, this, &MainWindow::imageZoomIn);
@@ -100,6 +104,9 @@ void MainWindow::makeConnections() {
     connect(ui->actionPluginsSettings, &QAction::triggered, this, &MainWindow::changePluginsSettings);
     connect(ui->actionRescanPluginDir, &QAction::triggered, this, &MainWindow::rescanPluginDir);
     connect(ui->actionHelp, &QAction::triggered, this, &MainWindow::callImageProcessorsHelp);
+    connect(ui->actionShowFirstImage, &QAction::triggered, this, &MainWindow::showFirstImage);
+    connect(ui->actionShowSecondImage, &QAction::triggered, this, &MainWindow::showSecondImage);
+    connect(ui->actionShowComparisonImage, &QAction::triggered, this, &MainWindow::showComparisonImage);
 }
 
 void MainWindow::enableImageProceesorsMenuItems(bool isEnabled) {
@@ -118,6 +125,8 @@ void MainWindow::enableImageProceesorsMenuItems(bool isEnabled) {
     ui->actionPlaceColorPickerOnRight->setDisabled(!isEnabled);
     ui->actionFitInView->setDisabled(!isEnabled);
     ui->actionColorPicker->setDisabled(!isEnabled);
+    ui->actionShowFirstImage->setDisabled(!isEnabled);
+    ui->actionShowSecondImage->setDisabled(!isEnabled);
 }
 
 void MainWindow::updateRecentFilesMenu() {
@@ -213,6 +222,18 @@ void MainWindow::switchBetweenImages() {
     imageView->toggleImage();
 }
 
+void MainWindow::showFirstImage() {
+    imageView->showFirstImage();
+}
+
+void MainWindow::showSecondImage() {
+    imageView->showSecondImage();
+}
+
+void MainWindow::showComparisonImage() {
+    imageProcessingInteractor->showLastComparisonImage();
+}
+
 void MainWindow::callImageProcessor() {
     if (imageProcessingInteractor == nullptr) {
         return;
@@ -249,7 +270,7 @@ void MainWindow::showAboutDialog() {
     aboutDialog.exec();
 }
 
-void MainWindow::showOriginalImages() {
+void MainWindow::reloadImagesFromDisk() {
     if (imageProcessingInteractor != nullptr) {
         imageProcessingInteractor->restoreOriginalImages();
     }
@@ -402,7 +423,6 @@ void MainWindow::onImagesClosed() {
         imageProcessingInteractor->unsubscribe(this);
         delete imageProcessingInteractor;
         imageProcessingInteractor = nullptr;
-
     }
     imageFilesInteractor->cleanup();
     colorPickerController->onImagesClosed();
@@ -451,6 +471,17 @@ void MainWindow::onImageProcessorFailed(const QString &error) {
         errorMsg = error;
     }
     showError(errorMsg);
+}
+/*
+ * The user can switch between images by pressing keys 1, 2, and 3,
+ * where the number 3 means switching to the last available
+ * comparison result image. However, there are cases when this
+ * is not possible: the user has changed the original compared
+ * images (applied or removed filters). In this case, the previous
+ * comparison result is no longer valid, so the key 3 does not work.
+ */
+void MainWindow::onFastSwitchingToComparisonImageStatusChanged(bool isSwitchingAvailable) {
+    ui->actionShowComparisonImage->setEnabled(isSwitchingAvailable);
 }
 
 /* } =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
@@ -559,5 +590,3 @@ void MainWindow::onError(const QString &error) {
 }
 
 /* } =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
-
-

@@ -50,7 +50,7 @@ public slots:
     void saveVisibleAreaAs();
     void showAboutDialog();
     void showDockedColorPicker();
-    void showOriginalImages();
+    void reloadImagesFromDisk();
     void imageZoomedToActualSize();
     void imageZoomIn();
     void imageZoomOut();
@@ -63,6 +63,9 @@ public slots:
     void changePluginsSettings();
     void rescanPluginDir();
     void clearOpenRecentsMenu();
+    void showFirstImage();
+    void showSecondImage();
+    void showComparisonImage();
 
 public:
     MainWindow(QWidget *parent = nullptr);
@@ -110,6 +113,7 @@ public:
 
     void onFilteredResultLoaded(const QPixmap &firstImage, const QPixmap &secondImage) override;
     void onImageProcessorFailed(const QString &error) override;
+    void onFastSwitchingToComparisonImageStatusChanged(bool isSwitchingAvailable) override;
 
     // IDropListener interface
 
@@ -128,6 +132,7 @@ protected:
     void closeEvent(QCloseEvent *event) override;
     void dragEnterEvent(QDragEnterEvent *event) override;
     void dropEvent(QDropEvent *event) override;
+    void showEvent(QShowEvent *) override;
 
 private:
     Ui::MainWindow *ui;
@@ -147,7 +152,7 @@ private:
     void enableImageProceesorsMenuItems(bool isEnabled);
     void saveMainWindowPosition();
     void restoreMainWindowPosition();
-    void updateRecentFilesMenu();    
+    void updateRecentFilesMenu();
 };
 #endif // MAINWINDOW_H
 

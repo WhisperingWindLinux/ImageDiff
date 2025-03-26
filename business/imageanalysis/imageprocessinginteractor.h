@@ -7,6 +7,7 @@
 #include <domain/interfaces/business/icomparator.h>
 #include <domain/interfaces/business/ifilter.h>
 #include <domain/valueobjects/imageprocessorsinfo.h>
+#include <domain/valueobjects/lastdisplayedcomparisonresult.h>
 #include <domain/valueobjects/savefileinfo.h>
 #include <business/recentfilesmanager.h>
 #include <domain/interfaces/presentation/imageprocessinginteractorlistener.h>
@@ -38,12 +39,14 @@ public:
     bool subscribe(IImageProcessingInteractorListener *listener);
     bool unsubscribe(const IImageProcessingInteractorListener *listener);
 
+    void showLastComparisonImage();
 private:
     IPropcessorPropertiesDialogCallback *propertiesDialogCallback;
     IProgressDialog *progressDialogCallback;
     QList<IImageProcessingInteractorListener*> listeners;
     ImagesPtr originalImages;
     ImagesPtr displayedImages;
+    LastDisplayedComparisonResult lastDisplayedComparisonResult;
 
     void coreCallImageProcessor(const QVariant &callerData);
     void callComparator(IComparatorPtr comparator);
@@ -59,6 +62,9 @@ private:
 
     void notifyFilteredResultLoaded(const QPixmap &firstImage, const QPixmap &secondImage);
     void notifyImageProcessorFailed(const QString &error);
+    void notifyFastSwitchingToComparisonImageStatusChanged(bool isSwitchingAvailable);
+    void clearLastComparisonImage();
+    void setLastComparisonImage(const QPixmap &pixmap, const QString &description);
 };
 
 #endif // IMAGEPROCESSINGINTERACTOR_H

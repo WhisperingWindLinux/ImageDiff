@@ -71,6 +71,10 @@
     </property>
     <addaction name="actionSwitchBetweenImages"/>
     <addaction name="separator"/>
+    <addaction name="actionShowFirstImage"/>
+    <addaction name="actionShowSecondImage"/>
+    <addaction name="actionShowComparisonImage"/>
+    <addaction name="separator"/>
     <addaction name="actionShowOriginalImage"/>
     <addaction name="separator"/>
     <addaction name="actionActualSize"/>
@@ -183,7 +187,7 @@
   </action>
   <action name="actionShowOriginalImage">
    <property name="text">
-    <string>Show Original Image</string>
+    <string>Reload Images From Disk</string>
    </property>
    <property name="shortcut">
     <string>C</string>
@@ -218,7 +222,7 @@
     <string>Place Color Picker On Right</string>
    </property>
    <property name="shortcut">
-    <string>2</string>
+    <string>Meta+R</string>
    </property>
   </action>
   <action name="actionPlaceColorPickerOnLeft">
@@ -226,7 +230,7 @@
     <string>Place Color Picker On Left</string>
    </property>
    <property name="shortcut">
-    <string>1</string>
+    <string>Meta+L</string>
    </property>
   </action>
   <action name="actionFitInView">
@@ -269,6 +273,30 @@
   <action name="actionHelp">
    <property name="text">
     <string>Image Processing Algorithms</string>
+   </property>
+  </action>
+  <action name="actionShowFirstImage">
+   <property name="text">
+    <string>Show First Image</string>
+   </property>
+   <property name="shortcut">
+    <string>1</string>
+   </property>
+  </action>
+  <action name="actionShowSecondImage">
+   <property name="text">
+    <string>Show Second Image</string>
+   </property>
+   <property name="shortcut">
+    <string>2</string>
+   </property>
+  </action>
+  <action name="actionShowComparisonImage">
+   <property name="text">
+    <string>Show Comparison Image</string>
+   </property>
+   <property name="shortcut">
+    <string>3</string>
    </property>
   </action>
  </widget>
