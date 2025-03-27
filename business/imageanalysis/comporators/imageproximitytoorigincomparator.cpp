@@ -63,9 +63,16 @@ qint64 ImageProximityToOriginComparator::calculateTotalDifference(const QImage &
 
 QList<Property> ImageProximityToOriginComparator::getDefaultProperties() const {
 
+    QString propDescription = "The file path whose proximity will be evaluated for "
+                              "the two images loaded into the application. It is "
+                              "assumed that the already opened images were captured "
+                              "using an HDMI recorder, while this image was created "
+                              "using the native operating system's tools.";
+
     Property filePathProperty = Property::createFilePathProperty("Path to original image",
-                                                                getDescription(),
-                                                                 "");
+                                                                 propDescription,
+                                                                 ""
+                                           );
     return { filePathProperty };
 
 }
