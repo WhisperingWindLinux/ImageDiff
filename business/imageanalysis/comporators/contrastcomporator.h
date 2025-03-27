@@ -11,9 +11,10 @@
 struct ContrastComparisonResult {
     QString image1Name;               // The Name of the first image
     QString image2Name;               // The Name of the second image
-    double contrast1;            // Contrast of the first image
-    double contrast2;            // Contrast of the second image
-    QString moreContrastImageName;   // The name of the image with higher contrast
+    double contrast1;                 // Contrast of the first image
+    double contrast2;                 // Contrast of the second image
+    QString moreContrastImageName;    // The name of the image with higher contrast
+    double persantage;                // Most contrasted image: how many % more than least
 };
 
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-

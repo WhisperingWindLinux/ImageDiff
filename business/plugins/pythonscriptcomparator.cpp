@@ -68,6 +68,7 @@ optional<QString> PythonScriptComparator::validateText(QString &text) {
     return make_optional(validatedText);
 }
 
+
 shared_ptr<ComparisonResultVariant> PythonScriptComparator::compare(const ComparableImage &first,
                                                                     const ComparableImage &second
                                                                     )
@@ -82,8 +83,7 @@ shared_ptr<ComparisonResultVariant> PythonScriptComparator::compare(const Compar
     buffer2.open(QIODevice::WriteOnly);
 
     if (!first.getImage().save(&buffer1, defaultSaveImageExtention.c_str()) ||
-        !second.getImage().save(&buffer2, defaultSaveImageExtention.c_str()))
-    {
+        !second.getImage().save(&buffer2, defaultSaveImageExtention.c_str())) {
         throw runtime_error("Failed to encode images to bytes array.");
     }
 
@@ -113,37 +113,49 @@ shared_ptr<ComparisonResultVariant> PythonScriptComparator::compare(const Compar
     QByteArray inputData;
 
     int size1 = image1Data.size();
-    inputData.append(QByteArray::fromRawData(reinterpret_cast<const char*>(&size1),
-                                             sizeof(size1))
-                     );
+    inputData.append(QByteArray::fromRawData(
+        reinterpret_cast<const char *>(&size1), sizeof(size1)));
     inputData.append(image1Data);
 
     int size2 = image2Data.size();
-    inputData.append(QByteArray::fromRawData(reinterpret_cast<const char*>(&size2),
-                                             sizeof(size2))
-                     );
-    inputData.append(image2Data);process.write(inputData);
+    inputData.append(QByteArray::fromRawData(
+        reinterpret_cast<const char *>(&size2), sizeof(size2)));
+    inputData.append(image2Data);
+    process.write(inputData);
     process.closeWriteChannel();
 
     if (!process.waitForFinished()) {
-        auto errorMsg =  QString("Process error: ") + process.errorString();
+        auto errorMsg = QString("Process error: ") + process.errorString();
         throw runtime_error(errorMsg.toStdString());
     }
 
     QByteArray output = process.readAllStandardOutput();
     QImage resultImage;
     if (resultImage.loadFromData(output, defaultSaveImageExtention.c_str()) &&
-        !resultImage.isNull())
-    {
-        return make_shared<ComparisonResultVariant>(resultImage);
+        !resultImage.isNull()) {
+        return prepareResult(resultImage, first);
     }
 
     QString text = QString::fromUtf8(output);
     auto validText = validateText(text);
-    if(validText) {
+    if (validText) {
         return make_shared<ComparisonResultVariant>(validText.value());
     }
 
     throw runtime_error("Error! The script returned '" +
-                            process.readAllStandardError() + "'");
+                        process.readAllStandardError() + "'");
+}
+
+shared_ptr<ComparisonResultVariant> PythonScriptComparator::prepareResult(const QImage &resultImage,
+                                                                          const ComparableImage &originalImage
+                                                                          )
+{
+    int expectedWidth = originalImage.getImage().width();
+    int expectedHeight = originalImage.getImage().height();
+    if (resultImage.width() != expectedWidth || resultImage.height() != expectedHeight) {
+        auto scaledResultImage = resultImage.scaled(expectedWidth, expectedHeight, Qt::KeepAspectRatio);
+        return make_shared<ComparisonResultVariant>(scaledResultImage);
+    } else {
+        return make_shared<ComparisonResultVariant>(resultImage);
+    }
 }

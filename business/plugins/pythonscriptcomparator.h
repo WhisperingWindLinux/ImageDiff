@@ -25,7 +25,7 @@ public:
     bool isPartOfAutoReportingToolbox() override;
     ComparisonResultVariantPtr compare(const ComparableImage &first,
                                        const ComparableImage &second) override;
-        
+
 private:
     const int charsInReportMax = 10000;
     QString shortName;
@@ -38,6 +38,9 @@ private:
     std::string defaultSaveImageExtention;
 
     optional<QString> validateText(QString &text);
+    shared_ptr<ComparisonResultVariant> prepareResult(const QImage &resultImage,
+                                                      const ComparableImage &originalImage
+                                                      );
 };
 
 #endif // PYTHONSCRIPTCOMPARATOR_H

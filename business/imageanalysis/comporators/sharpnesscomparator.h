@@ -8,13 +8,14 @@
 
 struct SharpnessComparisonResult {
 
-    QString name1;
-    QString name2;
+    QString name1;           // Name of the first image
+    QString name2;           // Name of the second image
 
-    double sharpness1;
-    double sharpness2;
+    double sharpness1;       // Average sharpness of the first image
+    double sharpness2;       // Average sharpness of the second image
 
-    QString sharperImage;
+    QString sharperImage;    // Most sharper image name
+    double persantage;       // Most sharper image: how many % more than least
 };
 
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-

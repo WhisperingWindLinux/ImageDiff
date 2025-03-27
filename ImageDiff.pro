@@ -11,7 +11,7 @@ CONFIG += c++17
 
 SOURCES += \
     business/getimagesfromvideosinteractor.cpp \
-    business/imageanalysis/comporators/coloreddifferenceInpixelvaluescomporator.cpp \
+    business/imageanalysis/comporators/coloreddifferenceinpixelvaluescomporator.cpp \
     business/imageanalysis/comporators/colorssaturationcomporator.cpp \
     business/imageanalysis/comporators/contrastcomporator.cpp \
     business/imageanalysis/comporators/customrangeddifferenceinpixelvaluescomparator.cpp \

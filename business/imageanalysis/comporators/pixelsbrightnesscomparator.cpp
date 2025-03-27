@@ -162,24 +162,34 @@ QString PixelsBrightnessComparator::formatResultToHtml(const PixelsBrightnessCom
     double dTotalBrightness1 = result.totalBrightness1;
     double dTotalBrightness2 = result.totalBrightness2;
 
-    // Add a line describing which image is brighter
-    double brightnessDifferencePercentage = (std::abs(dTotalBrightness1 - dTotalBrightness2) /
-                                             std::max(dTotalBrightness1, dTotalBrightness2)) * 100;
+    double persantage = qQNaN();
+    if (dTotalBrightness1 > dTotalBrightness2) {
+        persantage = ((dTotalBrightness1 - dTotalBrightness2) / dTotalBrightness2) * 100.0;
+    } else if (dTotalBrightness2 > dTotalBrightness1) {
+        persantage = ((dTotalBrightness2 - dTotalBrightness1) / dTotalBrightness1) * 100.0;
+    }
 
-    html += "<tr><td colspan=\"2\" align=\"center\"><b>";
+    QString formatteedPersantage;
+    if (qFuzzyIsNull(persantage)) {
+        formatteedPersantage = "";
+    } else if ((int)(persantage * 100) == 0) {
+        formatteedPersantage = " &lt;0.01%";
+    } else {
+        formatteedPersantage = QString(" %1%").arg(QString::number(persantage, 'f', 2));
+    }
+
+    html += "<tr><td colspan=\"2\" align=\"center\">";
 
     if (dTotalBrightness1 > dTotalBrightness2) {
-        html += QString("<font color=\"green\">%1</font> is brighter than %2 by %3%")
-        .arg(result.name1)      
+        html += QString("Image <b><font color=\"green\">%1</font></b> is%2 brighter")
+            .arg(result.name1)
+            .arg(formatteedPersantage);
+    } else if (dTotalBrightness2 > dTotalBrightness1) {
+        html += QString("Image <b><font color=\"green\">%1</font></b> is%2 brighter")
             .arg(result.name2)
-            .arg(QString::number(brightnessDifferencePercentage, 'f', 2));
-    } else if (dTotalBrightness1 < dTotalBrightness2) {
-        html += QString("%1 is darker than <font color=\"green\">%2</font> by %3%")
-        .arg(result.name1)
-            .arg(result.name2)
-            .arg(QString::number(brightnessDifferencePercentage, 'f', 2));
+            .arg(formatteedPersantage);
     } else {
-        html += " <font color=\"green\">Both images have the same brightness</font>";
+        html += "Equally";
     }
 
     html += "</tr>";

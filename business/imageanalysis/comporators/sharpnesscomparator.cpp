@@ -4,7 +4,7 @@
 
 #include <QFileInfo>
 #include <QDebug>
-#include <QtMath>
+#include <qstring.h>
 
 // Compare the two images and return a structure with the results
 SharpnessComparisonResult SharpnessComparator::compareImages(const QImage &image1,
@@ -17,15 +17,18 @@ SharpnessComparisonResult SharpnessComparator::compareImages(const QImage &image
     double sharpness2 = calculateSharpness(image2);
 
     QString sharperImage;
+    double persantage = qQNaN();
     if (sharpness1 > sharpness2) {
         sharperImage = name1;
+        persantage = ((sharpness1 - sharpness2) / sharpness2) * 100.0;
     } else if (sharpness2 > sharpness1) {
+        persantage = ((sharpness2 - sharpness1) / sharpness1) * 100.0;
         sharperImage = name2;
     } else {
         sharperImage = "Equal";
     }
 
-    return {name1, name2, sharpness1, sharpness2, sharperImage};
+    return {name1, name2, sharpness1, sharpness2, sharperImage, persantage};
 }
 
 
@@ -88,8 +91,15 @@ std::shared_ptr<ComparisonResultVariant> SharpnessComparator::compare(const Comp
 }
 
 QString SharpnessComparator::formatResultToHtml(const SharpnessComparisonResult &result) {
-
     QString html;
+    QString formatteedPersantage;
+    if (qIsNaN(result.persantage)) {
+        formatteedPersantage = "";
+    } else if ((int)(result.persantage * 100) == 0) {
+        formatteedPersantage = " &lt;0.01%";
+    } else {
+        formatteedPersantage = QString(" %1%").arg(QString::number(result.persantage, 'f', 2));
+    }
     html += QString("<h2 style=\"line-height: 2;\">%1</h2>").arg(getFullName());
     html += "<table border=\"1\" cellspacing=\"0\" cellpadding=\"5\">";
     html += QString("<tr><td>%1</td><td>%2</td></tr>")
@@ -98,8 +108,15 @@ QString SharpnessComparator::formatResultToHtml(const SharpnessComparisonResult 
     html += QString("<tr><td>%1</td><td>%2</td></tr>")
                 .arg(result.name2)
                 .arg(result.sharpness2);
-    html += QString("<tr><td colspan=\"2\" align=\"center\"><b>The more sharper image is "
-                    " <font color=\"green\">%1</font></b></td></tr>").arg(result.sharperImage);
+
+    if (!formatteedPersantage.isEmpty()) {
+        html += QString("<tr><td colspan=\"2\" align=\"center\">Image<b><font "
+                        "color=\"green\"> %1</font></b> is%2 sharper</td></tr>")
+                    .arg(result.sharperImage)
+                    .arg(formatteedPersantage);
+    } else {
+         html += "<tr><td colspan=\"2\" align=\"center\">Equally</td></tr>";
+    }
     html += "</table>";
     html += "<br /><br />";
     html += QString("The range of coefficient values is approx [0.0, 1.414]. ")

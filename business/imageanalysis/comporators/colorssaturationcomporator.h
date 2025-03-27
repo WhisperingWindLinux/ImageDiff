@@ -16,6 +16,7 @@ struct ColorsSaturationComparisonResult {
     double avgSaturation1;                // Average saturation of the first image
     double avgSaturation2;                // Average saturation of the second image
     QString moreSaturatedImageName;       // The name of the image with higher saturation
+    double persantage;                    // Most saturated image: how many % more than least
 };
 
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-

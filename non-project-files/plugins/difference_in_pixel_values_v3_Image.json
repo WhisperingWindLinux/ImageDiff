@@ -2,7 +2,7 @@
   "type": "Comparator",
   "shortName": "Difference In Pixel Values v.3 (Image, Python Plugin)",
   "hotkey": "Q",
-  "description": "This algorithm compares two images pixel by pixel and retains only those pixels that differ between the two compared images. It allows selecting the color of the points that mark the differing pixels. It is fully written in Python and integrated into the application as a plugin.",
+  "description": "This algorithm compares two images pixel by pixel and retains only those pixels that differ between the two compared images. It allows selecting the color of the points that mark the differing pixels.",
   "fullName": "Difference In Pixel Values v.3 (Image, Python Plugin)",
   "isPartOfAutoReportingToolbox": true,
   "properties": [
