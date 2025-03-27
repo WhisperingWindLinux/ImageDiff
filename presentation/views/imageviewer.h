@@ -75,7 +75,6 @@ private:
     QGraphicsPixmapItem *secondDisplayedImage;
     QGraphicsPixmapItem *comparatorResultDisplayedImage;
     int currentImageIndex;
-    qreal scaleFactor;
     bool isColorUnderCursorTrackingActive;
     std::optional<QPoint> lastCursorPos;
 

@@ -111,6 +111,7 @@ public:
                                   const QString &firstImagePath,
                                   const QString &secondImagePath) override;
 
+    void onShowImageInExternalViewer(const QPixmap &image, const QString &description) override;
     void onFilteredResultLoaded(const QPixmap &firstImage, const QPixmap &secondImage) override;
     void onImageProcessorFailed(const QString &error) override;
     void onFastSwitchingToComparisonImageStatusChanged(bool isSwitchingAvailable) override;

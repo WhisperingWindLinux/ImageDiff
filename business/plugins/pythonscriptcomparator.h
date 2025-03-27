@@ -38,9 +38,6 @@ private:
     std::string defaultSaveImageExtention;
 
     optional<QString> validateText(QString &text);
-    shared_ptr<ComparisonResultVariant> prepareResult(const QImage &resultImage,
-                                                      const ComparableImage &originalImage
-                                                      );
 };
 
 #endif // PYTHONSCRIPTCOMPARATOR_H

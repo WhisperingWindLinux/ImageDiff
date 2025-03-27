@@ -111,11 +111,14 @@ QImage PythonScripFilter::filter(const QImage &image) {
     return resultImage;
 }
 
-QImage PythonScripFilter::prepareResult(const QImage &resultImage, const QImage &originalImage) {
+const QImage& PythonScripFilter::prepareResult(const QImage &resultImage, const QImage &originalImage) {
     int expectedWidth = originalImage.width();
     int expectedHeight = originalImage.height();
     if (resultImage.width() != expectedWidth || resultImage.height() != expectedHeight) {
-        return resultImage.scaled(expectedWidth, expectedHeight, Qt::KeepAspectRatio);
+        QString errorStr = "The resolution of the image obtained from the Filter does not match "
+                           "the size of the original image. The Filter must not change "
+                           "the original resolution.";
+        throw std::runtime_error(errorStr.toStdString());
     } else {
         return resultImage;
     }

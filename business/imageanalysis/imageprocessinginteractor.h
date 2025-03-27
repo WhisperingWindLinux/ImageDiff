@@ -65,6 +65,7 @@ private:
     void notifyFastSwitchingToComparisonImageStatusChanged(bool isSwitchingAvailable);
     void clearLastComparisonImage();
     void setLastComparisonImage(const QPixmap &pixmap, const QString &description);
+    void notifyShowImageInExternalViewer(const QPixmap &image, const QString &description);
 };
 
 #endif // IMAGEPROCESSINGINTERACTOR_H

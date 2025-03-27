@@ -133,7 +133,7 @@ shared_ptr<ComparisonResultVariant> PythonScriptComparator::compare(const Compar
     QImage resultImage;
     if (resultImage.loadFromData(output, defaultSaveImageExtention.c_str()) &&
         !resultImage.isNull()) {
-        return prepareResult(resultImage, first);
+        return make_shared<ComparisonResultVariant>(resultImage);
     }
 
     QString text = QString::fromUtf8(output);
@@ -144,18 +144,4 @@ shared_ptr<ComparisonResultVariant> PythonScriptComparator::compare(const Compar
 
     throw runtime_error("Error! The script returned '" +
                         process.readAllStandardError() + "'");
-}
-
-shared_ptr<ComparisonResultVariant> PythonScriptComparator::prepareResult(const QImage &resultImage,
-                                                                          const ComparableImage &originalImage
-                                                                          )
-{
-    int expectedWidth = originalImage.getImage().width();
-    int expectedHeight = originalImage.getImage().height();
-    if (resultImage.width() != expectedWidth || resultImage.height() != expectedHeight) {
-        auto scaledResultImage = resultImage.scaled(expectedWidth, expectedHeight, Qt::KeepAspectRatio);
-        return make_shared<ComparisonResultVariant>(scaledResultImage);
-    } else {
-        return make_shared<ComparisonResultVariant>(resultImage);
-    }
 }

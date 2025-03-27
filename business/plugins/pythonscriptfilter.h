@@ -31,7 +31,7 @@ private:
     QString pyScriptPath;
     std::string defaultSaveImageExtention;
 
-    QImage prepareResult(const QImage &resultImage, const QImage &originalImage);
+    const QImage &prepareResult(const QImage &resultImage, const QImage &originalImage);
 };
 
 #endif // PYTHONSCRIPFILTER_H

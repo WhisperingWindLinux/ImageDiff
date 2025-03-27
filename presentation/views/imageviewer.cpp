@@ -71,14 +71,12 @@ void ImageViewer::wheelEvent(QWheelEvent *event) {
 void ImageViewer::zoomIn() {
     setCenterToViewRectCenter();
     scale(1.25, 1.25);
-    scaleFactor *= 1.25;
     sendPixelColorUnderCursor(lastCursorPos);
 }
 
 void ImageViewer::zoomOut() {
     setCenterToViewRectCenter();
     scale(0.8, 0.8);
-    scaleFactor *= 0.8;
     sendPixelColorUnderCursor(lastCursorPos);
 }
 
@@ -92,7 +90,6 @@ void ImageViewer::setToActualSize() {
         return;
     }
     resetTransform();
-    scaleFactor = 1.0;
 }
 
 void ImageViewer::setToFitImageInView() {
@@ -104,7 +101,6 @@ void ImageViewer::setToFitImageInView() {
     if (comparatorResultDisplayedImage != nullptr) {
         fitInView(comparatorResultDisplayedImage, Qt::KeepAspectRatio);
     }
-    scaleFactor = 1.0;
 }
 
 /* } =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
@@ -230,7 +226,6 @@ void ImageViewer::cleanUp() {
     firstImageName = "";
     secondImageName = "";
     currentImageIndex = 0;
-    scaleFactor = 1.0;
     isColorUnderCursorTrackingActive = false;
     lastCursorPos = std::nullopt;
     selecting = false;

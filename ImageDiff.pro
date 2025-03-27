@@ -49,6 +49,7 @@ SOURCES += \
     presentation/dialogs/aboutdialog.cpp \
     presentation/dialogs/colorpickerpanel.cpp \
     presentation/dialogs/comparatorresultdialog.cpp \
+    presentation/dialogs/externalimageviewerdialog.cpp \
     presentation/dialogs/formatters/helphtmlformatter.cpp \
     presentation/dialogs/getimagesfromvideosdialog.cpp \
     presentation/dialogs/helpdialog.cpp \
@@ -57,6 +58,7 @@ SOURCES += \
     presentation/imageprocessorsmenucontroller.cpp \
     presentation/mainwindow.cpp \
     business/imageanalysis/comporators/formatters/htmlreportpresenter.cpp \
+    presentation/views/externalgraphicsview.cpp \
     presentation/views/graphicspixmapitem.cpp \
     presentation/views/imageviewer.cpp \
     presentation/views/videodialogslider.cpp \
@@ -127,6 +129,7 @@ HEADERS += \
     presentation/dialogs/aboutdialog.h \
     presentation/dialogs/colorpickerpanel.h \
     presentation/dialogs/comparatorresultdialog.h \
+    presentation/dialogs/externalimageviewerdialog.h \
     presentation/dialogs/formatters/helphtmlformatter.h \
     presentation/dialogs/getimagesfromvideosdialog.h \
     presentation/dialogs/helpdialog.h \
@@ -136,6 +139,7 @@ HEADERS += \
     presentation/mainwindow.h \
     business/imageanalysis/comporators/formatters/htmlreportpresenter.h \
     presentation/valueobjects/rgbwidgets.h \
+    presentation/views/externalgraphicsview.h \
     presentation/views/graphicspixmapitem.h \
     presentation/views/imageviewer.h \
     presentation/views/videodialogslider.h \

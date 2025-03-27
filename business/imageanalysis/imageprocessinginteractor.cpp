@@ -152,8 +152,16 @@ void ImageProcessingInteractor::callComparator(IComparatorPtr comparator) {
         if (pixmap.isNull()) {
             throw std::runtime_error("Error: The comparator returns an empty result.");
         }
-        setLastComparisonImage(pixmap, comparator->getShortName());
-        notifyComparisonResultLoaded(pixmap, comparator->getShortName());
+        int originalWidth = originalImages->image1.width();
+        int originalHeight = originalImages->image1.height();
+        int resultWidth = imageResult.width();
+        int resultHeight = imageResult.height();
+        if (originalWidth == resultWidth && originalHeight == resultHeight) {
+            setLastComparisonImage(pixmap, comparator->getShortName());
+            notifyComparisonResultLoaded(pixmap, comparator->getShortName());
+        } else {
+            notifyShowImageInExternalViewer(pixmap, comparator->getShortName());
+        }
     }
     else if (result->type() == ComparisonResultVariantType::String) {
         QString stringResult = result->stringResult();
@@ -325,6 +333,15 @@ void ImageProcessingInteractor::notifyComparisonResultLoaded(const QString &html
                                            firstImagePath,
                                            secondImagePath
                                            );
+    }
+}
+
+void ImageProcessingInteractor::notifyShowImageInExternalViewer(const QPixmap &image,
+                                                                const QString &description
+                                                                )
+{
+    foreach (auto listener, listeners) {
+        listener->onShowImageInExternalViewer(image, description);
     }
 }
 

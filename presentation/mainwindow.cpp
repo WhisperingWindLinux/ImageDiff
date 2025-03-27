@@ -19,11 +19,13 @@
 #include <QMimeData>
 #include <qprocess.h>
 #include <ui_mainwindow.h>
+#include <QThread>
 #include <presentation/colorpickercontroller.h>
 #include <business/getimagesfromvideosinteractor.h>
 #include <presentation/views/imageviewer.h>
 #include <presentation/dialogs/aboutdialog.h>
 #include <presentation/dialogs/comparatorresultdialog.h>
+#include <presentation/dialogs/externalimageviewerdialog.h>
 #include <presentation/dialogs/helpdialog.h>
 #include <presentation/dialogs/pluginssettingsdialog.h>
 #include <presentation/dialogs/propertyeditordialog.h>
@@ -461,6 +463,17 @@ void MainWindow::onComparisonResultLoaded(const QString &html,
     dialog.exec();
 }
 
+void MainWindow::onShowImageInExternalViewer(const QPixmap &image, const QString &description) {
+    if (isMaximized()) {
+        showMinimized();
+    }
+
+   // QMetaObject::invokeMethod(this, [=]() {
+        ExternalImageViewerDialog dialog(image, description);
+        dialog.exec();
+    //}, Qt::QueuedConnection);
+}
+
 void MainWindow::onFilteredResultLoaded(const QPixmap &firstImage, const QPixmap &secondImage) {
     imageView->replaceDisplayedImages(firstImage, secondImage);
 }
@@ -590,3 +603,6 @@ void MainWindow::onError(const QString &error) {
 }
 
 /* } =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
+
+
+
