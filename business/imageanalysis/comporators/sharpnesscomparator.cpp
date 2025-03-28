@@ -85,12 +85,12 @@ QString SharpnessComparator::formatResultToHtml(const SharpnessComparisonResult 
 
     auto raundedResult = MathHelper::roundAndCompare(result.sharpness1, result.sharpness2);
 
-    auto beautifyPesantage = MathHelper::calcAndBeautifyPersantageValue(result.sharpness1,
-                                                                  result.sharpness2,
-                                                                  result.name1,
-                                                                  result.name2,
-                                                                  "Equal"
-                                                                  );
+    auto beautifyPecentage = MathHelper::calcAndBeautifyPercentageValue(result.sharpness1,
+                                                                        result.sharpness2,
+                                                                        result.name1,
+                                                                        result.name2,
+                                                                        "Equal"
+                                                                        );
 
 
     html += QString("<h2 style=\"line-height: 2;\">%1</h2>").arg(getFullName());
@@ -102,14 +102,14 @@ QString SharpnessComparator::formatResultToHtml(const SharpnessComparisonResult 
                 .arg(result.name2)
                 .arg(raundedResult.string2);
 
-    if (beautifyPesantage.resultDescription == "Equal") {
+    if (beautifyPecentage.resultDescription == "Equal") {
         html += "<tr><td colspan=\"2\" align=\"center\">Equal</td></tr>";
     }
     else {
         html += QString("<tr><td colspan=\"2\" align=\"center\">Image<b><font "
                         "color=\"green\"> %1</font></b> is %2 sharper</td></tr>")
-                    .arg(beautifyPesantage.resultDescription)
-                    .arg(beautifyPesantage.persantageResult);
+                    .arg(beautifyPecentage.resultDescription)
+                    .arg(beautifyPecentage.percentageResult);
     }
     html += "</table>";
     html += "<br /><br />";

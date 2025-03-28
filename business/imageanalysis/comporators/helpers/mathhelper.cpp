@@ -41,7 +41,7 @@ RoundedResult MathHelper::roundAndCompare(double num1, double num2, int precisio
     return {result1, result2, rounded1, rounded2};
 }
 
-QString MathHelper::formatPersentageValue(double value, int precision) {
+QString MathHelper::formatPercentageValue(double value, int precision) {
     if (std::abs(value) < std::numeric_limits<double>::epsilon()) {
         return "-";
     }
@@ -54,7 +54,7 @@ QString MathHelper::formatPersentageValue(double value, int precision) {
     }
 }
 
-BeautifiedPersantageResult MathHelper::calcAndBeautifyPersantageValue(double value1,
+BeautifiedPercentageResult MathHelper::calcAndBeautifyPercentageValue(double value1,
                                                                       double value2,
                                                                       QString stringIfValue1Greater,
                                                                       QString stringIfValue2Greater,
@@ -63,22 +63,22 @@ BeautifiedPersantageResult MathHelper::calcAndBeautifyPersantageValue(double val
                                                                      )
 {
     QString comparisonResult, persantageResult;
-    double persantage = 0;
+    double percentage = 0;
     bool isEqually = false;
     if (value1 > value2) {
         comparisonResult = stringIfValue1Greater;
-        persantage = ((value1 - value2) / value2) * 100.0;
-        persantageResult = MathHelper::formatPersentageValue(persantage, 1);
+        percentage = ((value1 - value2) / value2) * 100.0;
+        persantageResult = MathHelper::formatPercentageValue(percentage, 1);
     } else if (value2 > value1) {
-        persantage = ((value2 - value1) / value1) * 100.0;
+        percentage = ((value2 - value1) / value1) * 100.0;
         comparisonResult = stringIfValue2Greater;
-        persantageResult = MathHelper::formatPersentageValue(persantage, 1);
+        persantageResult = MathHelper::formatPercentageValue(percentage, 1);
     } else {
         comparisonResult = stringIfValuesEqual;
         persantageResult = stringIfPersantageIsZero;
         isEqually = true;
     }
-    return BeautifiedPersantageResult{comparisonResult, isEqually, persantageResult};
+    return BeautifiedPercentageResult{comparisonResult, isEqually, persantageResult};
 }
 
 double MathHelper::roundOrTruncate(double value, int precision, bool round) {

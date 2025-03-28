@@ -10,10 +10,10 @@ struct RoundedResult {
     double value2;
 };
 
-struct BeautifiedPersantageResult {
+struct BeautifiedPercentageResult {
     QString resultDescription;
     bool isEqually;
-    QString persantageResult;
+    QString percentageResult;
 };
 
 class MathHelper
@@ -22,9 +22,9 @@ public:
     MathHelper() = delete;
     ~MathHelper() = delete;
 
-    static QString formatPersentageValue(double value, int precision = 1);
+    static QString formatPercentageValue(double value, int precision = 1);
 
-    static BeautifiedPersantageResult calcAndBeautifyPersantageValue(double value1,
+    static BeautifiedPercentageResult calcAndBeautifyPercentageValue(double value1,
                                                                      double value2,
                                                                      QString stringIfValue1Greater,
                                                                      QString stringIfValue2Greater,

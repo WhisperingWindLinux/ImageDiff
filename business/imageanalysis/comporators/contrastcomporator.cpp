@@ -90,7 +90,7 @@ QString ContrastComporator::formatResultToHtml(const ContrastComparisonResult& r
 
     auto raundedResult = MathHelper::roundAndCompare(result.contrast1, result.contrast2);
 
-    auto beautifyPesantage = MathHelper::calcAndBeautifyPersantageValue(result.contrast1,
+    auto beautifyPecentage = MathHelper::calcAndBeautifyPercentageValue(result.contrast1,
                                                                         result.contrast2,
                                                                         result.image1Name,
                                                                         result.image2Name,
@@ -103,14 +103,14 @@ QString ContrastComporator::formatResultToHtml(const ContrastComparisonResult& r
                 .arg(result.image1Name, raundedResult.string1);
     html += QString("<tr><td>%1</td><td>%2</td></tr>")
                 .arg(result.image2Name, raundedResult.string2);
-    if (beautifyPesantage.isEqually) {
+    if (beautifyPecentage.isEqually) {
         html += QString("<tr><td colspan=\"2\" align=\"center\">%1</td></tr>")
-                .arg(beautifyPesantage.resultDescription);
+                .arg(beautifyPecentage.resultDescription);
 
     } else {
         html += QString("<tr><td colspan=\"2\" align=\"center\">Image "
                         "<b><font color=\"green\">%1</font></b> is %2  more contrasting</td></tr>")
-                    .arg(beautifyPesantage.resultDescription, beautifyPesantage.persantageResult);
+                    .arg(beautifyPecentage.resultDescription, beautifyPecentage.percentageResult);
     }
     html += "</table>";
     html += "<br /><br />";

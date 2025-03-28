@@ -38,7 +38,7 @@ QString PixelsAbsolutValueFormatter::formatResultToHtml(QList<PixelDifferenceRan
             .arg(it->maxDifference);
         QString pixelCount = locale.toString(it->pixelCount);
 
-        QString pixelPercentage = MathHelper::formatPersentageValue(it->percentage);
+        QString pixelPercentage = MathHelper::formatPercentageValue(it->percentage);
 
         html += "<tr>";
         html += QString("<td align=\"right\" style=\"padding-left: 10px; padding-right: 10px;\">%1</td>").arg(range);

@@ -74,11 +74,10 @@ ComparisonResultVariantPtr ColorsSaturationComporator::compare(const ComparableI
 
 QString ColorsSaturationComporator::formatResultToHtml(const ColorsSaturationComparisonResult& result) {
     QString html;
-    QString formatteedPersantage;
 
     auto raundedResult = MathHelper::roundAndCompare(result.avgSaturation1, result.avgSaturation2);
 
-    auto beautifyPesantage = MathHelper::calcAndBeautifyPersantageValue(result.avgSaturation1,
+    auto beautifyPercentage = MathHelper::calcAndBeautifyPercentageValue(result.avgSaturation1,
                                                                         result.avgSaturation2,
                                                                         result.image1Name,
                                                                         result.image2Name,
@@ -91,13 +90,13 @@ QString ColorsSaturationComporator::formatResultToHtml(const ColorsSaturationCom
                 .arg(result.image1Name, raundedResult.string1);
     html += QString("<tr><td>%1</td><td>%2</td></tr>")
                 .arg(result.image2Name, raundedResult.string2);
-    if (beautifyPesantage.isEqually) {
+    if (beautifyPercentage.isEqually) {
         html += QString("<tr><td colspan=\"2\" align=\"center\">%1</td></tr>")
-                    .arg(beautifyPesantage.resultDescription);
+                    .arg(beautifyPercentage.resultDescription);
     } else {
         html += QString("<tr><td colspan=\"2\" align=\"center\">Image <b>"
                         "<font color=\"green\">%1</font></b> is %2 more saturated</td></tr>")
-                    .arg(beautifyPesantage.resultDescription, beautifyPesantage.persantageResult);
+                    .arg(beautifyPercentage.resultDescription, beautifyPercentage.percentageResult);
     }
 
     html += "</table>";

@@ -120,9 +120,9 @@ QString PixelsBrightnessComparator::formatResultToHtml(const PixelsBrightnessCom
     QString formattedTotalBrightness1 = locale.toString(result.totalBrightness1);
     QString formattedTotalBrightness2 = locale.toString(result.totalBrightness2);
 
-    QString formattedSameColorPercent = MathHelper::formatPersentageValue(result.sameColorPercent);
-    QString formattedBrighterPercent = MathHelper::formatPersentageValue(result.brighterPercent);
-    QString formattedDarkerPercent = MathHelper::formatPersentageValue(result.darkerPercent);
+    QString formattedSameColorPercent = MathHelper::formatPercentageValue(result.sameColorPercent);
+    QString formattedBrighterPercent = MathHelper::formatPercentageValue(result.brighterPercent);
+    QString formattedDarkerPercent = MathHelper::formatPercentageValue(result.darkerPercent);
 
 
     QString html;
@@ -169,7 +169,7 @@ QString PixelsBrightnessComparator::formatResultToHtml(const PixelsBrightnessCom
     double dTotalBrightness1 = result.totalBrightness1;
     double dTotalBrightness2 = result.totalBrightness2;
 
-    auto beautifyPesantage = MathHelper::calcAndBeautifyPersantageValue(dTotalBrightness1,
+    auto beautifyPercentage = MathHelper::calcAndBeautifyPercentageValue(dTotalBrightness1,
                                                                         dTotalBrightness2,
                                                                         "",
                                                                         "",
@@ -180,11 +180,11 @@ QString PixelsBrightnessComparator::formatResultToHtml(const PixelsBrightnessCom
     if (dTotalBrightness1 > dTotalBrightness2) {
         html += QString("Image <b><font color=\"green\">%1</font></b> is %2 brighter")
             .arg(result.name1)
-            .arg(beautifyPesantage.persantageResult);
+            .arg(beautifyPercentage.percentageResult);
     } else if (dTotalBrightness2 > dTotalBrightness1) {
         html += QString("Image <b><font color=\"green\">%1</font></b> is %2 brighter")
             .arg(result.name2)
-            .arg(beautifyPesantage.persantageResult);
+            .arg(beautifyPercentage.percentageResult);
     } else {
         html += "Equally";
     }
