@@ -4,6 +4,8 @@
 #include <QDebug>
 #include <qfileinfo.h>
 
+#include <business/imageanalysis/comporators/helpers/mathhelper.h>
+
 #include "pixelsbrightnesscomparator.h"
 
 
@@ -113,10 +115,15 @@ QString PixelsBrightnessComparator::formatResultToHtml(const PixelsBrightnessCom
     QString formattedTotalPixels = locale.toString(result.totalPixels);
     QString formattedTheSameCount = locale.toString(result.sameColorCount);
     QString formattedBrighterCount = locale.toString(result.brighterCount);
-    QString formattedDarkerPercent = locale.toString(result.darkerCount);
+    QString formattedDarkerCount = locale.toString(result.darkerCount);
 
     QString formattedTotalBrightness1 = locale.toString(result.totalBrightness1);
     QString formattedTotalBrightness2 = locale.toString(result.totalBrightness2);
+
+    auto raundedResult = MathHelper::extendedRoundAndCompare(result.sameColorPercent,
+                                                             result.brighterPercent,
+                                                             result.darkerPercent,
+                                                             4);
 
     QString html;
 
@@ -133,17 +140,17 @@ QString PixelsBrightnessComparator::formatResultToHtml(const PixelsBrightnessCom
                 .arg(result.name1)
                 .arg(result.name2)
                 .arg(formattedTheSameCount)
-                .arg(QString::number(result.sameColorPercent, 'f', 2) + "%");
+                .arg(raundedResult.string1 + "%");
     html += QString("<tr><td>Brighter pixels in %1 than in %2</td><td align=\"right\">%3</td><td align=\"right\">%4</td></tr>")
                 .arg(result.name1)
                 .arg(result.name2)
                 .arg(formattedBrighterCount)
-                .arg(QString::number(result.brighterPercent, 'f', 8) + "%");
+                .arg(raundedResult.string2 + "%");
     html += QString("<tr><td>Darker pixels in %1 than in %2</td><td align=\"right\">%3</td><td align=\"right\">%4</td></tr>")
                 .arg(result.name1)
                 .arg(result.name2)
-                .arg(formattedDarkerPercent)
-                .arg(QString::number(result.darkerPercent, 'f', 8) + "%");
+                .arg(formattedDarkerCount)
+                .arg(raundedResult.string3 + "%");
     html += "</table>";
     html += "<br/>";
 
