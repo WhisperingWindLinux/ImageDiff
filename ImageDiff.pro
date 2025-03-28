@@ -16,6 +16,7 @@ SOURCES += \
     business/imageanalysis/comporators/contrastcomporator.cpp \
     business/imageanalysis/comporators/customrangeddifferenceinpixelvaluescomparator.cpp \
     business/imageanalysis/comporators/formatters/pixelsabsolutevalueformatter.cpp \
+    business/imageanalysis/comporators/helpers/mathhelper.cpp \
     business/imageanalysis/comporators/helpers/pixelsasolutvaluehelper.cpp \
     business/imageanalysis/comporators/imageproximitytoorigincomparator.cpp \
     business/imageanalysis/comporators/monocoloreddifferenceinpixelvaluescomporator.cpp \
@@ -72,6 +73,7 @@ HEADERS += \
     business/imageanalysis/comporators/contrastcomporator.h \
     business/imageanalysis/comporators/customrangeddifferenceinpixelvaluescomparator.h \
     business/imageanalysis/comporators/formatters/pixelsabsolutevalueformatter.h \
+    business/imageanalysis/comporators/helpers/mathhelper.h \
     business/imageanalysis/comporators/helpers/pixelsasolutvaluehelper.h \
     business/imageanalysis/comporators/imageproximitytoorigincomparator.h \
     business/imageanalysis/comporators/monocoloreddifferenceinpixelvaluescomporator.h \

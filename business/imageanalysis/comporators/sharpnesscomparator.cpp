@@ -6,6 +6,8 @@
 #include <QDebug>
 #include <qstring.h>
 
+#include <business/imageanalysis/comporators/helpers/mathhelper.h>
+
 // Compare the two images and return a structure with the results
 SharpnessComparisonResult SharpnessComparator::compareImages(const QImage &image1,
                                                              const QString &name1,
@@ -16,19 +18,7 @@ SharpnessComparisonResult SharpnessComparator::compareImages(const QImage &image
     double sharpness1 = calculateSharpness(image1);
     double sharpness2 = calculateSharpness(image2);
 
-    QString sharperImage;
-    double persantage = qQNaN();
-    if (sharpness1 > sharpness2) {
-        sharperImage = name1;
-        persantage = ((sharpness1 - sharpness2) / sharpness2) * 100.0;
-    } else if (sharpness2 > sharpness1) {
-        persantage = ((sharpness2 - sharpness1) / sharpness1) * 100.0;
-        sharperImage = name2;
-    } else {
-        sharperImage = "Equal";
-    }
-
-    return {name1, name2, sharpness1, sharpness2, sharperImage, persantage};
+    return {name1, name2, sharpness1, sharpness2};
 }
 
 
@@ -93,26 +83,41 @@ std::shared_ptr<ComparisonResultVariant> SharpnessComparator::compare(const Comp
 QString SharpnessComparator::formatResultToHtml(const SharpnessComparisonResult &result) {
     QString html;
     QString formatteedPersantage;
-    if (qIsNaN(result.persantage)) {
+
+    auto raundedResult = MathHelper::roundAndCompare(result.sharpness1, result.sharpness2, 4);
+
+    QString sharperImage;
+    double persantage = qQNaN();
+    if (raundedResult.value1 > raundedResult.value2) {
+        sharperImage = result.name1;
+        persantage = ((raundedResult.value1 - raundedResult.value2) / raundedResult.value2) * 100.0;
+    } else if (raundedResult.value2 > raundedResult.value1) {
+        persantage = ((raundedResult.value2 - raundedResult.value1) / raundedResult.value1) * 100.0;
+        sharperImage = result.name2;
+    } else {
+        sharperImage = "Equal";
+    }
+
+    if (qIsNaN(persantage)) {
         formatteedPersantage = "";
-    } else if ((int)(result.persantage * 100) == 0) {
+    } else if ((int)(persantage * 100) == 0) {
         formatteedPersantage = " &lt;0.01%";
     } else {
-        formatteedPersantage = QString(" %1%").arg(QString::number(result.persantage, 'f', 2));
+        formatteedPersantage = QString(" %1%").arg(QString::number(persantage, 'f', 2));
     }
     html += QString("<h2 style=\"line-height: 2;\">%1</h2>").arg(getFullName());
     html += "<table border=\"1\" cellspacing=\"0\" cellpadding=\"5\">";
     html += QString("<tr><td>%1</td><td>%2</td></tr>")
                 .arg(result.name1)
-                .arg(result.sharpness1);
+                .arg(raundedResult.string1);
     html += QString("<tr><td>%1</td><td>%2</td></tr>")
                 .arg(result.name2)
-                .arg(result.sharpness2);
+                .arg(raundedResult.string2);
 
     if (!formatteedPersantage.isEmpty()) {
         html += QString("<tr><td colspan=\"2\" align=\"center\">Image<b><font "
                         "color=\"green\"> %1</font></b> is%2 sharper</td></tr>")
-                    .arg(result.sharperImage)
+                    .arg(sharperImage)
                     .arg(formatteedPersantage);
     } else {
          html += "<tr><td colspan=\"2\" align=\"center\">Equally</td></tr>";

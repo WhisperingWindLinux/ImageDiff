@@ -1,6 +1,8 @@
 #include <QFileInfo>
 #include <cmath>
 
+#include <business/imageanalysis/comporators/helpers/mathhelper.h>
+
 #include "contrastcomporator.h"
 
 // Method to compare the contrast of two images
@@ -14,22 +16,7 @@ ContrastComparisonResult ContrastComporator::compareImages(const QImage &image1,
     double contrast1 = calculateContrast(image1);
     double contrast2 = calculateContrast(image2);
 
-    double persantage = qQNaN();
-
-    // Determine which image has higher contrast
-    QString moreContrastImage;
-    if (contrast1 > contrast2) {
-        moreContrastImage = name1;
-        persantage = ((contrast1 - contrast2) / contrast2) * 100.0;
-    } else if (contrast2 > contrast1) {
-        moreContrastImage = name2;
-         persantage = ((contrast2 - contrast1) / contrast1) * 100.0;
-    } else {
-        moreContrastImage = "Both images have the same contrast.";
-    }
-
-    // Return a structure with the results
-    return { name1, name2, contrast1, contrast2, moreContrastImage, persantage };
+    return { name1, name2, contrast1, contrast2 };
 }
 
 // Method to calculate the contrast of an image
@@ -101,24 +88,41 @@ std::shared_ptr<ComparisonResultVariant> ContrastComporator::compare(
 QString ContrastComporator::formatResultToHtml(const ContrastComparisonResult& result) {
     QString html;
     QString formatteedPersantage;
-    if (qIsNaN(result.persantage)) {
+
+    auto raundedResult = MathHelper::roundAndCompare(result.contrast1, result.contrast1, 4);
+    double persantage = qQNaN();
+
+    // Determine which image has higher contrast
+    QString moreContrastImageName;
+    if (raundedResult.value1 > raundedResult.value2) {
+        moreContrastImageName = result.image1Name;
+        persantage = ((raundedResult.value1 - raundedResult.value2) / raundedResult.value2) * 100.0;
+    } else if (raundedResult.value2 > raundedResult.value1) {
+        moreContrastImageName = result.image2Name;
+        persantage = ((raundedResult.value2 - raundedResult.value1) / raundedResult.value1) * 100.0;
+    } else {
+        moreContrastImageName = "Both images have the same contrast.";
+    }
+
+    if (qIsNaN(persantage)) {
         formatteedPersantage = "";
-    } else if ((int)(result.persantage * 100) == 0) {
+    } else if ((int)(persantage * 100) == 0) {
         formatteedPersantage = " &lt;0.01%";
     } else {
-        formatteedPersantage = QString(" %1%").arg(QString::number(result.persantage, 'f', 2));
+        formatteedPersantage = QString(" %1%").arg(QString::number(persantage, 'f', 2));
     }
+
     html += QString("<h2 style=\"line-height: 2;\">%1</h2>").arg(getFullName());
     html += "<table border=\"1\" cellspacing=\"0\" cellpadding=\"5\">";
     html += QString("<tr><td>%1</td><td>%2</td></tr>")
                 .arg(result.image1Name)
-                .arg(result.contrast1);
+                .arg(raundedResult.string1);
     html += QString("<tr><td>%1</td><td>%2</td></tr>")
                 .arg(result.image2Name)
-                .arg(result.contrast2);
+                .arg(raundedResult.string2);
     if (!formatteedPersantage.isEmpty()) {
         html += QString("<tr><td colspan=\"2\" align=\"center\">Image <b><font color=\"green\">%1</font></b> is%2  more contrasting</td></tr>")
-                    .arg(result.moreContrastImageName)
+                    .arg(moreContrastImageName)
                     .arg(formatteedPersantage);
     } else {
         html += "<tr><td colspan=\"2\" align=\"center\">Equally</td></tr>";

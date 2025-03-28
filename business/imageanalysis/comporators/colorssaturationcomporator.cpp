@@ -3,6 +3,8 @@
 #include <QFileInfo>
 #include <QDebug>
 
+#include <business/imageanalysis/comporators/helpers/mathhelper.h>
+
 // Compare the two images and return a structure with the results
 ColorsSaturationComparisonResult ColorsSaturationComporator::compareImages(const QImage &image1,
                                                                            const QString &name1,
@@ -19,19 +21,7 @@ ColorsSaturationComparisonResult ColorsSaturationComporator::compareImages(const
     double avgSat1 = calculateAverageSaturation(image1);
     double avgSat2 = calculateAverageSaturation(image2);
 
-    double persantage = qQNaN();
-    QString moreSaturated;
-    if (avgSat1 > avgSat2) {
-        moreSaturated = name1;
-        persantage = ((avgSat1 - avgSat2) / avgSat2) * 100.0;
-    } else if (avgSat2 > avgSat1) {
-        persantage = ((avgSat2 - avgSat1) / avgSat1) * 100.0;
-        moreSaturated = name2;
-    } else {
-        moreSaturated = "Equal";
-    }
-
-    return {name1, name2, avgSat1, avgSat2, moreSaturated, persantage};
+    return {name1, name2, avgSat1, avgSat2};
 }
 
 // Calculate the average saturation of an image
@@ -85,24 +75,39 @@ ComparisonResultVariantPtr ColorsSaturationComporator::compare(const ComparableI
 QString ColorsSaturationComporator::formatResultToHtml(const ColorsSaturationComparisonResult& result) {
     QString html;
     QString formatteedPersantage;
-    if (qIsNaN(result.persantage)) {
+
+    auto raundedResult = MathHelper::roundAndCompare(result.avgSaturation1, result.avgSaturation2, 4);
+
+    double persantage = qQNaN();
+    QString moreSaturatedImageName;
+    if (raundedResult.value1 > raundedResult.value2) {
+        moreSaturatedImageName = result.image1Name;
+        persantage = ((raundedResult.value1 - raundedResult.value2) / raundedResult.value2) * 100.0;
+    } else if (raundedResult.value2 > raundedResult.value1) {
+        persantage = ((raundedResult.value2 - raundedResult.value1) / raundedResult.value1) * 100.0;
+        moreSaturatedImageName = result.image2Name;
+    } else {
+        moreSaturatedImageName = "Equal";
+    }
+
+    if (qIsNaN(persantage)) {
         formatteedPersantage = "";
-    } else if ((int)(result.persantage * 100) == 0) {
+    } else if ((int)(persantage * 100) == 0) {
         formatteedPersantage = " &lt;0.01%";
     } else {
-        formatteedPersantage = QString(" %1%").arg(QString::number(result.persantage, 'f', 2));
+        formatteedPersantage = QString(" %1%").arg(QString::number(persantage, 'f', 2));
     }
     html += QString("<h2 style=\"line-height: 2;\">%1</h2>").arg(getFullName());
     html += "<table border=\"1\" cellspacing=\"0\" cellpadding=\"5\">";
     html += QString("<tr><td>%1</td><td>%2</td></tr>")
                 .arg(result.image1Name)
-                .arg(result.avgSaturation1);
+                .arg(raundedResult.string1);
     html += QString("<tr><td>%1</td><td>%2</td></tr>")
                 .arg(result.image2Name)
-                .arg(result.avgSaturation2);
+                .arg(raundedResult.string2);
     if (!formatteedPersantage.isEmpty()) {
         html += QString("<tr><td colspan=\"2\" align=\"center\">Image <b><font color=\"green\">%1</font></b> is%2  more saturated</td></tr>")
-                    .arg(result.moreSaturatedImageName)
+                    .arg(moreSaturatedImageName)
                     .arg(formatteedPersantage);
     } else {
         html += "<tr><td colspan=\"2\" align=\"center\">Equally</td></tr>";
