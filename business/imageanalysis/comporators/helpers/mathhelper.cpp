@@ -1,5 +1,6 @@
 #include "mathhelper.h"
 
+#include <QtCore/qmath.h>
 #include <qstring.h>
 
 RoundedResult MathHelper::roundAndCompare(double num1, double num2, int precision) {
@@ -40,63 +41,53 @@ RoundedResult MathHelper::roundAndCompare(double num1, double num2, int precisio
     return {result1, result2, rounded1, rounded2};
 }
 
-ExtendedRoundedResult MathHelper::extendedRoundAndCompare(double num1,
-                                                          double num2,
-                                                          double num3,
-                                                          int precision
-                                                         )
-{
-    auto roundToPrecision = [](double value, int prec) -> double {
-        double factor = std::pow(10.0, prec);
-        return std::round(value * factor) / factor;
-    };
-
-    double rounded1 = roundToPrecision(num1, precision);
-    double rounded2 = roundToPrecision(num2, precision);
-    double rounded3 = roundToPrecision(num3, precision);
-
-    auto isCloseToZero = [](double value) -> bool {
-        return std::abs(value) < std::numeric_limits<double>::epsilon();
-    };
-
-    if (isCloseToZero(rounded1) && !isCloseToZero(num1)) {
-        rounded1 = roundToPrecision(num1, precision + 1);
+QString MathHelper::formatPersentageValue(double value, int precision) {
+    if (std::abs(value) < std::numeric_limits<double>::epsilon()) {
+        return "-";
     }
-    if (isCloseToZero(rounded2) && !isCloseToZero(num2)) {
-        rounded2 = roundToPrecision(num2, precision + 1);
+    double truncatedValue = roundOrTruncate(value, precision, false);
+    if (std::abs(truncatedValue) < std::numeric_limits<double>::epsilon()) {
+        double threshold = std::pow(10.0, -precision);
+        return QString("&lt;%1%").arg(threshold);
+    } else {
+        return QString("%1%").arg(truncatedValue);
     }
-    if (isCloseToZero(rounded3) && !isCloseToZero(num3)) {
-        rounded3 = roundToPrecision(num3, precision + 1);
-    }
-
-    if (rounded1 == rounded2 && rounded2 == rounded3) {
-        int extraPrecision = precision;
-        while (true) {
-            ++extraPrecision;
-            rounded1 = roundToPrecision(num1, extraPrecision);
-            rounded2 = roundToPrecision(num2, extraPrecision);
-            rounded3 = roundToPrecision(num3, extraPrecision);
-
-            if (rounded1 != rounded2 || rounded2 != rounded3 || rounded1 != rounded3) {
-                break;
-            }
-
-            if (extraPrecision > 15) {
-                extraPrecision = precision;
-                break;
-            }
-        }
-
-        QString result1 = QString::number(rounded1, 'f', extraPrecision);
-        QString result2 = QString::number(rounded2, 'f', extraPrecision);
-        QString result3 = QString::number(rounded3, 'f', extraPrecision);
-
-        return {result1, result2, result3, rounded1, rounded2, rounded3};
-    }
-
-    QString result1 = QString::number(rounded1, 'f', precision);
-    QString result2 = QString::number(rounded2, 'f', precision);
-    QString result3 = QString::number(rounded3, 'f', precision);
-
-    return {result1, result2, result3, rounded1, rounded2, rounded3};
 }
+
+BeautifiedPersantageResult MathHelper::calcAndBeautifyPersantageValue(double value1,
+                                                                      double value2,
+                                                                      QString stringIfValue1Greater,
+                                                                      QString stringIfValue2Greater,
+                                                                      QString stringIfValuesEqual,
+                                                                      QString stringIfPersantageIsZero
+                                                                     )
+{
+    QString comparisonResult, persantageResult;
+    double persantage = 0;
+    bool isEqually = false;
+    if (value1 > value2) {
+        comparisonResult = stringIfValue1Greater;
+        persantage = ((value1 - value2) / value2) * 100.0;
+        persantageResult = MathHelper::formatPersentageValue(persantage, 1);
+    } else if (value2 > value1) {
+        persantage = ((value2 - value1) / value1) * 100.0;
+        comparisonResult = stringIfValue2Greater;
+        persantageResult = MathHelper::formatPersentageValue(persantage, 1);
+    } else {
+        comparisonResult = stringIfValuesEqual;
+        persantageResult = stringIfPersantageIsZero;
+        isEqually = true;
+    }
+    return BeautifiedPersantageResult{comparisonResult, isEqually, persantageResult};
+}
+
+double MathHelper::roundOrTruncate(double value, int precision, bool round) {
+    double factor = qPow(10.0, precision);
+    if (round) {
+        return qRound(value * factor) / factor;
+    } else {
+        return static_cast<double>(static_cast<qint64>(value * factor)) / factor;
+    }
+}
+
+

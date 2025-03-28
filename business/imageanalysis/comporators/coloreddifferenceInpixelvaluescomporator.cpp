@@ -56,19 +56,19 @@ QString ColoredDifferenceInPixelValuesComporator::getDescription() const {
 }
 
 ComparisonResultVariantPtr ColoredDifferenceInPixelValuesComporator::compare(const ComparableImage &first,
-                                                                  const ComparableImage &second
-                                                                  )
+                                                                             const ComparableImage &second
+                                                                            )
 {
     PixelsAbsolutValueHelper helper {};
 
     if (expectedResult == Result::Text) {
         QList<PixelDifferenceRange> ranges = helper.generateDifferenceStringResult(first.getImage(),
                                                                                    second.getImage()
-                                                                                   );
+                                                                                  );
 
         QString result = PixelsAbsolutValueFormatter::formatResultToHtml(ranges,
                                                                          getFullName()
-                                                                         );
+                                                                        );
         return std::make_shared<ComparisonResultVariant>(result);
 
     } else if (expectedResult == Result::Image){

@@ -120,10 +120,10 @@ QString PixelsBrightnessComparator::formatResultToHtml(const PixelsBrightnessCom
     QString formattedTotalBrightness1 = locale.toString(result.totalBrightness1);
     QString formattedTotalBrightness2 = locale.toString(result.totalBrightness2);
 
-    auto raundedResult = MathHelper::extendedRoundAndCompare(result.sameColorPercent,
-                                                             result.brighterPercent,
-                                                             result.darkerPercent,
-                                                             4);
+    QString formattedSameColorPercent = MathHelper::formatPersentageValue(result.sameColorPercent);
+    QString formattedBrighterPercent = MathHelper::formatPersentageValue(result.brighterPercent);
+    QString formattedDarkerPercent = MathHelper::formatPersentageValue(result.darkerPercent);
+
 
     QString html;
 
@@ -140,17 +140,17 @@ QString PixelsBrightnessComparator::formatResultToHtml(const PixelsBrightnessCom
                 .arg(result.name1)
                 .arg(result.name2)
                 .arg(formattedTheSameCount)
-                .arg(raundedResult.string1 + "%");
+                .arg(formattedSameColorPercent);
     html += QString("<tr><td>Brighter pixels in %1 than in %2</td><td align=\"right\">%3</td><td align=\"right\">%4</td></tr>")
                 .arg(result.name1)
                 .arg(result.name2)
                 .arg(formattedBrighterCount)
-                .arg(raundedResult.string2 + "%");
+                .arg(formattedBrighterPercent);
     html += QString("<tr><td>Darker pixels in %1 than in %2</td><td align=\"right\">%3</td><td align=\"right\">%4</td></tr>")
                 .arg(result.name1)
                 .arg(result.name2)
                 .arg(formattedDarkerCount)
-                .arg(raundedResult.string3 + "%");
+                .arg(formattedDarkerPercent);
     html += "</table>";
     html += "<br/>";
 
@@ -169,32 +169,22 @@ QString PixelsBrightnessComparator::formatResultToHtml(const PixelsBrightnessCom
     double dTotalBrightness1 = result.totalBrightness1;
     double dTotalBrightness2 = result.totalBrightness2;
 
-    double persantage = qQNaN();
-    if (dTotalBrightness1 > dTotalBrightness2) {
-        persantage = ((dTotalBrightness1 - dTotalBrightness2) / dTotalBrightness2) * 100.0;
-    } else if (dTotalBrightness2 > dTotalBrightness1) {
-        persantage = ((dTotalBrightness2 - dTotalBrightness1) / dTotalBrightness1) * 100.0;
-    }
-
-    QString formatteedPersantage;
-    if (qFuzzyIsNull(persantage)) {
-        formatteedPersantage = "";
-    } else if ((int)(persantage * 100) == 0) {
-        formatteedPersantage = " &lt;0.01%";
-    } else {
-        formatteedPersantage = QString(" %1%").arg(QString::number(persantage, 'f', 2));
-    }
+    auto beautifyPesantage = MathHelper::calcAndBeautifyPersantageValue(dTotalBrightness1,
+                                                                        dTotalBrightness2,
+                                                                        "",
+                                                                        "",
+                                                                        "");
 
     html += "<tr><td colspan=\"2\" align=\"center\">";
 
     if (dTotalBrightness1 > dTotalBrightness2) {
-        html += QString("Image <b><font color=\"green\">%1</font></b> is%2 brighter")
+        html += QString("Image <b><font color=\"green\">%1</font></b> is %2 brighter")
             .arg(result.name1)
-            .arg(formatteedPersantage);
+            .arg(beautifyPesantage.persantageResult);
     } else if (dTotalBrightness2 > dTotalBrightness1) {
-        html += QString("Image <b><font color=\"green\">%1</font></b> is%2 brighter")
+        html += QString("Image <b><font color=\"green\">%1</font></b> is %2 brighter")
             .arg(result.name2)
-            .arg(formatteedPersantage);
+            .arg(beautifyPesantage.persantageResult);
     } else {
         html += "Equally";
     }

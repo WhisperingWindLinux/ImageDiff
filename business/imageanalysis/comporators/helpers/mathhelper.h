@@ -10,13 +10,10 @@ struct RoundedResult {
     double value2;
 };
 
-struct ExtendedRoundedResult {
-    QString string1;
-    QString string2;
-    QString string3;
-    double value1;
-    double value2;
-    double value3;
+struct BeautifiedPersantageResult {
+    QString resultDescription;
+    bool isEqually;
+    QString persantageResult;
 };
 
 class MathHelper
@@ -25,8 +22,21 @@ public:
     MathHelper() = delete;
     ~MathHelper() = delete;
 
-    static RoundedResult roundAndCompare(double num1, double num2, int precision);
-    static ExtendedRoundedResult extendedRoundAndCompare(double num1, double num2, double num3, int precision);
+    static QString formatPersentageValue(double value, int precision = 1);
+
+    static BeautifiedPersantageResult calcAndBeautifyPersantageValue(double value1,
+                                                                     double value2,
+                                                                     QString stringIfValue1Greater,
+                                                                     QString stringIfValue2Greater,
+                                                                     QString stringIfValuesEqual,
+                                                                     QString stringIfPersantageIsZero = ""
+                                                                     );
+
+    static RoundedResult roundAndCompare(double num1, double num2, int precision = 1);
+
+private:
+    static double roundOrTruncate(double value, int precision, bool round);
+
 };
 
 #endif // MATHHELPER_H

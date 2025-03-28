@@ -1,6 +1,7 @@
 #include "pixelsabsolutevalueformatter.h"
 
 #include <qlocale.h>
+#include <business/imageanalysis/comporators/helpers/mathhelper.h>
 
 
 QString PixelsAbsolutValueFormatter::formatResultToHtml(QList<PixelDifferenceRange> &result,
@@ -36,12 +37,8 @@ QString PixelsAbsolutValueFormatter::formatResultToHtml(QList<PixelDifferenceRan
         .arg(it->minDifference)
             .arg(it->maxDifference);
         QString pixelCount = locale.toString(it->pixelCount);
-        QString pixelPercentage;
-        if ((int)(it->percentage * 100) == 0) {
-            pixelPercentage = "&lt; 0.1%";
-        } else {
-            pixelPercentage = QString::number(it->percentage, 'f', 1) + "%";
-        }
+
+        QString pixelPercentage = MathHelper::formatPersentageValue(it->percentage);
 
         html += "<tr>";
         html += QString("<td align=\"right\" style=\"padding-left: 10px; padding-right: 10px;\">%1</td>").arg(range);

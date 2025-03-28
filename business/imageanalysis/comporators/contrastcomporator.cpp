@@ -87,45 +87,30 @@ std::shared_ptr<ComparisonResultVariant> ContrastComporator::compare(
 
 QString ContrastComporator::formatResultToHtml(const ContrastComparisonResult& result) {
     QString html;
-    QString formatteedPersantage;
 
-    auto raundedResult = MathHelper::roundAndCompare(result.contrast1, result.contrast1, 4);
-    double persantage = qQNaN();
+    auto raundedResult = MathHelper::roundAndCompare(result.contrast1, result.contrast2);
 
-    // Determine which image has higher contrast
-    QString moreContrastImageName;
-    if (raundedResult.value1 > raundedResult.value2) {
-        moreContrastImageName = result.image1Name;
-        persantage = ((raundedResult.value1 - raundedResult.value2) / raundedResult.value2) * 100.0;
-    } else if (raundedResult.value2 > raundedResult.value1) {
-        moreContrastImageName = result.image2Name;
-        persantage = ((raundedResult.value2 - raundedResult.value1) / raundedResult.value1) * 100.0;
-    } else {
-        moreContrastImageName = "Both images have the same contrast.";
-    }
-
-    if (qIsNaN(persantage)) {
-        formatteedPersantage = "";
-    } else if ((int)(persantage * 100) == 0) {
-        formatteedPersantage = " &lt;0.01%";
-    } else {
-        formatteedPersantage = QString(" %1%").arg(QString::number(persantage, 'f', 2));
-    }
+    auto beautifyPesantage = MathHelper::calcAndBeautifyPersantageValue(result.contrast1,
+                                                                        result.contrast2,
+                                                                        result.image1Name,
+                                                                        result.image2Name,
+                                                                        "Equally"
+                                                                        );
 
     html += QString("<h2 style=\"line-height: 2;\">%1</h2>").arg(getFullName());
     html += "<table border=\"1\" cellspacing=\"0\" cellpadding=\"5\">";
     html += QString("<tr><td>%1</td><td>%2</td></tr>")
-                .arg(result.image1Name)
-                .arg(raundedResult.string1);
+                .arg(result.image1Name, raundedResult.string1);
     html += QString("<tr><td>%1</td><td>%2</td></tr>")
-                .arg(result.image2Name)
-                .arg(raundedResult.string2);
-    if (!formatteedPersantage.isEmpty()) {
-        html += QString("<tr><td colspan=\"2\" align=\"center\">Image <b><font color=\"green\">%1</font></b> is%2  more contrasting</td></tr>")
-                    .arg(moreContrastImageName)
-                    .arg(formatteedPersantage);
+                .arg(result.image2Name, raundedResult.string2);
+    if (beautifyPesantage.isEqually) {
+        html += QString("<tr><td colspan=\"2\" align=\"center\">%1</td></tr>")
+                .arg(beautifyPesantage.resultDescription);
+
     } else {
-        html += "<tr><td colspan=\"2\" align=\"center\">Equally</td></tr>";
+        html += QString("<tr><td colspan=\"2\" align=\"center\">Image "
+                        "<b><font color=\"green\">%1</font></b> is %2  more contrasting</td></tr>")
+                    .arg(beautifyPesantage.resultDescription, beautifyPesantage.persantageResult);
     }
     html += "</table>";
     html += "<br /><br />";

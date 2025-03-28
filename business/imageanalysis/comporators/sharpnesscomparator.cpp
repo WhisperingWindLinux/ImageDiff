@@ -82,29 +82,17 @@ std::shared_ptr<ComparisonResultVariant> SharpnessComparator::compare(const Comp
 
 QString SharpnessComparator::formatResultToHtml(const SharpnessComparisonResult &result) {
     QString html;
-    QString formatteedPersantage;
 
-    auto raundedResult = MathHelper::roundAndCompare(result.sharpness1, result.sharpness2, 4);
+    auto raundedResult = MathHelper::roundAndCompare(result.sharpness1, result.sharpness2);
 
-    QString sharperImage;
-    double persantage = qQNaN();
-    if (raundedResult.value1 > raundedResult.value2) {
-        sharperImage = result.name1;
-        persantage = ((raundedResult.value1 - raundedResult.value2) / raundedResult.value2) * 100.0;
-    } else if (raundedResult.value2 > raundedResult.value1) {
-        persantage = ((raundedResult.value2 - raundedResult.value1) / raundedResult.value1) * 100.0;
-        sharperImage = result.name2;
-    } else {
-        sharperImage = "Equal";
-    }
+    auto beautifyPesantage = MathHelper::calcAndBeautifyPersantageValue(result.sharpness1,
+                                                                  result.sharpness2,
+                                                                  result.name1,
+                                                                  result.name2,
+                                                                  "Equal"
+                                                                  );
 
-    if (qIsNaN(persantage)) {
-        formatteedPersantage = "";
-    } else if ((int)(persantage * 100) == 0) {
-        formatteedPersantage = " &lt;0.01%";
-    } else {
-        formatteedPersantage = QString(" %1%").arg(QString::number(persantage, 'f', 2));
-    }
+
     html += QString("<h2 style=\"line-height: 2;\">%1</h2>").arg(getFullName());
     html += "<table border=\"1\" cellspacing=\"0\" cellpadding=\"5\">";
     html += QString("<tr><td>%1</td><td>%2</td></tr>")
@@ -114,13 +102,14 @@ QString SharpnessComparator::formatResultToHtml(const SharpnessComparisonResult 
                 .arg(result.name2)
                 .arg(raundedResult.string2);
 
-    if (!formatteedPersantage.isEmpty()) {
+    if (beautifyPesantage.resultDescription == "Equal") {
+        html += "<tr><td colspan=\"2\" align=\"center\">Equal</td></tr>";
+    }
+    else {
         html += QString("<tr><td colspan=\"2\" align=\"center\">Image<b><font "
-                        "color=\"green\"> %1</font></b> is%2 sharper</td></tr>")
-                    .arg(sharperImage)
-                    .arg(formatteedPersantage);
-    } else {
-         html += "<tr><td colspan=\"2\" align=\"center\">Equally</td></tr>";
+                        "color=\"green\"> %1</font></b> is %2 sharper</td></tr>")
+                    .arg(beautifyPesantage.resultDescription)
+                    .arg(beautifyPesantage.persantageResult);
     }
     html += "</table>";
     html += "<br /><br />";
