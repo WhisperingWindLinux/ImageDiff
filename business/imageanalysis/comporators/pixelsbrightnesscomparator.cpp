@@ -138,12 +138,12 @@ QString PixelsBrightnessComparator::formatResultToHtml(const PixelsBrightnessCom
                 .arg(result.name1)
                 .arg(result.name2)
                 .arg(formattedBrighterCount)
-                .arg(QString::number(result.brighterPercent, 'f', 2) + "%");
+                .arg(QString::number(result.brighterPercent, 'f', 8) + "%");
     html += QString("<tr><td>Darker pixels in %1 than in %2</td><td align=\"right\">%3</td><td align=\"right\">%4</td></tr>")
                 .arg(result.name1)
                 .arg(result.name2)
                 .arg(formattedDarkerPercent)
-                .arg(QString::number(result.darkerPercent, 'f', 2) + "%");
+                .arg(QString::number(result.darkerPercent, 'f', 8) + "%");
     html += "</table>";
     html += "<br/>";
 

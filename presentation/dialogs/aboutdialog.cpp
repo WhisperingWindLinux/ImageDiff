@@ -16,7 +16,7 @@ AboutDialog::AboutDialog(QWidget *parent) : QDialog(parent) {
     appNameLabel->setAlignment(Qt::AlignCenter);
     layout->addWidget(appNameLabel);
 
-    QLabel *appVersion = new QLabel("version 1.0.0-alpha.4");
+    QLabel *appVersion = new QLabel("version 1.0.0-alpha.5");
     appVersion->setAlignment(Qt::AlignCenter);
     layout->addWidget(appVersion);
 

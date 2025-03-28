@@ -38,7 +38,7 @@ QString PixelsAbsolutValueFormatter::formatResultToHtml(QList<PixelDifferenceRan
             .arg(it->maxDifference);
         QString pixelCount = locale.toString(it->pixelCount);
         QString pixelPercentage;
-        if ((int)((it->percentage) * 10) < 10) {
+        if ((int)(it->percentage * 100) == 0) {
             pixelPercentage = "&lt; 0.1%";
         } else {
             pixelPercentage = QString::number(it->percentage, 'f', 1) + "%";
