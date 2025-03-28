@@ -6,8 +6,8 @@
 #include "monocoloreddifferenceinpixelvaluescomporator.h"
 
 QImage MonoColoredDifferenceInPixelValuesComporator::compareImages(const QImage &image1,
-                                                               const QImage &image2
-                                                               )
+                                                                   const QImage &image2
+                                                                  )
 {
     // Create a resulting image (copy of the first image)
     QImage resultImg = image1.copy();
@@ -56,4 +56,9 @@ ComparisonResultVariantPtr MonoColoredDifferenceInPixelValuesComporator::compare
     std::shared_ptr<ComparisonResultVariant> resultVariant =
                                 std::make_shared<ComparisonResultVariant>(result);
     return resultVariant;
+}
+
+
+bool MonoColoredDifferenceInPixelValuesComporator::isPartOfAutoReportingToolbox() {
+    return false;
 }

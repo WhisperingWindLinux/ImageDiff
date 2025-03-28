@@ -12,11 +12,9 @@ class PixelsAbsolutValueFormatter
 public:
     PixelsAbsolutValueFormatter() = delete;
     ~PixelsAbsolutValueFormatter() = delete;
-
+    
     static QString formatResultToHtml(QList<PixelDifferenceRange> &result,
-                                      QString comporatorFullName,
-                                      PixelsDifferenceCalculationMode currentMode
-                                      );
+                                      QString comporatorFullName);
 
 };
 

@@ -1,7 +1,6 @@
 #ifndef CUSTOMRANGEDDIFFERENCEINPIXELVALUESCOMPARATOR_H
 #define CUSTOMRANGEDDIFFERENCEINPIXELVALUESCOMPARATOR_H
 
-#include "business/imageanalysis/comporators/helpers/pixelsasolutvaluehelper.h"
 #include <domain/interfaces/business/icomparator.h>
 
 
@@ -9,6 +8,7 @@ class CustomRangedDifferenceInPixelValuesComparator : public IComparator
 {
 public:
     CustomRangedDifferenceInPixelValuesComparator();
+    virtual ~CustomRangedDifferenceInPixelValuesComparator() = default;
 
     // IComparator interface
 
@@ -23,7 +23,6 @@ public:
     bool isPartOfAutoReportingToolbox() override;
 
 private:
-    PixelsDifferenceCalculationMode currentMode;
     int startOfRange, endOfRange;
 };
 

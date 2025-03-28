@@ -14,40 +14,7 @@
 
 
 ColoredDifferenceInPixelValuesComporator::ColoredDifferenceInPixelValuesComporator(Result result) {
-    currentMode = PixelsDifferenceCalculationMode::DifferenceBySingleLargestComponent;
     expectedResult = result;
-}
-
-void ColoredDifferenceInPixelValuesComporator::setProperties(QList<Property> properties) {
-    if (properties.size() != 1) {
-        QString error = "Got an error from %1: an incorrect number of properties.";
-        error = error.arg(getShortName());
-        throw std::runtime_error(error.toStdString());
-    }
-    int prop1Index = properties[0].getValue();
-
-    currentMode = (prop1Index == 0 ?
-                       PixelsDifferenceCalculationMode::DifferenceBySingleLargestComponent :
-                       PixelsDifferenceCalculationMode::DifferenceByAllComponents
-                   );
-}
-
-QList<Property> ColoredDifferenceInPixelValuesComporator::getDefaultProperties() const {
-    QString prop1Description = "There are two modes of operation for the algorithm: "
-                               "DifferenceBySingleLargestComponent and DifferenceByAllComponents. "
-                               "In the first case, the algorithm calculates the absolute difference "
-                               "for each component (R, G, or B) and takes the largest value among "
-                               "them, which is then used as the comparison value.  In the second c"
-                               "ase, the absolute differences of all components (R, G, and B) are "
-                               "summed up, and their total is used as the comparison value.";
-
-    QList<QString> prop1Alternatives = { "DifferenceBySingleLargestComponent", "DifferenceByAllComponents" };
-    auto prop1 = Property::createAlternativesProperty("Mode", prop1Description, prop1Alternatives, 0);
-    return { prop1 };
-}
-
-void ColoredDifferenceInPixelValuesComporator::reset() {
-    currentMode = PixelsDifferenceCalculationMode::DifferenceBySingleLargestComponent;
 }
 
 QString ColoredDifferenceInPixelValuesComporator::getShortName() const {
@@ -92,7 +59,7 @@ ComparisonResultVariantPtr ColoredDifferenceInPixelValuesComporator::compare(con
                                                                   const ComparableImage &second
                                                                   )
 {
-    PixelsAbsolutValueHelper helper { currentMode };
+    PixelsAbsolutValueHelper helper {};
 
     if (expectedResult == Result::Text) {
         QList<PixelDifferenceRange> ranges = helper.generateDifferenceStringResult(first.getImage(),
@@ -100,8 +67,7 @@ ComparisonResultVariantPtr ColoredDifferenceInPixelValuesComporator::compare(con
                                                                                    );
 
         QString result = PixelsAbsolutValueFormatter::formatResultToHtml(ranges,
-                                                                         getFullName(),
-                                                                         currentMode
+                                                                         getFullName()
                                                                          );
         return std::make_shared<ComparisonResultVariant>(result);
 

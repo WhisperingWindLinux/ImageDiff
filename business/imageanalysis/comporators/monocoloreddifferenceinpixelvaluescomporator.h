@@ -23,6 +23,7 @@ public:
     ComparisonResultVariantPtr compare(const ComparableImage &first,
                                        const ComparableImage &second) override;
     QString getFullName() const override;
+    bool isPartOfAutoReportingToolbox() override;
 
 private:
     QImage compareImages(const QImage &image1, const QImage &image2);

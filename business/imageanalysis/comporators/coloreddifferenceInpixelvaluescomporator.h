@@ -1,7 +1,6 @@
 #ifndef COLOREDDIFFERENCEINPIXELVALUESCOMPORATOR_H
 #define COLOREDDIFFERENCEINPIXELVALUESCOMPORATOR_H
 
-#include "business/imageanalysis/comporators/helpers/pixelsasolutvaluehelper.h"
 #include "domain/valueobjects/comparisonresultvariant.h"
 #include <domain/valueobjects/pixeldiffrencerange.h>
 #include <domain/valueobjects/property.h>
@@ -24,12 +23,8 @@ public:
     QString getDescription() const override;
     QString getFullName() const override;
     ComparisonResultVariantPtr compare(const ComparableImage &first, const ComparableImage &second) override;
-    QList<Property> getDefaultProperties() const override;
-    void setProperties(QList<Property> properties) override;
-    void reset() override;
 
 private:
-    PixelsDifferenceCalculationMode currentMode;
     Result expectedResult;
 };
 

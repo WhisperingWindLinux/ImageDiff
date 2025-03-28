@@ -1,10 +1,5 @@
 #include "pixelsasolutvaluehelper.h"
 
-PixelsAbsolutValueHelper::PixelsAbsolutValueHelper(PixelsDifferenceCalculationMode mode)
-    : currentMode(mode)
-{
-}
-
 
 QList<PixelDifferenceRange> PixelsAbsolutValueHelper::generateDifferenceStringResult(const QImage &image1,
                                                                                      const QImage &image2
@@ -25,10 +20,6 @@ QList<PixelDifferenceRange> PixelsAbsolutValueHelper::generateDifferenceStringRe
         PixelDifferenceRange(81, 90), PixelDifferenceRange(91, 100), PixelDifferenceRange(101, 150),
         PixelDifferenceRange(151, 200), PixelDifferenceRange(201, 255)
     };
-
-    if (currentMode == PixelsDifferenceCalculationMode::DifferenceByAllComponents) {
-        ranges.append(PixelDifferenceRange(256, 768));
-    }
 
     // Loop through each pixel and calculate the differences
     for (int y = 0; y < height; ++y) {
@@ -56,19 +47,10 @@ QList<PixelDifferenceRange> PixelsAbsolutValueHelper::generateDifferenceStringRe
 
 int PixelsAbsolutValueHelper::calculateDiff(QColor color1, QColor color2)
 {
-    if (currentMode == PixelsDifferenceCalculationMode::DifferenceBySingleLargestComponent) {
-        int diffR = std::abs(color1.red() - color2.red());
-        int diffG = std::abs(color1.green() - color2.green());
-        int diffB = std::abs(color1.blue() - color2.blue());
-        return std::max({diffR, diffG, diffB});
-    } else if (currentMode == PixelsDifferenceCalculationMode::DifferenceByAllComponents) {
-        int diff1 = color1.red() + color1.green() + color1.blue();
-        int diff2 = color2.red() + color2.green() + color2.blue();
-        return std::abs(diff1 - diff2);
-    }
-
-    throw std::runtime_error("Bad PixelsAbsoluteValueComparator::Mode "
-                             "in PixelsAbsolutValueHelper::calculateDiff.");
+    int diffR = std::abs(color1.red() - color2.red());
+    int diffG = std::abs(color1.green() - color2.green());
+    int diffB = std::abs(color1.blue() - color2.blue());
+    return std::max({diffR, diffG, diffB});
 }
 
 // Function to generate a color map for each range
