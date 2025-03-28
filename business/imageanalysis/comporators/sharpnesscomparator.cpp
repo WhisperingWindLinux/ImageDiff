@@ -89,7 +89,7 @@ QString SharpnessComparator::formatResultToHtml(const SharpnessComparisonResult 
                                                                         result.sharpness2,
                                                                         result.name1,
                                                                         result.name2,
-                                                                        "Equal"
+                                                                        "Equally"
                                                                         );
 
 
