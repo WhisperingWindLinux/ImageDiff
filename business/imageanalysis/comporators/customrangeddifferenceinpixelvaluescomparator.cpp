@@ -24,8 +24,8 @@ void CustomRangedDifferenceInPixelValuesComparator::setProperties(QList<Property
         error = error.arg(getShortName());
         throw std::runtime_error(error.toStdString());
     }
-    startOfRange = properties[1].getValue();
-    endOfRange = properties[2].getValue();
+    startOfRange = properties[0].getValue();
+    endOfRange = properties[1].getValue();
 }
 
 QList<Property> CustomRangedDifferenceInPixelValuesComparator::getDefaultProperties() const {
