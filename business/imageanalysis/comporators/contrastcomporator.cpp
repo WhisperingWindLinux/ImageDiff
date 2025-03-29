@@ -90,8 +90,8 @@ QString ContrastComporator::formatResultToHtml(const ContrastComparisonResult& r
 
     auto raundedResult = MathHelper::roundAndCompare(result.contrast1, result.contrast2);
 
-    auto beautifyPecentage = MathHelper::calcAndBeautifyPercentageValue(result.contrast1,
-                                                                        result.contrast2,
+    auto beautifyPecentage = MathHelper::calcAndBeautifyPercentageValue(raundedResult.value1,
+                                                                        raundedResult.value2,
                                                                         result.image1Name,
                                                                         result.image2Name,
                                                                         "Equally"

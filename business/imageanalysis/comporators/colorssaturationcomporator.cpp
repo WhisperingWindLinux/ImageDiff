@@ -77,12 +77,12 @@ QString ColorsSaturationComporator::formatResultToHtml(const ColorsSaturationCom
 
     auto raundedResult = MathHelper::roundAndCompare(result.avgSaturation1, result.avgSaturation2);
 
-    auto beautifyPercentage = MathHelper::calcAndBeautifyPercentageValue(result.avgSaturation1,
-                                                                        result.avgSaturation2,
-                                                                        result.image1Name,
-                                                                        result.image2Name,
-                                                                        "Equally"
-                                                                        );
+    auto beautifyPercentage = MathHelper::calcAndBeautifyPercentageValue(raundedResult.value1,
+                                                                         raundedResult.value2,
+                                                                         result.image1Name,
+                                                                         result.image2Name,
+                                                                         "Equally"
+                                                                         );
 
     html += QString("<h2 style=\"line-height: 2;\">%1</h2>").arg(getFullName());
     html += "<table border=\"1\" cellspacing=\"0\" cellpadding=\"5\">";

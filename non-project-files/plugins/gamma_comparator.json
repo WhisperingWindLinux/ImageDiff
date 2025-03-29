@@ -4,5 +4,5 @@
   "hotkey": "Z",
   "description": "Gamma correction adjusts brightness; this algorithm compares two images' gamma curves via normalized histograms.",
   "fullName": "Compare two images' gamma curves via normalized histograms (Python Plugin)",
-  "isPartOfAutoReportingToolbox": false
+  "isPartOfAutoReportingToolbox" : true
 }

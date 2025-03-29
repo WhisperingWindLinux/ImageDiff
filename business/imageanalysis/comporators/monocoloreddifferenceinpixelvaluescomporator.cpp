@@ -57,8 +57,3 @@ ComparisonResultVariantPtr MonoColoredDifferenceInPixelValuesComporator::compare
                                 std::make_shared<ComparisonResultVariant>(result);
     return resultVariant;
 }
-
-
-bool MonoColoredDifferenceInPixelValuesComporator::isPartOfAutoReportingToolbox() {
-    return false;
-}

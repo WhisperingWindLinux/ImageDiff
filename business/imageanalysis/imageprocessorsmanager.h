@@ -7,21 +7,26 @@
 #include <domain/interfaces/business/imageprocessor.h>
 #include <domain/valueobjects/imageprocessorsinfo.h>
 
+class QSettings;
+
 class ImageProcessorsManager
 {
 public:
     static ImageProcessorsManager *instance();
     void addProcessor(shared_ptr<IImageProcessor> processor);
     shared_ptr<IImageProcessor> findProcessorByShortName(const QString &name);
+    void setEnabledInAutoanalysisToolbox(const QString &shortName, bool isEnabled);
     std::optional<ImageProcessorInfo> getProcessorInfoByProcessorShortName(const QString &name);
     QList<ImageProcessorInfo> getAllProcessorsInfo();
     QList<shared_ptr<IComparator> > getAllComparators();
+
     void clear();
 
 private:
     QList<shared_ptr<IImageProcessor> > processors;
     QSet<QString> hotkeys;
     unique_ptr<PluginsManager> pluginsManager;
+    QSettings *storage;
 
     static ImageProcessorsManager *manager;
     ImageProcessorsManager();

@@ -44,6 +44,9 @@ QList<AutocomparisonReportEntry> RunAllComparatorsInteractor::executeAllComparat
         if (!comparator->isPartOfAutoReportingToolbox()) {
             continue;
         }
+        if (!comparator->isEnabled()) {
+            continue;
+        }
         if (callback->wasCanceled()) {
             return {};
         }

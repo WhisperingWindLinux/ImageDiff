@@ -14,11 +14,11 @@ class IFilter : public IImageProcessor {
 public:
     virtual QImage filter(const QImage &image) = 0;
 
-    virtual QList<Property> getDefaultProperties() const override { return {}; }
+    virtual QList<Property> getDefaultProperties() const override;
 
-    virtual void setProperties(QList<Property>) override { };
+    virtual void setProperties(QList<Property>) override;;
 
-    ImageProcessorType getType() const override { return ImageProcessorType::Filter; }
+    ImageProcessorType getType() const override;
 };
 
 typedef std::shared_ptr<IFilter> IFilterPtr;

@@ -4,13 +4,13 @@
   "hotkey": "Q",
   "description": "This algorithm compares two images pixel by pixel and retains only those pixels that differ between the two compared images. It allows selecting the color of the points that mark the differing pixels.",
   "fullName": "Difference In Pixel Values v.3 (Image, Python Plugin)",
-  "isPartOfAutoReportingToolbox": true,
+  "isPartOfAutoReportingToolbox" : true,
   "properties": [
     {
       "name": "Dot Color",
       "type": "alternatives",
       "alternatives": ["black","red", "green", "blue", "yellow", "cyan", "magenta", "white", "orange", "purple", "lime"],
-      "defaultIndex": 0,
+      "defaultIndex": 1,
       "description" : "Dot Color."
     },
     {

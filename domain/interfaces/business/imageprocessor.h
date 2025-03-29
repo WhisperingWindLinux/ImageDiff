@@ -26,10 +26,10 @@ public:
 
     virtual void setProperties(QList<Property>) = 0;
 
-    virtual void reset() { };
-
-    // The full name to be printed in help
+    // The full name to be printed in help.
     virtual QString getFullName() const = 0;
+
+    virtual void reset();
 };
 
 typedef std::shared_ptr<IImageProcessor> IImageProcessorPtr;

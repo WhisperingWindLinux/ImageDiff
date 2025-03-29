@@ -66,6 +66,7 @@ public slots:
     void showFirstImage();
     void showSecondImage();
     void showComparisonImage();
+    void showImageAutoAnalysisSettings();
 
 public:
     MainWindow(QWidget *parent = nullptr);

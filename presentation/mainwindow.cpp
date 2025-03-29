@@ -27,6 +27,7 @@
 #include <presentation/dialogs/comparatorresultdialog.h>
 #include <presentation/dialogs/externalimageviewerdialog.h>
 #include <presentation/dialogs/helpdialog.h>
+#include <presentation/dialogs/imageautoanalysissettingsdialog.h>
 #include <presentation/dialogs/pluginssettingsdialog.h>
 #include <presentation/dialogs/propertyeditordialog.h>
 #include <data/storage/savefiledialoghandler.h>
@@ -109,6 +110,7 @@ void MainWindow::makeConnections() {
     connect(ui->actionShowFirstImage, &QAction::triggered, this, &MainWindow::showFirstImage);
     connect(ui->actionShowSecondImage, &QAction::triggered, this, &MainWindow::showSecondImage);
     connect(ui->actionShowComparisonImage, &QAction::triggered, this, &MainWindow::showComparisonImage);
+    connect(ui->actionImageAutoAnalysisSettings, &QAction::triggered, this, &MainWindow::showImageAutoAnalysisSettings);
 }
 
 void MainWindow::enableImageProceesorsMenuItems(bool isEnabled) {
@@ -234,6 +236,11 @@ void MainWindow::showSecondImage() {
 
 void MainWindow::showComparisonImage() {
     imageProcessingInteractor->showLastComparisonImage();
+}
+
+void MainWindow::showImageAutoAnalysisSettings() {
+    ImageAutoAnalysisSettingsDialog dialog{};
+    dialog.exec();
 }
 
 void MainWindow::callImageProcessor() {

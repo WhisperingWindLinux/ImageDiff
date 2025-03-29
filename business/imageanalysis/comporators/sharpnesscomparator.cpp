@@ -85,8 +85,8 @@ QString SharpnessComparator::formatResultToHtml(const SharpnessComparisonResult 
 
     auto raundedResult = MathHelper::roundAndCompare(result.sharpness1, result.sharpness2);
 
-    auto beautifyPecentage = MathHelper::calcAndBeautifyPercentageValue(result.sharpness1,
-                                                                        result.sharpness2,
+    auto beautifyPecentage = MathHelper::calcAndBeautifyPercentageValue(raundedResult.value1,
+                                                                        raundedResult.value2,
                                                                         result.name1,
                                                                         result.name2,
                                                                         "Equally"

@@ -104,6 +104,7 @@
     <addaction name="actionColorPicker"/>
     <addaction name="separator"/>
     <addaction name="menuPlugins"/>
+    <addaction name="actionImageAutoAnalysisSettings"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuView"/>
@@ -297,6 +298,11 @@
    </property>
    <property name="shortcut">
     <string>3</string>
+   </property>
+  </action>
+  <action name="actionImageAutoAnalysisSettings">
+   <property name="text">
+    <string>Image Auto-Analysis Settings</string>
    </property>
   </action>
  </widget>

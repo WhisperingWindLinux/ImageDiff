@@ -11,6 +11,7 @@ CONFIG += c++17
 
 SOURCES += \
     business/getimagesfromvideosinteractor.cpp \
+    business/imageanalysis/autoanalysissettingsinteractor.cpp \
     business/imageanalysis/comporators/coloreddifferenceinpixelvaluescomporator.cpp \
     business/imageanalysis/comporators/colorssaturationcomporator.cpp \
     business/imageanalysis/comporators/contrastcomporator.cpp \
@@ -41,6 +42,9 @@ SOURCES += \
     data/storage/imagefileshandler.cpp \
     data/repositories/pluginsrepository.cpp \
     data/storage/savefiledialoghandler.cpp \
+    domain/interfaces/business/icomparator.cpp \
+    domain/interfaces/business/ifilter.cpp \
+    domain/interfaces/business/imageprocessor.cpp \
     domain/valueobjects/comparableimage.cpp \
     domain/valueobjects/comparisonresultvariant.cpp \
     domain/valueobjects/images.cpp \
@@ -54,6 +58,7 @@ SOURCES += \
     presentation/dialogs/formatters/helphtmlformatter.cpp \
     presentation/dialogs/getimagesfromvideosdialog.cpp \
     presentation/dialogs/helpdialog.cpp \
+    presentation/dialogs/imageautoanalysissettingsdialog.cpp \
     presentation/dialogs/pluginssettingsdialog.cpp \
     presentation/dialogs/propertyeditordialog.cpp \
     presentation/imageprocessorsmenucontroller.cpp \
@@ -68,6 +73,7 @@ SOURCES += \
 
 HEADERS += \
     business/getimagesfromvideosinteractor.h \
+    business/imageanalysis/autoanalysissettingsinteractor.h \
     business/imageanalysis/comporators/coloreddifferenceInpixelvaluescomporator.h \
     business/imageanalysis/comporators/colorssaturationcomporator.h \
     business/imageanalysis/comporators/contrastcomporator.h \
@@ -135,6 +141,7 @@ HEADERS += \
     presentation/dialogs/formatters/helphtmlformatter.h \
     presentation/dialogs/getimagesfromvideosdialog.h \
     presentation/dialogs/helpdialog.h \
+    presentation/dialogs/imageautoanalysissettingsdialog.h \
     presentation/dialogs/pluginssettingsdialog.h \
     presentation/dialogs/propertyeditordialog.h \
     presentation/imageprocessorsmenucontroller.h \

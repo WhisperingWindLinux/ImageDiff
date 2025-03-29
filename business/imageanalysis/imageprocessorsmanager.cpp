@@ -1,6 +1,7 @@
 #include "imageprocessorsmanager.h"
 
 #include <qhash.h>
+#include <qsettings.h>
 
 #include <business/imageanalysis/comporators/colorssaturationcomporator.h>
 #include <business/imageanalysis/comporators/contrastcomporator.h>
@@ -20,6 +21,7 @@ ImageProcessorsManager *ImageProcessorsManager::instance() {
 }
 
 ImageProcessorsManager::ImageProcessorsManager() {
+    storage = new QSettings("com.WhisperingWind", "ImageDiff");
 }
 
 void ImageProcessorsManager::clear() {
@@ -28,15 +30,44 @@ void ImageProcessorsManager::clear() {
 }
 
 void ImageProcessorsManager::addProcessor(shared_ptr<IImageProcessor> processor) {
-    if (processor != nullptr) {
-        if (hotkeys.contains(processor->getHotkey()) && !processor->getHotkey().isEmpty()) {
-            QString errorMsg = QString("It is not possible to add ") +
-                                       "two IImageProcessors with the same hotkey value.";
-            throw runtime_error(errorMsg.toStdString());
-        }
-        hotkeys.insert(processor->getHotkey());
-        processors.append(processor);
+    if (processor == nullptr) {
+        return;
     }
+    if (hotkeys.contains(processor->getHotkey()) && !processor->getHotkey().isEmpty()) {
+        QString errorMsg = QString("It is not possible to add ") +
+                                   "two IImageProcessors with the same hotkey value.";
+        throw runtime_error(errorMsg.toStdString());
+    }
+    hotkeys.insert(processor->getHotkey());
+    processors.append(processor);
+
+    if (processor->getType() != ImageProcessorType::Comparator) {
+        return;
+    }
+    auto comparator = std::static_pointer_cast<IComparator>(processor);
+    if (!comparator->isPartOfAutoReportingToolbox()) {
+        return;
+    }
+    QString shortName = processor->getShortName();
+    bool isEnabledInAutoanalysisToolbox = storage->value(shortName, true).toBool();
+    std::static_pointer_cast<IComparator>(processor)->setEnabled(isEnabledInAutoanalysisToolbox);
+}
+
+void ImageProcessorsManager::setEnabledInAutoanalysisToolbox(const QString &shortName,
+                                                             bool isEnabled
+                                                             )
+{
+    auto processor = this->findProcessorByShortName(shortName);
+
+    if (processor == nullptr || processor->getType() != ImageProcessorType::Comparator) {
+        return;
+    }
+    auto comparator = std::static_pointer_cast<IComparator>(processor);
+    if (!comparator->isPartOfAutoReportingToolbox()) {
+        return;
+    }
+    comparator->setEnabled(isEnabled);
+    storage->setValue(shortName, isEnabled);
 }
 
 void ImageProcessorsManager::removeProcessor(QString name) {
