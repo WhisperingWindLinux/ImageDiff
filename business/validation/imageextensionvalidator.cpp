@@ -11,7 +11,7 @@ ImageExtensionValidator::ImageExtensionValidator()
 bool ImageExtensionValidator::canOpen(const QString &imagePath) {
     QFileInfo imageInfo { imagePath };
     QString suffix = imageInfo.suffix();
-    if (extensionsForOpen.contains(suffix)) {
+    if (extensionsForOpen.contains(suffix.toLower())) {
         return true;
     } else {
         return false;
