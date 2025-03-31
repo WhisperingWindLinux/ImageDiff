@@ -79,7 +79,9 @@ void ImageFilesInteractor::openImagesViaCommandLine(const QString &image1Path,
 void ImageFilesInteractor::openImagesViaOpenFilesDialog() {
     try {
         images = imageFileHandler->openImages();
-        notifyImagesOpened(images);
+        if (images != nullptr) {
+            notifyImagesOpened(images);
+        }
     } catch(std::runtime_error &e) {
         cleanup();
         notifyImagesOpenFailed(e.what());

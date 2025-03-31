@@ -9,7 +9,7 @@
 
 SaveFileDialogHandler::SaveFileDialogHandler() {
     auto validationRules = ImageValidationRulesFactory::createImageExtensionValidator();
-    imageFilter = validationRules->createFilter();
+    imageFilter = validationRules->createSaveFilter();
 }
 
 std::optional<QString> SaveFileDialogHandler::getUserSaveImagePath(const QString &path) {

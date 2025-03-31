@@ -5,6 +5,9 @@
 #include <qstring.h>
 #include <qurl.h>
 #include <domain/valueobjects/savefileinfo.h>
+#define STB_IMAGE_IMPLEMENTATION
+#include <opencv2/opencv.hpp>
+
 
 class ImagesRepository;
 
@@ -31,6 +34,7 @@ public:
 private:
     bool validateFile(const QString &filePath);
     void validateImages(ImagesPtr images);
+    QPixmap cvMatToQImage(const cv::Mat &mat);
 };
 
 #endif // IMAGEFILESHANDLER_H

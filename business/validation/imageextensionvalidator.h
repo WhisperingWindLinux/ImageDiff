@@ -7,17 +7,15 @@
 #include <business/validation/interfaces/iimageextentionvalidator.h>
 
 
-class ImageExtensionValidator : public IImageExtentionValidator
+class ImageExtensionsInfoProvider : public IImageExtentionValidator
 {
 public:
-    ImageExtensionValidator();
-    virtual ~ImageExtensionValidator() = default;
+    ImageExtensionsInfoProvider();
+    virtual ~ImageExtensionsInfoProvider() = default;
 
-    bool canOpen(const QString &imagePath) override;
-    QString getAllExtensionsForUserMessages(bool isToUpper) override;
     QString getDeafaultSaveExtension(bool includeDot = false) override;
-    QString createFilter() override;
-
+    QString createOpenFilter() override;
+    QString createSaveFilter() override;
 private:
     QList<QString> extensionsForOpen;
     QString extensionForSave;

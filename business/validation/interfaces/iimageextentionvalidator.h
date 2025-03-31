@@ -7,10 +7,9 @@
 class IImageExtentionValidator
 {
 public:
-    virtual bool canOpen(const QString &imagePath) = 0;
-    virtual QString getAllExtensionsForUserMessages(bool isToUpper) = 0;
     virtual QString getDeafaultSaveExtension(bool includeDot) = 0;
-    virtual QString createFilter() = 0;
+    virtual QString createOpenFilter() = 0;
+    virtual QString createSaveFilter() = 0;
 };
 
 

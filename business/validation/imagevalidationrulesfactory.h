@@ -16,7 +16,7 @@ public:
     }
 
     static std::shared_ptr<IImageExtentionValidator> createImageExtensionValidator() {
-        return std::make_shared<ImageExtensionValidator>();
+        return std::make_shared<ImageExtensionsInfoProvider>();
     }
 };
 
