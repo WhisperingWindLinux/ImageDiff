@@ -106,10 +106,15 @@ QString SharpnessComparator::formatResultToHtml(const SharpnessComparisonResult 
         html += "<tr><td colspan=\"2\" align=\"center\">Equal</td></tr>";
     }
     else {
-        html += QString("<tr><td colspan=\"2\" align=\"center\">Image<b><font "
-                        "color=\"green\"> %1</font></b> is %2 sharper</td></tr>")
-                    .arg(beautifyPecentage.resultDescription)
-                    .arg(beautifyPecentage.percentageResult);
+        if (beautifyPecentage.isEqually) {
+            html += QString("<tr><td colspan=\"2\" align=\"center\">%1</td></tr>")
+                        .arg(beautifyPecentage.resultDescription);
+        } else {
+            html += QString("<tr><td colspan=\"2\" align=\"center\">Image<b><font "
+                            "color=\"green\"> %1</font></b> is %2 sharper</td></tr>")
+                        .arg(beautifyPecentage.resultDescription)
+                        .arg(beautifyPecentage.percentageResult);
+        }
     }
     html += "</table>";
     html += "<br /><br />";
