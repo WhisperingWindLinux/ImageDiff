@@ -8,14 +8,6 @@ CONFIG += c++17
 # In order to do so, uncomment the following line.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
-INCLUDEPATH += /usr/local/opencv4/include/opencv4
-
-LIBS += -L/usr/local/opencv4/lib \
-        -lopencv_core \
-        -lopencv_imgcodecs \
-        -lopencv_highgui \
-        -lopencv_imgproc
-
 SOURCES += \
     business/getimagesfromvideosinteractor.cpp \
     business/imageanalysis/autoanalysissettingsinteractor.cpp \

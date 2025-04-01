@@ -5,9 +5,6 @@
 #include <qstring.h>
 #include <qurl.h>
 #include <domain/valueobjects/savefileinfo.h>
-#define STB_IMAGE_IMPLEMENTATION
-#include <opencv2/opencv.hpp>
-
 
 class ImagesRepository;
 

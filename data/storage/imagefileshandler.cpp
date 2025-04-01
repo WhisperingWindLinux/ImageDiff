@@ -1,5 +1,4 @@
 #include "imagefileshandler.h"
-#include "data/storage/stb_image.h"
 
 #include <QStringList>
 #include <QtCore/qdir.h>
@@ -10,6 +9,9 @@
 #include <domain/valueobjects/images.h>
 #include <business/utils/imagesinfo.h>
 #include <business/validation/imagevalidationrulesfactory.h>
+
+#define STB_IMAGE_IMPLEMENTATION
+#include "data/storage/stb_image.h"
 
 
 ImagesPtr ImageFilesHandler::openImages(const QList<QUrl> &urls) {
