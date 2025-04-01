@@ -63,9 +63,9 @@ ComparisonResultVariantPtr ColorsSaturationComporator::compare(const ComparableI
                                                               )
 {
     auto result = compareImages(first.getImage(),
-                                first.getName(),
+                                first.getBaseName(),
                                 second.getImage(),
-                                second.getName()
+                                second.getBaseName()
                                 );
 
     QString html = ColorsSaturationComporator::formatResultToHtml(result);

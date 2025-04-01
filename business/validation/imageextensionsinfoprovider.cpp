@@ -1,4 +1,4 @@
-#include "imageextensionvalidator.h"
+#include "imageextensionsinfoprovider.h"
 
 #include <qfileinfo.h>
 

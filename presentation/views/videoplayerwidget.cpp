@@ -114,7 +114,7 @@ void VideoPlayerWidget::takeScreenshot() {
 
     QString timePos = currentTimePositionAsString();
 
-    auto extentionValidator = ImageValidationRulesFactory::createImageExtensionValidator();
+    auto extentionValidator = ImageValidationRulesFactory::createImageExtensionsInfoProvider();
     QString ext = extentionValidator->getDeafaultSaveExtension(true);
 
     QString screenshotFileName = QString("%1_screenshot_%2%3")

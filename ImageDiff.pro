@@ -26,7 +26,7 @@ SOURCES += \
     business/imageanalysis/filters/rgbfilter.cpp \
     business/imageanalysis/imageprocessinginteractor.cpp \
     business/imageanalysis/imageprocessorsmanager.cpp \
-    business/validation/imageextensionvalidator.cpp \
+    business/validation/imageextensionsinfoprovider.cpp \
     business/validation/imagevalidationrules.cpp \
     business/imagefilesinteractors.cpp \
     business/otherappinstancesinteractor.cpp \
@@ -88,10 +88,10 @@ HEADERS += \
     business/imageanalysis/filters/rgbfilter.h \
     business/imageanalysis/imageprocessinginteractor.h \
     business/imageanalysis/imageprocessorsmanager.h \
-    business/validation/imageextensionvalidator.h \
+    business/validation/imageextensionsinfoprovider.h \
     business/validation/imagevalidationrules.h \
     business/validation/imagevalidationrulesfactory.h \
-    business/validation/interfaces/iimageextentionvalidator.h \
+    business/validation/interfaces/iimageextensionsinfoprovider.h \
     business/validation/interfaces/iimagevalidationrules.h \
     business/imagefilesinteractors.h \
     business/otherappinstancesinteractor.h \

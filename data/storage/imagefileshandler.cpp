@@ -114,7 +114,7 @@ std::optional<FileSaveResult> ImageFilesHandler::saveImageAs(const SaveImageInfo
 
     ImagesInfo imagesInfo { images };
 
-    auto extentionValidator = ImageValidationRulesFactory::createImageExtensionValidator();
+    auto extentionValidator = ImageValidationRulesFactory::createImageExtensionsInfoProvider();
     QString ext = extentionValidator->getDeafaultSaveExtension(true);
 
     const QString &file1Name = imagesInfo.getFirstImageBaseName();

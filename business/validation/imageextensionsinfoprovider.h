@@ -1,13 +1,13 @@
-#ifndef IMAGEEXTENSIONVALIDATOR_H
-#define IMAGEEXTENSIONVALIDATOR_H
+#ifndef IMAGEEXTENSIONSINFOPROVIDER_H
+#define IMAGEEXTENSIONSINFOPROVIDER_H
 
 #include <qstring.h>
 #include <QList>
 
-#include <business/validation/interfaces/iimageextentionvalidator.h>
+#include <business/validation/interfaces/iimageextensionsinfoprovider.h>
 
 
-class ImageExtensionsInfoProvider : public IImageExtentionValidator
+class ImageExtensionsInfoProvider : public IImageExtensionsInfoProvider
 {
 public:
     ImageExtensionsInfoProvider();
@@ -21,4 +21,4 @@ private:
     QString extensionForSave;
 };
 
-#endif // IMAGEEXTENSIONVALIDATOR_H
+#endif // IMAGEEXTENSIONSINFOPROVIDER_H

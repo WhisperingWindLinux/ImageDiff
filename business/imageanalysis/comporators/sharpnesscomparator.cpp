@@ -71,9 +71,9 @@ std::shared_ptr<ComparisonResultVariant> SharpnessComparator::compare(const Comp
                                                                       )
 {
     auto result = compareImages(first.getImage(),
-                                first.getName(),
+                                first.getBaseName(),
                                 second.getImage(),
-                                second.getName()
+                                second.getBaseName()
                                 );
 
     QString html = SharpnessComparator::formatResultToHtml(result);

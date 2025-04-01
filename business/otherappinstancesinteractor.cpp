@@ -76,7 +76,7 @@ std::optional<QString> OtherAppInstancesInteractor::saveImageInTempDir(const QPi
                                                                        )
 {
     QString tempDir = QDir::tempPath();
-    auto validationRules = ImageValidationRulesFactory::createImageExtensionValidator();
+    auto validationRules = ImageValidationRulesFactory::createImageExtensionsInfoProvider();
     auto ext = validationRules->getDeafaultSaveExtension(true);
     QString filePath = QDir(tempDir).filePath(QString(fileName) + ext);
     if (pixmap.save(filePath)) {

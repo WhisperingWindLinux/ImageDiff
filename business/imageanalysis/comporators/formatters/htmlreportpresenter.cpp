@@ -5,6 +5,7 @@
 #include <qdir.h>
 
 #include <presentation/dialogs/formatters/helphtmlformatter.h>
+#include <business/validation/imagevalidationrulesfactory.h>
 
 bool HtmlReportPresenter::createExtendedReportPage(const QString &folderPath,
                                                    const ComparableImage &firstOriginalImage,
@@ -25,11 +26,16 @@ bool HtmlReportPresenter::createExtendedReportPage(const QString &folderPath,
         imagesDir.mkpath(".");
     }
 
+    auto provider = ImageValidationRulesFactory::createImageExtensionsInfoProvider();
+
     QImage firstOrigImage = firstOriginalImage.getImage();
     QImage secondOrigImage = secondOriginalImage.getImage();
 
-    QString firtsOrigImageName = firstOriginalImage.getName();
-    QString secondOrigImageName = secondOriginalImage.getName();
+    QString firtsOrigImageName = firstOriginalImage.getBaseName() +
+                                 provider->getDeafaultSaveExtension(true);
+
+    QString secondOrigImageName = secondOriginalImage.getBaseName() +
+                                  provider->getDeafaultSaveExtension(true);;
 
     // Save the two main images
     firstOrigImage.save(imagesFolderPath + "/" + firtsOrigImageName);

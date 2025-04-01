@@ -1,10 +1,10 @@
-#ifndef IIMAGEEXTENTIONVALIDATOR_H
-#define IIMAGEEXTENTIONVALIDATOR_H
+#ifndef IIMAGEEXTENSIONSINFOPROVIDER_H
+#define IIMAGEEXTENSIONSINFOPROVIDER_H
 
 #include <qstring.h>
 
 
-class IImageExtentionValidator
+class IImageExtensionsInfoProvider
 {
 public:
     virtual QString getDeafaultSaveExtension(bool includeDot) = 0;
@@ -13,4 +13,4 @@ public:
 };
 
 
-#endif // IIMAGEEXTENTIONVALIDATOR_H
+#endif // IIMAGEEXTENSIONSINFOPROVIDER_H
