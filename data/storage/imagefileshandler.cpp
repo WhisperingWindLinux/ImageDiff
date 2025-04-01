@@ -9,7 +9,7 @@
 #include <data/storage/savefiledialoghandler.h>
 #include <domain/valueobjects/images.h>
 #include <business/utils/imagesinfo.h>
-#include <business//validation/imagevalidationrulesfactory.h>
+#include <business/validation/imagevalidationrulesfactory.h>
 
 
 ImagesPtr ImageFilesHandler::openImages(const QList<QUrl> &urls) {
@@ -58,42 +58,32 @@ ImagesPtr ImageFilesHandler::openImages(const QString &image1Path, const QString
         throw std::runtime_error(error.toStdString());
     }
 
-    cv::Mat openCvImage1 { height1, width1, CV_8UC4, data1 };
-    cv::Mat openCvImage2 { height2, width2, CV_8UC4, data2 };
 
-    // OpenCV by default works with the BGR (Blue-Green-Red) format, while
-    // stb_image loads images in the RGBA (Red-Green-Blue-Alpha) format.
+    QImage image1(reinterpret_cast<const uchar*>(data1),
+                  width1,
+                  height1,
+                  QImage::Format_RGBA8888
+                  );
 
-    cv::cvtColor(openCvImage1, openCvImage1, cv::COLOR_RGBA2BGRA);
-    cv::cvtColor(openCvImage2, openCvImage2, cv::COLOR_RGBA2BGRA);
+    QImage image2(reinterpret_cast<const uchar*>(data2),
+                  width2,
+                  height2,
+                  QImage::Format_RGBA8888
+                  );
 
-    QPixmap image1 = cvMatToQImage(openCvImage1);
-    QPixmap image2 = cvMatToQImage(openCvImage2);
+
+    QPixmap pixmap1 = QPixmap::fromImage(image1.copy());
+    QPixmap pixmap2 = QPixmap::fromImage(image2.copy());
 
     stbi_image_free(data1);
     stbi_image_free(data2);
 
-    auto images = std::make_shared<Images>(image1, image2, image1Path, image2Path);
+    auto images = std::make_shared<Images>(pixmap1, pixmap2, image1Path, image2Path);
 
     validateImages(images);
 
     return images;
 }
-
-QPixmap ImageFilesHandler::cvMatToQImage(const cv::Mat &mat) {
-    if (mat.empty()) {
-        return {};
-    }
-    if (mat.type() == CV_8UC3) {
-        return QPixmap::fromImage(QImage(mat.data, mat.cols, mat.rows, mat.step, QImage::Format_RGB888).rgbSwapped());
-    } else if (mat.type() == CV_8UC4) {
-        return QPixmap::fromImage(QImage(mat.data, mat.cols, mat.rows, mat.step, QImage::Format_ARGB32));
-    } else if (mat.type() == CV_8UC1) {
-        return QPixmap::fromImage(QImage(mat.data, mat.cols, mat.rows, mat.step, QImage::Format_Grayscale8));
-    }
-    return {};
-}
-
 
 void ImageFilesHandler::validateImages(ImagesPtr images) {
     auto validationRules = ImageValidationRulesFactory::createImageFormatValidator(images);

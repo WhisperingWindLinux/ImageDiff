@@ -34,7 +34,6 @@ public:
 private:
     bool validateFile(const QString &filePath);
     void validateImages(ImagesPtr images);
-    QPixmap cvMatToQImage(const cv::Mat &mat);
 };
 
 #endif // IMAGEFILESHANDLER_H
