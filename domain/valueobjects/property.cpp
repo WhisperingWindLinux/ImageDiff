@@ -73,12 +73,12 @@ Property Property::createIntProperty(const QString &propertyName,
 // Static method to create a real property without min/max constraints
 Property Property::createRealProperty(const QString &propertyName,
                                       const QString &propertyDescription,
-                                      int defaultValue
+                                      double defaultValue
                                       )
 {
     return Property(propertyName,
                     propertyDescription,
-                    static_cast<double>(defaultValue),
+                    defaultValue,
                     -DBL_MAX,
                     DBL_MAX
                     );

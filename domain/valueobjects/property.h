@@ -27,7 +27,7 @@ public:
     
     static Property createRealProperty(const QString &propertyName,
                                        const QString &propertyDescription,
-                                       int defaultValue
+                                       double defaultValue
                                        );
     
     static Property createRealProperty(const QString &propertyName,

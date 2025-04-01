@@ -19,6 +19,7 @@ SOURCES += \
     business/imageanalysis/comporators/helpers/mathhelper.cpp \
     business/imageanalysis/comporators/helpers/pixelsasolutvaluehelper.cpp \
     business/imageanalysis/comporators/imageproximitytoorigincomparator.cpp \
+    business/imageanalysis/comporators/linernonlinerdifferencecomparator.cpp \
     business/imageanalysis/comporators/monocoloreddifferenceinpixelvaluescomporator.cpp \
     business/imageanalysis/comporators/pixelsbrightnesscomparator.cpp \
     business/imageanalysis/comporators/sharpnesscomparator.cpp \
@@ -81,6 +82,7 @@ HEADERS += \
     business/imageanalysis/comporators/helpers/mathhelper.h \
     business/imageanalysis/comporators/helpers/pixelsasolutvaluehelper.h \
     business/imageanalysis/comporators/imageproximitytoorigincomparator.h \
+    business/imageanalysis/comporators/linernonlinerdifferencecomparator.h \
     business/imageanalysis/comporators/monocoloreddifferenceinpixelvaluescomporator.h \
     business/imageanalysis/comporators/pixelsbrightnesscomparator.h \
     business/imageanalysis/comporators/sharpnesscomparator.h \

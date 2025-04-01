@@ -63,13 +63,15 @@ Show pixels' saturation difference statistics (Comparator)                      
 
 Dummy comparator (Comparator; For Testing Purposes Only)                                                X
 
+Liner - non-liner difference comparator                                                                 L
+
 Color picker                                                                                            P
 
 Docked Color Picker                                                                                     A
 
 Show Original Image (Filter)                                                                            C
 
-Show Grayscale Image (Filter)                                                                           L
+Show Grayscale Image (Filter)                                                                           E
 
 Show Red channel only (Filter)                                                                          R
 

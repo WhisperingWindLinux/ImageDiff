@@ -12,6 +12,7 @@
 #include <business/imageanalysis/comporators/pixelsbrightnesscomparator.h>
 #include <business/imageanalysis/comporators/sharpnesscomparator.h>
 #include <business/imageanalysis/comporators/customrangeddifferenceinpixelvaluescomparator.h>
+#include <business/imageanalysis/comporators/linernonlinerdifferencecomparator.h>
 #include <business/imageanalysis/filters/grayscalefilter.h>
 #include <business/imageanalysis/filters/rgbfilter.h>
 #include <data/storage/savefiledialoghandler.h>
@@ -227,6 +228,7 @@ QList<ImageProcessorInfo> ImageProcessingInteractor::getImageProcessorsInfo() {
     auto sharpnessComparator = make_shared<SharpnessComparator>();
     auto imageProximityComparator = make_shared<ImageProximityToOriginComparator>();
     auto customRangedPixelsComparatorImg = make_shared<CustomRangedDifferenceInPixelValuesComparator>();
+    auto linerNonLinerDifferenceComparator = make_shared<LinerNonLinerDifferenceComparator>();
 
     processorsManager->addProcessor(imageComparator);
     processorsManager->addProcessor(imageSaturationComporator);
@@ -237,6 +239,7 @@ QList<ImageProcessorInfo> ImageProcessingInteractor::getImageProcessorsInfo() {
     processorsManager->addProcessor(sharpnessComparator);
     processorsManager->addProcessor(imageProximityComparator);
     processorsManager->addProcessor(customRangedPixelsComparatorImg);
+    processorsManager->addProcessor(linerNonLinerDifferenceComparator);
 
     // add filters
 
