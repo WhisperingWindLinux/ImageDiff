@@ -25,7 +25,7 @@ PythonScriptComparator::PythonScriptComparator(const QString &pyScriptPath,
     m_isPartOfAutoReportingToolbox(isPartOfAutoReportingToolbox),
     pyScriptPath(pyScriptPath)
 {
-    auto validationRules = ImageValidationRulesFactory::createImageExtensionValidator();
+    auto validationRules = ImageValidationRulesFactory::createImageExtensionsInfoProvider();
     QString ext = validationRules->getDeafaultSaveExtension(false);
     defaultSaveImageExtention = ext.toUpper().toStdString();
 }
@@ -93,7 +93,7 @@ shared_ptr<ComparisonResultVariant> PythonScriptComparator::compare(const Compar
     }
 
     QStringList params;
-    params << pyScriptPath << first.getName() << second.getName();
+    params << pyScriptPath << first.getPath() << second.getPath();
 
     foreach (auto property, properties) {
         params << property.getAnyValueAsString();

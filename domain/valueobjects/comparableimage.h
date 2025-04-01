@@ -12,13 +12,13 @@ public:
     ComparableImage(const QPixmap &image, const QString &name);
 
     QImage getImage() const;
-    QString getName() const;
 
-    friend class ComparableImageTests;
+    QString getBaseName() const;
+    QString getPath() const;
 
 private:
     QImage image;
-    QString name;
+    QString path;
 };
 
 #endif // COMPARABLEIMAGE_H

@@ -8,8 +8,8 @@
 #include <business/validation/imagevalidationrulesfactory.h>
 
 SaveFileDialogHandler::SaveFileDialogHandler() {
-    auto validationRules = ImageValidationRulesFactory::createImageExtensionValidator();
-    imageFilter = validationRules->createFilter();
+    auto validationRules = ImageValidationRulesFactory::createImageExtensionsInfoProvider();
+    imageFilter = validationRules->createSaveFilter();
 }
 
 std::optional<QString> SaveFileDialogHandler::getUserSaveImagePath(const QString &path) {

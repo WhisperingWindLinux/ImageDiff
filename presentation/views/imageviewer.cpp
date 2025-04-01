@@ -149,6 +149,7 @@ void ImageViewer::showImageFromComparator(const QPixmap &image, const QString &d
     }
     if (comparatorResultDisplayedImage != nullptr) {
         customScene->removeItem(comparatorResultDisplayedImage);
+        delete comparatorResultDisplayedImage;
         comparatorResultDisplayedImage = nullptr;
     }
 
@@ -170,14 +171,17 @@ void ImageViewer::replaceDisplayedImages(const QPixmap& image1, const QPixmap& i
 
     if (firstDisplayedImage != nullptr) {
         customScene->removeItem(firstDisplayedImage);
+        delete firstDisplayedImage;
         firstDisplayedImage = nullptr;
     }
     if (secondDisplayedImage != nullptr) {
         customScene->removeItem(secondDisplayedImage);
+        delete secondDisplayedImage;
         secondDisplayedImage = nullptr;
     }
     if (comparatorResultDisplayedImage != nullptr) {
         customScene->removeItem(comparatorResultDisplayedImage);
+        delete comparatorResultDisplayedImage;
         comparatorResultDisplayedImage = nullptr;
     }
 
@@ -206,14 +210,17 @@ bool ImageViewer::hasActiveSession() {
 void ImageViewer::cleanUp() {
     if (firstDisplayedImage != nullptr) {
         customScene->removeItem(firstDisplayedImage);
+        delete firstDisplayedImage;
         firstDisplayedImage = nullptr;
     }
     if (secondDisplayedImage != nullptr) {
         customScene->removeItem(secondDisplayedImage);
+        delete secondDisplayedImage;
         secondDisplayedImage = nullptr;
     }
     if (comparatorResultDisplayedImage != nullptr) {
         customScene->removeItem(comparatorResultDisplayedImage);
+        delete comparatorResultDisplayedImage;
         comparatorResultDisplayedImage = nullptr;
     }
     if (customScene != nullptr) {
@@ -255,6 +262,7 @@ void ImageViewer::toggleImage() {
 
     if (comparatorResultDisplayedImage != nullptr) {
         customScene->removeItem(comparatorResultDisplayedImage);
+        delete comparatorResultDisplayedImage;
         comparatorResultDisplayedImage = nullptr;
         currentImageIndex == 1 ?
             currentImageIndex = 0 :

@@ -1,7 +1,7 @@
 #ifndef IMAGEVALIDATIONRULESFACTORY_H
 #define IMAGEVALIDATIONRULESFACTORY_H
 
-#include <business/validation/imageextensionvalidator.h>
+#include <business/validation/imageextensionsinfoprovider.h>
 #include <domain/valueobjects/images.h>
 #include <business/validation/interfaces/iimagevalidationrules.h>
 #include <business/validation/imagevalidationrules.h>
@@ -15,8 +15,8 @@ public:
         return std::make_shared<ImageValidationRules>(images);
     }
 
-    static std::shared_ptr<IImageExtentionValidator> createImageExtensionValidator() {
-        return std::make_shared<ImageExtensionValidator>();
+    static std::shared_ptr<IImageExtensionsInfoProvider> createImageExtensionsInfoProvider() {
+        return std::make_shared<ImageExtensionsInfoProvider>();
     }
 };
 

@@ -4,7 +4,6 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++17
 
-
 # You can make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
@@ -27,7 +26,7 @@ SOURCES += \
     business/imageanalysis/filters/rgbfilter.cpp \
     business/imageanalysis/imageprocessinginteractor.cpp \
     business/imageanalysis/imageprocessorsmanager.cpp \
-    business/validation/imageextensionvalidator.cpp \
+    business/validation/imageextensionsinfoprovider.cpp \
     business/validation/imagevalidationrules.cpp \
     business/imagefilesinteractors.cpp \
     business/otherappinstancesinteractor.cpp \
@@ -89,10 +88,10 @@ HEADERS += \
     business/imageanalysis/filters/rgbfilter.h \
     business/imageanalysis/imageprocessinginteractor.h \
     business/imageanalysis/imageprocessorsmanager.h \
-    business/validation/imageextensionvalidator.h \
+    business/validation/imageextensionsinfoprovider.h \
     business/validation/imagevalidationrules.h \
     business/validation/imagevalidationrulesfactory.h \
-    business/validation/interfaces/iimageextentionvalidator.h \
+    business/validation/interfaces/iimageextensionsinfoprovider.h \
     business/validation/interfaces/iimagevalidationrules.h \
     business/imagefilesinteractors.h \
     business/otherappinstancesinteractor.h \
@@ -108,6 +107,7 @@ HEADERS += \
     data/storage/imagefileshandler.h \
     data/repositories/pluginsrepository.h \
     data/storage/savefiledialoghandler.h \
+    data/storage/stb_image.h \
     domain/interfaces/business/irecentfilesmanager.h \
     domain/interfaces/presentation/icolorpickercontroller.h \
     domain/interfaces/presentation/icolorundercursorchangelistener.h \

@@ -20,7 +20,7 @@ PythonScripFilter::PythonScripFilter(const QString& pyScriptPath,
     properties(properties),
     pyScriptPath(pyScriptPath)
 {
-    auto validationRules = ImageValidationRulesFactory::createImageExtensionValidator();
+    auto validationRules = ImageValidationRulesFactory::createImageExtensionsInfoProvider();
     QString ext = validationRules->getDeafaultSaveExtension(false);
     defaultSaveImageExtention = ext.toUpper().toStdString();
 }
