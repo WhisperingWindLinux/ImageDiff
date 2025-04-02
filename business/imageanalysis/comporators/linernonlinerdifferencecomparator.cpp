@@ -13,7 +13,7 @@ QString LinerNonLinerDifferenceComparator::getShortName() const {
 }
 
 QString LinerNonLinerDifferenceComparator::getHotkey() const {
-    return "l";
+    return "L";
 }
 
 QString LinerNonLinerDifferenceComparator::getDescription() const {
@@ -74,8 +74,6 @@ LinerNonLinerComparisonResult LinerNonLinerDifferenceComparator::compareImages(c
     }
     variance /= differences.size();
     double stdDeviation = qSqrt(variance);
-
-    const double threshold = 5.0;
 
     return { meanDifference, threshold, stdDeviation };
 }

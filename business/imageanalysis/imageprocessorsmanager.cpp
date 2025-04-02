@@ -91,6 +91,15 @@ shared_ptr<IImageProcessor> ImageProcessorsManager::findProcessorByShortName(con
     return nullptr;
 }
 
+shared_ptr<IImageProcessor> ImageProcessorsManager::findProcessorByHotkey(const QChar &hotkey) {
+    for (auto it = processors.begin(); it != processors.end(); ++it) {
+        if ((*it)->getHotkey() == hotkey) {
+            return *it;
+        }
+    }
+    return nullptr;
+}
+
 std::optional<ImageProcessorInfo> ImageProcessorsManager::getProcessorInfoByProcessorShortName(const QString &name) {
     auto processor = findProcessorByShortName(name);
     if (processor == nullptr) {

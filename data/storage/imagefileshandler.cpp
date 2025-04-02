@@ -127,11 +127,11 @@ std::optional<FileSaveResult> ImageFilesHandler::saveImageAs(const SaveImageInfo
 
     switch (saveImageInfo.saveImageInfoType) {
     case SaveImageInfoType::FirstImage:
-        fileName = QString("%1%2").arg(file1Name, ext);
+        fileName = QString("%1_copy%2").arg(file1Name, ext);
         fullPath = file1Dir.filePath(fileName);
         break;
     case SaveImageInfoType::SecondImage:
-        fileName = QString("%1%2").arg(file2Name, ext);
+        fileName = QString("%1_copy%2").arg(file2Name, ext);
         fullPath = file2Dir.filePath(fileName);
         break;
     case SaveImageInfoType::FirstImageArea:

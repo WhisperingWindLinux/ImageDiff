@@ -15,6 +15,7 @@ public:
     static ImageProcessorsManager *instance();
     void addProcessor(shared_ptr<IImageProcessor> processor);
     shared_ptr<IImageProcessor> findProcessorByShortName(const QString &name);
+    shared_ptr<IImageProcessor> findProcessorByHotkey(const QChar &hotkey);
     void setEnabledInAutoanalysisToolbox(const QString &shortName, bool isEnabled);
     std::optional<ImageProcessorInfo> getProcessorInfoByProcessorShortName(const QString &name);
     QList<ImageProcessorInfo> getAllProcessorsInfo();

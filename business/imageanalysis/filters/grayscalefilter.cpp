@@ -11,7 +11,7 @@ QString GrayscaleFilter::getFullName() const {
 }
 
 QString GrayscaleFilter::getHotkey() const {
-    return "e";
+    return "E";
 }
 
 QString GrayscaleFilter::getDescription() const {

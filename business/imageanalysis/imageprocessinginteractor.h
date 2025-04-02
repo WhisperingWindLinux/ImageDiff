@@ -40,6 +40,9 @@ public:
     bool unsubscribe(const IImageProcessingInteractorListener *listener);
 
     void showLastComparisonImage();
+
+    void analyzeSelectedArea(ImagesPtr, std::optional<int> key);
+
 private:
     IPropcessorPropertiesDialogCallback *propertiesDialogCallback;
     IProgressDialog *progressDialogCallback;
@@ -49,8 +52,8 @@ private:
     LastDisplayedComparisonResult lastDisplayedComparisonResult;
 
     void coreCallImageProcessor(const QVariant &callerData);
-    void callComparator(IComparatorPtr comparator);
-    void callFilter(IFilterPtr transformer);
+    void callComparator(IComparatorPtr comparator, ImagesPtr images);
+    void callFilter(IFilterPtr filter);
     void handleProcessorPropertiesIfNeed(IImageProcessorPtr processor);
 
     void notifyComparisonResultLoaded(const QPixmap &image, const QString &description);

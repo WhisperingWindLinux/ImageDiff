@@ -62,7 +62,8 @@ protected:
     void paintEvent(QPaintEvent *event) override;
     void dragEnterEvent(QDragEnterEvent *event) override;
     void dropEvent(QDropEvent *event) override;
-
+    void keyReleaseEvent(QKeyEvent *event) override;
+    void keyPressEvent(QKeyEvent *event) override;
 private:
     MainWindow *parent;
     IDropListener *dropListener;
@@ -77,6 +78,7 @@ private:
     int currentImageIndex;
     bool isColorUnderCursorTrackingActive;
     std::optional<QPoint> lastCursorPos;
+    std::optional<int> pressedKey;
 
     // Zoom to selection
     bool selecting;                         // Whether the user is currently selecting an area

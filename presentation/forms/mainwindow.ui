@@ -273,7 +273,7 @@
   </action>
   <action name="actionHelp">
    <property name="text">
-    <string>Image Processing Algorithms</string>
+    <string>Help</string>
    </property>
   </action>
   <action name="actionShowFirstImage">

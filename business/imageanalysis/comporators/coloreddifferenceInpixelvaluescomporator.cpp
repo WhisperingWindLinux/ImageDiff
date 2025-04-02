@@ -34,7 +34,7 @@ QString ColoredDifferenceInPixelValuesComporator::getFullName() const {
 }
 
 QString ColoredDifferenceInPixelValuesComporator::getHotkey() const {
-    return (expectedResult == Result::Text ? "v" : "m");
+    return (expectedResult == Result::Text ? "V" : "M");
 }
 
 QString ColoredDifferenceInPixelValuesComporator::getDescription() const {

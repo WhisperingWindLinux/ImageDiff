@@ -15,7 +15,7 @@ QString GenericRgbFilter::getShortName() const {
     case RgbChannel::B:
         return "Show Blue channel";
     }
-    throw std::runtime_error("Error: an incorrect RGB chnannel in GenericRgbTransformer.");
+    throw std::runtime_error("Error: an incorrect RGB chnannel in GenericRgbFilter.");
 }
 
 QString GenericRgbFilter::getFullName() const {
@@ -31,7 +31,7 @@ QString GenericRgbFilter::getHotkey() const {
     case RgbChannel::B:
         return "B";
     }
-    throw std::runtime_error("Error: an incorrect RGB chnannel in GenericRgbTransformer.");
+    throw std::runtime_error("Error: an incorrect RGB chnannel in GenericRgbFilter.");
 }
 
 QString GenericRgbFilter::getDescription() const {
@@ -43,7 +43,7 @@ QString GenericRgbFilter::getDescription() const {
     } else if (channel == RgbChannel::B) {
         channelName = "Blue";
     } else {
-        throw std::runtime_error("Error: an incorrect RGB chnannel in GenericRgbTransformer.");
+        throw std::runtime_error("Error: an incorrect RGB chnannel in GenericRgbFilter.");
     }
 
     QString description = QString("Leaves only the %1 channel on the RGB image.").arg(channelName);

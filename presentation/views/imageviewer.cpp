@@ -516,7 +516,8 @@ void ImageViewer::mousePressEvent(QMouseEvent *event) {
     }
     auto shiftModifier = event->modifiers() & Qt::ShiftModifier;
     auto controlModifier = event->modifiers() & Qt::ControlModifier;
-    if (event->button() == Qt::LeftButton && (shiftModifier || controlModifier)) {
+    auto altModifier = event->modifiers() & Qt::AltModifier;
+    if (event->button() == Qt::LeftButton && (shiftModifier || controlModifier || altModifier)) {
         selecting = true;
         selectionStart = event->pos(); // Save the starting point of the selection in view coordinates
         selectionRect = QRect();       // Reset the selection rectangle
@@ -546,17 +547,42 @@ void ImageViewer::mouseReleaseEvent(QMouseEvent *event) {
         }
         else if (!sceneSelectionRect.isEmpty() &&
                  sceneSelectionRect.isValid() &&
-                 event->modifiers() & Qt::ControlModifier
+                 event->modifiers() & Qt::AltModifier
                  )
         {
             ImagesPtr images = getCroppedImages(sceneSelectionRect);
             parent->onImagesCropped(images);
+        }
+        else if (!sceneSelectionRect.isEmpty() &&
+                 sceneSelectionRect.isValid() &&
+                 event->modifiers() & Qt::ControlModifier
+                 )
+        {
+            // If the user holds down the Command (Ctrl) key along with the comparator hotkey and selects
+            // a specific area while holding the left mouse button, the comparator will run only for
+            // the selected area.
+            ImagesPtr images = getCroppedImages(sceneSelectionRect);
+            parent->onSelectedAreaShouldBeAnalyzed(images, pressedKey);
         }
         selectionRect = QRect(); // Clear the selection rectangle
         viewport()->update();    // Request a repaint of the view
         setDragMode(ScrollHandDrag);
     }
     QGraphicsView::mouseReleaseEvent(event);
+}
+
+void ImageViewer::keyPressEvent(QKeyEvent *event) {
+    if (event->key() >= Qt::Key_A && event->key() <= Qt::Key_Z) {
+        pressedKey = event->key();
+    }
+    QGraphicsView::keyPressEvent(event);
+}
+
+void ImageViewer::keyReleaseEvent(QKeyEvent *event) {
+    if (event->key() >= Qt::Key_A && event->key() <= Qt::Key_Z) {
+        pressedKey = std::nullopt;
+    }
+    QGraphicsView::keyReleaseEvent(event);
 }
 
 // Implement zoom to selection

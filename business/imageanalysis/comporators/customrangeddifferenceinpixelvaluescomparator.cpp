@@ -53,7 +53,7 @@ QString CustomRangedDifferenceInPixelValuesComparator::getFullName() const {
 }
 
 QString CustomRangedDifferenceInPixelValuesComparator::getHotkey() const {
-    return "u";
+    return "U";
 }
 
 QString CustomRangedDifferenceInPixelValuesComparator::getDescription() const {

@@ -71,7 +71,7 @@ void ImageProcessingInteractor::coreCallImageProcessor(const QVariant &callerDat
     handleProcessorPropertiesIfNeed(processor);
 
     if (processor->getType() == ImageProcessorType::Comparator) {
-        callComparator(dynamic_pointer_cast<IComparator>(processor));
+        callComparator(dynamic_pointer_cast<IComparator>(processor), displayedImages);
     } else if (processor->getType() == ImageProcessorType::Filter) {
         callFilter(dynamic_pointer_cast<IFilter>(processor));
     } else {
@@ -94,6 +94,28 @@ void ImageProcessingInteractor::showLastComparisonImage() {
         notifyComparisonResultLoaded(lastDisplayedComparisonResult.getImage(),
                                      lastDisplayedComparisonResult.getDescription()
                                      );
+    }
+}
+
+// If the user holds down the Command (Ctrl) key along with the comparator hotkey and selects
+// a specific area while holding the left mouse button, the comparator will run only for
+// the selected area.
+void ImageProcessingInteractor::analyzeSelectedArea(ImagesPtr images, std::optional<int> key) {
+    if (!key) {
+        return;
+    }
+    QChar hotkey{key.value()};
+    auto processorsManager = ImageProcessorsManager::instance();
+    auto processor = processorsManager->findProcessorByHotkey(hotkey);
+    if (processor == nullptr || processor->getType() != ImageProcessorType::Comparator) {
+        return;
+    }
+    try {
+        callComparator(dynamic_pointer_cast<IComparator>(processor), images);
+    } catch(std::runtime_error &e) {
+        notifyImageProcessorFailed(e.what());
+    } catch (std::exception &e) {
+        qDebug() << e.what();
     }
 }
 
@@ -125,16 +147,16 @@ void ImageProcessingInteractor::handleProcessorPropertiesIfNeed(IImageProcessorP
     }
 }
 
-void ImageProcessingInteractor::callComparator(IComparatorPtr comparator) {
-    if (displayedImages == nullptr) {
+void ImageProcessingInteractor::callComparator(IComparatorPtr comparator, ImagesPtr images) {
+    if (images == nullptr) {
         return;
     }
-    ImagesInfo info { displayedImages };
+    ImagesInfo info { images };
 
-    auto firstImage = displayedImages->image1;
-    auto firstImagePath = displayedImages->path1;
-    auto secondImage = displayedImages->image2;
-    auto secondImagePath = displayedImages->path2;
+    auto firstImage = images->image1;
+    auto firstImagePath = images->path1;
+    auto secondImage = images->image2;
+    auto secondImagePath = images->path2;
     auto firstImageName = info.getFirstImageName();
     auto secondImageName = info.getSecondImageName();
 

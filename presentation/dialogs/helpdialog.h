@@ -26,6 +26,8 @@ private:
     QList<ImageProcessorInfo> algorithms;
     QListWidget *listWidget;
     QTextBrowser *infoBrowser;
+    QTextBrowser *imageAreaSelectionBrowser; // For the second tab
+
 };
 
 #endif // HELPDIALOG_H

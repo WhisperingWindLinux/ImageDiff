@@ -75,6 +75,7 @@ public:
     void openImagesInOtherAppInstance(QString firstFilePath, QString secondFilePath);
     void openImagesFromCommandLine(const QString &firstFilePath, const QString &secondFilePath);
     void onColorUnderCursorTrackingStatusChanged(bool isActive);
+    void onSelectedAreaShouldBeAnalyzed(ImagesPtr images, std::optional<int> key);
 
     // IProgressDialog interface
 

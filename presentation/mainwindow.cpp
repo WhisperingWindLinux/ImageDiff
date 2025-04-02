@@ -354,7 +354,17 @@ void MainWindow::onDrop(QList<QUrl> urls) {
 
 /* } =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
-/* If the user selects a part of the image while holding down Command,
+/* If the user holds down the Command (Ctrl) key along with the comparator hotkey and selects
+ * a specific area while holding the left mouse button, the comparator will run only for
+ * the selected area. {   */
+
+void MainWindow::onSelectedAreaShouldBeAnalyzed(ImagesPtr images, std::optional<int> key) {
+    imageProcessingInteractor->analyzeSelectedArea(images, key);
+}
+
+/* } =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
+
+/* If the user selects a part of the image while holding down Option (Alt),
  * we copy the selected part and open it in a new instance of the application
  * for further analysis. Parts from both images are copied.
  *  {   */
