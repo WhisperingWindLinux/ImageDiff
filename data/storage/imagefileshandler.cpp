@@ -58,50 +58,43 @@ ImagesPtr ImageFilesHandler::openImage() {
 // The function never returns nullptr; if an error occurs,
 // a runtime_error with its description will be thrown.
 ImagesPtr ImageFilesHandler::openImages(const QString &image1Path, const QString &image2Path) {
+    ImagesPtr images;
 
-    int width1, height1, channels1;
-    int width2, height2, channels2;
-
-    unsigned char* data1 = stbi_load(image1Path.toStdString().c_str(), &width1, &height1, &channels1, 4);
-    if (!data1) {
-        QString error = QString("Unable to open " + image1Path + ". The image format might not be supported, "
-                                                                 "or the file does not exist.");
-        throw std::runtime_error(error.toStdString());
+    QPixmap pixmap1 = openImage(image1Path);
+    if (image1Path == image2Path) {
+        images = std::make_shared<Images>(pixmap1, pixmap1, image1Path, image1Path);
+    } else {
+        QPixmap pixmap2 = openImage(image2Path);
+        images = std::make_shared<Images>(pixmap1, pixmap2, image1Path, image2Path);
     }
-
-    unsigned char* data2 = stbi_load(image2Path.toStdString().c_str(), &width2, &height2, &channels2, 4);
-    if (!data2) {
-        stbi_image_free(data1);
-        QString error = QString("Unable to open " + image2Path + ". The image format might not be supported, "
-                                                                 "or the file does not exist.");
-        throw std::runtime_error(error.toStdString());
-    }
-
-
-    QImage image1(reinterpret_cast<const uchar*>(data1),
-                  width1,
-                  height1,
-                  QImage::Format_RGBA8888
-                  );
-
-    QImage image2(reinterpret_cast<const uchar*>(data2),
-                  width2,
-                  height2,
-                  QImage::Format_RGBA8888
-                  );
-
-
-    QPixmap pixmap1 = QPixmap::fromImage(image1.copy());
-    QPixmap pixmap2 = QPixmap::fromImage(image2.copy());
-
-    stbi_image_free(data1);
-    stbi_image_free(data2);
-
-    auto images = std::make_shared<Images>(pixmap1, pixmap2, image1Path, image2Path);
 
     validateImages(images);
-
     return images;
+}
+
+QPixmap ImageFilesHandler::openImage(const QString &imagePath) {
+
+    int width, height, channels;
+
+    unsigned char* data = stbi_load(imagePath.toStdString().c_str(), &width, &height, &channels, 4);
+    if (!data) {
+        QString error = QString("Unable to open " + imagePath + ". The image format might not be supported, "
+                                                                 "or the file does not exist.");
+        throw std::runtime_error(error.toStdString());
+    }
+
+    QImage image(reinterpret_cast<const uchar*>(data),
+                 width,
+                 height,
+                 QImage::Format_RGBA8888
+                 );
+
+
+    QPixmap pixmap = QPixmap::fromImage(image.copy());
+
+    stbi_image_free(data);
+
+    return pixmap;
 }
 
 void ImageFilesHandler::validateImages(ImagesPtr images) {

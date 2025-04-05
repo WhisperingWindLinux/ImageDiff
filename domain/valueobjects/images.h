@@ -18,6 +18,8 @@ struct Images {
 
     bool getIsTemporaryFiles() const;
 
+    bool isTheSameImage() const;
+
     QPixmap image1;
     QPixmap image2;
     QString path1;

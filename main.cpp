@@ -17,7 +17,7 @@ public:
 
         if (arguments.size() == 2) {
             QString filePath = arguments.at(1);
-            w.openImagesFromCommandLine(filePath, filePath);
+            w.openImageFromCommandLine(filePath);
         } else if (arguments.size() == 3) {
             QString firstFilePath = arguments.at(1);
             QString secondFilePath = arguments.at(2);
@@ -30,9 +30,7 @@ protected:
         if (event->type() == QEvent::FileOpen) {
             QFileOpenEvent *fileOpenEvent = static_cast<QFileOpenEvent *>(event);
             QString filePath = fileOpenEvent->file();
-
-            w.openImagesFromCommandLine(filePath, filePath);
-
+            w.openImageFromCommandLine(filePath);
             return true;
         }
         return QApplication::event(event);

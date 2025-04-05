@@ -36,7 +36,8 @@
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    ui(new Ui::MainWindow),
+    isOpenImageMenuEnabled(false)
 {
     ui->setupUi(this);
 
@@ -132,6 +133,13 @@ void MainWindow::enableImageProceesorsMenuItems(bool isEnabled) {
     ui->actionColorPicker->setDisabled(!isEnabled);
     ui->actionShowFirstImage->setDisabled(!isEnabled);
     ui->actionShowSecondImage->setDisabled(!isEnabled);
+
+
+    if (!isOpenImageMenuEnabled) {
+        ui->actionOpenImage->setVisible(false);
+        ui->actionOpenImages->setText("Open Images");
+        ui->actionGetImagesFromVideos->setText("Get Images From Videos");
+    }
 }
 
 void MainWindow::updateRecentFilesMenu() {
@@ -350,6 +358,10 @@ void MainWindow::dropEvent(QDropEvent *event) {
 
 // IDropListener interface
 void MainWindow::onDrop(QList<QUrl> urls) {
+    if (urls.size() == 1 && !isOpenImageMenuEnabled) {
+        showError("Drag and drop two images here.");
+        return;
+    }
     try {
         imageFilesInteractor->openImagesFromDragAndDrop(urls);
     } catch (std::runtime_error &e) {
@@ -564,6 +576,12 @@ void MainWindow::showStatusMessage(QString message) {
 
 void MainWindow::openImagesFromCommandLine(const QString &firstFilePath, const QString &secondFilePath) {
     imageFilesInteractor->openImagesViaCommandLine(firstFilePath, secondFilePath);
+}
+
+void MainWindow::openImageFromCommandLine(const QString &filePath) {
+    if (isOpenImageMenuEnabled) {
+        imageFilesInteractor->openImagesViaCommandLine(filePath, filePath);
+    }
 }
 
 /* } =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */

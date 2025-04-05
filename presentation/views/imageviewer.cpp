@@ -127,6 +127,7 @@ void ImageViewer::displayImages(const ImagesPtr images) {
 
     firstDisplayedImage = new GraphicsPixmapItem(images->image1, dropListener);
     secondDisplayedImage = new GraphicsPixmapItem(images->image2, dropListener);
+    secondDisplayedImage->setVisible(false);
 
     setAcceptDrops(true);
     customScene = new QGraphicsScene(this);
@@ -136,7 +137,6 @@ void ImageViewer::displayImages(const ImagesPtr images) {
     customScene->addItem(secondDisplayedImage);
 
     parent->showStatusMessage(firstImagePath);
-    secondDisplayedImage->setVisible(false);
 
     QTimer::singleShot(0, this, [this]() {
         setToFitImageInView();
@@ -187,8 +187,6 @@ void ImageViewer::replaceDisplayedImages(const QPixmap& image1, const QPixmap& i
 
     firstDisplayedImage = new GraphicsPixmapItem(image1, dropListener);
     secondDisplayedImage = new GraphicsPixmapItem(image2, dropListener);
-    customScene->addItem(firstDisplayedImage);
-    customScene->addItem(secondDisplayedImage);
 
     if (currentImageIndex == 0) {
         secondDisplayedImage->setVisible(false);
@@ -197,6 +195,8 @@ void ImageViewer::replaceDisplayedImages(const QPixmap& image1, const QPixmap& i
         firstDisplayedImage->setVisible(false);
         parent->showStatusMessage(secondImagePath);
     }
+    customScene->addItem(firstDisplayedImage);
+    customScene->addItem(secondDisplayedImage);
     centerOn(viewRect.center());
     if (lastCursorPos) {
         sendPixelColorUnderCursor(lastCursorPos.value());

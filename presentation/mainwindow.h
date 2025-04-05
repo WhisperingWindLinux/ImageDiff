@@ -75,6 +75,7 @@ public:
     void showStatusMessage(QString message);
     void openImagesInOtherAppInstance(QString firstFilePath, QString secondFilePath);
     void openImagesFromCommandLine(const QString &firstFilePath, const QString &secondFilePath);
+    void openImageFromCommandLine(const QString &filePath);
     void onColorUnderCursorTrackingStatusChanged(bool isActive);
     void onSelectedAreaShouldBeAnalyzed(ImagesPtr images, std::optional<int> key);
 
@@ -148,7 +149,7 @@ private:
     RecentFilesInteractor *recentFilesInteractor;
     OtherAppInstancesInteractor *otherAppInstanceInteractor;
     QProgressDialog *progressDialog;
-    QList<shared_ptr<QProcess> > instances;
+    bool isOpenImageMenuEnabled;
 
     void buildImageProcessorsMenu();
     void makeConnections();

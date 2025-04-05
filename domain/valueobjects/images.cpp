@@ -35,3 +35,7 @@ void Images::markAsTemporary() {
 bool Images::getIsTemporaryFiles() const {
     return isTemporaryFiles;
 }
+
+bool Images::isTheSameImage() const {
+    return path1 == path2;
+}

@@ -30,6 +30,7 @@ public:
     std::optional<FileSaveResult> saveImageAs(const SaveImageInfo &saveImageInfo, const ImagesPtr images);
 
 private:
+    QPixmap openImage(const QString &imagePath);
     bool validateFile(const QString &filePath);
     void validateImages(ImagesPtr images);
 };
