@@ -37,7 +37,7 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent),
     ui(new Ui::MainWindow),
-    isOpenImageMenuEnabled(false)
+    isOpenSingleImageEnabledFeatureFlag(false)
 {
     ui->setupUi(this);
 
@@ -134,8 +134,7 @@ void MainWindow::enableImageProceesorsMenuItems(bool isEnabled) {
     ui->actionShowFirstImage->setDisabled(!isEnabled);
     ui->actionShowSecondImage->setDisabled(!isEnabled);
 
-
-    if (!isOpenImageMenuEnabled) {
+    if (!isOpenSingleImageEnabledFeatureFlag) {
         ui->actionOpenImage->setVisible(false);
         ui->actionOpenImages->setText("Open Images");
         ui->actionGetImagesFromVideos->setText("Get Images From Videos");
@@ -358,7 +357,7 @@ void MainWindow::dropEvent(QDropEvent *event) {
 
 // IDropListener interface
 void MainWindow::onDrop(QList<QUrl> urls) {
-    if (urls.size() == 1 && !isOpenImageMenuEnabled) {
+    if (urls.size() == 1 && !isOpenSingleImageEnabledFeatureFlag) {
         showError("Drag and drop two images here.");
         return;
     }
@@ -579,7 +578,7 @@ void MainWindow::openImagesFromCommandLine(const QString &firstFilePath, const Q
 }
 
 void MainWindow::openImageFromCommandLine(const QString &filePath) {
-    if (isOpenImageMenuEnabled) {
+    if (isOpenSingleImageEnabledFeatureFlag) {
         imageFilesInteractor->openImagesViaCommandLine(filePath, filePath);
     }
 }
