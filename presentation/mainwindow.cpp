@@ -30,7 +30,7 @@
 #include <presentation/dialogs/imageautoanalysissettingsdialog.h>
 #include <presentation/dialogs/pluginssettingsdialog.h>
 #include <presentation/dialogs/propertyeditordialog.h>
-#include <data/storage/savefiledialoghandler.h>
+#include <data/storage/filedialoghandler.h>
 #include <business/imageanalysis/imageprocessinginteractor.h>
 #include <domain/interfaces/presentation/iotherappinstancesinteractorcallback.h>
 
@@ -89,6 +89,7 @@ void MainWindow::buildImageProcessorsMenu() {
 
 void MainWindow::makeConnections() {
     connect(ui->actionOpenImages, &QAction::triggered, this, &MainWindow::openImages);
+    connect(ui->actionOpenImage, &QAction::triggered, this, &MainWindow::openImage);
     connect(ui->actionCloseImages, &QAction::triggered, this, &MainWindow::closeImages);
     connect(ui->actionSwitchBetweenImages, &QAction::triggered, this, &MainWindow::switchBetweenImages);
     connect(ui->actionSaveVisibleAreaAs, &QAction::triggered, this, &MainWindow::saveVisibleAreaAs);
@@ -102,7 +103,7 @@ void MainWindow::makeConnections() {
     connect(ui->actionSaveImageAs, &QAction::triggered, this, &MainWindow::saveImageAs);
     connect(ui->actionPlaceColorPickerOnRight, &QAction::triggered, this, &MainWindow::placeColorPickerOnRight);
     connect(ui->actionPlaceColorPickerOnLeft, &QAction::triggered, this, &MainWindow::placeColorPickerOnLeft);
-    connect(ui->actionGrabImagesFromVideos, &QAction::triggered, this, &MainWindow::grabImagesFromVideos);
+    connect(ui->actionGetImagesFromVideos, &QAction::triggered, this, &MainWindow::getImagesFromVideos);
     connect(ui->actionRunAllComparators, &QAction::triggered, this, &MainWindow::runAllComparators);
     connect(ui->actionPluginsSettings, &QAction::triggered, this, &MainWindow::changePluginsSettings);
     connect(ui->actionRescanPluginDir, &QAction::triggered, this, &MainWindow::rescanPluginDir);
@@ -136,23 +137,23 @@ void MainWindow::enableImageProceesorsMenuItems(bool isEnabled) {
 void MainWindow::updateRecentFilesMenu() {
     QStringList recentFileMenuRecords = recentFilesInteractor->getRecentFilesMenuRecords();
 
-    ui->menuRecentFiles->clear();
+    ui->menuRecentImages->clear();
 
     foreach (auto record, recentFileMenuRecords) {
-        QAction *action = new QAction(record, ui->menuRecentFiles);
+        QAction *action = new QAction(record, ui->menuRecentImages);
         action->setData(record);
         connect(action, &QAction::triggered, this, &MainWindow::openRecentFile);
-        ui->menuRecentFiles->addAction(action);
+        ui->menuRecentImages->addAction(action);
     }
 
-    if (ui->menuRecentFiles->isEmpty()) {
-        ui->menuRecentFiles->addAction("No Recent Files")->setEnabled(false);
+    if (ui->menuRecentImages->isEmpty()) {
+        ui->menuRecentImages->addAction("No Recent Files")->setEnabled(false);
     } else {
-        ui->menuRecentFiles->addAction("")->setSeparator(true);
+        ui->menuRecentImages->addAction("")->setSeparator(true);
 
-        QAction *action = new QAction("Clear Menu", ui->menuRecentFiles);
+        QAction *action = new QAction("Clear Menu", ui->menuRecentImages);
         connect(action, &QAction::triggered, this, &MainWindow::clearOpenRecentsMenu);
-        ui->menuRecentFiles->addAction(action);
+        ui->menuRecentImages->addAction(action);
     }
 }
 
@@ -160,7 +161,7 @@ void MainWindow::updateRecentFilesMenu() {
 
 /* Event handlers for application menu interactions { */
 
-void MainWindow::grabImagesFromVideos() {
+void MainWindow::getImagesFromVideos() {
     imageFilesInteractor->openImagesFromVideos();
 }
 
@@ -216,6 +217,10 @@ void MainWindow::openRecentFile() {
 
 void MainWindow::openImages() {
     imageFilesInteractor->openImagesViaOpenFilesDialog();
+}
+
+void MainWindow::openImage() {
+    imageFilesInteractor->openImageViaOpenFilesDialog();
 }
 
 void MainWindow::closeImages() {

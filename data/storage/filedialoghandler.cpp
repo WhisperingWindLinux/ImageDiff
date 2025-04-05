@@ -1,4 +1,4 @@
-#include "savefiledialoghandler.h"
+#include "filedialoghandler.h"
 
 #include <QMimeDatabase>
 #include <qfiledialog.h>
@@ -7,20 +7,21 @@
 
 #include <business/validation/imagevalidationrulesfactory.h>
 
-SaveFileDialogHandler::SaveFileDialogHandler() {
+FileDialogHandler::FileDialogHandler() {
     auto validationRules = ImageValidationRulesFactory::createImageExtensionsInfoProvider();
-    imageFilter = validationRules->createSaveFilter();
+    openImagesFilter = validationRules->createOpenFilter();
+    saveImagesFilter = validationRules->createSaveFilter();
 }
 
-std::optional<QString> SaveFileDialogHandler::getUserSaveImagePath(const QString &path) {
+std::optional<QString> FileDialogHandler::getUserSaveImagePath(const QString &path) {
     return getUserSaveFilePath(path, PathType::Image);
 }
 
-std::optional<QString> SaveFileDialogHandler::getUserSaveReportPath(const QString &path) {
+std::optional<QString> FileDialogHandler::getUserSaveReportPath(const QString &path) {
     return getUserSaveFilePath(path, PathType::Report);
 }
 
-std::optional<QString> SaveFileDialogHandler::getUserSaveFilePath(const QString &path,
+std::optional<QString> FileDialogHandler::getUserSaveFilePath(const QString &path,
                                                                   PathType savedFileType
                                                                  )
 {
@@ -30,7 +31,7 @@ std::optional<QString> SaveFileDialogHandler::getUserSaveFilePath(const QString 
     QString title;
 
     if (savedFileType == PathType::Image) {
-        filter = imageFilter;
+        filter = saveImagesFilter;
         title = "Save Image";
     } else if (savedFileType == PathType::Report) {
         filter = reportFilter;
@@ -71,12 +72,12 @@ std::optional<QString> SaveFileDialogHandler::getUserSaveFilePath(const QString 
     return std::make_optional<QString>(filePath);
 }
 
-std::optional<QString> SaveFileDialogHandler::getUserOpenImagePath(const QString &baseDir) {
+std::optional<QString> FileDialogHandler::getUserOpenImagePath(const QString &baseDir) {
     QFileDialog dialog;
     QString firstPath;    
     dialog.setViewMode(QFileDialog::Detail);
     dialog.setWindowTitle("Open Image");
-    dialog.setNameFilter(imageFilter);
+    dialog.setNameFilter(openImagesFilter);
     dialog.setModal(true);
     dialog.setFileMode(QFileDialog::ExistingFile);
     dialog.setAcceptMode(QFileDialog::AcceptOpen);
@@ -106,15 +107,15 @@ std::optional<QString> SaveFileDialogHandler::getUserOpenImagePath(const QString
     return std::make_optional<QString>(firstPath);
 }
 
-OptionalStringPair SaveFileDialogHandler::getUserOpenTwoImagePaths(const QString &baseDir) {
+OptionalStringPair FileDialogHandler::getUserOpenTwoImagePaths(const QString &baseDir) {
     return getUserOpenTwoFilePaths(baseDir, PathType::Image);
 }
 
-OptionalStringPair SaveFileDialogHandler::getUserOpenTwoVideoPaths(const QString &baseDir) {
+OptionalStringPair FileDialogHandler::getUserOpenTwoVideoPaths(const QString &baseDir) {
     return getUserOpenTwoFilePaths(baseDir, PathType::Video);
 }
 
-OptionalStringPair SaveFileDialogHandler::getUserOpenTwoFilePaths(const QString &baseDir,
+OptionalStringPair FileDialogHandler::getUserOpenTwoFilePaths(const QString &baseDir,
                                                                   PathType pathType
                                                                   )
 {
@@ -127,7 +128,7 @@ OptionalStringPair SaveFileDialogHandler::getUserOpenTwoFilePaths(const QString 
     QString title2;
 
     if (pathType == PathType::Image) {
-        filter = imageFilter;
+        filter = openImagesFilter;
         title1 = "Open First Image";
         title2 = "Open Second Image";
     } else if (pathType == PathType::Video) {
@@ -194,7 +195,7 @@ OptionalStringPair SaveFileDialogHandler::getUserOpenTwoFilePaths(const QString 
     return std::make_optional<QPair<QString, QString>>(firstFile, secondFile);
 }
 
-void SaveFileDialogHandler::showWarningMessage(const QString &msg) {
+void FileDialogHandler::showWarningMessage(const QString &msg) {
     QMessageBox msgBox;
     msgBox.setIcon(QMessageBox::Warning);
     msgBox.setText(msg);
@@ -203,7 +204,7 @@ void SaveFileDialogHandler::showWarningMessage(const QString &msg) {
     msgBox.exec();
 }
 
-bool SaveFileDialogHandler::validateVideoFile(const QString &path) {
+bool FileDialogHandler::validateVideoFile(const QString &path) {
     if (path.isEmpty()) {
         return false;
     }

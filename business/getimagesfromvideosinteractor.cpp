@@ -1,10 +1,10 @@
 #include "getimagesfromvideosinteractor.h"
 
-#include <data/storage/savefiledialoghandler.h>
+#include <data/storage/filedialoghandler.h>
 
 ImagesPtr GetImagesFromVideosInteractor::get() {
     // Load videos for both players
-    SaveFileDialogHandler service;
+    FileDialogHandler service;
     auto pathsPair = service.getUserOpenTwoVideoPaths("");
     if (!pathsPair) {
         return nullptr; // the operation was canceled by the user

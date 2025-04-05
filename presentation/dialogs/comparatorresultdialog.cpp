@@ -1,7 +1,7 @@
 #include "comparatorresultdialog.h"
 #include <QtWidgets/qmessagebox.h>
 #include <business/imageanalysis/comporators/formatters/htmlreportpresenter.h>
-#include <data/storage/savefiledialoghandler.h>
+#include <data/storage/filedialoghandler.h>
 
 
 ComparatorResultDialog::ComparatorResultDialog(const QString &message,
@@ -45,7 +45,7 @@ void ComparatorResultDialog::onSaveClicked() {
     QDir parentDir(QFileInfo(firstFilePath).absolutePath());
     QString filePath = parentDir.absolutePath() + QDir::separator() + "report.html";
 
-    SaveFileDialogHandler services;
+    FileDialogHandler services;
     auto savedPath = services.getUserSaveReportPath(filePath);
 
     if (savedPath) {

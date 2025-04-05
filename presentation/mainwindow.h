@@ -43,6 +43,7 @@ class MainWindow : public QMainWindow,
 public slots:
     void closeImages();
     void openImages();
+    void openImage();
     void switchBetweenImages();
     void callImageProcessor();
     void callImageProcessorsHelp();
@@ -58,7 +59,7 @@ public slots:
     void placeColorPickerOnRight();
     void placeColorPickerOnLeft();
     void imagFitInView();
-    void grabImagesFromVideos();
+    void getImagesFromVideos();
     void runAllComparators();
     void changePluginsSettings();
     void rescanPluginDir();

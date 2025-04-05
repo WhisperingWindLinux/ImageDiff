@@ -1,6 +1,6 @@
 #include "propertyeditordialog.h"
 
-#include <data/storage/savefiledialoghandler.h>
+#include <data/storage/filedialoghandler.h>
 
 
 PropertyEditorDialog::PropertyEditorDialog(const QString &processorName,
@@ -76,7 +76,7 @@ PropertyEditorDialog::PropertyEditorDialog(const QString &processorName,
             fileLayout->addWidget(fileButton);
 
             connect(fileButton, &QPushButton::clicked, this, [filePathEdit]() {
-                SaveFileDialogHandler service;
+                FileDialogHandler service;
                 auto filePath =service.getUserOpenImagePath("");
                 if (filePath) {
                     filePathEdit->setText(filePath.value());

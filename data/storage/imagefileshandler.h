@@ -23,6 +23,7 @@ public:
     // The openImages functions never returns nullptr; if an error occurs,
     // a runtime_error with its description will be thrown.
     ImagesPtr openImages();
+    ImagesPtr openImage();
     ImagesPtr openImages(const QString &image1Path, const QString &image2Path);
     ImagesPtr openImages(const QList<QUrl> &urls);
 

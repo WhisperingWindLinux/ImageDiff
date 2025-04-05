@@ -2,9 +2,8 @@
 
 #include <qfileinfo.h>
 
-ImageExtensionsInfoProvider::ImageExtensionsInfoProvider()
-{
-    extensionsForOpen = { "png", "tga" };
+ImageExtensionsInfoProvider::ImageExtensionsInfoProvider() {
+    extensionsForOpen = { "png", "tga", "jpg", "jpeg", "bmp", "gif" };
     extensionForSave = "png";
 }
 
@@ -22,7 +21,6 @@ QString ImageExtensionsInfoProvider::createOpenFilter() {
         formattedExtensions.append("*." + ext);
     }
     QString extensionsString = formattedExtensions.join(" ");
-    //return QString("%1 Files (%2);;All Files (*.*)").arg("Images", extensionsString);
     return QString("%1 Files (%2)").arg("Images", extensionsString);
 }
 

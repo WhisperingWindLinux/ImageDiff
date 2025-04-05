@@ -26,6 +26,7 @@ public:
     void openImagesFromDragAndDrop(const QList<QUrl> &urls);
     void openImagesViaCommandLine(const QString &image1Path, const QString &image2Path);
     void openImagesViaOpenFilesDialog();
+    void openImageViaOpenFilesDialog();
     void openImagesFromVideos();
     void saveImage(const SaveImageInfo &info);
     void saveImageAs(const SaveImageInfo &info);
@@ -44,6 +45,8 @@ private:
     void validateImages(ImagesPtr images);
 
     std::optional<QString> savePixmapToTempDir(const QPixmap &pixmap, const QString &fileName);
+
+    bool isFileInTempFolder(const QString &filePath);
 
     void notifyImagesOpened(const ImagesPtr images);
     void notifyImagesOpenFailed(const QString &error);

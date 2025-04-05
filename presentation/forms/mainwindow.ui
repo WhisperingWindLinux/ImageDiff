@@ -27,15 +27,15 @@
     <property name="title">
      <string>&amp;File</string>
     </property>
-    <widget class="QMenu" name="menuRecentFiles">
+    <widget class="QMenu" name="menuRecentImages">
      <property name="title">
       <string>Recent Images</string>
      </property>
     </widget>
+    <addaction name="actionOpenImage"/>
     <addaction name="actionOpenImages"/>
-    <addaction name="menuRecentFiles"/>
-    <addaction name="separator"/>
-    <addaction name="actionGrabImagesFromVideos"/>
+    <addaction name="actionGetImagesFromVideos"/>
+    <addaction name="menuRecentImages"/>
     <addaction name="separator"/>
     <addaction name="actionCloseImages"/>
     <addaction name="separator"/>
@@ -129,7 +129,7 @@
   </widget>
   <action name="actionOpenImages">
    <property name="text">
-    <string>Open Images</string>
+    <string>Open Images For Comparison</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+O</string>
@@ -137,7 +137,7 @@
   </action>
   <action name="actionCloseImages">
    <property name="text">
-    <string>Close Images</string>
+    <string>Close All Images</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+C</string>
@@ -242,9 +242,9 @@
     <string>F</string>
    </property>
   </action>
-  <action name="actionGrabImagesFromVideos">
+  <action name="actionGetImagesFromVideos">
    <property name="text">
-    <string>Get Images From Videos</string>
+    <string>Get Images For Comparison From Videos</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Alt+O</string>
@@ -303,6 +303,14 @@
   <action name="actionImageAutoAnalysisSettings">
    <property name="text">
     <string>Image Auto-Analysis Settings</string>
+   </property>
+  </action>
+  <action name="actionOpenImage">
+   <property name="text">
+    <string>Open Image</string>
+   </property>
+   <property name="shortcut">
+    <string>O</string>
    </property>
   </action>
  </widget>

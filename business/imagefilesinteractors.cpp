@@ -67,7 +67,10 @@ void ImageFilesInteractor::openImagesViaCommandLine(const QString &image1Path,
 {
     try {
         images = imageFileHandler->openImages(image1Path, image2Path);
-        images->markAsTemporary();
+
+        if (isFileInTempFolder(images->path1) && isFileInTempFolder(images->path2)) {
+            images->markAsTemporary();
+        }
         notifyImagesOpened(images);
     } catch(std::runtime_error &e) {
         cleanup();
@@ -79,6 +82,19 @@ void ImageFilesInteractor::openImagesViaCommandLine(const QString &image1Path,
 void ImageFilesInteractor::openImagesViaOpenFilesDialog() {
     try {
         images = imageFileHandler->openImages();
+        if (images != nullptr) {
+            notifyImagesOpened(images);
+        }
+    } catch(std::runtime_error &e) {
+        cleanup();
+        notifyImagesOpenFailed(e.what());
+        notifyImagesClosed();
+    }
+}
+
+void ImageFilesInteractor::openImageViaOpenFilesDialog() {
+    try {
+        images = imageFileHandler->openImage();
         if (images != nullptr) {
             notifyImagesOpened(images);
         }
@@ -127,6 +143,12 @@ void ImageFilesInteractor::saveImageAs(const SaveImageInfo &info) {
     } else {
         notifySavingFileFailed(result.value().path);
     }
+}
+
+bool ImageFilesInteractor::isFileInTempFolder(const QString &filePath) {
+    QString tempPath = QDir::tempPath();
+    QFileInfo fileInfo(filePath);
+    return fileInfo.absoluteFilePath().startsWith(tempPath) && fileInfo.isFile();
 }
 
 bool ImageFilesInteractor::subscribe(IImageFilesInteractorListener *listener) {

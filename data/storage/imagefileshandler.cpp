@@ -5,7 +5,7 @@
 #include <qfileinfo.h>
 #include <business/recentfilesmanager.h>
 #include <business/imageanalysis/imageprocessinginteractor.h>
-#include <data/storage/savefiledialoghandler.h>
+#include <data/storage/filedialoghandler.h>
 #include <domain/valueobjects/images.h>
 #include <business/utils/imagesinfo.h>
 #include <business/validation/imagevalidationrulesfactory.h>
@@ -14,21 +14,28 @@
 #include "data/storage/stb_image.h"
 
 
+// The user can drag and drop one or two images into the application window.
+// In the case of a single image, it will simply open for viewing; only filters
+// will be available (but not comparators). In the case of two images, the user
+// will be able to compare them; both filters and comparators will be available.
 ImagesPtr ImageFilesHandler::openImages(const QList<QUrl> &urls) {
-    if (urls.size() != 2) {
-        QString err = QString("Drag and drop two images.");
+    if (urls.size() == 0 || urls.size() > 2) {
+        QString err = QString("Drag and drop one or two images here.");
         throw std::runtime_error(err.toStdString());
     }
-    if (urls[0].isLocalFile() && urls[1].isLocalFile()) {
+    if (urls.size() == 2 && urls[0].isLocalFile() && urls[1].isLocalFile()) {
         const QString file1 = urls[0].toLocalFile();
         const QString file2 = urls[1].toLocalFile();
         return openImages(file1, file2);
+    } else if (urls.size() == 1 && urls[0].isLocalFile()) {
+        const QString file = urls[0].toLocalFile();
+        return openImages(file, file);
     }
-    throw std::runtime_error("Incorrect path to one or both images.");
+    throw std::runtime_error("Incorrect path to image.");
 }
 
 ImagesPtr ImageFilesHandler::openImages() {
-    SaveFileDialogHandler handler;
+    FileDialogHandler handler;
     OptionalStringPair twoUserImagePaths = handler.getUserOpenTwoImagePaths("");
     if (!twoUserImagePaths) {
         return nullptr;
@@ -36,6 +43,16 @@ ImagesPtr ImageFilesHandler::openImages() {
     return openImages(twoUserImagePaths.value().first,
                       twoUserImagePaths.value().second
                      );
+}
+
+ImagesPtr ImageFilesHandler::openImage() {
+    FileDialogHandler handler;
+    std::optional<QString> userImagePath = handler.getUserOpenImagePath("");
+    if (!userImagePath) {
+        return nullptr;     // nullptr means that the user closed the file open
+            // dialog and declined the open operation; we do nothing
+    }
+    return openImages(userImagePath.value(), userImagePath.value());
 }
 
 // The function never returns nullptr; if an error occurs,
@@ -157,7 +174,7 @@ std::optional<FileSaveResult> ImageFilesHandler::saveImageAs(const SaveImageInfo
     }
 
     bool isSaved = false;
-    SaveFileDialogHandler saveFileDialog {};
+    FileDialogHandler saveFileDialog {};
     auto savePath = saveFileDialog.getUserSaveImagePath(fullPath);
     if (savePath) {
         isSaved = saveImageInfo.image.save(savePath.value());

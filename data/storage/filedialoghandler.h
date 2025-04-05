@@ -1,16 +1,16 @@
-#ifndef SAVEFILEDIALOGHANDLER_H
-#define SAVEFILEDIALOGHANDLER_H
+#ifndef FILEDIALOGHANDLER_H
+#define FILEDIALOGHANDLER_H
 
 #include <qpixmap.h>
 #include <qstring.h>
 
 typedef std::optional<QPair<QString, QString>> OptionalStringPair;
 
-class SaveFileDialogHandler
+class FileDialogHandler
 {
 public:
-    SaveFileDialogHandler();
-    ~SaveFileDialogHandler() = default;
+    FileDialogHandler();
+    ~FileDialogHandler() = default;
 
     std::optional<QString> getUserSaveImagePath(const QString &path);
     std::optional<QString> getUserSaveReportPath(const QString &path);
@@ -19,7 +19,8 @@ public:
     OptionalStringPair getUserOpenTwoVideoPaths(const QString &baseDir);
 
 private:
-    QString imageFilter;
+    QString openImagesFilter;
+    QString saveImagesFilter;
     const QString reportFilter = "Report Files (*.html)";
     const QString videoFilter = "Video Files (*.mp4 *.avi *.mkv *.mov *.wmv *.flv *.webm)";
 
@@ -37,4 +38,4 @@ private:
 
 };
 
-#endif // SAVEFILEDIALOGHANDLER_H
+#endif // FILEDIALOGHANDLER_H

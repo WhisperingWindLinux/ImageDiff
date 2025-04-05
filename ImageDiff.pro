@@ -39,9 +39,9 @@ SOURCES += \
     business/pluginsettingsinteractor.cpp \
     business/recentfilesmanager.cpp \
     business/recentfilesinteractor.cpp \
+    data/storage/filedialoghandler.cpp \
     data/storage/imagefileshandler.cpp \
     data/repositories/pluginsrepository.cpp \
-    data/storage/savefiledialoghandler.cpp \
     domain/interfaces/business/icomparator.cpp \
     domain/interfaces/business/ifilter.cpp \
     domain/interfaces/business/imageprocessor.cpp \
@@ -106,9 +106,9 @@ HEADERS += \
     business/recentfilesmanager.h \
     business/recentfilesinteractor.h \
     business/utils/imagesinfo.h \
+    data/storage/filedialoghandler.h \
     data/storage/imagefileshandler.h \
     data/repositories/pluginsrepository.h \
-    data/storage/savefiledialoghandler.h \
     data/storage/stb_image.h \
     domain/interfaces/business/irecentfilesmanager.h \
     domain/interfaces/presentation/icolorpickercontroller.h \
@@ -169,3 +169,5 @@ ICON = Resources/app_icon.icns
 DISTFILES += \
     business/plugins/comparator_example.json \
     business/plugins/filter_example.json
+
+QMAKE_INFO_PLIST = Info.plist

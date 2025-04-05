@@ -15,7 +15,7 @@
 #include <business/imageanalysis/comporators/linernonlinerdifferencecomparator.h>
 #include <business/imageanalysis/filters/grayscalefilter.h>
 #include <business/imageanalysis/filters/rgbfilter.h>
-#include <data/storage/savefiledialoghandler.h>
+#include <data/storage/filedialoghandler.h>
 #include <domain/interfaces/presentation/imageprocessinginteractorlistener.h>
 #include <business/utils/imagesinfo.h>
 #include "domain/interfaces/presentation/iprocessorpropertiesdialogcallback.h"

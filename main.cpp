@@ -1,11 +1,49 @@
 #include <presentation/mainwindow.h>
 
 #include <QApplication>
+#include <QFileOpenEvent>
+
+
+class MyApplication : public QApplication {
+public:
+    MyApplication(int &argc, char **argv) : QApplication(argc, argv) {}
+
+    void showMainWindow() {
+
+        w.setWindowTitle("Image Diff");
+        w.show();
+
+        QStringList arguments = QCoreApplication::arguments();
+
+        if (arguments.size() == 2) {
+            QString filePath = arguments.at(1);
+            w.openImagesFromCommandLine(filePath, filePath);
+        } else if (arguments.size() == 3) {
+            QString firstFilePath = arguments.at(1);
+            QString secondFilePath = arguments.at(2);
+            w.openImagesFromCommandLine(firstFilePath, secondFilePath);
+        }
+    }
+
+protected:
+    bool event(QEvent *event) override {
+        if (event->type() == QEvent::FileOpen) {
+            QFileOpenEvent *fileOpenEvent = static_cast<QFileOpenEvent *>(event);
+            QString filePath = fileOpenEvent->file();
+
+            w.openImagesFromCommandLine(filePath, filePath);
+
+            return true;
+        }
+        return QApplication::event(event);
+    }
+
+private:
+    MainWindow w;
+};
 
 
 int main(int argc, char *argv[]) {
-
-    QApplication a(argc, argv);
 
 #ifndef TARGET_OS_MAC
     #error The application was developed and tested for functionality only on macOS.
@@ -13,15 +51,6 @@ int main(int argc, char *argv[]) {
     #error If you're feeling lucky, you can try to build and run the application on your chosen operating system.
 #endif
 
-    MainWindow w;
-    w.setWindowTitle("Image Diff");
-    w.show();
-
-    if (argc == 3) {
-        QString firstFilePath = argv[1];
-        QString SecondFilePath = argv[2];
-        w.openImagesFromCommandLine(firstFilePath, SecondFilePath);
-    }
-
+    MyApplication a(argc, argv);
     return a.exec();
 }
