@@ -37,7 +37,7 @@
                 <string>jpeg</string>
                 <string>png</string>
                 <string>bmp</string>
-                <string>gif</string>
+                <string>tga</string>
             </array>
         </dict>
     </array>
