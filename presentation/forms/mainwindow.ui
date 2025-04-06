@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>896</width>
+    <height>652</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget"/>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>896</width>
+     <height>24</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>&amp;File</string>
+    </property>
+    <widget class="QMenu" name="menuRecentImages">
+     <property name="title">
+      <string>Recent Images</string>
+     </property>
+    </widget>
+    <addaction name="actionOpenImage"/>
+    <addaction name="actionOpenImageFromClipboard"/>
+    <addaction name="actionOpenImages"/>
+    <addaction name="actionGetImagesFromVideos"/>
+    <addaction name="menuRecentImages"/>
+    <addaction name="separator"/>
+    <addaction name="actionCloseImages"/>
+    <addaction name="separator"/>
+    <addaction name="actionSaveImageAs"/>
+    <addaction name="actionSaveVisibleAreaAs"/>
+   </widget>
+   <widget class="QMenu" name="menuComparators">
+    <property name="title">
+     <string>Сomparators</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionAbout"/>
+    <addaction name="actionHelp"/>
+   </widget>
+   <widget class="QMenu" name="menuImageAnalysis">
+    <property name="title">
+     <string>Analysis</string>
+    </property>
+    <addaction name="actionRunAllComparators"/>
+   </widget>
+   <widget class="QMenu" name="menuFilters">
+    <property name="title">
+     <string>Filters</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuView">
+    <property name="title">
+     <string>View</string>
+    </property>
+    <addaction name="actionSwitchBetweenImages"/>
+    <addaction name="separator"/>
+    <addaction name="actionShowFirstImage"/>
+    <addaction name="actionShowSecondImage"/>
+    <addaction name="actionShowComparisonImage"/>
+    <addaction name="separator"/>
+    <addaction name="actionShowOriginalImage"/>
+    <addaction name="separator"/>
+    <addaction name="actionActualSize"/>
+    <addaction name="actionFitInView"/>
+    <addaction name="actionZoomIn"/>
+    <addaction name="actionZoomOut"/>
+    <addaction name="separator"/>
+   </widget>
+   <widget class="QMenu" name="menuWindow">
+    <property name="title">
+     <string>Window</string>
+    </property>
+    <addaction name="actionPlaceColorPickerOnLeft"/>
+    <addaction name="actionPlaceColorPickerOnRight"/>
+   </widget>
+   <widget class="QMenu" name="menuTools">
+    <property name="title">
+     <string>Tools</string>
+    </property>
+    <widget class="QMenu" name="menuPlugins">
+     <property name="title">
+      <string>Plugins</string>
+     </property>
+     <addaction name="actionPluginsSettings"/>
+     <addaction name="actionRescanPluginDir"/>
+    </widget>
+    <addaction name="actionColorPicker"/>
+    <addaction name="separator"/>
+    <addaction name="menuPlugins"/>
+    <addaction name="actionImageAutoAnalysisSettings"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuView"/>
+   <addaction name="menuImageAnalysis"/>
+   <addaction name="menuFilters"/>
+   <addaction name="menuComparators"/>
+   <addaction name="menuTools"/>
+   <addaction name="menuWindow"/>
+   <addaction name="menuHelp"/>
+  </widget>
+  <action name="actionOpenImages">
+   <property name="text">
+    <string>Open Images For Comparison</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
+  </action>
+  <action name="actionCloseImages">
+   <property name="text">
+    <string>Close All Images</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+C</string>
+   </property>
+  </action>
+  <action name="actionSwitchBetweenImages">
+   <property name="text">
+    <string>Switch between images</string>
+   </property>
+   <property name="shortcut">
+    <string>S</string>
+   </property>
+   <property name="shortcutVisibleInContextMenu">
+    <bool>false</bool>
+   </property>
+  </action>
+  <action name="actionSaveImageAs">
+   <property name="text">
+    <string>Save Image As...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="actionSaveVisibleAreaAs">
+   <property name="text">
+    <string>Save Visible Area As... </string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+S</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>About</string>
+   </property>
+  </action>
+  <action name="actionColorPicker">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Color Picker</string>
+   </property>
+   <property name="shortcut">
+    <string>P</string>
+   </property>
+  </action>
+  <action name="actionShowOriginalImage">
+   <property name="text">
+    <string>Reload Images From Disk</string>
+   </property>
+   <property name="shortcut">
+    <string>C</string>
+   </property>
+  </action>
+  <action name="actionActualSize">
+   <property name="text">
+    <string>Actual Size</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+A</string>
+   </property>
+  </action>
+  <action name="actionZoomIn">
+   <property name="text">
+    <string>Zoom In</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl++</string>
+   </property>
+  </action>
+  <action name="actionZoomOut">
+   <property name="text">
+    <string>Zoom Out</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+-</string>
+   </property>
+  </action>
+  <action name="actionPlaceColorPickerOnRight">
+   <property name="text">
+    <string>Place Color Picker On Right</string>
+   </property>
+   <property name="shortcut">
+    <string>Meta+R</string>
+   </property>
+  </action>
+  <action name="actionPlaceColorPickerOnLeft">
+   <property name="text">
+    <string>Place Color Picker On Left</string>
+   </property>
+   <property name="shortcut">
+    <string>Meta+L</string>
+   </property>
+  </action>
+  <action name="actionFitInView">
+   <property name="text">
+    <string>Fit In View</string>
+   </property>
+   <property name="shortcut">
+    <string>F</string>
+   </property>
+  </action>
+  <action name="actionGetImagesFromVideos">
+   <property name="text">
+    <string>Get Images For Comparison From Videos</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+O</string>
+   </property>
+  </action>
+  <action name="actionRunAllComparators">
+   <property name="text">
+    <string>Run Analysis</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+R</string>
+   </property>
+  </action>
+  <action name="actionPluginsSettings">
+   <property name="text">
+    <string>Settings</string>
+   </property>
+  </action>
+  <action name="actionRescanPluginDir">
+   <property name="text">
+    <string>Rescan Plugins Directory</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+R</string>
+   </property>
+  </action>
+  <action name="actionHelp">
+   <property name="text">
+    <string>Help</string>
+   </property>
+  </action>
+  <action name="actionShowFirstImage">
+   <property name="text">
+    <string>Show First Image</string>
+   </property>
+   <property name="shortcut">
+    <string>1</string>
+   </property>
+  </action>
+  <action name="actionShowSecondImage">
+   <property name="text">
+    <string>Show Second Image</string>
+   </property>
+   <property name="shortcut">
+    <string>2</string>
+   </property>
+  </action>
+  <action name="actionShowComparisonImage">
+   <property name="text">
+    <string>Show Comparison Image</string>
+   </property>
+   <property name="shortcut">
+    <string>3</string>
+   </property>
+  </action>
+  <action name="actionImageAutoAnalysisSettings">
+   <property name="text">
+    <string>Image Auto-Analysis Settings</string>
+   </property>
+  </action>
+  <action name="actionOpenImage">
+   <property name="text">
+    <string>Open Image</string>
+   </property>
+   <property name="shortcut">
+    <string>O</string>
+   </property>
+  </action>
+  <action name="actionOpenImageFromClipboard">
+   <property name="text">
+    <string>Open Image From Clipboard</string>
+   </property>
+  </action>
+  <action name="actionCopy_Displayed_Image">
+   <property name="text">
+    <string>Copy</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

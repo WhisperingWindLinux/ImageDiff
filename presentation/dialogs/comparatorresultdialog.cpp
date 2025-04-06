@@ -1,0 +1,67 @@
+#include "comparatorresultdialog.h"
+#include <QtWidgets/qmessagebox.h>
+#include <business/imageanalysis/comporators/formatters/htmlreportpresenter.h>
+#include <data/storage/filedialoghandler.h>
+
+
+ComparatorResultDialog::ComparatorResultDialog(const QString &message,
+                                               const QString &comparatorFullName,
+                                               const QString &firstImageFilePath,
+                                               const QString &secondImageFilePath,
+                                               QWidget *parent
+                                               )
+    : QDialog(parent),
+    message(message),
+    firstFilePath(firstImageFilePath),
+    secondFilePath(secondImageFilePath),
+    comparatorFullName(comparatorFullName){
+    setupUI();
+}
+
+void ComparatorResultDialog::setupUI() {
+    label = new QLabel(message, this);
+    closeButton = new QPushButton("Close", this);
+    saveButton = new QPushButton("Save", this);
+    label->setWordWrap(true);
+
+    QVBoxLayout *vlayout = new QVBoxLayout(this);
+    vlayout->addWidget(label);
+    QHBoxLayout *hlayout = new QHBoxLayout(this);
+    hlayout->addStretch();
+    hlayout->addWidget(saveButton);
+    hlayout->addSpacing(10);
+    hlayout->addWidget(closeButton);
+    vlayout->addItem(hlayout);
+
+    setLayout(vlayout);
+
+    connect(closeButton, &QPushButton::clicked, this, &ComparatorResultDialog::close);
+    connect(saveButton, &QPushButton::clicked, this, &ComparatorResultDialog::onSaveClicked);
+
+    setWindowTitle("Comparison Report");
+}
+
+void ComparatorResultDialog::onSaveClicked() {
+    QDir parentDir(QFileInfo(firstFilePath).absolutePath());
+    QString filePath = parentDir.absolutePath() + QDir::separator() + "report.html";
+
+    FileDialogHandler services;
+    auto savedPath = services.getUserSaveReportPath(filePath);
+
+    if (savedPath) {
+        bool isOk = HtmlReportPresenter::createSimpleReportPage(savedPath.value(),
+                                                                firstFilePath,
+                                                                secondFilePath,
+                                                                message);
+        if (!isOk) {
+            QMessageBox msgBox;
+            msgBox.setIcon(QMessageBox::Critical);
+            msgBox.setText("Unable to save the report!");
+            msgBox.setStandardButtons(QMessageBox::Ok);
+            msgBox.setDefaultButton(QMessageBox::Ok);
+            msgBox.exec();
+        }
+    }
+}
+
+

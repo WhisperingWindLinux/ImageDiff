@@ -1,0 +1,38 @@
+name: Build and Package Qt Application
+
+on:
+  workflow_dispatch:
+  #push:
+    #branches:
+      #- develop
+  #pull_request:
+    #branches:
+      #- develop
+
+jobs:
+  build:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up environment
+        run: |
+          export SHELL=/bin/bash
+          
+      #- name: Install gtar
+        #run: brew install gnu-tar
+        
+      - name: Build project
+        run: |
+          mkdir build
+          cd build
+          qmake ../ImageDiff.pro
+          make -j8
+
+      - name: Package application into tar.gz
+        run: |
+          cd build
+          tar -czvf ImageDiff-macOS-arm64.tar.gz ImageDiff.app
+
+          mv ImageDiff-macOS-arm64.tar.gz ImageDiff.app ../
