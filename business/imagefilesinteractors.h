@@ -28,6 +28,7 @@ public:
     void openImagesViaOpenFilesDialog();
     void openImageViaOpenFilesDialog();
     void openImagesFromVideos();
+    void openImageFromClipboard();
     void saveImage(const SaveImageInfo &info);
     void saveImageAs(const SaveImageInfo &info);
     
@@ -35,7 +36,7 @@ public:
     bool unsubscribe(const IImageFilesInteractorListener *listener);
 
     void cleanup();
-
+    
 private:
     ImagesPtr images;
     ImageFilesHandler *imageFileHandler;

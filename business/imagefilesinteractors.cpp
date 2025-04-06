@@ -2,6 +2,8 @@
 
 #include "business/getimagesfromvideosinteractor.h"
 #include "recentfilesinteractor.h"
+#include <QtCore/qmimedata.h>
+#include <QtGui/qclipboard.h>
 #include <data/storage/imagefileshandler.h>
 
 ImageFilesInteractor::ImageFilesInteractor() {
@@ -113,6 +115,34 @@ void ImageFilesInteractor::openImagesFromVideos() {
             return;
         }
         images = imageFileHandler->openImages(imagesPath->path1, imagesPath->path2);
+        notifyImagesOpened(images);
+    } catch(std::runtime_error &e) {
+        cleanup();
+        notifyImagesOpenFailed(e.what());
+        notifyImagesClosed();
+    }
+}
+
+void ImageFilesInteractor::openImageFromClipboard() {
+    try {
+        std::string errorMissingImage = "The clipboard does not contain an image, "
+                                        "or the image format is not supported.";
+
+        QClipboard *clipboard = QApplication::clipboard();
+        if (!clipboard->mimeData()->hasImage()) {
+            throw std::runtime_error(errorMissingImage);
+        }
+        QImage image = clipboard->image();
+        if (image.isNull()) {
+            throw std::runtime_error(errorMissingImage);
+        }
+        QPixmap pixmap = QPixmap::fromImage(image);
+        auto result = imageFileHandler->saveImageTemporary(pixmap);
+        if (!result) {
+            throw std::runtime_error("Unable to save the image in the Temp directory");
+        }
+        auto images = imageFileHandler->openImages(result->path, result->path);
+        images->markAsTemporary();
         notifyImagesOpened(images);
     } catch(std::runtime_error &e) {
         cleanup();

@@ -9,11 +9,11 @@ GenericRgbFilter::GenericRgbFilter(RgbChannel channel)
 QString GenericRgbFilter::getShortName() const {
     switch(channel) {
     case RgbChannel::R:
-        return "Show Red channel";
+        return "Show Red Channel";
     case RgbChannel::G:
-        return "Show Green channel";
+        return "Show Green Channel";
     case RgbChannel::B:
-        return "Show Blue channel";
+        return "Show Blue Channel";
     }
     throw std::runtime_error("Error: an incorrect RGB chnannel in GenericRgbFilter.");
 }

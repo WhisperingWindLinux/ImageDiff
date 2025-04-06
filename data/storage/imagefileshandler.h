@@ -28,6 +28,7 @@ public:
     ImagesPtr openImages(const QList<QUrl> &urls);
 
     std::optional<FileSaveResult> saveImageAs(const SaveImageInfo &saveImageInfo, const ImagesPtr images);
+    std::optional<FileSaveResult> saveImageTemporary(const QPixmap &image);
 
 private:
     QPixmap openImage(const QString &imagePath);

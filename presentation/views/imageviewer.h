@@ -70,6 +70,8 @@ private:
     QGraphicsScene *customScene;
     QString firstImagePath;
     QString secondImagePath;
+    QString firstImageBaseName;
+    QString secondImageBaseName;
     QString firstImageName;
     QString secondImageName;
     QGraphicsPixmapItem *firstDisplayedImage;

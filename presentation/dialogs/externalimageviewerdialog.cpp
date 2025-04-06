@@ -73,14 +73,14 @@ void ExternalImageViewerDialog::keyPressEvent(QKeyEvent *event) {
 }
 
 void ExternalImageViewerDialog::saveWindowState() {
-    QSettings settings("com.WhisperingWind", "ImageDiff");
+    QSettings settings("com.WhisperingWind", "TwinPix");
     settings.beginGroup("ExternalImageViewerDialog");
     settings.setValue("geometry", saveGeometry());
     settings.endGroup();
 }
 
 void ExternalImageViewerDialog::restoreWindowState() {
-    QSettings settings("com.WhisperingWind", "ImageDiff");
+    QSettings settings("com.WhisperingWind", "TwinPix");
     settings.beginGroup("ExternalImageViewerDialog");
     restoreGeometry(settings.value("geometry").toByteArray());
     settings.endGroup();

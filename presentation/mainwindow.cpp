@@ -20,6 +20,7 @@
 #include <qprocess.h>
 #include <ui_mainwindow.h>
 #include <QThread>
+#include <QClipboard>
 #include <presentation/colorpickercontroller.h>
 #include <business/getimagesfromvideosinteractor.h>
 #include <presentation/views/imageviewer.h>
@@ -43,7 +44,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     setAcceptDrops(true);
 
-    setWindowTitle("Image Diff");
+    setWindowTitle("TwinPix");
+
     resize(1380, 820);
     showNormal();
     restoreMainWindowPosition();
@@ -74,6 +76,28 @@ MainWindow::~MainWindow() {
 
 void MainWindow::showEvent(QShowEvent *) {
     onFastSwitchingToComparisonImageStatusChanged(false);
+}
+
+void MainWindow::mousePressEvent(QMouseEvent *event) {
+
+    if (event->button() != Qt::RightButton) {
+        return;
+    }
+
+    QMenu contextMenu(this);
+
+    QMenu *filters = ui->menuFilters;
+    if (filters) {
+        contextMenu.addActions(filters->actions());
+    }
+    if (!menuIsInSingleImageMode) {
+        contextMenu.addSeparator();
+        QMenu *comparators = ui->menuComparators;
+        if (comparators) {
+            contextMenu.addActions(comparators->actions());
+        }
+    }
+    contextMenu.exec(event->globalPosition().toPoint());
 }
 
 /*  Application menu settings { */
@@ -113,6 +137,7 @@ void MainWindow::makeConnections() {
     connect(ui->actionShowSecondImage, &QAction::triggered, this, &MainWindow::showSecondImage);
     connect(ui->actionShowComparisonImage, &QAction::triggered, this, &MainWindow::showComparisonImage);
     connect(ui->actionImageAutoAnalysisSettings, &QAction::triggered, this, &MainWindow::showImageAutoAnalysisSettings);
+    connect(ui->actionOpenImageFromClipboard, &QAction::triggered, this, &MainWindow::openImageFromClipboard);
 }
 
 void MainWindow::enableImageProceesorsMenuItems(bool isEnabled) {
@@ -258,6 +283,10 @@ void MainWindow::showImageAutoAnalysisSettings() {
     dialog.exec();
 }
 
+void MainWindow::openImageFromClipboard() {
+    imageFilesInteractor->openImageFromClipboard();
+}
+
 void MainWindow::callImageProcessor() {
     if (imageProcessingInteractor == nullptr) {
         return;
@@ -325,13 +354,13 @@ void MainWindow::onColorUnderCursorTrackingStatusChanged(bool isActive) {
 /* Save and restore the main widow position { */
 
 void MainWindow::saveMainWindowPosition() {
-    QSettings settings("com.WhisperingWind", "ImageDiff");
+    QSettings settings("com.WhisperingWind", "TwinPix");
     settings.setValue("mainWindow/geometry", saveGeometry());
     settings.setValue("mainWindow/state", saveState());
 }
 
 void MainWindow::restoreMainWindowPosition() {
-    QSettings settings("com.WhisperingWind", "ImageDiff");
+    QSettings settings("com.WhisperingWind", "TwinPix");
     restoreGeometry(settings.value("mainWindow/geometry").toByteArray());
     restoreState(settings.value("mainWindow/state").toByteArray());
 }
@@ -430,15 +459,8 @@ void MainWindow::onImagesOpened(const ImagesPtr images) {
         imageProcessingInteractor = nullptr;
 
     }
-    imageView->cleanUp();
-    showStatusMessage("");
     menuIsInSingleImageMode = images->isTheSameImage();
-    if (menuIsInSingleImageMode) {
-        setWindowTitle("Single Image Viewer Mode - Image Diff");
-    } else {
-        setWindowTitle("Image Comparison Mode - Image Diff");
-    }
-
+    imageView->cleanUp();
     imageProcessingInteractor = new ImageProcessingInteractor(images, this, this);
     imageProcessingInteractor->subscribe(this);
     imageView->displayImages(images);
@@ -469,8 +491,7 @@ void MainWindow::onImagesClosed() {
     colorPickerController->onImagesClosed();
     imageView->cleanUp();
     enableImageProceesorsMenuItems(false);
-    showStatusMessage("");
-    setWindowTitle("Image Diff");
+    setWindowTitle("TwinPix");
 }
 
 void MainWindow::onSavingFileFailed(const QString &path) {
@@ -570,10 +591,18 @@ QList<Property> MainWindow::showImageProcessorPropertiesDialog(const QString& pr
 
 /* } =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
-/* { */
+/*  {   */
 
-void MainWindow::showStatusMessage(QString message) {
-    statusBar()->showMessage(message);
+void MainWindow::onComparebleImageDisplayed(const QString &imageName) {
+    QString title = QString("%1 - TwinPix").arg(imageName);
+    setWindowTitle(title);
+}
+
+void MainWindow::onComparisonImageDisplayed(const QString &image1Name,
+                                            const QString &image2Name,
+                                            const QString &comparatorName) {
+    QString title = QString("%1 vs %2 @ %3 - TwinPix").arg(image1Name, image2Name, comparatorName);
+    setWindowTitle(title);
 }
 
 /* } =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */

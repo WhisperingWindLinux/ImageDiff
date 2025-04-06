@@ -10,7 +10,7 @@ RecentFilesInteractor::RecentFilesInteractor(IRecentFilesManager *manager) {
 
 
 RecentFilesInteractor::RecentFilesInteractor() {
-    recentFilesManager = new RecentFilesManager("com.whisperingwind", "ImageDiff");
+    recentFilesManager = new RecentFilesManager("com.whisperingwind", "TwinPix");
 }
 
 RecentFilesInteractor::~RecentFilesInteractor() {

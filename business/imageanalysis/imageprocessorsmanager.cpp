@@ -21,7 +21,7 @@ ImageProcessorsManager *ImageProcessorsManager::instance() {
 }
 
 ImageProcessorsManager::ImageProcessorsManager() {
-    storage = new QSettings("com.WhisperingWind", "ImageDiff");
+    storage = new QSettings("com.WhisperingWind", "TwinPix");
 }
 
 void ImageProcessorsManager::clear() {

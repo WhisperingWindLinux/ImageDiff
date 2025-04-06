@@ -11,7 +11,7 @@ public:
 
     void showMainWindow() {
 
-        w.setWindowTitle("Image Diff");
+        w.setWindowTitle("TwinPix");
         w.show();
 
         QStringList arguments = QCoreApplication::arguments();

@@ -68,16 +68,22 @@ public slots:
     void showSecondImage();
     void showComparisonImage();
     void showImageAutoAnalysisSettings();
+    void openImageFromClipboard();
 
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-    void showStatusMessage(QString message);
     void openImagesInOtherAppInstance(QString firstFilePath, QString secondFilePath);
     void openImagesFromCommandLine(const QString &firstFilePath, const QString &secondFilePath);
     void openImageFromCommandLine(const QString &filePath);
     void onColorUnderCursorTrackingStatusChanged(bool isActive);
     void onSelectedAreaShouldBeAnalyzed(ImagesPtr images, std::optional<int> key);
+
+    void onComparebleImageDisplayed(const QString &imageName);
+    void onComparisonImageDisplayed(const QString &image1Name,
+                                    const QString &image2Name,
+                                    const QString &comparatorName
+                                    );
 
     // IProgressDialog interface
 
@@ -132,6 +138,8 @@ public:
 
     void onOtherAppInstanceOpened() override;
     void showError(const QString &errorMessage) override;
+
+    void mousePressEvent(QMouseEvent *event) override;
 
 protected:
     void closeEvent(QCloseEvent *event) override;

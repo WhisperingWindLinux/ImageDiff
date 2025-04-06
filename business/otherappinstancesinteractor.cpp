@@ -75,7 +75,7 @@ void OtherAppInstancesInteractor::openNewAppInstance(const QString &firstFilePat
     if (process->startDetached(program, arguments)) {
         callback->onOtherAppInstanceOpened();
     } else {
-        callback->showError("Failed to start the new instance of ImageDiff: " + process->errorString());
+        callback->showError("Failed to start the new instance of TwinPix: " + process->errorString());
     }
 }
 

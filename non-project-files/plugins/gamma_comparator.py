@@ -38,7 +38,7 @@ def main():
 
     try:
         my_variable = os.getenv("Runner")
-        if my_variable == "ImageDiff":
+        if my_variable == "TwinPix":
             # Read the first image's size and data from stdin
             size1 = int.from_bytes(sys.stdin.buffer.read(4), byteorder='little')
             image1_data = sys.stdin.buffer.read(size1)

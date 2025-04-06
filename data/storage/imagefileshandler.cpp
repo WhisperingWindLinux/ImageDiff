@@ -3,6 +3,7 @@
 #include <QStringList>
 #include <QtCore/qdir.h>
 #include <qfileinfo.h>
+#include <quuid.h>
 #include <business/recentfilesmanager.h>
 #include <business/imageanalysis/imageprocessinginteractor.h>
 #include <data/storage/filedialoghandler.h>
@@ -107,9 +108,21 @@ void ImageFilesHandler::validateImages(ImagesPtr images) {
     throw std::runtime_error(strError);
 }
 
+std::optional<FileSaveResult> ImageFilesHandler::saveImageTemporary(const QPixmap &image) {
+    auto extentionValidator = ImageValidationRulesFactory::createImageExtensionsInfoProvider();
+    QString ext = extentionValidator->getDeafaultSaveExtension(true);
+    QString uniqueName = QUuid::createUuid().toString(QUuid::WithoutBraces) + ext;
+    QString tempDir = QDir::tempPath();
+    QString filePath = QDir(tempDir).filePath(uniqueName);
+    if (image.save(filePath)) {
+        return std::make_optional<FileSaveResult>(true, filePath);
+    }
+    return std::nullopt;
+}
+
 std::optional<FileSaveResult> ImageFilesHandler::saveImageAs(const SaveImageInfo &saveImageInfo,
-                                              const ImagesPtr images
-                                             )
+                                                             const ImagesPtr images
+                                                             )
 {
     if (saveImageInfo.saveImageInfoType == SaveImageInfoType::None ||
         saveImageInfo.image.isNull() ||

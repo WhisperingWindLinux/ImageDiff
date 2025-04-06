@@ -126,17 +126,17 @@ void ImageViewer::displayImages(const ImagesPtr images) {
     setScene(customScene);
 
     ImagesInfo info { images };
-    QString image1Name = info.getFirstImageBaseName();
     firstImagePath = images->path1;
-    firstImageName = image1Name;
+    firstImageBaseName = info.getFirstImageBaseName();;
+    firstImageName = info.getFirstImageName();
     firstDisplayedImage = new GraphicsPixmapItem(images->image1, dropListener);
     customScene->addItem(firstDisplayedImage);
-    parent->showStatusMessage(firstImagePath);
+    parent->onComparebleImageDisplayed(firstImageName);
 
     if (!isSingleImageMode) {
-        QString image2Name = info.getSecondImageBaseName();
         secondImagePath = images->path2;
-        secondImageName = image2Name;
+        secondImageBaseName = info.getSecondImageBaseName();
+        secondImageName = info.getSecondImageName();
         secondDisplayedImage = new GraphicsPixmapItem(images->image2, dropListener);
         secondDisplayedImage->setVisible(false);
         customScene->addItem(secondDisplayedImage);
@@ -162,7 +162,7 @@ void ImageViewer::showImageFromComparator(const QPixmap &image, const QString &d
     firstDisplayedImage->setVisible(false);
     secondDisplayedImage->setVisible(false);
     comparatorResultDisplayedImage->setVisible(true);
-    parent->showStatusMessage(description);
+    parent->onComparisonImageDisplayed(firstImageName, secondImageName, description);
 }
 
 void ImageViewer::replaceDisplayedImages(const QPixmap& image1, const QPixmap& image2) {
@@ -197,10 +197,10 @@ void ImageViewer::replaceDisplayedImages(const QPixmap& image1, const QPixmap& i
 
         if (currentImageIndex == 0) {
             secondDisplayedImage->setVisible(false);
-            parent->showStatusMessage(firstImagePath);
+            parent->onComparebleImageDisplayed(firstImageName);
         } else {
             firstDisplayedImage->setVisible(false);
-            parent->showStatusMessage(secondImagePath);
+            parent->onComparebleImageDisplayed(secondImageName);
         }
         customScene->addItem(secondDisplayedImage);
     }
@@ -241,8 +241,8 @@ void ImageViewer::cleanUp() {
     }
     firstImagePath = "";
     secondImagePath = "";
-    firstImageName = "";
-    secondImageName = "";
+    firstImageBaseName = "";
+    secondImageBaseName = "";
     currentImageIndex = 0;
     isColorUnderCursorTrackingActive = false;
     lastCursorPos = std::nullopt;
@@ -284,12 +284,12 @@ void ImageViewer::toggleImage() {
         firstDisplayedImage->setVisible(false);
         secondDisplayedImage->setVisible(true);
         currentImageIndex = 1;
-        parent->showStatusMessage(secondImagePath);
+        parent->onComparebleImageDisplayed(secondImageName);
     } else {
         firstDisplayedImage->setVisible(true);
         secondDisplayedImage->setVisible(false);
         currentImageIndex = 0;
-        parent->showStatusMessage(firstImagePath);
+        parent->onComparebleImageDisplayed(firstImageName);
     }
 
     centerOn(viewRect.center());
@@ -425,14 +425,14 @@ ImagesPtr ImageViewer::getCroppedImages(QRectF rect) {
     QPixmap croppedPixmap1 = firstPixmap.copy(boundedRect1);
 
     if (isSingleImageMode) {
-        return std::make_shared<Images>(croppedPixmap1, firstImageName);
+        return std::make_shared<Images>(croppedPixmap1, firstImageBaseName);
     }
 
     auto secondPixmap = secondDisplayedImage->pixmap();
     QRect boundedRect2 = selectionRect.intersected(secondPixmap.rect());
     QPixmap croppedPixmap2 = secondPixmap.copy(boundedRect2);
 
-    return std::make_shared<Images>(croppedPixmap1, croppedPixmap2, firstImageName, secondImageName);
+    return std::make_shared<Images>(croppedPixmap1, croppedPixmap2, firstImageBaseName, secondImageBaseName);
 }
 
 /* } =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
@@ -497,7 +497,7 @@ void ImageViewer::sendPixelColorValuesForSingleImage(const QImage &visibleImage,
         QColor colorOfImage;
         QString imageName;
         colorOfImage = firstDisplayedImage->pixmap().toImage().pixelColor(x, y);
-        imageName = firstImageName;
+        imageName = firstImageBaseName;
         sendPixelColorValues(imageName, colorOfImage, std::nullopt, std::nullopt);
     }
 }
@@ -513,15 +513,15 @@ void ImageViewer::sendPixelColorValuesForTwoImages(const QImage &visibleImage, i
                 firstDisplayedImage->pixmap().toImage().pixelColor(x, y);
             colorOfHiddenImage =
                 secondDisplayedImage->pixmap().toImage().pixelColor(x, y);
-            visibleImageName = firstImageName;
-            hiddenImageName = secondImageName;
+            visibleImageName = firstImageBaseName;
+            hiddenImageName = secondImageBaseName;
         } else {
             colorOfVisibleImage =
                 secondDisplayedImage->pixmap().toImage().pixelColor(x, y);
             colorOfHiddenImage =
                 firstDisplayedImage->pixmap().toImage().pixelColor(x, y);
-            visibleImageName = secondImageName;
-            hiddenImageName = firstImageName;
+            visibleImageName = secondImageBaseName;
+            hiddenImageName = firstImageBaseName;
         }
         sendPixelColorValues(visibleImageName,
                              colorOfVisibleImage,

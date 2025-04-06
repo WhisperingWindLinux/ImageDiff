@@ -7,11 +7,11 @@
     <key>CFBundleDevelopmentRegion</key>
     <string>en</string>
     <key>CFBundleExecutable</key>
-    <string>ImageDiff</string>
+    <string>TwinPix</string>
     <key>CFBundleIconFile</key>
     <string>app_icon.icns</string>
     <key>CFBundleIdentifier</key>
-    <string>com.WhisperingWind.ImageDiff</string>
+    <string>com.WhisperingWind.TwinPix</string>
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleSignature</key>

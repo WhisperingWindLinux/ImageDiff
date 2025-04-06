@@ -1,7 +1,7 @@
 #include "pluginsrepository.h"
 
 PluginsSettingsRepository::PluginsSettingsRepository() {
-    settings = make_unique<QSettings>("ImageDiff", "PythonPluginsSettings");
+    settings = make_unique<QSettings>("TwinPix", "PythonPluginsSettings");
 }
 
 PluginsSettings PluginsSettingsRepository::getSettings() {

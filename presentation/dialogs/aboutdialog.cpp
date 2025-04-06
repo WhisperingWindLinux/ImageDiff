@@ -12,7 +12,7 @@ AboutDialog::AboutDialog(QWidget *parent) : QDialog(parent) {
     QVBoxLayout *layout = new QVBoxLayout(this);
 
     // Application information
-    QLabel *appNameLabel = new QLabel("<h2>ImageDiff</h2>", this);
+    QLabel *appNameLabel = new QLabel("<h2>TwinPix</h2>", this);
     appNameLabel->setAlignment(Qt::AlignCenter);
     layout->addWidget(appNameLabel);
 

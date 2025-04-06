@@ -101,7 +101,7 @@ shared_ptr<ComparisonResultVariant> PythonScriptComparator::compare(const Compar
 
     QProcess process;
     QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
-    env.insert("Runner", "ImageDiff");
+    env.insert("Runner", "TwinPix");
     process.setProcessEnvironment(env);
 
     process.start(pluginSettings.pythonInterpreterPath, params);

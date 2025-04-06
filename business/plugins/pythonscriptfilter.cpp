@@ -67,7 +67,7 @@ QImage PythonScripFilter::filter(const QImage &image) {
 
     QProcess process;
     QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
-    env.insert("Runner", "ImageDiff");
+    env.insert("Runner", "TwinPix");
     process.setProcessEnvironment(env);
 
 
