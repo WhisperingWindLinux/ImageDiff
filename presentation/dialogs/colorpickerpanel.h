@@ -22,7 +22,7 @@ public:
     // The second panel is for the second (hidden) image.
     explicit ColorPickerPanel(bool isForRightPosition, QWidget *parent = nullptr, bool isTwoPanelMode = true);
     
-    void update(const ImagePixelColor &visibleImageColor, std::optional<ImagePixelColor> hiddenImageColor);
+    void update(const ImagePixelColor &visibleImageColor, const std::optional<ImagePixelColor> &hiddenImageColor);
 
     void reset();
 

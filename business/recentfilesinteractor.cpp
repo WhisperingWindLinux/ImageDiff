@@ -62,7 +62,11 @@ QString RecentFilesInteractor::pairToString(const QStringPair& pair) {
     if (pair.first.isEmpty() || pair.second.isEmpty()) {
         return QString();
     }
-    return pair.first + " -> " + pair.second;
+    if (pair.first == pair.second) {
+        return pair.first;
+    } else {
+        return pair.first + " -> " + pair.second;
+    }
 }
 
 // Converts a formatted QString back to a QPair<QString, QString>
@@ -70,7 +74,12 @@ std::optional<QStringPair> RecentFilesInteractor::stringToPair(const QString& st
     if (str.isEmpty()) {
         return std::nullopt;
     }
-    return splitString(str, " -> ");
+    QString splitter = " -> ";
+    if (str.contains(splitter)) {
+        return splitString(str, splitter);
+    } else {
+        return QStringPair(str, str);
+    }
 }
 
 // Helper method to split a string with a specific separator

@@ -170,4 +170,4 @@ DISTFILES += \
     business/plugins/comparator_example.json \
     business/plugins/filter_example.json
 
-# QMAKE_INFO_PLIST = Info.plist
+QMAKE_INFO_PLIST = Info.plist

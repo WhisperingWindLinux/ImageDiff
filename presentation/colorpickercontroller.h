@@ -30,7 +30,7 @@ public:
     void onImagesOpened() override;
 
     void onColorUnderCursorChanged(const ImagePixelColor &visibleImageRgbValue,
-                                   const ImagePixelColor &hiddenImageRgbValue) override;
+                                   const std::optional<ImagePixelColor> &hiddenImageRgbValue) override;
 
 private:
     MainWindow *mainWindow;

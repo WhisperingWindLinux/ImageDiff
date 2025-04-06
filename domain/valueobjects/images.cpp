@@ -9,12 +9,27 @@ Images::Images(const QPixmap &image1, const QPixmap &image2, const QString &path
         image2(image2),
         path1(path1),
         path2(path2),
-        isTemporaryFiles(false)
+        isTemporaryFiles(false),
+        _isTheSameImage(false)
 {
     #ifdef QT_DEBUG
         currentGeneration = ++generation;
         qDebug() << "Images { Generation " << currentGeneration << "created! }";
     #endif
+}
+
+Images::Images(const QPixmap &image, const QString &path)
+    : image1(image),
+    image2(image),
+    path1(path),
+    path2(path),
+    isTemporaryFiles(false),
+    _isTheSameImage(true)
+{
+#ifdef QT_DEBUG
+    currentGeneration = ++generation;
+    qDebug() << "Images { Generation " << currentGeneration << "created! }";
+#endif
 }
 
 Images::~Images() {
@@ -25,7 +40,9 @@ Images::~Images() {
         return;
     }
     QFile(path1).remove();
-    QFile(path2).remove();
+    if (!isTheSameImage()) {
+        QFile(path2).remove();
+    }
 }
 
 void Images::markAsTemporary() {
@@ -37,5 +54,5 @@ bool Images::getIsTemporaryFiles() const {
 }
 
 bool Images::isTheSameImage() const {
-    return path1 == path2;
+    return _isTheSameImage;
 }

@@ -62,7 +62,7 @@ ImagesPtr ImageFilesHandler::openImages(const QString &image1Path, const QString
 
     QPixmap pixmap1 = openImage(image1Path);
     if (image1Path == image2Path) {
-        images = std::make_shared<Images>(pixmap1, pixmap1, image1Path, image1Path);
+        images = std::make_shared<Images>(pixmap1, image1Path);
     } else {
         QPixmap pixmap2 = openImage(image2Path);
         images = std::make_shared<Images>(pixmap1, pixmap2, image1Path, image2Path);

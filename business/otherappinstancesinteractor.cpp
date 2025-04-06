@@ -37,10 +37,15 @@ void OtherAppInstancesInteractor::openNewAppInstance(ImagesPtr images) {
 
     ImagesInfo info { images };
 
-    auto path1 = saveImageInTempDir(images->image1, info.getFirstImageBaseName());
-    auto path2 = saveImageInTempDir(images->image2, info.getSecondImageBaseName());
-    if (path1 && path2) {
-        openNewAppInstance(path1.value(), path2.value());
+    std::optional<QString> path1 = saveImageInTempDir(images->image1, info.getFirstImageBaseName());
+    std::optional<QString> path2;
+
+    if (!images->isTheSameImage()) {
+        path2 = saveImageInTempDir(images->image2, info.getSecondImageBaseName());
+    }
+
+    if (path1 && (images->isTheSameImage() || path2)) {
+        openNewAppInstance(path1.value(), path2);
         return;
     }
     if (path1) {
@@ -52,8 +57,8 @@ void OtherAppInstancesInteractor::openNewAppInstance(ImagesPtr images) {
 }
 
 void OtherAppInstancesInteractor::openNewAppInstance(const QString &firstFilePath,
-                                                                const QString &secondFilePath
-                                                                )
+                                                     const std::optional<QString> &secondFilePath
+                                                     )
 {
     cleanupProcesses();
 
@@ -62,7 +67,10 @@ void OtherAppInstancesInteractor::openNewAppInstance(const QString &firstFilePat
 
     QString program = QCoreApplication::applicationFilePath();
     QStringList arguments;
-    arguments << firstFilePath << secondFilePath;
+    arguments << firstFilePath;
+    if (secondFilePath) {
+        arguments << secondFilePath.value();
+    }
 
     if (process->startDetached(program, arguments)) {
         callback->onOtherAppInstanceOpened();

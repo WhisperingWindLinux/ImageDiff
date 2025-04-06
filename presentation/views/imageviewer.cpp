@@ -18,7 +18,9 @@
 ImageViewer::ImageViewer(IDropListener *dropListener, MainWindow *parent)
     : QGraphicsView(parent),
     parent(parent),
-    dropListener(dropListener)
+    dropListener(dropListener),
+    isSingleImageMode(false),
+    invalidColor({-1, -1, -1})
 {    
     customScene = nullptr;
     firstDisplayedImage = nullptr;
@@ -97,7 +99,9 @@ void ImageViewer::setToFitImageInView() {
         return;
     }
     fitInView(firstDisplayedImage, Qt::KeepAspectRatio);
-    fitInView(secondDisplayedImage, Qt::KeepAspectRatio);
+    if (secondDisplayedImage != nullptr) {
+        fitInView(secondDisplayedImage, Qt::KeepAspectRatio);
+    }
     if (comparatorResultDisplayedImage != nullptr) {
         fitInView(comparatorResultDisplayedImage, Qt::KeepAspectRatio);
     }
@@ -115,28 +119,28 @@ void ImageViewer::displayImages(const ImagesPtr images) {
         return;
     }
 
-    ImagesInfo info { images };
-
-    QString image1Name = info.getFirstImageBaseName();
-    QString image2Name = info.getSecondImageBaseName();
-
-    firstImagePath = images->path1;
-    secondImagePath = images->path2;
-    firstImageName = image1Name;
-    secondImageName = image2Name;
-
-    firstDisplayedImage = new GraphicsPixmapItem(images->image1, dropListener);
-    secondDisplayedImage = new GraphicsPixmapItem(images->image2, dropListener);
-    secondDisplayedImage->setVisible(false);
+    isSingleImageMode = images->isTheSameImage();
 
     setAcceptDrops(true);
     customScene = new QGraphicsScene(this);
     setScene(customScene);
 
+    ImagesInfo info { images };
+    QString image1Name = info.getFirstImageBaseName();
+    firstImagePath = images->path1;
+    firstImageName = image1Name;
+    firstDisplayedImage = new GraphicsPixmapItem(images->image1, dropListener);
     customScene->addItem(firstDisplayedImage);
-    customScene->addItem(secondDisplayedImage);
-
     parent->showStatusMessage(firstImagePath);
+
+    if (!isSingleImageMode) {
+        QString image2Name = info.getSecondImageBaseName();
+        secondImagePath = images->path2;
+        secondImageName = image2Name;
+        secondDisplayedImage = new GraphicsPixmapItem(images->image2, dropListener);
+        secondDisplayedImage->setVisible(false);
+        customScene->addItem(secondDisplayedImage);
+    }
 
     QTimer::singleShot(0, this, [this]() {
         setToFitImageInView();
@@ -144,7 +148,7 @@ void ImageViewer::displayImages(const ImagesPtr images) {
 }
 
 void ImageViewer::showImageFromComparator(const QPixmap &image, const QString &description) {
-    if (image.isNull() || !hasActiveSession()) {
+    if (image.isNull() || !hasActiveSession() || isSingleImageMode) {
         return;
     }
     if (comparatorResultDisplayedImage != nullptr) {
@@ -186,17 +190,20 @@ void ImageViewer::replaceDisplayedImages(const QPixmap& image1, const QPixmap& i
     }
 
     firstDisplayedImage = new GraphicsPixmapItem(image1, dropListener);
-    secondDisplayedImage = new GraphicsPixmapItem(image2, dropListener);
-
-    if (currentImageIndex == 0) {
-        secondDisplayedImage->setVisible(false);
-        parent->showStatusMessage(firstImagePath);
-    } else {
-        firstDisplayedImage->setVisible(false);
-        parent->showStatusMessage(secondImagePath);
-    }
     customScene->addItem(firstDisplayedImage);
-    customScene->addItem(secondDisplayedImage);
+
+    if (!isSingleImageMode) {
+        secondDisplayedImage = new GraphicsPixmapItem(image2, dropListener);
+
+        if (currentImageIndex == 0) {
+            secondDisplayedImage->setVisible(false);
+            parent->showStatusMessage(firstImagePath);
+        } else {
+            firstDisplayedImage->setVisible(false);
+            parent->showStatusMessage(secondImagePath);
+        }
+        customScene->addItem(secondDisplayedImage);
+    }
     centerOn(viewRect.center());
     if (lastCursorPos) {
         sendPixelColorUnderCursor(lastCursorPos.value());
@@ -204,7 +211,11 @@ void ImageViewer::replaceDisplayedImages(const QPixmap& image1, const QPixmap& i
 }
 
 bool ImageViewer::hasActiveSession() {
-    return (firstDisplayedImage != nullptr && secondDisplayedImage != nullptr);
+    if (isSingleImageMode) {
+        return (firstDisplayedImage != nullptr);
+    } else {
+        return (firstDisplayedImage != nullptr && secondDisplayedImage != nullptr);
+    }
 }
 
 void ImageViewer::cleanUp() {
@@ -255,7 +266,7 @@ void ImageViewer::cleanUp() {
  *  {   */
 
 void ImageViewer::toggleImage() {
-    if (!hasActiveSession()) {
+    if (!hasActiveSession() || isSingleImageMode) {
         return;
     }
     QRectF viewRect = mapToScene(viewport()->geometry()).boundingRect();
@@ -410,13 +421,18 @@ ImagesPtr ImageViewer::getCroppedImages(QRectF rect) {
     QRect selectionRect = rect.toAlignedRect();
 
     auto firstPixmap = firstDisplayedImage->pixmap();
-    auto secondPixmap = secondDisplayedImage->pixmap();
     QRect boundedRect1 = selectionRect.intersected(firstPixmap.rect());
     QPixmap croppedPixmap1 = firstPixmap.copy(boundedRect1);
+
+    if (isSingleImageMode) {
+        return std::make_shared<Images>(croppedPixmap1, firstImageName);
+    }
+
+    auto secondPixmap = secondDisplayedImage->pixmap();
     QRect boundedRect2 = selectionRect.intersected(secondPixmap.rect());
     QPixmap croppedPixmap2 = secondPixmap.copy(boundedRect2);
 
-    return std::make_shared<Images>(croppedPixmap1, croppedPixmap2,  firstImageName, secondImageName);
+    return std::make_shared<Images>(croppedPixmap1, croppedPixmap2, firstImageName, secondImageName);
 }
 
 /* } =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
@@ -451,10 +467,10 @@ void ImageViewer::sendPixelColorUnderCursor(std::optional<QPoint> cursorPos) {
     QPointF scenePos = mapToScene(cursorPos.value());
 
     // Get the item under the cursor (if any)
-    QGraphicsItem* item = customScene->itemAt(scenePos, transform());
+    QGraphicsItem *item = customScene->itemAt(scenePos, transform());
     if (item) {
         // Check if the item is a pixmap (image)
-        QGraphicsPixmapItem* pixmapItem = dynamic_cast<QGraphicsPixmapItem*>(item);
+        QGraphicsPixmapItem *pixmapItem = dynamic_cast<QGraphicsPixmapItem *>(item);
         if (pixmapItem) {
             // Get the pixmap (image) from the item
             const QPixmap pixmap = pixmapItem->pixmap();
@@ -465,32 +481,60 @@ void ImageViewer::sendPixelColorUnderCursor(std::optional<QPoint> cursorPos) {
             int x = static_cast<int>(itemPos.x());
             int y = static_cast<int>(itemPos.y());
 
-            // Ensure the coordinates are within the image bounds
-            if (x >= 0 && x < visibleImage.width() && y >= 0 && y < visibleImage.height()) {
-                // Get the color of the pixel
-                QColor colorOfVisibleImage, colorOfHiddenImage;
-                QString visibleImageName, hiddenImageName;
-                if (currentImageIndex == 0) {
-                    colorOfVisibleImage = firstDisplayedImage->pixmap().toImage().pixelColor(x, y);
-                    colorOfHiddenImage = secondDisplayedImage->pixmap().toImage().pixelColor(x, y);
-                    visibleImageName = firstImageName;
-                    hiddenImageName = secondImageName;
-                } else {
-                    colorOfVisibleImage = secondDisplayedImage->pixmap().toImage().pixelColor(x, y);
-                    colorOfHiddenImage = firstDisplayedImage->pixmap().toImage().pixelColor(x, y);
-                    visibleImageName = secondImageName;
-                    hiddenImageName = firstImageName;
-                }
-                sendPixelColorValues(visibleImageName, colorOfVisibleImage, hiddenImageName, colorOfHiddenImage);
+            if (isSingleImageMode) {
+                sendPixelColorValuesForSingleImage(visibleImage, x, y);
+            } else {
+                sendPixelColorValuesForTwoImages(visibleImage, x, y);
             }
         }
     }
 }
 
+void ImageViewer::sendPixelColorValuesForSingleImage(const QImage &visibleImage, int &x, int &y) {
+    // Ensure the coordinates are within the image bounds
+    if (x >= 0 && x < visibleImage.width() && y >= 0 && y < visibleImage.height()) {
+        // Get the color of the pixel
+        QColor colorOfImage;
+        QString imageName;
+        colorOfImage = firstDisplayedImage->pixmap().toImage().pixelColor(x, y);
+        imageName = firstImageName;
+        sendPixelColorValues(imageName, colorOfImage, std::nullopt, std::nullopt);
+    }
+}
+
+void ImageViewer::sendPixelColorValuesForTwoImages(const QImage &visibleImage, int &x, int &y) {
+    // Ensure the coordinates are within the image bounds
+    if (x >= 0 && x < visibleImage.width() && y >= 0 && y < visibleImage.height()) {
+        // Get the color of the pixel
+        QColor colorOfVisibleImage, colorOfHiddenImage;
+        QString visibleImageName, hiddenImageName;
+        if (currentImageIndex == 0) {
+            colorOfVisibleImage =
+                firstDisplayedImage->pixmap().toImage().pixelColor(x, y);
+            colorOfHiddenImage =
+                secondDisplayedImage->pixmap().toImage().pixelColor(x, y);
+            visibleImageName = firstImageName;
+            hiddenImageName = secondImageName;
+        } else {
+            colorOfVisibleImage =
+                secondDisplayedImage->pixmap().toImage().pixelColor(x, y);
+            colorOfHiddenImage =
+                firstDisplayedImage->pixmap().toImage().pixelColor(x, y);
+            visibleImageName = secondImageName;
+            hiddenImageName = firstImageName;
+        }
+        sendPixelColorValues(visibleImageName,
+                             colorOfVisibleImage,
+                             hiddenImageName,
+                             colorOfHiddenImage
+                             );
+    }
+}
+
 void ImageViewer::sendPixelColorValues(const QString &visibleImageName,
                                        const QColor &colorOfVisibleImage,
-                                       const QString &hiddenImageName,
-                                       const QColor &colorOfHiddenImage
+                                       const std::optional<QString> &hiddenImageName,
+                                       const std::optional<QColor> &colorOfHiddenImage
                                        )
 {
     ImagePixelColor pixelValueOfVisibleImage = {
@@ -499,13 +543,16 @@ void ImageViewer::sendPixelColorValues(const QString &visibleImageName,
         colorOfVisibleImage.green(),
         colorOfVisibleImage.blue()
     };
+    std::optional<ImagePixelColor> pixelValueOfHiddenImage;
+    if (hiddenImageName && colorOfHiddenImage) {
 
-    ImagePixelColor pixelValueOfHiddenImage = {
-            hiddenImageName,
-            colorOfHiddenImage.red(),
-            colorOfHiddenImage.green(),
-            colorOfHiddenImage.blue()
-    };
+        pixelValueOfHiddenImage = {
+                hiddenImageName.value(),
+                colorOfHiddenImage.value().red(),
+                colorOfHiddenImage.value().green(),
+                colorOfHiddenImage.value().blue()
+        };
+    }
     parent->onColorUnderCursorChanged(pixelValueOfVisibleImage, pixelValueOfHiddenImage);
 }
 
@@ -515,8 +562,8 @@ void ImageViewer::mousePressEvent(QMouseEvent *event) {
         return;
     }
     auto shiftModifier = event->modifiers() & Qt::ShiftModifier;
-    auto controlModifier = event->modifiers() & Qt::ControlModifier;
-    auto altModifier = event->modifiers() & Qt::AltModifier;
+    auto controlModifier = (event->modifiers() & Qt::ControlModifier);
+    auto altModifier = (event->modifiers() & Qt::AltModifier) && !isSingleImageMode;
     if (event->button() == Qt::LeftButton && (shiftModifier || controlModifier || altModifier)) {
         selecting = true;
         selectionStart = event->pos(); // Save the starting point of the selection in view coordinates
@@ -547,7 +594,7 @@ void ImageViewer::mouseReleaseEvent(QMouseEvent *event) {
         }
         else if (!sceneSelectionRect.isEmpty() &&
                  sceneSelectionRect.isValid() &&
-                 event->modifiers() & Qt::AltModifier
+                 event->modifiers() & Qt::ControlModifier
                  )
         {
             ImagesPtr images = getCroppedImages(sceneSelectionRect);
@@ -555,7 +602,7 @@ void ImageViewer::mouseReleaseEvent(QMouseEvent *event) {
         }
         else if (!sceneSelectionRect.isEmpty() &&
                  sceneSelectionRect.isValid() &&
-                 event->modifiers() & Qt::ControlModifier
+                 event->modifiers() & Qt::AltModifier
                  )
         {
             // If the user holds down the Command (Ctrl) key along with the comparator hotkey and selects

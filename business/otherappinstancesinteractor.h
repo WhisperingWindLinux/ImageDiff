@@ -23,9 +23,10 @@ private:
     QList<QProcess*> appInstances;
     OtherAppInstancesInteractorCallback *callback;
 
-    void openNewAppInstance(const QString &firstFilePath, const QString &secondFilePath);
+    void openNewAppInstance(const QString &firstFilePath, const std::optional<QString> &secondFilePath);
     std::optional<QString> saveImageInTempDir(const QPixmap &pixmap, const QString &fileName);
     void cleanupProcesses();
+    void openNewAppInstaceForSingleImage(ImagesPtr);
 };
 
 #endif // OTHERAPPINSTANCESINTERACTOR_H

@@ -2,6 +2,7 @@
 
 #include <QApplication>
 #include <QFileOpenEvent>
+#include <qthread.h>
 
 
 class MyApplication : public QApplication {
@@ -50,5 +51,6 @@ int main(int argc, char *argv[]) {
 #endif
 
     MyApplication a(argc, argv);
+    a.showMainWindow();
     return a.exec();
 }

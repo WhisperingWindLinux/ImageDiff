@@ -79,6 +79,8 @@ private:
     bool isColorUnderCursorTrackingActive;
     std::optional<QPoint> lastCursorPos;
     std::optional<int> pressedKey;
+    bool isSingleImageMode;
+    QColor invalidColor;
 
     // Zoom to selection
     bool selecting;                         // Whether the user is currently selecting an area
@@ -90,12 +92,14 @@ private:
 
     ImagesPtr getCroppedImages(QRectF rect);
 
+    void sendPixelColorValuesForTwoImages(const QImage &visibleImage, int &x, int &y);
+    void sendPixelColorValuesForSingleImage(const QImage &visibleImage, int &x, int &y);
     void sendPixelColorUnderCursor(std::optional<QPoint> cursorPos);
 
     void sendPixelColorValues(const QString &visibleImageName,
                               const QColor &colorOfVisibleImage,
-                              const QString &hiddenImageName,
-                              const QColor &colorOfHiddenImage
+                              const std::optional<QString> &hiddenImageName,
+                              const std::optional<QColor> &colorOfHiddenImage
                               );
     void setCenterToViewRectCenter();
 };

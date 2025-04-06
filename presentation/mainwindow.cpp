@@ -37,7 +37,7 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent),
     ui(new Ui::MainWindow),
-    isOpenSingleImageEnabledFeatureFlag(false)
+    menuIsInSingleImageMode(false)
 {
     ui->setupUi(this);
 
@@ -134,10 +134,13 @@ void MainWindow::enableImageProceesorsMenuItems(bool isEnabled) {
     ui->actionShowFirstImage->setDisabled(!isEnabled);
     ui->actionShowSecondImage->setDisabled(!isEnabled);
 
-    if (!isOpenSingleImageEnabledFeatureFlag) {
-        ui->actionOpenImage->setVisible(false);
-        ui->actionOpenImages->setText("Open Images");
-        ui->actionGetImagesFromVideos->setText("Get Images From Videos");
+    if (menuIsInSingleImageMode) {
+        ui->menuComparators->setDisabled(true);
+        ui->menuImageAnalysis->setDisabled(true);
+        ui->actionSwitchBetweenImages->setDisabled(true);
+        ui->actionShowFirstImage->setDisabled(true);
+        ui->actionShowSecondImage->setDisabled(true);
+        ui->actionShowComparisonImage->setDisabled(true);
     }
 }
 
@@ -357,10 +360,6 @@ void MainWindow::dropEvent(QDropEvent *event) {
 
 // IDropListener interface
 void MainWindow::onDrop(QList<QUrl> urls) {
-    if (urls.size() == 1 && !isOpenSingleImageEnabledFeatureFlag) {
-        showError("Drag and drop two images here.");
-        return;
-    }
     try {
         imageFilesInteractor->openImagesFromDragAndDrop(urls);
     } catch (std::runtime_error &e) {
@@ -414,7 +413,7 @@ void MainWindow::closeEvent(QCloseEvent *) {
 /* Methods of the abstract class IColorUnderCursorChangeListener { */
 
 void MainWindow::onColorUnderCursorChanged(const ImagePixelColor &visibleImageRgbValue,
-                                           const ImagePixelColor &hiddenImageRgbValue
+                                           const std::optional<ImagePixelColor> &hiddenImageRgbValue
                                            )
 {
     colorPickerController->onColorUnderCursorChanged(visibleImageRgbValue, hiddenImageRgbValue);
@@ -433,6 +432,12 @@ void MainWindow::onImagesOpened(const ImagesPtr images) {
     }
     imageView->cleanUp();
     showStatusMessage("");
+    menuIsInSingleImageMode = images->isTheSameImage();
+    if (menuIsInSingleImageMode) {
+        setWindowTitle("Single Image Viewer Mode - Image Diff");
+    } else {
+        setWindowTitle("Image Comparison Mode - Image Diff");
+    }
 
     imageProcessingInteractor = new ImageProcessingInteractor(images, this, this);
     imageProcessingInteractor->subscribe(this);
@@ -459,11 +464,13 @@ void MainWindow::onImagesClosed() {
         delete imageProcessingInteractor;
         imageProcessingInteractor = nullptr;
     }
+    menuIsInSingleImageMode = false;
     imageFilesInteractor->cleanup();
     colorPickerController->onImagesClosed();
     imageView->cleanUp();
     enableImageProceesorsMenuItems(false);
     showStatusMessage("");
+    setWindowTitle("Image Diff");
 }
 
 void MainWindow::onSavingFileFailed(const QString &path) {
@@ -578,9 +585,7 @@ void MainWindow::openImagesFromCommandLine(const QString &firstFilePath, const Q
 }
 
 void MainWindow::openImageFromCommandLine(const QString &filePath) {
-    if (isOpenSingleImageEnabledFeatureFlag) {
-        imageFilesInteractor->openImagesViaCommandLine(filePath, filePath);
-    }
+    imageFilesInteractor->openImagesViaCommandLine(filePath, filePath);
 }
 
 /* } =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */

@@ -6,7 +6,7 @@
 class IColorUnderCursorChangeListener {
 public:
     virtual void onColorUnderCursorChanged(const ImagePixelColor &visibleImageRgbValue,
-                                           const ImagePixelColor &hiddenImageRgbValue) = 0;
+                                           const std::optional<ImagePixelColor> &hiddenImageRgbValue) = 0;
 };
 
 #endif // ICOLORUNDERCURSORCHANGELISTENER_H

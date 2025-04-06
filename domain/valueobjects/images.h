@@ -8,6 +8,7 @@
 struct Images {
 
     Images(const QPixmap &image1, const QPixmap &image2, const QString &path1, const QString &path2);
+    Images(const QPixmap &image, const QString &path);
     ~Images();
 
     // When the user selects an area of the image with the mouse while holding
@@ -27,6 +28,7 @@ struct Images {
 
 private:
     bool isTemporaryFiles;
+    bool _isTheSameImage;
     #ifdef QT_DEBUG
         static int generation;
         int currentGeneration;

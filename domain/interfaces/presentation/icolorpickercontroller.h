@@ -17,7 +17,7 @@ public:
     virtual void onImagesOpened() = 0;
 
     virtual void onColorUnderCursorChanged(const ImagePixelColor &visibleImageRgbValue,
-                                   const ImagePixelColor &hiddenImageRgbValue
+                                   const std::optional<ImagePixelColor> &hiddenImageRgbValue
                                    ) = 0;
 };
 

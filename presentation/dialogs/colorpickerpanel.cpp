@@ -153,8 +153,8 @@ void ColorPickerPanel::updateTopPanelOnly(const ImagePixelColor &visibleImageCol
 }
 
 void ColorPickerPanel::update(const ImagePixelColor &visibleImageColor,
-                              std::optional<ImagePixelColor> hiddenImageColor
-                             )
+                              const std::optional<ImagePixelColor> &hiddenImageColor
+                              )
 {
     if (!isTwoPanelMode) {
         updateTopPanelOnly(visibleImageColor);
@@ -163,6 +163,8 @@ void ColorPickerPanel::update(const ImagePixelColor &visibleImageColor,
 
     if (!hiddenImageColor) {
         reset();
+        updateTopPanelOnly(visibleImageColor);
+        return;
     }
 
     // Update the top panel
@@ -274,20 +276,4 @@ QString ColorPickerPanel::format(const QString &colorComponemt,
 
         return QString(colorComponemt) + ":  " + formattedColor + separator + formattedDiff;
     }
-
-
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

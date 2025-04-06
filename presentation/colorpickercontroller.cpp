@@ -64,8 +64,8 @@ void ColorPickerController::onImagesOpened() {
 }
 
 void ColorPickerController::onColorUnderCursorChanged(const ImagePixelColor &visibleImageRgbValue,
-                                                     const ImagePixelColor &hiddenImageRgbValue
-                                                     )
+                                                      const std::optional<ImagePixelColor> &hiddenImageRgbValue
+                                                      )
 {
     colorPicker->update(visibleImageRgbValue, hiddenImageRgbValue);
 }

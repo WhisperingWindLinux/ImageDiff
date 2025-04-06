@@ -90,7 +90,7 @@ public:
     // IColorUnderCursorChangeListener interface
 
     void onColorUnderCursorChanged(const ImagePixelColor &visibleImageRgbValue,
-                                   const ImagePixelColor &hiddenImageRgbValue) override;
+                                   const std::optional<ImagePixelColor> &hiddenImageRgbValue) override;
 
     // IPropcessorPropertiesDialogCallback intergace
 
@@ -149,19 +149,7 @@ private:
     RecentFilesInteractor *recentFilesInteractor;
     OtherAppInstancesInteractor *otherAppInstanceInteractor;
     QProgressDialog *progressDialog;
-
-    // The application was not originally designed for opening a single image.
-    // This flag adds that feature. Under the hood, the image is still
-    // opened as two images for comparison, but the process of opening it
-    // is simplified. For example, the open dialog, drag-and-drop, and
-    // opening via double-click from Finder become available for a single image.
-    // The feature is disabled by default as it might confuse users. Enable it
-    // only if you are sure you need it and understand how it works.
-    // To open an image from Finder by double-clicking, you have to uncomment
-    //          # QMAKE_INFO_PLIST = Info.plist
-    // in ImageDiff.pro
-
-    const bool isOpenSingleImageEnabledFeatureFlag;
+    bool menuIsInSingleImageMode;
 
     void buildImageProcessorsMenu();
     void makeConnections();
