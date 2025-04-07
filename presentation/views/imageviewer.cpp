@@ -426,7 +426,19 @@ ImageHolderPtr ImageViewer::getCroppedImages(const QRectF &rect) {
     auto secondPixmap = mSecondDisplayedImage->pixmap();
     QRect boundedRect2 = selectionRect.intersected(secondPixmap.rect());
     QPixmap croppedPixmap2 = secondPixmap.copy(boundedRect2);
-    return std::make_shared<ImageHolder>(croppedPixmap1, mFirstImageBaseName, croppedPixmap2, mSecondImageBaseName);
+    if (mCurrentImageIndex == 0) {
+        return std::make_shared<ImageHolder>(croppedPixmap1,
+                                             mFirstImageBaseName,
+                                             croppedPixmap2,
+                                             mSecondImageBaseName
+                                             );
+    } else {
+        return std::make_shared<ImageHolder>(croppedPixmap2,
+                                             mSecondImageBaseName,
+                                             croppedPixmap1,
+                                             mFirstImageBaseName
+                                             );
+    }
 }
 
 /* } =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
@@ -555,9 +567,10 @@ void ImageViewer::mousePressEvent(QMouseEvent *event) {
     if (!hasActiveSession()) {
         return;
     }
+    bool isComparisonImageDisplayed = (mComparatorResultDisplayedImage != nullptr);
     auto shiftModifier = event->modifiers() & Qt::ShiftModifier;
-    auto controlModifier = (event->modifiers() & Qt::ControlModifier);
-    auto altModifier = (event->modifiers() & Qt::AltModifier) && !mIsSingleImageMode;
+    auto controlModifier = (event->modifiers() & Qt::ControlModifier) && !isComparisonImageDisplayed;
+    auto altModifier = (event->modifiers() & Qt::AltModifier) && !mIsSingleImageMode && !isComparisonImageDisplayed;
     if (event->button() == Qt::LeftButton && (shiftModifier || controlModifier || altModifier)) {
         mIsSelecting = true;
         mSelectionStart = event->pos(); // Save the starting point of the selection in view coordinates
