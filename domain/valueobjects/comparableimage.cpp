@@ -3,21 +3,21 @@
 #include <qfileinfo.h>
 #include <qpixmap.h>
 
-ComparableImage::ComparableImage(const QImage &image, const QString &path)
+ComparableImage::ComparableImage(const QImage &image, const QString &imageName)
     : mImage(image),
-    mPath(path)
+    mImageName(imageName)
 {
 }
 
-ComparableImage::ComparableImage(QImage&& image, QString&& path)
+ComparableImage::ComparableImage(QImage&& image, QString&& imageName)
     : mImage(std::move(image)),
-    mPath(std::move(path))
+    mImageName(std::move(imageName))
 {
 }
 
-ComparableImage::ComparableImage(const QPixmap &image, const QString &path) {
-    this->mImage = image.toImage();
-    this->mPath = path;
+ComparableImage::ComparableImage(const QPixmap &image, const QString &imageName) {
+    mImage = image.toImage();
+    mImageName = imageName;
 }
 
 QImage ComparableImage::getImage() const {
@@ -25,10 +25,9 @@ QImage ComparableImage::getImage() const {
 }
 
 QString ComparableImage::getPath() const {
-    return mPath;
+    return mImageName;
 }
 
-QString ComparableImage::getBaseName() const {
-    QFileInfo file {mPath};
-    return file.baseName();
+QString ComparableImage::getImageName() const {
+    return mImageName;
 }

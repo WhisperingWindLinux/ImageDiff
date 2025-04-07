@@ -2,9 +2,11 @@
 #define GETIMAGESFROMVIDEOSINTERACTOR_H
 
 #include <qstring.h>
-
 #include <presentation/dialogs/getimagesfromvideosdialog.h>
-#include <domain/valueobjects/images.h>
+#include <data/storage/filedialoghandler.h>
+
+
+typedef std::optional<QPair<QString, QString>> OptionalStringPair;
 
 class MainWindow;
 
@@ -14,7 +16,7 @@ public:
     GetImagesFromVideosInteractor() = default;
     ~GetImagesFromVideosInteractor() = default;
     
-    ImageHolderPtr get();
+    OptionalStringPair getImagePaths();
 };
 
 #endif // GETIMAGESFROMVIDEOSINTERACTOR_H

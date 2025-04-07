@@ -77,9 +77,9 @@ std::shared_ptr<ComparisonResultVariant> ContrastComporator::compare(
                                                             )
 {
     auto result = compareImages(first.getImage(),
-                                first.getBaseName(),
+                                first.getImageName(),
                                 second.getImage(),
-                                second.getBaseName()
+                                second.getImageName()
                                 );
     QString html = ContrastComporator::formatResultToHtml(result);
     return std::make_shared<ComparisonResultVariant>(html);

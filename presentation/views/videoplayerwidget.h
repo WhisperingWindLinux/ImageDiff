@@ -22,13 +22,13 @@ class VideoPlayerWidget : public QWidget {
     Q_OBJECT
 
 public:
-    VideoPlayerWidget(QWidget *parent = nullptr);
+    VideoPlayerWidget(QWidget *parent, int videoPlayerNumber);
 
     void loadVideo(const QString &filePath);
 
     int getScreenshotCounter() const;
 
-    QString getCurrentScreenshotPath() const;
+    std::optional<QString> getCurrentScreenshotPath() const;
 
 private slots:
     void togglePlayPause();
@@ -53,10 +53,11 @@ private:
     QLabel *mFrameLabel; // Displays the current frame number
     QLabel *mTimeLabel;  // Displays the current timestamp in milliseconds
     QString mCurrentVideoPath;
-    QString mCurrentScreenshotPath;
+    std::optional<QString> mCurrentScreenshotPath;
     int mScreenshotCounter;
     double mFrameRate;
     qint64 mCurrentPosition;
+    int mVideoPlayerNumber;
 };
 
 #endif // VIDEOPLAYERWIDGET_H

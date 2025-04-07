@@ -137,9 +137,9 @@ ComparisonResultVariantPtr LinerNonLinerDifferenceComparator::compare(const Comp
                                                                        )
 {
     auto result = compareImages(first.getImage(),
-                                first.getBaseName(),
+                                first.getImageName(),
                                 second.getImage(),
-                                second.getBaseName()
+                                second.getImageName()
                                 );
 
     QString html = formatResultToHtml(result);

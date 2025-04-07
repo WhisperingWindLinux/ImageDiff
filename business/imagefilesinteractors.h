@@ -20,6 +20,7 @@ public:
     void openImagesFromRecentMenu(const QString &recentFileMenuRecord);
     void openImagesFromDragAndDrop(const QList<QUrl> &urls);
     void openImagesViaCommandLine(const QString &firstImagePath, const QString &secondImagePath);
+    void openImageViaCommandLine(const QString &imagePath);
     void openImagesViaOpenFilesDialog();
     void openImageViaOpenFilesDialog();
     void openImagesFromVideos();

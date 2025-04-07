@@ -1,5 +1,7 @@
 #include "getimagesfromvideosdialog.h"
 
+#include <qmessagebox.h>
+
 
 GetImagesFromVideosDialog::GetImagesFromVideosDialog(QWidget *parent,
                                                        const QString &videoFilePath1,
@@ -15,8 +17,8 @@ GetImagesFromVideosDialog::GetImagesFromVideosDialog(QWidget *parent,
     QHBoxLayout *mainLayout = new QHBoxLayout(this);
 
     // Create two video player widgets
-    mPlayer1 = new VideoPlayerWidget(this);
-    mPlayer2 = new VideoPlayerWidget(this);
+    mPlayer1 = new VideoPlayerWidget(this, 1);
+    mPlayer2 = new VideoPlayerWidget(this, 2);
 
     mainLayout->addWidget(mPlayer1);
     mainLayout->addWidget(mPlayer2);
@@ -31,11 +33,11 @@ GetImagesFromVideosDialog::GetImagesFromVideosDialog(QWidget *parent,
     connect(mPlayer2, &VideoPlayerWidget::screenshotTaken, this, &GetImagesFromVideosDialog::handleScreenshotTaken);
 }
 
-QString GetImagesFromVideosDialog::getFirstScreenshotPath() {
+std::optional<QString> GetImagesFromVideosDialog::getFirstScreenshotPath() {
     return mPlayer1->getCurrentScreenshotPath();
 }
 
-QString GetImagesFromVideosDialog::getSecondScreenshotPath() {
+std::optional<QString> GetImagesFromVideosDialog::getSecondScreenshotPath() {
     return mPlayer2->getCurrentScreenshotPath();
 }
 
@@ -48,4 +50,13 @@ void GetImagesFromVideosDialog::handleScreenshotTaken() {
     if (mTotalScreenshotsTaken >= 2) {
         close(); // Close the dialog after two screenshots are taken
     }
+}
+
+void GetImagesFromVideosDialog::showError(const QString &errorMessage) {
+    QMessageBox msgBox;
+    msgBox.setIcon(QMessageBox::Critical);
+    msgBox.setText(errorMessage);
+    msgBox.setStandardButtons(QMessageBox::Ok);
+    msgBox.setDefaultButton(QMessageBox::Ok);
+    msgBox.exec();
 }

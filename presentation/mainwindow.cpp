@@ -621,7 +621,7 @@ void MainWindow::openImagesFromCommandLine(const QString &firstFilePath, const Q
 }
 
 void MainWindow::openImageFromCommandLine(const QString &filePath) {
-    mImageFilesInteractor->openImagesViaCommandLine(filePath, filePath);
+    mImageFilesInteractor->openImageViaCommandLine(filePath);
 }
 
 /* } =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */

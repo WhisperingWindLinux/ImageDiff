@@ -92,6 +92,21 @@ void ImageFilesInteractor::openImagesViaCommandLine(const QString &firstImagePat
     }
 }
 
+void ImageFilesInteractor::openImageViaCommandLine(const QString &imagePath) {
+    try {
+        mImages = mImageFileHandler->openImage(imagePath);
+
+        if (isFileInTempFolder(mImages->getFirstImagePath())) {
+            mImages->markTemporary();
+        }
+        notifyImagesOpened(mImages);
+    } catch(std::runtime_error &e) {
+        cleanup();
+        notifyImagesOpenFailed(e.what());
+        notifyImagesClosed();
+    }
+}
+
 void ImageFilesInteractor::openImagesViaOpenFilesDialog() {
     try {
         mImages = mImageFileHandler->openImages();
@@ -121,12 +136,12 @@ void ImageFilesInteractor::openImageViaOpenFilesDialog() {
 void ImageFilesInteractor::openImagesFromVideos() {
     try {
         GetImagesFromVideosInteractor getImagesFromVideosInteractor {};
-        ImageHolderPtr imagesPath = getImagesFromVideosInteractor.get();
-        if (imagesPath == nullptr) {
+        auto imagePaths = getImagesFromVideosInteractor.getImagePaths();
+        if (!imagePaths) {
             return;
         }
-        mImages = mImageFileHandler->openImages(imagesPath->getFirstImagePath(),
-                                                imagesPath->getSecondImagePath()
+        mImages = mImageFileHandler->openImages(imagePaths->first,
+                                                imagePaths->second
                                                 );
         notifyImagesOpened(mImages);
     } catch(std::runtime_error &e) {
@@ -151,7 +166,7 @@ void ImageFilesInteractor::openImageFromClipboard() {
         }
         QPixmap pixmap = QPixmap::fromImage(image);
         auto path = mImageFileHandler->saveImageAsTemporary(pixmap);
-        auto images = mImageFileHandler->openImages(path, path);
+        auto images = mImageFileHandler->openImage(path);
         images->markTemporary();
         notifyImagesOpened(images);
     } catch(std::runtime_error &e) {

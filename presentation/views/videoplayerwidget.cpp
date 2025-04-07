@@ -4,8 +4,13 @@
 #include <presentation/views/videodialogslider.h>
 #include <business/validation/imagevalidationrulesfactory.h>
 
-VideoPlayerWidget::VideoPlayerWidget(QWidget *parent)
-    : QWidget(parent), mScreenshotCounter(0), mFrameRate(INFINITY), mCurrentPosition(0) {
+VideoPlayerWidget::VideoPlayerWidget(QWidget *parent, int videoPlayerNumber)
+    : QWidget(parent),
+    mScreenshotCounter(0),
+    mFrameRate(INFINITY),
+    mCurrentPosition(0),
+    mVideoPlayerNumber(videoPlayerNumber)
+{
     setMinimumSize(600, 600);
 
     // Main layout for the video player widget
@@ -74,7 +79,7 @@ int VideoPlayerWidget::getScreenshotCounter() const {
     return mScreenshotCounter;
 }
 
-QString VideoPlayerWidget::getCurrentScreenshotPath() const {
+std::optional<QString> VideoPlayerWidget::getCurrentScreenshotPath() const {
     return mCurrentScreenshotPath;
 }
 
@@ -117,14 +122,17 @@ void VideoPlayerWidget::takeScreenshot() {
     auto extentionValidator = ImageValidationRulesFactory::createImageExtensionsInfoProvider();
     QString ext = extentionValidator->getDeafaultSaveExtension(true);
 
-    QString screenshotFileName = QString("%1_screenshot_%2%3")
-                                     .arg(baseName, timePos, ext);
+    QString screenshotFileName = QString("%1_screenshot_%2_player%3%4")
+                                     .arg(baseName, timePos)
+                                     .arg(mVideoPlayerNumber)
+                                     .arg(ext);
 
     // Save the screenshot in the same folder as the video
-    mCurrentScreenshotPath = fileInfo.absolutePath() + "/" + screenshotFileName;
-    image.save(mCurrentScreenshotPath);
-
-    qDebug() << "Screenshot saved:" << mCurrentScreenshotPath;
+    mCurrentScreenshotPath = QDir(fileInfo.absolutePath()).filePath(screenshotFileName);
+    bool isSaved = image.save(mCurrentScreenshotPath.value());
+    if (!isSaved) {
+        mCurrentScreenshotPath = std::nullopt;
+    }
 
     mScreenshotButton->setDisabled(true);
     mPlayPauseButton->setDisabled(true);

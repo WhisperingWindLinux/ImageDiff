@@ -134,8 +134,8 @@ std::shared_ptr<ComparisonResultVariant> ImageProximityToOriginComparator::compa
 
     auto result = compareImages(first.getImage(),
                                 second.getImage(),
-                                first.getBaseName(),
-                                second.getBaseName(),
+                                first.getImageName(),
+                                second.getImageName(),
                                 mOriginalImage
                                 );
 
