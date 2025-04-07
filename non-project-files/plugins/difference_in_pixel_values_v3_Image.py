@@ -86,7 +86,7 @@ def main():
             # Encode the resulting image to PNG format
             _, encoded_image = cv2.imencode('.png', result_image)
             # Write the encoded image to stdout
-            if my_variable == "ImageDiff":
+            if my_variable == "TwinPix":
                 sys.stdout.buffer.write(encoded_image.tobytes())
             else:
                 cv2.imshow("Differences", result_image)
@@ -102,7 +102,7 @@ def main():
             # Encode the resulting image to PNG format
             _, encoded_image = cv2.imencode('.png', result_image)
             # Write the encoded image to stdout
-            if my_variable == "ImageDiff":
+            if my_variable == "TwinPix":
                 sys.stdout.buffer.write(encoded_image.tobytes())
             else:
                 cv2.imshow("Differences on White Background", result_image)
