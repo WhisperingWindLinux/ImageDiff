@@ -26,6 +26,8 @@ ExternalImageViewerDialog::ExternalImageViewerDialog(const QPixmap &image, const
     QVBoxLayout *layout = new QVBoxLayout(this);
     layout->setMenuBar(menuBar);
     layout->addWidget(graphicsView);
+    layout->setContentsMargins(0, 0, 0, 0);
+    layout->setSpacing(0);
     setLayout(layout);
 }
 
