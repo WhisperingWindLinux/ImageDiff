@@ -12,17 +12,17 @@ public:
     ComparisonResultVariant(const QImage &image);
     ComparisonResultVariant(const QString &string);
 
-    QImage imageResult();
-    QString stringResult();
+    QImage getImageResult();
+    QString getStringResult();
 
-    ComparisonResultVariantType type();
+    ComparisonResultVariantType getType();
 
     friend class TestComparisonResultVariant;
 
 private:
-    ComparisonResultVariantType _type { ComparisonResultVariantType::None };
-    QImage image;
-    QString string;
+    ComparisonResultVariantType mType { ComparisonResultVariantType::None };
+    QImage mImage;
+    QString mString;
 };
 
 typedef std::shared_ptr<ComparisonResultVariant> ComparisonResultVariantPtr;

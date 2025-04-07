@@ -17,8 +17,8 @@ public:
     QString getPath() const;
 
 private:
-    QImage image;
-    QString path;
+    QImage mImage;
+    QString mPath;
 };
 
 #endif // COMPARABLEIMAGE_H

@@ -19,7 +19,7 @@ public:
 
     virtual ~ImageViewer();
     
-    void displayImages(const ImagesPtr images);
+    void displayImages(const ImageHolderPtr images);
 
     void showImageFromComparator(const QPixmap &image, const QString& description);
 
@@ -45,7 +45,7 @@ public:
 
     // Filters can be applied to modify images. This function removes
     // all filters applied to the compared images.
-    void replaceDisplayedImages(const QPixmap &image1, const QPixmap &image2);
+    void replaceDisplayedImages(const ImageHolderPtr imageHolder);
 
     void zoomIn();
     void zoomOut();
@@ -65,34 +65,34 @@ protected:
     void keyReleaseEvent(QKeyEvent *event) override;
     void keyPressEvent(QKeyEvent *event) override;
 private:
-    MainWindow *parent;
-    IDropListener *dropListener;
-    QGraphicsScene *customScene;
-    QString firstImagePath;
-    QString secondImagePath;
-    QString firstImageBaseName;
-    QString secondImageBaseName;
-    QString firstImageName;
-    QString secondImageName;
-    QGraphicsPixmapItem *firstDisplayedImage;
-    QGraphicsPixmapItem *secondDisplayedImage;
-    QGraphicsPixmapItem *comparatorResultDisplayedImage;
-    int currentImageIndex;
-    bool isColorUnderCursorTrackingActive;
-    std::optional<QPoint> lastCursorPos;
-    std::optional<int> pressedKey;
-    bool isSingleImageMode;
-    QColor invalidColor;
+    MainWindow *mParent;
+    IDropListener *mDropListener;
+    QGraphicsScene *mCustomScene;
+    QString mFirstImagePath;
+    QString mSecondImagePath;
+    QString mFirstImageBaseName;
+    QString mSecondImageBaseName;
+    QString mFirstImageName;
+    QString mSecondImageName;
+    QGraphicsPixmapItem *mFirstDisplayedImage;
+    QGraphicsPixmapItem *mSecondDisplayedImage;
+    QGraphicsPixmapItem *mComparatorResultDisplayedImage;
+    int mCurrentImageIndex;
+    bool mIsColorUnderCursorTrackingActive;
+    std::optional<QPoint> mLastCursorPos;
+    std::optional<int> mPressedKey;
+    bool mIsSingleImageMode;
+    QColor mInvalidColor;
 
     // Zoom to selection
-    bool selecting;                         // Whether the user is currently selecting an area
-    bool isZoomToSelectionEnabled;
-    QPoint selectionStart;                  // Start point of the selection (in view coordinates)
-    QRect selectionRect;                    // Rectangle being selected (in view coordinates)
+    bool mIsSelecting;                       // Whether the user is currently selecting an area
+    bool mIsZoomToSelectionEnabled;
+    QPoint mSelectionStart;                  // Start point of the selection (in view coordinates)
+    QRect mSelectionRect;                    // Rectangle being selected (in view coordinates)
 
     QPixmap getVisiblePixmap();
 
-    ImagesPtr getCroppedImages(QRectF rect);
+    ImageHolderPtr getCroppedImages(const QRectF &rect);
 
     void sendPixelColorValuesForTwoImages(const QImage &visibleImage, int &x, int &y);
     void sendPixelColorValuesForSingleImage(const QImage &visibleImage, int &x, int &y);

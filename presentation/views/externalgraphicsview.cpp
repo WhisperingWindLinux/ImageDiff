@@ -7,11 +7,11 @@
 ExternalGraphicsView::ExternalGraphicsView(const QPixmap &image, QWidget *parent)
     : QGraphicsView(parent)
 {
-    scene = new QGraphicsScene(this);
-    setScene(scene);
+    mScene = new QGraphicsScene(this);
+    setScene(mScene);
 
-    imageItem = new QGraphicsPixmapItem(image);
-    scene->addItem(imageItem);
+    mImageItem = new QGraphicsPixmapItem(image);
+    mScene->addItem(mImageItem);
 
     setDragMode(QGraphicsView::ScrollHandDrag);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -46,6 +46,6 @@ void ExternalGraphicsView::setCenterToViewRectCenter() {
 }
 
 void ExternalGraphicsView::setToFitImageInView() {
-    fitInView(imageItem, Qt::KeepAspectRatio);
+    fitInView(mImageItem, Qt::KeepAspectRatio);
     scale(1.0, 1.0);
 }

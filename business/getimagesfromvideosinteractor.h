@@ -14,7 +14,7 @@ public:
     GetImagesFromVideosInteractor() = default;
     ~GetImagesFromVideosInteractor() = default;
     
-    ImagesPtr get();
+    ImageHolderPtr get();
 };
 
 #endif // GETIMAGESFROMVIDEOSINTERACTOR_H

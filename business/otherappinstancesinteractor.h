@@ -17,16 +17,18 @@ public:
     OtherAppInstancesInteractor(OtherAppInstancesInteractorCallback *callback);
     ~OtherAppInstancesInteractor();
 
-    void openNewAppInstance(ImagesPtr images);
+    void openNewAppInstance(ImageHolderPtr images);
 
 private:
-    QList<QProcess*> appInstances;
-    OtherAppInstancesInteractorCallback *callback;
+    QList<QProcess*> mAppInstances;
+    OtherAppInstancesInteractorCallback *mCallback;
 
-    void openNewAppInstance(const QString &firstFilePath, const std::optional<QString> &secondFilePath);
+    void coreOpenNewAppInstance(const QString &firstFilePath,
+                                const std::optional<QString> &secondFilePath
+                                );
     std::optional<QString> saveImageInTempDir(const QPixmap &pixmap, const QString &fileName);
     void cleanupProcesses();
-    void openNewAppInstaceForSingleImage(ImagesPtr);
+    void openNewAppInstaceForSingleImage(ImageHolderPtr);
 };
 
 #endif // OTHERAPPINSTANCESINTERACTOR_H

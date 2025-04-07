@@ -3,16 +3,25 @@
 
 #include <domain/interfaces/business/icomparator.h>
 
+// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
 struct LinerNonLinerComparisonResult {
-    LinerNonLinerComparisonResult(double meanDifference, double threshold,
-                                  double stdDeviation)
-        : meanDifference(meanDifference), threshold(threshold),
-        stdDeviation(stdDeviation) {}
+    LinerNonLinerComparisonResult(double meanDifference,
+                                  double threshold,
+                                  double stdDeviation
+                                  )
+        : meanDifference(meanDifference),
+        threshold(threshold),
+        stdDeviation(stdDeviation)
+    {
+    }
 
     double meanDifference;
     double threshold;
     double stdDeviation;
 };
+
+// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 class LinerNonLinerDifferenceComparator : public IComparator
 {
@@ -35,7 +44,7 @@ public:
     ComparisonResultVariantPtr compare(const ComparableImage &first, const ComparableImage &second) override;
 
 private:
-    double threshold;
+    double mThreshold;
 
     LinerNonLinerComparisonResult compareImages(const QImage &image1,
                                                 const QString &,

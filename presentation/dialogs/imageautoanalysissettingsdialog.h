@@ -21,9 +21,9 @@ private slots:
     void onCancelClicked();
 
 private:
-    AutoAnalysisSettingsInteractor* m_interactor;
-    QList<QCheckBox*> m_checkBoxes;             // List of dynamically created checkboxes
-    QVBoxLayout* m_checkBoxLayout;              // Layout for checkboxes
+    AutoAnalysisSettingsInteractor* mInteractor;
+    QList<QCheckBox*> mCheckBoxes;             // List of dynamically created checkboxes
+    QVBoxLayout* mCheckBoxLayout;              // Layout for checkboxes
 };
 
 

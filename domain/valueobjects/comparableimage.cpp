@@ -4,31 +4,31 @@
 #include <qpixmap.h>
 
 ComparableImage::ComparableImage(const QImage &image, const QString &path)
-    : image(image),
-    path(path)
+    : mImage(image),
+    mPath(path)
 {
 }
 
 ComparableImage::ComparableImage(QImage&& image, QString&& path)
-    : image(std::move(image)),
-    path(std::move(path))
+    : mImage(std::move(image)),
+    mPath(std::move(path))
 {
 }
 
 ComparableImage::ComparableImage(const QPixmap &image, const QString &path) {
-    this->image = image.toImage();
-    this->path = path;
+    this->mImage = image.toImage();
+    this->mPath = path;
 }
 
 QImage ComparableImage::getImage() const {
-    return image;
+    return mImage;
 }
 
 QString ComparableImage::getPath() const {
-    return path;
+    return mPath;
 }
 
 QString ComparableImage::getBaseName() const {
-    QFileInfo file {path};
+    QFileInfo file {mPath};
     return file.baseName();
 }

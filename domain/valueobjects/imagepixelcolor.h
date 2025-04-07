@@ -13,36 +13,35 @@ public:
     ImagePixelColor(ImagePixelColor&&) = default;
 
     ImagePixelColor(const QString &imageName, int r, int g, int b)
-        : imageName(imageName),
-          r(r),
-          g(g),
-          b(b) {}
+        : mImageName(imageName),
+          mR(r),
+          mG(g),
+          mB(b) {}
 
     QString getImageName() const {
-        return imageName;
+        return mImageName;
     }
 
     int getR() const {
-        return r;
+        return mR;
     }
 
     int getG() const {
-        return g;
+        return mG;
     }
 
     int getB() const {
-        return b;
+        return mB;
     }
 
     ImagePixelColor& operator=(const ImagePixelColor&) = default;
-
     ImagePixelColor& operator=(ImagePixelColor&&) = default;
 
 private:
-    QString imageName;
-    int r;
-    int g;
-    int b;
+    QString mImageName;
+    int mR;
+    int mG;
+    int mB;
 };
 
 #endif // IMAGEPIXELCOLOR_H

@@ -8,20 +8,20 @@ PropertyEditorDialog::PropertyEditorDialog(const QString &processorName,
                                            const QList<Property> &properties,
                                            QWidget *parent)
 
-    : QDialog(parent), deafultProperties(properties) {
+    : QDialog(parent), mDeafultProperties(properties) {
 
     setWindowTitle(processorName);
 
-    mainLayout = new QVBoxLayout(this);
+    mMainLayout = new QVBoxLayout(this);
 
     QLabel *descriptionLbl = new QLabel(this);
     descriptionLbl->setWordWrap(true);
     descriptionLbl->setText(processorDescription);
-    mainLayout->addWidget(descriptionLbl);
-    mainLayout->addWidget(new QLabel());
+    mMainLayout->addWidget(descriptionLbl);
+    mMainLayout->addWidget(new QLabel());
 
     // Dynamically create controls for each property
-    for (auto it = this->deafultProperties.begin(); it != this->deafultProperties.end(); ++it) {
+    for (auto it = this->mDeafultProperties.begin(); it != this->mDeafultProperties.end(); ++it) {
 
         auto property = (*it);
 
@@ -85,16 +85,16 @@ PropertyEditorDialog::PropertyEditorDialog(const QString &processorName,
 
             propertyLayout->addLayout(fileLayout);
 
-            editors.append(filePathEdit);
+            mEditors.append(filePathEdit);
         }
         }
 
         if (editor) {
             propertyLayout->addWidget(editor);
-            editors.append(editor); // Store the editor for later use
+            mEditors.append(editor); // Store the editor for later use
         }
 
-        mainLayout->addLayout(propertyLayout);
+        mMainLayout->addLayout(propertyLayout);
     }
 
     // Add Run and Cancel buttons
@@ -106,7 +106,7 @@ PropertyEditorDialog::PropertyEditorDialog(const QString &processorName,
     buttonLayout->addWidget(runButton);
     buttonLayout->addWidget(cancelButton);
 
-    mainLayout->addLayout(buttonLayout);
+    mMainLayout->addLayout(buttonLayout);
 
     // Connect signals to slots
     connect(runButton, &QPushButton::clicked, this, &PropertyEditorDialog::onRun);
@@ -115,9 +115,9 @@ PropertyEditorDialog::PropertyEditorDialog(const QString &processorName,
 
 void PropertyEditorDialog::onRun() {
     // Update property values from the editors
-    for (int i = 0; i < deafultProperties.size(); ++i) {
-        auto property = deafultProperties[i];
-        QWidget *editor = editors[i];
+    for (int i = 0; i < mDeafultProperties.size(); ++i) {
+        auto property = mDeafultProperties[i];
+        QWidget *editor = mEditors[i];
 
         switch (property.getPropertyType()) {
         case Property::Type::Integer: {
@@ -130,7 +130,7 @@ void PropertyEditorDialog::onRun() {
                     static_cast<int>(property.getMinValue()),
                     static_cast<int>(property.getMaxValue())
                     );
-                updatedProperties.append(prop);
+                mUpdatedProperties.append(prop);
             }
             break;
         }
@@ -144,7 +144,7 @@ void PropertyEditorDialog::onRun() {
                     property.getMinValue(),
                     property.getMaxValue()
                     );
-                updatedProperties.append(prop);
+                mUpdatedProperties.append(prop);
             }
             break;
         }
@@ -157,7 +157,7 @@ void PropertyEditorDialog::onRun() {
                     property.getAlternatives(),
                     comboBox->currentIndex()
                     );
-                updatedProperties.append(prop);
+                mUpdatedProperties.append(prop);
             }
             break;
         }
@@ -169,7 +169,7 @@ void PropertyEditorDialog::onRun() {
                     property.getPropertyDescription(),
                     filePathEdit->text()
                     );
-                updatedProperties.append(prop);
+                mUpdatedProperties.append(prop);
             }
             break;
         }
@@ -180,9 +180,9 @@ void PropertyEditorDialog::onRun() {
 }
 
 QList<Property> PropertyEditorDialog::getUpdatedProperties() const {
-    if (updatedProperties.empty()) {
-        return deafultProperties;
+    if (mUpdatedProperties.empty()) {
+        return mDeafultProperties;
     } else {
-        return updatedProperties;
+        return mUpdatedProperties;
     }
 }

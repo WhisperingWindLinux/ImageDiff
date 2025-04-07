@@ -6,7 +6,7 @@
 
 
 ImageProcessorsMenuController::ImageProcessorsMenuController(MainWindow *mainWindow)
-    : mainWindow(mainWindow)
+    : mMainWindow(mainWindow)
 {
 
 }
@@ -38,9 +38,9 @@ void ImageProcessorsMenuController::buildFiltersAndComparatorsMenus(QMenu *compa
         }
         newRunProcessorAction->setData(name);
         newRunProcessorAction->setShortcut(QKeySequence(hotkey));
-        mainWindow->connect(newRunProcessorAction,
+        mMainWindow->connect(newRunProcessorAction,
                             &QAction::triggered,
-                            mainWindow,
+                            mMainWindow,
                             &MainWindow::callImageProcessor
                             );
     }

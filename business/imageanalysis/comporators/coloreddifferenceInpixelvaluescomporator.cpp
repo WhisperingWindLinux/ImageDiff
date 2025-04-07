@@ -14,11 +14,11 @@
 
 
 ColoredDifferenceInPixelValuesComporator::ColoredDifferenceInPixelValuesComporator(Result result) {
-    expectedResult = result;
+    mExpectedResult = result;
 }
 
 QString ColoredDifferenceInPixelValuesComporator::getShortName() const {
-    if (expectedResult == Result::Text) {
+    if (mExpectedResult == Result::Text) {
         return "Difference In Pixel Values v.2 (Text)";
     } else {
         return "Difference In Pixel Values v.2 (Image, Multicolor)";
@@ -26,7 +26,7 @@ QString ColoredDifferenceInPixelValuesComporator::getShortName() const {
 }
 
 QString ColoredDifferenceInPixelValuesComporator::getFullName() const {
-    if (expectedResult == Result::Text) {
+    if (mExpectedResult == Result::Text) {
         return "Difference In Pixel Values v.2 (Text)";
     } else {
         return "Difference In Pixel Values v.2 (Image, Multicolor)";
@@ -34,7 +34,7 @@ QString ColoredDifferenceInPixelValuesComporator::getFullName() const {
 }
 
 QString ColoredDifferenceInPixelValuesComporator::getHotkey() const {
-    return (expectedResult == Result::Text ? "V" : "M");
+    return (mExpectedResult == Result::Text ? "V" : "M");
 }
 
 QString ColoredDifferenceInPixelValuesComporator::getDescription() const {
@@ -44,7 +44,7 @@ QString ColoredDifferenceInPixelValuesComporator::getDescription() const {
                           "and based on these differences, the pixels are categorized into " +
                           "predefined ranges.";
 
-    if (expectedResult == Result::Text) {
+    if (mExpectedResult == Result::Text) {
         return baseHelpTxt + " It shows the result in text form.";
     } else {
         QString colorRangeDexcription = PixelsAbsolutValueHelper::getColorRangeDescription();
@@ -61,7 +61,7 @@ ComparisonResultVariantPtr ColoredDifferenceInPixelValuesComporator::compare(con
 {
     PixelsAbsolutValueHelper helper {};
 
-    if (expectedResult == Result::Text) {
+    if (mExpectedResult == Result::Text) {
         QList<PixelDifferenceRange> ranges = helper.generateDifferenceStringResult(first.getImage(),
                                                                                    second.getImage()
                                                                                   );
@@ -71,7 +71,7 @@ ComparisonResultVariantPtr ColoredDifferenceInPixelValuesComporator::compare(con
                                                                         );
         return std::make_shared<ComparisonResultVariant>(result);
 
-    } else if (expectedResult == Result::Image){
+    } else if (mExpectedResult == Result::Image){
         QImage result = helper.generateDifferenceImage(first.getImage(), second.getImage());
         return std::make_shared<ComparisonResultVariant>(result);
     }

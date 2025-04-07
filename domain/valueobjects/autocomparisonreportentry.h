@@ -18,9 +18,9 @@ public:
     std::optional<ImageProcessorInfo> getImageProcessorInfo() const;
 
 private:
-    std::optional<QString> textReport;
-    std::optional<QImage> imageReport;
-    std::optional<ImageProcessorInfo> imageProcessorInfo;
+    std::optional<QString> mTextReport;
+    std::optional<QImage> mImageReport;
+    std::optional<ImageProcessorInfo> mImageProcessorInfo;
 };
 
 

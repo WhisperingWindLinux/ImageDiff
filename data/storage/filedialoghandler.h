@@ -19,12 +19,12 @@ public:
     OptionalStringPair getUserOpenTwoVideoPaths(const QString &baseDir);
 
 private:
-    QString openImagesFilter;
-    QString saveImagesFilter;
-    const QString reportFilter = "Report Files (*.html)";
-    const QString videoFilter = "Video Files (*.mp4 *.avi *.mkv *.mov *.wmv *.flv *.webm)";
-
     enum class PathType { Image, Report, Video };
+
+    QString mOpenImagesFilter;
+    QString mSaveImagesFilter;
+    const QString mReportFilter = "Report Files (*.html)";
+    const QString mVideoFilter = "Video Files (*.mp4 *.avi *.mkv *.mov *.wmv *.flv *.webm)";
 
     std::optional<QString> getUserSaveFilePath(const QString &path, PathType pathType);
 
@@ -35,7 +35,6 @@ private:
     void showWarningMessage(const QString &msg);
 
     bool validateVideoFile(const QString &path);
-
 };
 
 #endif // FILEDIALOGHANDLER_H

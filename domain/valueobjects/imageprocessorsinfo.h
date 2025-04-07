@@ -13,9 +13,16 @@ struct ImageProcessorInfo {
                        const QString &description,
                        const QString &hotkey,
                        ImageProcessorType type,
-                       QList<Property> properties)
-        : name(name), fullName(fullName), description(description),
-        hotkey(hotkey), type(type), properties(properties) {}
+                       QList<Property> properties
+                       )
+        : name(name),
+        fullName(fullName),
+        description(description),
+        hotkey(hotkey),
+        type(type),
+        properties(properties)
+    {
+    }
 
     QString name;
     QString fullName;

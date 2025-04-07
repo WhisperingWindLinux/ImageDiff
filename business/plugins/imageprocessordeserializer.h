@@ -21,7 +21,7 @@ public:
     QList<std::shared_ptr<IImageProcessor>> deserialize();
 
 private:
-    const QList<PyScriptInfo> pyScriptsInfo;
+    const QList<PyScriptInfo> mPyScriptsInfo;
 
     std::shared_ptr<IFilter> createFilter(const QJsonObject& obj, QString pyScriptPath);
     std::shared_ptr<IComparator> createComparator(const QJsonObject& obj, QString pyScriptPath);

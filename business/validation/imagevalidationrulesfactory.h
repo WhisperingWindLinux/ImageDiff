@@ -11,7 +11,7 @@ public:
     ImageValidationRulesFactory() = delete;
     ~ImageValidationRulesFactory() = delete;
 
-    static std::shared_ptr<IImageValidationRules> createImageFormatValidator(ImagesPtr images) {
+    static std::shared_ptr<IImageValidationRules> createImageFormatValidator(ImageHolderPtr images) {
         return std::make_shared<ImageValidationRules>(images);
     }
 

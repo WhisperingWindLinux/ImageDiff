@@ -5,13 +5,13 @@
 #include <business/imageanalysis/imageprocessorsmanager.h>
 
 PluginsSettingsInteractor::PluginsSettingsInteractor() {
-    pluginSettingsRepository = new PluginsSettingsRepository();
+    mPluginSettingsRepository = new PluginsSettingsRepository();
 }
 
 PluginsSettingsInteractor::~PluginsSettingsInteractor() {
-    if (pluginSettingsRepository != nullptr) {
-        delete pluginSettingsRepository;
-        pluginSettingsRepository = nullptr;
+    if (mPluginSettingsRepository != nullptr) {
+        delete mPluginSettingsRepository;
+        mPluginSettingsRepository = nullptr;
     }
 }
 
@@ -24,12 +24,12 @@ bool PluginsSettingsInteractor::updatePluginSettings(PluginsSettings pluginSetti
         error.append(QString("Incorrect plugins directory path."));
         return false;
     }
-    pluginSettingsRepository->upadteSettings(pluginSettings);
+    mPluginSettingsRepository->upadteSettings(pluginSettings);
     return true;
 }
 
 PluginsSettings PluginsSettingsInteractor::getPluginSettings() {
-    auto pluginSettings = pluginSettingsRepository->getSettings();
+    auto pluginSettings = mPluginSettingsRepository->getSettings();
 
     QString pythonInterpreterPath;
     QString pluginsDirectoryPath;

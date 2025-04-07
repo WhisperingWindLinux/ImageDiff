@@ -5,94 +5,94 @@
 #include <business/validation/imagevalidationrulesfactory.h>
 
 VideoPlayerWidget::VideoPlayerWidget(QWidget *parent)
-    : QWidget(parent), screenshotCounter(0), frameRate(INFINITY), currentPosition(0) {
+    : QWidget(parent), mScreenshotCounter(0), mFrameRate(INFINITY), mCurrentPosition(0) {
     setMinimumSize(600, 600);
 
     // Main layout for the video player widget
     QVBoxLayout *layout = new QVBoxLayout(this);
 
     // Video widget
-    videoWidget = new QVideoWidget(this);
-    layout->addWidget(videoWidget, 1);
+    mVideoWidget = new QVideoWidget(this);
+    layout->addWidget(mVideoWidget, 1);
 
     // Control buttons (Play/Pause and Screenshot)
     QHBoxLayout *controlsLayout = new QHBoxLayout();
-    playPauseButton = new QPushButton("Play", this); // Single button for Play/Pause
-    screenshotButton = new QPushButton("Take Screenshot", this);
-    controlsLayout->addWidget(playPauseButton);
-    controlsLayout->addWidget(screenshotButton);
+    mPlayPauseButton = new QPushButton("Play", this); // Single button for Play/Pause
+    mScreenshotButton = new QPushButton("Take Screenshot", this);
+    controlsLayout->addWidget(mPlayPauseButton);
+    controlsLayout->addWidget(mScreenshotButton);
     layout->addLayout(controlsLayout);
 
     // Slider for seeking through the video
-    slider = new VideoDialogSlider(Qt::Horizontal, this);
-    layout->addWidget(slider);
+    mSlider = new VideoDialogSlider(Qt::Horizontal, this);
+    layout->addWidget(mSlider);
 
     // Frame number and timestamp display
     QHBoxLayout *infoLayout = new QHBoxLayout();
-    frameLabel = new QLabel("Frame: 0", this); // Displays the current frame number
-    timeLabel = new QLabel("Time: 00:00:000", this); // Displays the current time in milliseconds
-    infoLayout->addWidget(frameLabel);
-    infoLayout->addWidget(timeLabel);
+    mFrameLabel = new QLabel("Frame: 0", this); // Displays the current frame number
+    mTimeLabel = new QLabel("Time: 00:00:000", this); // Displays the current time in milliseconds
+    infoLayout->addWidget(mFrameLabel);
+    infoLayout->addWidget(mTimeLabel);
     layout->addLayout(infoLayout);
 
     // Add stretch at the end to ensure labels take minimal space
-    layout->setStretchFactor(videoWidget, 1); // Video widget takes all available space
+    layout->setStretchFactor(mVideoWidget, 1); // Video widget takes all available space
     layout->setStretchFactor(controlsLayout, 0); // Controls take minimal space
-    layout->setStretchFactor(slider, 0);       // Slider takes minimal space
+    layout->setStretchFactor(mSlider, 0);       // Slider takes minimal space
     layout->setStretchFactor(infoLayout, 0);   // Labels take minimal space
 
     // Media player setup
-    mediaPlayer = new QMediaPlayer(this);
-    mediaPlayer->setVideoOutput(videoWidget);
+    mMediaPlayer = new QMediaPlayer(this);
+    mMediaPlayer->setVideoOutput(mVideoWidget);
 
-    connect(playPauseButton, &QPushButton::clicked, this, &VideoPlayerWidget::togglePlayPause);
-    connect(screenshotButton, &QPushButton::clicked, this, &VideoPlayerWidget::takeScreenshot);
-    connect(mediaPlayer, &QMediaPlayer::durationChanged, this, &VideoPlayerWidget::updateSliderRange);
-    connect(mediaPlayer, &QMediaPlayer::positionChanged, this, &VideoPlayerWidget::updateSliderPosition);
-    connect(slider, &QSlider::sliderMoved, mediaPlayer, &QMediaPlayer::setPosition);
-    connect(slider, &VideoDialogSlider::sliderClicked, mediaPlayer, &QMediaPlayer::setPosition);
+    connect(mPlayPauseButton, &QPushButton::clicked, this, &VideoPlayerWidget::togglePlayPause);
+    connect(mScreenshotButton, &QPushButton::clicked, this, &VideoPlayerWidget::takeScreenshot);
+    connect(mMediaPlayer, &QMediaPlayer::durationChanged, this, &VideoPlayerWidget::updateSliderRange);
+    connect(mMediaPlayer, &QMediaPlayer::positionChanged, this, &VideoPlayerWidget::updateSliderPosition);
+    connect(mSlider, &QSlider::sliderMoved, mMediaPlayer, &QMediaPlayer::setPosition);
+    connect(mSlider, &VideoDialogSlider::sliderClicked, mMediaPlayer, &QMediaPlayer::setPosition);
 
-    connect(mediaPlayer, &QMediaPlayer::metaDataChanged, this, [&]() {
-        if (mediaPlayer->metaData().keys().contains(QMediaMetaData::VideoFrameRate)) {
-            QVariant frameRate = mediaPlayer->metaData().value(QMediaMetaData::VideoFrameRate);
-            this->frameRate = frameRate.toDouble();
+    connect(mMediaPlayer, &QMediaPlayer::metaDataChanged, this, [&]() {
+        if (mMediaPlayer->metaData().keys().contains(QMediaMetaData::VideoFrameRate)) {
+            QVariant frameRate = mMediaPlayer->metaData().value(QMediaMetaData::VideoFrameRate);
+            this->mFrameRate = frameRate.toDouble();
         }
     });
 }
 
 void VideoPlayerWidget::loadVideo(const QString &filePath) {
     if (!filePath.isEmpty()) {
-        mediaPlayer->setSource(QUrl::fromLocalFile(filePath));
-        currentVideoPath = filePath;
-        mediaPlayer->play();
-        mediaPlayer->pause();
-        playPauseButton->setText("Play");
+        mMediaPlayer->setSource(QUrl::fromLocalFile(filePath));
+        mCurrentVideoPath = filePath;
+        mMediaPlayer->play();
+        mMediaPlayer->pause();
+        mPlayPauseButton->setText("Play");
     }
 }
 
 int VideoPlayerWidget::getScreenshotCounter() const {
-    return screenshotCounter;
+    return mScreenshotCounter;
 }
 
 QString VideoPlayerWidget::getCurrentScreenshotPath() const {
-    return currentScreenshotPath;
+    return mCurrentScreenshotPath;
 }
 
 void VideoPlayerWidget::togglePlayPause() {
     // Toggle between Play and Pause states
-    if (mediaPlayer->playbackState() == QMediaPlayer::PlayingState) {
-        mediaPlayer->pause();
-        playPauseButton->setText("Play");
+    if (mMediaPlayer->playbackState() == QMediaPlayer::PlayingState) {
+        mMediaPlayer->pause();
+        mPlayPauseButton->setText("Play");
     } else {
-        mediaPlayer->play();
-        playPauseButton->setText("Pause");
+        mMediaPlayer->play();
+        mPlayPauseButton->setText("Pause");
     }
 }
 
 void VideoPlayerWidget::takeScreenshot() {
-    if (!mediaPlayer || !videoWidget) return;
+    if (!mMediaPlayer || !mVideoWidget) return;
 
-    QVideoSink *videoSink = mediaPlayer->videoSink();
+    QVideoSink *videoSink = mMediaPlayer->videoSink();
     if (!videoSink || !videoSink->videoFrame().isValid()) {
         QMessageBox::critical(this, "Error", "No valid video frame available for screenshot.");
         return;
@@ -109,7 +109,7 @@ void VideoPlayerWidget::takeScreenshot() {
     }
 
     // Generate the file name
-    QFileInfo fileInfo(currentVideoPath);
+    QFileInfo fileInfo(mCurrentVideoPath);
     QString baseName = fileInfo.completeBaseName(); // Video name without extension
 
     QString timePos = currentTimePositionAsString();
@@ -121,50 +121,50 @@ void VideoPlayerWidget::takeScreenshot() {
                                      .arg(baseName, timePos, ext);
 
     // Save the screenshot in the same folder as the video
-    currentScreenshotPath = fileInfo.absolutePath() + "/" + screenshotFileName;
-    image.save(currentScreenshotPath);
+    mCurrentScreenshotPath = fileInfo.absolutePath() + "/" + screenshotFileName;
+    image.save(mCurrentScreenshotPath);
 
-    qDebug() << "Screenshot saved:" << currentScreenshotPath;
+    qDebug() << "Screenshot saved:" << mCurrentScreenshotPath;
 
-    screenshotButton->setDisabled(true);
-    playPauseButton->setDisabled(true);
-    slider->setDisabled(true);
+    mScreenshotButton->setDisabled(true);
+    mPlayPauseButton->setDisabled(true);
+    mSlider->setDisabled(true);
 
     emit screenshotTaken();
 }
 
 void VideoPlayerWidget::updateSliderRange(qint64 duration) {
-    slider->setRange(0, static_cast<int>(duration));
+    mSlider->setRange(0, static_cast<int>(duration));
 }
 
 void VideoPlayerWidget::updateSliderPosition(qint64 position) {
-    currentPosition = position;
+    mCurrentPosition = position;
 
-    slider->setValue(static_cast<int>(position));
+    mSlider->setValue(static_cast<int>(position));
 
     // Update frame number and timestamp labels
-    qint64 duration = mediaPlayer->duration();
+    qint64 duration = mMediaPlayer->duration();
 
-    if (frameRate != INFINITY) {
-        int frameNumber = static_cast<int>((position / static_cast<double>(duration)) * frameRate);
-        frameLabel->setText(QString("Frame: %1").arg(frameNumber));
+    if (mFrameRate != INFINITY) {
+        int frameNumber = static_cast<int>((position / static_cast<double>(duration)) * mFrameRate);
+        mFrameLabel->setText(QString("Frame: %1").arg(frameNumber));
     } else {
-        frameLabel->setText(QString("Frame: unknown"));
+        mFrameLabel->setText(QString("Frame: unknown"));
     }
 
     int ms = position % 1000;
     int seconds = (position / 1000) % 60;
     int minutes = (position / (1000 * 60)) % 60;
-    timeLabel->setText(QString("Time: %1:%2:%3")
+    mTimeLabel->setText(QString("Time: %1:%2:%3")
                            .arg(minutes, 2, 10, QChar('0'))
                            .arg(seconds, 2, 10, QChar('0'))
                            .arg(ms, 3, 10, QChar('0')));
 }
 
 QString VideoPlayerWidget::currentTimePositionAsString() {
-    int ms = currentPosition % 1000;
-    int seconds = (currentPosition / 1000) % 60;
-    int minutes = (currentPosition / (1000 * 60)) % 60;
+    int ms = mCurrentPosition % 1000;
+    int seconds = (mCurrentPosition / 1000) % 60;
+    int minutes = (mCurrentPosition / (1000 * 60)) % 60;
     QString timePos = QString("%1_%2_%3")
                           .arg(minutes, 2, 10, QChar('0'))
                           .arg(seconds, 2, 10, QChar('0'))

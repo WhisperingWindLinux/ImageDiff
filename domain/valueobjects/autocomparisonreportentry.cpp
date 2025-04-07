@@ -8,22 +8,22 @@ AutocomparisonReportEntry::AutocomparisonReportEntry(std::shared_ptr<ComparisonR
     if (result == nullptr) {
         return;
     }
-    if (result->type() == ComparisonResultVariantType::String) {
-        textReport = result->stringResult();
-    } else if (result->type() == ComparisonResultVariantType::Image) {
-        imageReport = result->imageResult();
+    if (result->getType() == ComparisonResultVariantType::String) {
+        mTextReport = result->getStringResult();
+    } else if (result->getType() == ComparisonResultVariantType::Image) {
+        mImageReport = result->getImageResult();
     }
-    this->imageProcessorInfo = imageProcessorInfo;
+    this->mImageProcessorInfo = imageProcessorInfo;
 }
 
 std::optional<QString> AutocomparisonReportEntry::getTextReport() const {
-    return textReport;
+    return mTextReport;
 }
 
 std::optional<QImage> AutocomparisonReportEntry::getImagereport() const {
-    return imageReport;
+    return mImageReport;
 }
 
 std::optional<ImageProcessorInfo> AutocomparisonReportEntry::getImageProcessorInfo() const {
-    return imageProcessorInfo;
+    return mImageProcessorInfo;
 }

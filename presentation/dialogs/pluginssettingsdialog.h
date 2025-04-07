@@ -26,9 +26,9 @@ private slots:
     void onOkClicked();
 
 private:
-    QLineEdit* pythonInterpreterEdit;
-    QLineEdit* pluginsDirectoryEdit;
-    unique_ptr<PluginsSettingsInteractor> interactor;
+    QLineEdit* mPythonInterpreterEdit;
+    QLineEdit* mPluginsDirectoryEdit;
+    unique_ptr<PluginsSettingsInteractor> mInteractor;
 
     void loadCurrentSettings();
     void showError(const QString &errorMessage);

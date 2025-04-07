@@ -9,10 +9,10 @@
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 struct ContrastComparisonResult {
-    QString image1Name;               // The Name of the first image
-    QString image2Name;               // The Name of the second image
-    double contrast1;                 // Contrast of the first image
-    double contrast2;                 // Contrast of the second image
+    QString firstImageName;
+    QString secondImageName;
+    double firstImageContrast;             // Contrast of the first image
+    double secondImageContrast;            // Contrast of the second image
 };
 
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-

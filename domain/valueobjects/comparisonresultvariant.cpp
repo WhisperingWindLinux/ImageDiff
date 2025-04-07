@@ -1,35 +1,35 @@
 #include "comparisonresultvariant.h"
 
 ComparisonResultVariant::ComparisonResultVariant(){
-    this->_type = ComparisonResultVariantType::None;
+    this->mType = ComparisonResultVariantType::None;
 }
 
 ComparisonResultVariant::ComparisonResultVariant(const QImage &image) {
-    this->image = image;
-    this->_type = ComparisonResultVariantType::Image;
+    this->mImage = image;
+    this->mType = ComparisonResultVariantType::Image;
 }
 
 ComparisonResultVariant::ComparisonResultVariant(const QString &string) {
-    this->string = string;
-    this->_type = ComparisonResultVariantType::String;
+    this->mString = string;
+    this->mType = ComparisonResultVariantType::String;
 }
 
-QImage ComparisonResultVariant::imageResult() {
-    if (_type != ComparisonResultVariantType::Image) {
+QImage ComparisonResultVariant::getImageResult() {
+    if (mType != ComparisonResultVariantType::Image) {
         throw std::runtime_error("An internal error occurred: an incorrect ComparisionResultVariant type.");
     } else {
-        return image;
+        return mImage;
     }
 }
 
-QString ComparisonResultVariant::stringResult() {
-    if (_type != ComparisonResultVariantType::String) {
+QString ComparisonResultVariant::getStringResult() {
+    if (mType != ComparisonResultVariantType::String) {
         throw std::runtime_error("An internal error occurred: an incorrect ComparisionResultVariant type.");
     } else {
-        return string;
+        return mString;
     }
 }
 
-ComparisonResultVariantType ComparisonResultVariant::type() {
-    return _type;
+ComparisonResultVariantType ComparisonResultVariant::getType() {
+    return mType;
 }

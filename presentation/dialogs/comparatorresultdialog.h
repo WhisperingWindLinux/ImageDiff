@@ -19,14 +19,14 @@ public:
                            );
 
 private:
-    QString message;
-    QString firstFilePath;
-    QString secondFilePath;
-    QString comparatorFullName;
+    QString mMessage;
+    QString mFirstFilePath;
+    QString mSecondFilePath;
+    QString mComparatorFullName;
 
-    QLabel *label;
-    QPushButton *closeButton;
-    QPushButton *saveButton;
+    QLabel *mMessageLabel;
+    QPushButton *mCloseButton;
+    QPushButton *mSaveButton;
 
     void setupUI();
 

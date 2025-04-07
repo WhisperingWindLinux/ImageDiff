@@ -1,13 +1,13 @@
 #include "rgbfilter.h"
 
 GenericRgbFilter::GenericRgbFilter(RgbChannel channel)
-    : channel(channel),
-      isOutputImageColored(true)
+    : mChannel(channel),
+      mIsOutputImageColored(true)
 {
 }
 
 QString GenericRgbFilter::getShortName() const {
-    switch(channel) {
+    switch(mChannel) {
     case RgbChannel::R:
         return "Show Red Channel";
     case RgbChannel::G:
@@ -23,7 +23,7 @@ QString GenericRgbFilter::getFullName() const {
 }
 
 QString GenericRgbFilter::getHotkey() const {
-    switch(channel) {
+    switch(mChannel) {
     case RgbChannel::R:
         return "R";
     case RgbChannel::G:
@@ -36,11 +36,11 @@ QString GenericRgbFilter::getHotkey() const {
 
 QString GenericRgbFilter::getDescription() const {
     QString channelName;
-    if (channel == RgbChannel::R) {
+    if (mChannel == RgbChannel::R) {
         channelName = "Red";
-    } else if (channel == RgbChannel::G) {
+    } else if (mChannel == RgbChannel::G) {
         channelName = "Green";
-    } else if (channel == RgbChannel::B) {
+    } else if (mChannel == RgbChannel::B) {
         channelName = "Blue";
     } else {
         throw std::runtime_error("Error: an incorrect RGB chnannel in GenericRgbFilter.");
@@ -51,7 +51,7 @@ QString GenericRgbFilter::getDescription() const {
 }
 
 QImage GenericRgbFilter::filter(const QImage &image) {
-    return extractChannel(image, isOutputImageColored, channel);
+    return extractChannel(image, mIsOutputImageColored, mChannel);
 }
 
 QImage GenericRgbFilter::extractChannel(const QImage &image,
@@ -116,9 +116,9 @@ void GenericRgbFilter::setProperties(QList<Property> properties) {
         return;
     }
     int iColorModeProperty = colorModeProperty.getValue();
-    isOutputImageColored = (iColorModeProperty == 0);
+    mIsOutputImageColored = (iColorModeProperty == 0);
 }
 
 void GenericRgbFilter::reset() {
-    isOutputImageColored = true;
+    mIsOutputImageColored = true;
 }

@@ -16,10 +16,10 @@ RunAllComparatorsInteractor::RunAllComparatorsInteractor(IProgressDialog *callba
                                                          const ComparableImage &secondImage,
                                                          const QString &reportDirPath
                                                          )
-    : callback(callback),
-    firstImage(firstImage),
-    secondImage(secondImage),
-    reportDirPath(reportDirPath)
+    : mCallback(callback),
+    mFirstImage(firstImage),
+    mSecondImage(secondImage),
+    mReportDirPath(reportDirPath)
 {
 
 }
@@ -38,7 +38,7 @@ QList<AutocomparisonReportEntry> RunAllComparatorsInteractor::executeAllComparat
     if (comparators.size() == 0) {
         return {};
     }
-    callback->showProgressDialog("Run All Comparators", comparators.size());
+    mCallback->showProgressDialog("Run All Comparators", comparators.size());
     int runCounter = 0;
     foreach(auto comparator, comparators) {
         if (!comparator->isPartOfAutoReportingToolbox()) {
@@ -47,12 +47,12 @@ QList<AutocomparisonReportEntry> RunAllComparatorsInteractor::executeAllComparat
         if (!comparator->isEnabled()) {
             continue;
         }
-        if (callback->wasCanceled()) {
+        if (mCallback->wasCanceled()) {
             return {};
         }
         try {
             comparator->reset();
-            auto result = comparator->compare(firstImage, secondImage);
+            auto result = comparator->compare(mFirstImage, mSecondImage);
             if (result != nullptr) {
                 auto proicessorInfo = manager->getProcessorInfoByProcessorShortName(comparator->getShortName());
                 entries.append({ result, proicessorInfo });
@@ -61,24 +61,24 @@ QList<AutocomparisonReportEntry> RunAllComparatorsInteractor::executeAllComparat
             qDebug() << e.what();
         }
         runCounter++;
-        callback->onUpdateProgressValue(runCounter);
+        mCallback->onUpdateProgressValue(runCounter);
     }
-    callback->onUpdateProgressValue(INT32_MAX);
+    mCallback->onUpdateProgressValue(INT32_MAX);
     return entries;
 }
 
 void RunAllComparatorsInteractor::generateReports(QList<AutocomparisonReportEntry> &entries) {
 
-    bool isOk = HtmlReportPresenter::createExtendedReportPage(reportDirPath,
-                                                              firstImage,
-                                                              secondImage,
+    bool isOk = HtmlReportPresenter::createExtendedReportPage(mReportDirPath,
+                                                              mFirstImage,
+                                                              mSecondImage,
                                                               entries
                                                               );
 
     if (isOk) {
-        callback->onMessage("The report saved to " + reportDirPath + ".");
-        QDesktopServices::openUrl("file://" + reportDirPath + QDir::separator() + "report.html");
+        mCallback->onMessage("The report saved to " + mReportDirPath + ".");
+        QDesktopServices::openUrl("file://" + mReportDirPath + QDir::separator() + "report.html");
     } else {
-        callback->onError("Unable to generate the report.");
+        mCallback->onError("Unable to generate the report.");
     }
 }

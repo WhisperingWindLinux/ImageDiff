@@ -27,15 +27,15 @@ public:
                                        const ComparableImage &second) override;
 
 private:
-    const int charsInReportMax = 10000;
-    QString shortName;
-    QString hotkey;
-    QString description;
-    QList<Property> properties;
-    QString fullName;
-    bool m_isPartOfAutoReportingToolbox;
-    QString pyScriptPath;
-    std::string defaultSaveImageExtention;
+    const int mCharsInReportMax = 10000;
+    QString mShortName;
+    QString mHotkey;
+    QString mDescription;
+    QList<Property> mProperties;
+    QString mFullName;
+    bool misPartOfAutoReportingToolbox;
+    QString mPyScriptPath;
+    std::string mDefaultSaveImageExtention;
 
     optional<QString> validateText(QString &text);
 };

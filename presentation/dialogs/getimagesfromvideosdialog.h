@@ -23,10 +23,10 @@ private slots:
     void handleScreenshotTaken();
 
 private:
-    QString videoFilePath1;
-    QString videoFilePath2;
-    VideoPlayerWidget *player1;
-    VideoPlayerWidget *player2;
-    int totalScreenshotsTaken;
+    QString mVideoFilePath1;
+    QString mVideoFilePath2;
+    VideoPlayerWidget *mPlayer1;
+    VideoPlayerWidget *mPlayer2;
+    int mTotalScreenshotsTaken;
 };
 #endif // GETIMAGESFROMVIDEOSDIALOG_H

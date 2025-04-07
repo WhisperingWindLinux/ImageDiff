@@ -17,7 +17,7 @@ public:
     void upadteSettings(const PluginsSettings &pluginsSettings);
 
 private:
-    unique_ptr<QSettings> settings;
+    unique_ptr<QSettings> mSettings;
 };
 
 #endif // PLUGINSREPOSITORY_H

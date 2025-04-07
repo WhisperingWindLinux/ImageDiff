@@ -4,7 +4,7 @@
 
 
 LinerNonLinerDifferenceComparator::LinerNonLinerDifferenceComparator()
-    : threshold(5.0)
+    : mThreshold(5.0)
 {
 }
 
@@ -75,7 +75,7 @@ LinerNonLinerComparisonResult LinerNonLinerDifferenceComparator::compareImages(c
     variance /= differences.size();
     double stdDeviation = qSqrt(variance);
 
-    return { meanDifference, threshold, stdDeviation };
+    return { meanDifference, mThreshold, stdDeviation };
 }
 
 QString LinerNonLinerDifferenceComparator::formatResultToHtml(const LinerNonLinerComparisonResult &result) {
@@ -167,9 +167,9 @@ void LinerNonLinerDifferenceComparator::setProperties(QList<Property> properties
         error = error.arg(getShortName());
         throw std::runtime_error(error.toStdString());
     }
-    threshold = properties[0].getValue();
+    mThreshold = properties[0].getValue();
 }
 
 void LinerNonLinerDifferenceComparator::reset() {
-    threshold = 5.0;
+    mThreshold = 5.0;
 }

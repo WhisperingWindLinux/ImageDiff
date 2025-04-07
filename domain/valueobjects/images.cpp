@@ -1,58 +1,88 @@
 #include "images.h"
+#include <QtCore/qdebug.h>
+#include <qfile.h>
 
 #ifdef QT_DEBUG
-    int Images::generation = 0;
+int ImageHolder::mGeneration = 0;
 #endif
 
-Images::Images(const QPixmap &image1, const QPixmap &image2, const QString &path1, const QString &path2)
-        : image1(image1),
-        image2(image2),
-        path1(path1),
-        path2(path2),
-        isTemporaryFiles(false),
-        _isTheSameImage(false)
-{
-    #ifdef QT_DEBUG
-        currentGeneration = ++generation;
-        qDebug() << "Images { Generation " << currentGeneration << "created! }";
-    #endif
-}
-
-Images::Images(const QPixmap &image, const QString &path)
-    : image1(image),
-    image2(image),
-    path1(path),
-    path2(path),
-    isTemporaryFiles(false),
-    _isTheSameImage(true)
+ImageHolder::ImageHolder(const QPixmap &image, const QString &imagePath)
+    : mIsTemporary(false),
+    mFirstImage(image),
+    mFirstImagePath(imagePath)
 {
 #ifdef QT_DEBUG
-    currentGeneration = ++generation;
-    qDebug() << "Images { Generation " << currentGeneration << "created! }";
+    mCurrentGeneration = ++mGeneration;
+    qDebug() << "Images { Generation " << mCurrentGeneration << "created! }";
 #endif
 }
 
-Images::~Images() {
-    #ifdef QT_DEBUG
-        qDebug() << "Images { Generation " << currentGeneration << "killed! }";
-    #endif
-    if (!isTemporaryFiles) {
+ImageHolder::ImageHolder(const QPixmap &firstImage,
+                         const QString &firstImagePath,
+                         const QPixmap &secondImage,
+                         const QString &secondImagePath
+                         )
+    : mIsTemporary(false),
+    mFirstImage(firstImage),
+    mFirstImagePath(firstImagePath),
+    mSecondImage(secondImage),
+    mSecondImagePath(secondImagePath)
+{
+#ifdef QT_DEBUG
+    mCurrentGeneration = ++mGeneration;
+    qDebug() << "Images { Generation " << mCurrentGeneration << "created! }";
+#endif
+}
+
+ImageHolder::~ImageHolder() {
+#ifdef QT_DEBUG
+    qDebug() << "Images { Generation " << mCurrentGeneration << "killed! }";
+#endif
+    if (!mIsTemporary) {
         return;
     }
-    QFile(path1).remove();
-    if (!isTheSameImage()) {
-        QFile(path2).remove();
+    QFile(mFirstImagePath).remove();
+    mFirstImage = {};
+    if (isPairOfImages()) {
+        QFile(mSecondImagePath).remove();
+        mSecondImage = {};
     }
 }
 
-void Images::markAsTemporary() {
-    isTemporaryFiles = true;
+void ImageHolder::markTemporary() {
+    mIsTemporary = true;
 }
 
-bool Images::getIsTemporaryFiles() const {
-    return isTemporaryFiles;
+bool ImageHolder::isMarkedTemporary() const {
+    return mIsTemporary;
 }
 
-bool Images::isTheSameImage() const {
-    return _isTheSameImage;
+bool ImageHolder::isSingleImage() const {
+    return mSecondImage.isNull();
+}
+
+bool ImageHolder::isPairOfImages() const {
+    return !mFirstImage.isNull() && !mSecondImage.isNull();
+}
+
+QPixmap ImageHolder::getFirstImage() const {
+    return mFirstImage;
+}
+
+QString ImageHolder::getFirstImagePath() const {
+    return mFirstImagePath;
+}
+
+QPixmap ImageHolder::getSecondImage() const {
+    if (isSingleImage()) {
+        throw std::runtime_error("ImageHolder contains the single image");
+    }
+    return mSecondImage;
+}
+
+QString ImageHolder::getSecondImagePath() const {
+    if (isSingleImage()) {
+        throw std::runtime_error("ImageHolder contains the single image");
+    }
+    return mSecondImagePath;
 }

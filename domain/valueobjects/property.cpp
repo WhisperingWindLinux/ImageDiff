@@ -9,12 +9,12 @@ Property::Property(const QString &propertyName,
                    double defaultValue,
                    double minValue,
                    double maxValue)
-    : propertyType(Type::Real),
-    propertyName(propertyName),
-    propertyDescription(propertyDescription),
-    doubleValue(defaultValue),
-    max(maxValue),
-    min(minValue) {}
+    : mPropertyType(Type::Real),
+    mPropertyName(propertyName),
+    mPropertyDescription(propertyDescription),
+    mDoubleValue(defaultValue),
+    mMax(maxValue),
+    mMin(minValue) {}
 
 // Constructor for integer property
 Property::Property(const QString &propertyName,
@@ -22,20 +22,20 @@ Property::Property(const QString &propertyName,
                    int defaultValue,
                    int minValue,
                    int maxValue)
-    : propertyType(Type::Integer),
-    propertyName(propertyName),
-    propertyDescription(propertyDescription),
-    doubleValue(static_cast<double>(defaultValue)),
-    max(static_cast<double>(maxValue)),
-    min(static_cast<double>(minValue)) {}
+    : mPropertyType(Type::Integer),
+    mPropertyName(propertyName),
+    mPropertyDescription(propertyDescription),
+    mDoubleValue(static_cast<double>(defaultValue)),
+    mMax(static_cast<double>(maxValue)),
+    mMin(static_cast<double>(minValue)) {}
 
 Property::Property(const QString &propertyName,
                    const QString &propertyDescription,
                    const QString &defaultValue)
-    : propertyType(Type::FilePath),
-     propertyName(propertyName),
-     propertyDescription(propertyDescription),
-     filePathValue(defaultValue) {}
+    : mPropertyType(Type::FilePath),
+     mPropertyName(propertyName),
+     mPropertyDescription(propertyDescription),
+     mFilePathValue(defaultValue) {}
 
 
 // Static method to create an integer property without min/max constraints
@@ -101,7 +101,7 @@ Property Property::createRealProperty(const QString &propertyName,
                     );
 }
 
-// Static method to create a string property with alternativesValue
+// Static method to create a string property with mAlternativesValue
 Property Property::createAlternativesProperty(const QString &propertyName,
                                               const QString &propertyDescription,
                                               const QStringList &alternatives,
@@ -117,9 +117,9 @@ Property Property::createAlternativesProperty(const QString &propertyName,
     }
 
     Property prop(std::move(propertyName), std::move(propertyDescription), 0.0, 0.0, 0.0);
-    prop.propertyType = Type::Alternatives;
-    prop.alternativesValue = alternatives;
-    prop.doubleValue = static_cast<double>(defaultValueIndex);
+    prop.mPropertyType = Type::Alternatives;
+    prop.mAlternativesValue = alternatives;
+    prop.mDoubleValue = static_cast<double>(defaultValueIndex);
 
     return prop;
 }
@@ -134,64 +134,64 @@ Property Property::createFilePathProperty(const QString &propertyName,
 
 // Getters
 Property::Type Property::getPropertyType() const {
-    return propertyType;
+    return mPropertyType;
 }
 
 QString Property::getPropertyName() const {
-    return propertyName;
+    return mPropertyName;
 }
 
 QString Property::getPropertyDescription() const {
-    return propertyDescription;
+    return mPropertyDescription;
 }
 
 double Property::getValue() const {
-    return doubleValue;
+    return mDoubleValue;
 }
 
 QString Property::getFilePath() const {
-    return filePathValue;
+    return mFilePathValue;
 }
 
 QStringList Property::getAlternatives() const {
-    if (propertyType != Type::Alternatives) {
+    if (mPropertyType != Type::Alternatives) {
         throw std::runtime_error("An internal error occurred: this property type does not have alternatives");
     }
-    return alternativesValue;
+    return mAlternativesValue;
 }
 
 double Property::getMinValue() const {
-    if (propertyType == Type::Alternatives || propertyType == Type::FilePath) {
+    if (mPropertyType == Type::Alternatives || mPropertyType == Type::FilePath) {
         throw std::runtime_error("An internal error occurred: this property type does not have min/max values");
     }
-    return min;
+    return mMin;
 }
 
 QString Property::getAnyValueAsString() const {
-    switch (propertyType) {
+    switch (mPropertyType) {
     case Type::Integer:
-        return QString::number((int)doubleValue);
+        return QString::number((int)mDoubleValue);
     case Type::Real:
-        return QString::number(doubleValue);
+        return QString::number(mDoubleValue);
     case Type::Alternatives:
-        if (alternativesValue.size() == 0) {
+        if (mAlternativesValue.size() == 0) {
             return "";
         }
-        if ((int)doubleValue > alternativesValue.size() || (int)doubleValue < 0) {
+        if ((int)mDoubleValue > mAlternativesValue.size() || (int)mDoubleValue < 0) {
             return "";
         }
-        return alternativesValue[(int)doubleValue];
+        return mAlternativesValue[(int)mDoubleValue];
     case Type::FilePath:
-        return filePathValue;
+        return mFilePathValue;
     }
     return "";
 }
 
 double Property::getMaxValue() const {
-    if (propertyType == Type::Alternatives || propertyType == Type::FilePath) {
+    if (mPropertyType == Type::Alternatives || mPropertyType == Type::FilePath) {
         throw std::runtime_error("An internal error occurred: this property type does not have min/max values.");
     }
-    return max;
+    return mMax;
 }
 
 QString Property::toString() const {
@@ -222,7 +222,7 @@ QString Property::toString() const {
 
     case Type::FilePath:
         result += "  Type: FilePath\n";
-        result += "  Value: " + filePathValue + "\n";
+        result += "  Value: " + mFilePathValue + "\n";
         break;
     }
 

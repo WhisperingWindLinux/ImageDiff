@@ -88,12 +88,12 @@ void ImageProximityToOriginComparator::setProperties(QList<Property> properties)
         throw runtime_error("Unabel to open the original image.");
     }
 
-    pathToOriginalImage = filePath;
+    mPathToOriginalImage = filePath;
 }
 
 void ImageProximityToOriginComparator::reset() {
-    pathToOriginalImage = "";
-    originalImage = {};
+    mPathToOriginalImage = "";
+    mOriginalImage = {};
 }
 
 QString ImageProximityToOriginComparator::getShortName() const {
@@ -125,10 +125,10 @@ std::shared_ptr<ComparisonResultVariant> ImageProximityToOriginComparator::compa
                                                                     const ComparableImage &second
                                                                         )
 {
-    originalImage = {};
-    originalImage.load(pathToOriginalImage);
+    mOriginalImage = {};
+    mOriginalImage.load(mPathToOriginalImage);
 
-    if (originalImage.isNull()) {
+    if (mOriginalImage.isNull()) {
         throw runtime_error("Error: Unable to laod the original image.");
     }
 
@@ -136,7 +136,7 @@ std::shared_ptr<ComparisonResultVariant> ImageProximityToOriginComparator::compa
                                 second.getImage(),
                                 first.getBaseName(),
                                 second.getBaseName(),
-                                originalImage
+                                mOriginalImage
                                 );
 
     QString html = ImageProximityToOriginComparator::formatResultToHtml(result);
@@ -146,17 +146,17 @@ std::shared_ptr<ComparisonResultVariant> ImageProximityToOriginComparator::compa
 
 QString ImageProximityToOriginComparator::formatResultToHtml(const ImageProximityToOriginResult &result) {
     QLocale locale = QLocale::system();
-    QString formattedTotalDiff1 = locale.toString(result.totalDifference1);
-    QString formattedTotalDiff2 = locale.toString(result.totalDifference2);
+    QString formattedTotalDiff1 = locale.toString(result.totalDifference4FirstImage);
+    QString formattedTotalDiff2 = locale.toString(result.totalDifference4SecondImage);
 
     QString html;
     html += QString("<h2 style=\"line-height: 2;\">%1</h2>").arg(getFullName());
     html += "<table border=\"1\" cellspacing=\"0\" cellpadding=\"5\">";
     html += QString("<tr><td>The difference between %1 and the original image</td><td>%2</td></tr>")
-                .arg(result.image1Name)
+                .arg(result.firstImageName)
                 .arg(formattedTotalDiff1);
     html += QString("<tr><td>The difference between %1 and the original image</td><td>%2</td></tr>")
-                .arg(result.image2Name)
+                .arg(result.secondImageName)
                 .arg(formattedTotalDiff2);
     html += QString("<tr><td colspan=\"2\" align=\"center\"><b>"
                     " <font color=\"green\">%1</font></b></td></tr>").arg(result.resultDescription);

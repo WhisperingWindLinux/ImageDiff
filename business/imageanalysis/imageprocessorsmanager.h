@@ -24,10 +24,10 @@ public:
     void clear();
 
 private:
-    QList<shared_ptr<IImageProcessor> > processors;
-    QSet<QString> hotkeys;
-    unique_ptr<PluginsManager> pluginsManager;
-    QSettings *storage;
+    QList<shared_ptr<IImageProcessor> > mProcessors;
+    QSet<QString> mHotkeys;
+    unique_ptr<PluginsManager> mPluginsManager;
+    QSettings *mStorage;
 
     static ImageProcessorsManager *manager;
     ImageProcessorsManager();

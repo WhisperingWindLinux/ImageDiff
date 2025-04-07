@@ -45,18 +45,18 @@ signals:
     void screenshotTaken();
 
 private:
-    QMediaPlayer *mediaPlayer;
-    QVideoWidget *videoWidget;
-    QPushButton *playPauseButton; // Single button for Play/Pause
-    QPushButton *screenshotButton;
-    VideoDialogSlider *slider;
-    QLabel *frameLabel; // Displays the current frame number
-    QLabel *timeLabel;  // Displays the current timestamp in milliseconds
-    QString currentVideoPath;
-    QString currentScreenshotPath;
-    int screenshotCounter;
-    double frameRate;
-    qint64 currentPosition;
+    QMediaPlayer *mMediaPlayer;
+    QVideoWidget *mVideoWidget;
+    QPushButton *mPlayPauseButton; // Single button for Play/Pause
+    QPushButton *mScreenshotButton;
+    VideoDialogSlider *mSlider;
+    QLabel *mFrameLabel; // Displays the current frame number
+    QLabel *mTimeLabel;  // Displays the current timestamp in milliseconds
+    QString mCurrentVideoPath;
+    QString mCurrentScreenshotPath;
+    int mScreenshotCounter;
+    double mFrameRate;
+    qint64 mCurrentPosition;
 };
 
 #endif // VIDEOPLAYERWIDGET_H

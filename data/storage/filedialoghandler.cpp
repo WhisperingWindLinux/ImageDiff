@@ -9,8 +9,8 @@
 
 FileDialogHandler::FileDialogHandler() {
     auto validationRules = ImageValidationRulesFactory::createImageExtensionsInfoProvider();
-    openImagesFilter = validationRules->createOpenFilter();
-    saveImagesFilter = validationRules->createSaveFilter();
+    mOpenImagesFilter = validationRules->createOpenFilter();
+    mSaveImagesFilter = validationRules->createSaveFilter();
 }
 
 std::optional<QString> FileDialogHandler::getUserSaveImagePath(const QString &path) {
@@ -22,8 +22,8 @@ std::optional<QString> FileDialogHandler::getUserSaveReportPath(const QString &p
 }
 
 std::optional<QString> FileDialogHandler::getUserSaveFilePath(const QString &path,
-                                                                  PathType savedFileType
-                                                                 )
+                                                              PathType savedFileType
+                                                              )
 {
     QFileDialog dialog;
     QString filePath;
@@ -31,13 +31,14 @@ std::optional<QString> FileDialogHandler::getUserSaveFilePath(const QString &pat
     QString title;
 
     if (savedFileType == PathType::Image) {
-        filter = saveImagesFilter;
+        filter = mSaveImagesFilter;
         title = "Save Image";
     } else if (savedFileType == PathType::Report) {
-        filter = reportFilter;
+        filter = mReportFilter;
         title = "Save Report";
     } else {
-        throw std::runtime_error("An internal error occurred: the app is trying to save a file of an unsupported type.");
+        throw std::runtime_error("An internal error occurred: the app is trying to "
+                                 "save a file of an unsupported type.");
     }
 
     dialog.setViewMode(QFileDialog::Detail);
@@ -77,7 +78,7 @@ std::optional<QString> FileDialogHandler::getUserOpenImagePath(const QString &ba
     QString firstPath;    
     dialog.setViewMode(QFileDialog::Detail);
     dialog.setWindowTitle("Open Image");
-    dialog.setNameFilter(openImagesFilter);
+    dialog.setNameFilter(mOpenImagesFilter);
     dialog.setModal(true);
     dialog.setFileMode(QFileDialog::ExistingFile);
     dialog.setAcceptMode(QFileDialog::AcceptOpen);
@@ -116,8 +117,8 @@ OptionalStringPair FileDialogHandler::getUserOpenTwoVideoPaths(const QString &ba
 }
 
 OptionalStringPair FileDialogHandler::getUserOpenTwoFilePaths(const QString &baseDir,
-                                                                  PathType pathType
-                                                                  )
+                                                              PathType pathType
+                                                              )
 {
     QFileDialog dialog;
     QString firstFile;
@@ -128,16 +129,17 @@ OptionalStringPair FileDialogHandler::getUserOpenTwoFilePaths(const QString &bas
     QString title2;
 
     if (pathType == PathType::Image) {
-        filter = openImagesFilter;
+        filter = mOpenImagesFilter;
         title1 = "Open First Image";
         title2 = "Open Second Image";
     } else if (pathType == PathType::Video) {
-        filter = videoFilter;
+        filter = mVideoFilter;
         title1 = "Open First Video";
         title2 = "Open Second Video";
     } else {
-        QString err = QString("An internal error occurred: the app is trying to open a file of an unsupported type.")
-                      + " This error message is for the app developer.";
+        QString err = "An internal error occurred: the app is trying to "
+                      "open a file of an unsupported type. This error message "
+                      "is for the app developer.";
         throw std::runtime_error(err.toStdString());
     }
 
