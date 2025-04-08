@@ -18,7 +18,7 @@ jobs:
       - name: Set up environment
         run: |
           export SHELL=/bin/bash
-          export PATH=/Users/Shared/Developer/Qt/6.9.0/macos/bin:$PATH
+          export PATH=${{ vars.QT_BIN_DIR_PATH }}:$PATH
           echo "PATH is set to: $PATH"
           which qmake
 
@@ -26,13 +26,10 @@ jobs:
         run: |
           mkdir build
           cd build
-          /Users/Shared/Developer/Qt/6.9.0/macos/bin/qmake ../TwinPix.pro
+          ${{ vars.QT_BIN_DIR_PATH }}/qmake ../TwinPix.pro
           make -j8
 
       - name: Deploy project
         run: |
-          /Users/Shared/Developer/Qt/6.9.0/macos/bin/macdeployqt /Users/Shared/Developer/githab-actions/_work/TwinPix/TwinPix/build/TwinPix.app
-
-      - name: Package application into tar.gz
-        run: |
+          ${{ vars.QT_BIN_DIR_PATH }}/macdeployqt TwinPix.app
           tar -czvf TwinPix-macOS-arm64.tar.gz TwinPix.app
