@@ -42,4 +42,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: TwinPix-DMG
-          path: ${{ vars.BUILD_DIR }}/../TwinPix-macOS-arm64.dmg
+          path: ${{ vars.GITHUB_WORKSPACE }}/TwinPix/TwinPix/TwinPix-macOS-arm64.dmg
