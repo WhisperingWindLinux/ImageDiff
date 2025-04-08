@@ -11,7 +11,12 @@ struct PixelDifferenceRange {
     double percentage;    // Percentage of pixels in this range
 
     PixelDifferenceRange(int minDiff, int maxDiff)
-        : minDifference(minDiff), maxDifference(maxDiff), pixelCount(0), percentage(0.0) {}
+        : minDifference(minDiff),
+        maxDifference(maxDiff),
+        pixelCount(0),
+        percentage(0.0)
+    {
+    }
 };
 
 #endif // PIXELDIFFRENCERANGE_H

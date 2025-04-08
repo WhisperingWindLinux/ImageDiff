@@ -16,7 +16,7 @@ public:
                                          const QList<ImageProcessorInfo> &imageProcessorsInfo
                                          );
 private:
-    MainWindow *mainWindow;
+    MainWindow *mMainWindow;
 };
 
 #endif // IMAGEPROCESSORSMENUCONTROLLER_H

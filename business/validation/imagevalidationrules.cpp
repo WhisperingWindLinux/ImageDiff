@@ -4,41 +4,49 @@
 #include <qimageiohandler.h>
 
 
-ImageValidationRules::ImageValidationRules(const ImagesPtr images)
-    : images(images)
+ImageValidationRules::ImageValidationRules(const ImageHolderPtr images)
+    : mImages(images)
 {
 }
 
 ImageValidationRules::~ImageValidationRules() {
-    images = nullptr;
+    mImages = nullptr;
 }
 
 std::optional<QString> ImageValidationRules::isValid() {
-    // Check if both images are not null
-    if (images->image1.isNull() || images->image2.isNull()) {
-        return "One or both images are empty.";
+    if (mImages->isSingleImage()) {
+        return isSingleImageValid();
+    } else {
+        return isTwoImagesValid();
     }
+}
 
-    // Check if the first image is 8-bit
-    if (!isImage8Bit(images->image1)) {
+std::optional<QString> ImageValidationRules::isSingleImageValid() {
+    if (mImages->getFirstImage().isNull() ) {
+        return "Image is empty.";
+    }
+    if (!isImage8Bit(mImages->getFirstImage())) {
         return "The first image is not 8-bit.";
     }
+    return std::nullopt;
+}
 
-    // Check if the second image is 8-bit
-    if (!isImage8Bit(images->image2)) {
+std::optional<QString> ImageValidationRules::isTwoImagesValid() {
+    if (mImages->getFirstImage().isNull() || mImages->getSecondImage().isNull()) {
+        return "One or both images are empty.";
+    }
+    if (!isImage8Bit(mImages->getFirstImage())) {
+        return "The first image is not 8-bit.";
+    }
+    if (!isImage8Bit(mImages->getSecondImage())) {
         return "The second image is not 8-bit.";
     }
-
-    // Check if both images have the same bit depth
-    if (images->image1.depth() != images->image2.depth()) {
+    if (mImages->getFirstImage().depth() != mImages->getSecondImage().depth()) {
         return "The images do not have the same bit depth.";
     }
-
-    // Check if both images have the same size
-    if (images->image1.size() != images->image2.size()) {
+    if (mImages->getFirstImage().size() != mImages->getSecondImage().size()) {
         return "The images do not have the same dimensions.";
     }
-
     return std::nullopt;
 }
 

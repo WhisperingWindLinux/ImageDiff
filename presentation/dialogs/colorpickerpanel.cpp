@@ -5,7 +5,7 @@
 
 ColorPickerPanel::ColorPickerPanel(bool isForRightPosition, QWidget *parent, bool isTwoPanelMode)
     : QWidget(parent),
-    isTwoPanelMode(isTwoPanelMode)
+    mIsTwoPanelMode(isTwoPanelMode)
 {
     setWindowTitle("Color Picker");
     setLayout(isForRightPosition);
@@ -28,14 +28,14 @@ void ColorPickerPanel::setLayout(bool isForRightPosition) {
     // Create the first panel (visible image panel)
     auto rgbWidgets = createPanel(isForRightPosition);
     mainLayout->addLayout(rgbWidgets.panelLayout);
-    firstFileNameLabel = rgbWidgets.fileNamelabel;
-    firstColorSquare = rgbWidgets.colorSquare;
-    firstRLabel = rgbWidgets.rLabel;
-    firstGLabel = rgbWidgets.gLabel;
-    firstBLabel = rgbWidgets.bLabel;
+    mFirstFileNameLabel = rgbWidgets.fileNamelabel;
+    mFirstColorSquare = rgbWidgets.colorSquare;
+    mFirstRLabel = rgbWidgets.rLabel;
+    mFirstGLabel = rgbWidgets.gLabel;
+    mFirstBLabel = rgbWidgets.bLabel;
 
     // If isTwoPanelMode is true, create a advanced color picker' panel
-    if (isTwoPanelMode) {
+    if (mIsTwoPanelMode) {
         // Add some spacing before the second panel
         mainLayout->addSpacing(20);
 
@@ -45,11 +45,11 @@ void ColorPickerPanel::setLayout(bool isForRightPosition) {
         mainLayout->addLayout(rgbWidgets.panelLayout);
 
         // Store references to the second panel's elements
-        secondFileNameLabel = rgbWidgets.fileNamelabel;
-        secondColorSquare = rgbWidgets.colorSquare;
-        secondRLabel = rgbWidgets.rLabel;
-        secondGLabel = rgbWidgets.gLabel;
-        secondBLabel = rgbWidgets.bLabel;
+        mSecondFileNameLabel = rgbWidgets.fileNamelabel;
+        mSecondColorSquare = rgbWidgets.colorSquare;
+        mSecondRLabel = rgbWidgets.rLabel;
+        mSecondGLabel = rgbWidgets.gLabel;
+        mSecondBLabel = rgbWidgets.bLabel;
     }
 
     // Add a spacer to push everything to the top of the panel
@@ -121,7 +121,7 @@ void ColorPickerPanel::reset() {
 
 void ColorPickerPanel::updateTopPanelOnly(const ImagePixelColor &visibleImageColor) {
     // Set the file name in the top panel
-    firstFileNameLabel->setText(visibleImageColor.getImageName());
+    mFirstFileNameLabel->setText(visibleImageColor.getImageName());
 
     // Validate RGB values
     int r = visibleImageColor.getR();
@@ -131,24 +131,24 @@ void ColorPickerPanel::updateTopPanelOnly(const ImagePixelColor &visibleImageCol
     // Check if any RGB value is out of range
     if (r < 0 || r > 255 || g < 0 || g > 255 || b < 0 || b > 255) {
         // Display "n/a" for invalid RGB values
-        firstRLabel->setText("R: n/a");
-        firstGLabel->setText("G: n/a");
-        firstBLabel->setText("B: n/a");
+        mFirstRLabel->setText("R: n/a");
+        mFirstGLabel->setText("G: n/a");
+        mFirstBLabel->setText("B: n/a");
 
         // Set a default background color (e.g., gray) for invalid RGB
-        firstColorSquare->setStyleSheet("background-color: gray;");
+        mFirstColorSquare->setStyleSheet("background-color: gray;");
     } else {
         // Update the background color of the square based on valid RGB values
         QString style = QString("background-color: rgb(%1, %2, %3);")
                             .arg(r)
                             .arg(g)
                             .arg(b);
-        firstColorSquare->setStyleSheet(style);
+        mFirstColorSquare->setStyleSheet(style);
 
         // Display valid RGB values
-        firstRLabel->setText(QString("R: %1").arg(r));
-        firstGLabel->setText(QString("G: %1").arg(g));
-        firstBLabel->setText(QString("B: %1").arg(b));
+        mFirstRLabel->setText(QString("R: %1").arg(r));
+        mFirstGLabel->setText(QString("G: %1").arg(g));
+        mFirstBLabel->setText(QString("B: %1").arg(b));
     }
 }
 
@@ -156,7 +156,7 @@ void ColorPickerPanel::update(const ImagePixelColor &visibleImageColor,
                               const std::optional<ImagePixelColor> &hiddenImageColor
                               )
 {
-    if (!isTwoPanelMode) {
+    if (!mIsTwoPanelMode) {
         updateTopPanelOnly(visibleImageColor);
         return;
     }
@@ -168,20 +168,20 @@ void ColorPickerPanel::update(const ImagePixelColor &visibleImageColor,
     }
 
     // Update the top panel
-    firstFileNameLabel->setText(visibleImageColor.getImageName());
+    mFirstFileNameLabel->setText(visibleImageColor.getImageName());
     QString topStyle = QString("background-color: rgb(%1, %2, %3);")
                            .arg(visibleImageColor.getR())
                            .arg(visibleImageColor.getG())
                            .arg(visibleImageColor.getB());
-    firstColorSquare->setStyleSheet(topStyle);
+    mFirstColorSquare->setStyleSheet(topStyle);
 
     // Update the bottom panel
-    secondFileNameLabel->setText(hiddenImageColor->getImageName());
+    mSecondFileNameLabel->setText(hiddenImageColor->getImageName());
     QString bottomStyle = QString("background-color: rgb(%1, %2, %3);")
                               .arg(hiddenImageColor->getR())
                               .arg(hiddenImageColor->getG())
                               .arg(hiddenImageColor->getB());
-    secondColorSquare->setStyleSheet(bottomStyle);
+    mSecondColorSquare->setStyleSheet(bottomStyle);
 
     // Helper lambda to calculate and format differences for each RGB component
     auto formatComponent = [&](const QString& componentName,
@@ -198,8 +198,8 @@ void ColorPickerPanel::update(const ImagePixelColor &visibleImageColor,
             bottomLabel->setText(QString("%1: n/a").arg(componentName));
             topLabel->setStyleSheet("color: black;");
             bottomLabel->setStyleSheet("color: black;");
-            firstColorSquare->setStyleSheet("background-color: gray;");
-            secondColorSquare->setStyleSheet("background-color: gray;");
+            mFirstColorSquare->setStyleSheet("background-color: gray;");
+            mSecondColorSquare->setStyleSheet("background-color: gray;");
             return;
         }
 
@@ -231,24 +231,24 @@ void ColorPickerPanel::update(const ImagePixelColor &visibleImageColor,
     formatComponent("R",
                     visibleImageColor.getR(),
                     hiddenImageColor->getR(),
-                    firstRLabel,
-                    secondRLabel
+                    mFirstRLabel,
+                    mSecondRLabel
                     );
 
     // Update and compare G values
     formatComponent("G",
                     visibleImageColor.getG(),
                     hiddenImageColor->getG(),
-                    firstGLabel,
-                    secondGLabel
+                    mFirstGLabel,
+                    mSecondGLabel
                     );
 
     // Update and compare B values
     formatComponent("B",
                     visibleImageColor.getB(),
                     hiddenImageColor->getB(),
-                    firstBLabel,
-                    secondBLabel
+                    mFirstBLabel,
+                    mSecondBLabel
                     );
 }
 

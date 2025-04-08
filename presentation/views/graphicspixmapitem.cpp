@@ -8,7 +8,7 @@ GraphicsPixmapItem::GraphicsPixmapItem(const QPixmap &pixmap,
                                        QGraphicsItem *parent
                                        )
     : QGraphicsPixmapItem(pixmap, parent),
-    dropListener(dropListener)
+    mDropListener(dropListener)
 {
     setAcceptDrops(true);
 }
@@ -18,7 +18,7 @@ GraphicsPixmapItem::~GraphicsPixmapItem() {
 }
 
 void GraphicsPixmapItem::dragEnterEvent(QGraphicsSceneDragDropEvent *event) {
-    if (event->mimeData()->hasFormat("text/uri-list") && dropListener) {
+    if (event->mimeData()->hasFormat("text/uri-list") && mDropListener) {
         event->acceptProposedAction();
     } else {
         event->ignore();
@@ -26,11 +26,11 @@ void GraphicsPixmapItem::dragEnterEvent(QGraphicsSceneDragDropEvent *event) {
 }
 
 void GraphicsPixmapItem::dropEvent(QGraphicsSceneDragDropEvent *event) {
-    if (!event->mimeData()->hasUrls() || !dropListener) {
+    if (!event->mimeData()->hasUrls() || !mDropListener) {
         event->ignore();
     } else {
         event->acceptProposedAction();
         QList<QUrl> urls = event->mimeData()->urls();
-        dropListener->onDrop(urls);
+        mDropListener->onDrop(urls);
     }
 }

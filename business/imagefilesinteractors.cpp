@@ -7,30 +7,39 @@
 #include <data/storage/imagefileshandler.h>
 
 ImageFilesInteractor::ImageFilesInteractor() {
-    imageFileHandler = new ImageFilesHandler();
-    recentFilesInteractor = new RecentFilesInteractor();
+    mImageFileHandler = new ImageFilesHandler();
+    mRecentFilesInteractor = new RecentFilesInteractor();
 }
 
 ImageFilesInteractor::~ImageFilesInteractor() {
-    if (recentFilesInteractor != nullptr) {
-        delete recentFilesInteractor;
-        recentFilesInteractor = nullptr;
+    if (mRecentFilesInteractor != nullptr) {
+        delete mRecentFilesInteractor;
+        mRecentFilesInteractor = nullptr;
     }
-    if (imageFileHandler != nullptr) {
-        delete imageFileHandler;
-        imageFileHandler = nullptr;
+    if (mImageFileHandler != nullptr) {
+        delete mImageFileHandler;
+        mImageFileHandler = nullptr;
     }
-    images = nullptr;
+    mImages = nullptr;
 }
 
 void ImageFilesInteractor::openImagesFromRecentMenu(const QString &recentFileMenuRecord) {
     try {
-        auto paths = recentFilesInteractor->getRecentFilesPathsByRecentMenuRecord(recentFileMenuRecord);
-        if (!paths) {
-            throw std::runtime_error("Incorrect path to one or both images.");
+        auto record = mRecentFilesInteractor->getRecentFilesPathsByRecentMenuRecord(recentFileMenuRecord);
+        if (!record) {
+            throw std::runtime_error("Incorrect path to image(s).");
         }
-        images = imageFileHandler->openImages(paths->first, paths->second);
-        notifyImagesOpened(images);
+        std::optional<ImageHolderPtr> images;
+        if (record->isPairPathsRecord()) {
+            images = mImageFileHandler->openImages(record->getFirstPath(), record->getSecondPath());
+        } else {
+            images = mImageFileHandler->openImage(record->getFirstPath());
+        }
+        if (!images) {
+            return; // the user canceled the operation
+        }
+        mImages = images.value();
+        notifyImagesOpened(mImages);
     } catch(std::runtime_error &e) {
         cleanup();
         notifyImagesOpenFailed(e.what());
@@ -40,8 +49,8 @@ void ImageFilesInteractor::openImagesFromRecentMenu(const QString &recentFileMen
 
 void ImageFilesInteractor::openImagesFromDragAndDrop(const QList<QUrl> &urls) {
     try {
-        images = imageFileHandler->openImages(urls);
-        notifyImagesOpened(images);
+        mImages = mImageFileHandler->openImages(urls);
+        notifyImagesOpened(mImages);
     } catch(std::runtime_error &e) {
         cleanup();
         notifyImagesOpenFailed(e.what());
@@ -49,13 +58,13 @@ void ImageFilesInteractor::openImagesFromDragAndDrop(const QList<QUrl> &urls) {
     }
 }
 
-void ImageFilesInteractor::openImages(const QString &image1Path,
-                                      const QString &image2Path
+void ImageFilesInteractor::openImages(const QString &firstImagePath,
+                                      const QString &secondImagePath
                                      )
 {
     try {
-        images = imageFileHandler->openImages(image1Path, image2Path);
-        notifyImagesOpened(images);
+        mImages = mImageFileHandler->openImages(firstImagePath, secondImagePath);
+        notifyImagesOpened(mImages);
     } catch(std::runtime_error &e) {
         cleanup();
         notifyImagesOpenFailed(e.what());
@@ -63,17 +72,34 @@ void ImageFilesInteractor::openImages(const QString &image1Path,
     }
 }
 
-void ImageFilesInteractor::openImagesViaCommandLine(const QString &image1Path,
-                                                    const QString &image2Path
+void ImageFilesInteractor::openImagesViaCommandLine(const QString &firstImagePath,
+                                                    const QString &secondImagePath
                                                    )
 {
     try {
-        images = imageFileHandler->openImages(image1Path, image2Path);
+        mImages = mImageFileHandler->openImages(firstImagePath, secondImagePath);
 
-        if (isFileInTempFolder(images->path1) && isFileInTempFolder(images->path2)) {
-            images->markAsTemporary();
+        if (isFileInTempFolder(mImages->getFirstImagePath()) &&
+            isFileInTempFolder(mImages->getSecondImagePath()))
+        {
+            mImages->markTemporary();
         }
-        notifyImagesOpened(images);
+        notifyImagesOpened(mImages);
+    } catch(std::runtime_error &e) {
+        cleanup();
+        notifyImagesOpenFailed(e.what());
+        notifyImagesClosed();
+    }
+}
+
+void ImageFilesInteractor::openImageViaCommandLine(const QString &imagePath) {
+    try {
+        mImages = mImageFileHandler->openImage(imagePath);
+
+        if (isFileInTempFolder(mImages->getFirstImagePath())) {
+            mImages->markTemporary();
+        }
+        notifyImagesOpened(mImages);
     } catch(std::runtime_error &e) {
         cleanup();
         notifyImagesOpenFailed(e.what());
@@ -83,9 +109,9 @@ void ImageFilesInteractor::openImagesViaCommandLine(const QString &image1Path,
 
 void ImageFilesInteractor::openImagesViaOpenFilesDialog() {
     try {
-        images = imageFileHandler->openImages();
-        if (images != nullptr) {
-            notifyImagesOpened(images);
+        mImages = mImageFileHandler->openImages();
+        if (mImages != nullptr) {
+            notifyImagesOpened(mImages);
         }
     } catch(std::runtime_error &e) {
         cleanup();
@@ -96,9 +122,9 @@ void ImageFilesInteractor::openImagesViaOpenFilesDialog() {
 
 void ImageFilesInteractor::openImageViaOpenFilesDialog() {
     try {
-        images = imageFileHandler->openImage();
-        if (images != nullptr) {
-            notifyImagesOpened(images);
+        mImages = mImageFileHandler->openImage();
+        if (mImages != nullptr) {
+            notifyImagesOpened(mImages);
         }
     } catch(std::runtime_error &e) {
         cleanup();
@@ -110,12 +136,14 @@ void ImageFilesInteractor::openImageViaOpenFilesDialog() {
 void ImageFilesInteractor::openImagesFromVideos() {
     try {
         GetImagesFromVideosInteractor getImagesFromVideosInteractor {};
-        ImagesPtr imagesPath = getImagesFromVideosInteractor.get();
-        if (imagesPath == nullptr) {
+        auto imagePaths = getImagesFromVideosInteractor.getImagePaths();
+        if (!imagePaths) {
             return;
         }
-        images = imageFileHandler->openImages(imagesPath->path1, imagesPath->path2);
-        notifyImagesOpened(images);
+        mImages = mImageFileHandler->openImages(imagePaths->first,
+                                                imagePaths->second
+                                                );
+        notifyImagesOpened(mImages);
     } catch(std::runtime_error &e) {
         cleanup();
         notifyImagesOpenFailed(e.what());
@@ -137,12 +165,9 @@ void ImageFilesInteractor::openImageFromClipboard() {
             throw std::runtime_error(errorMissingImage);
         }
         QPixmap pixmap = QPixmap::fromImage(image);
-        auto result = imageFileHandler->saveImageTemporary(pixmap);
-        if (!result) {
-            throw std::runtime_error("Unable to save the image in the Temp directory");
-        }
-        auto images = imageFileHandler->openImages(result->path, result->path);
-        images->markAsTemporary();
+        auto path = mImageFileHandler->saveImageAsTemporary(pixmap);
+        auto images = mImageFileHandler->openImage(path);
+        images->markTemporary();
         notifyImagesOpened(images);
     } catch(std::runtime_error &e) {
         cleanup();
@@ -151,27 +176,17 @@ void ImageFilesInteractor::openImageFromClipboard() {
     }
 }
 
-void ImageFilesInteractor::saveImage(const SaveImageInfo &info) {
-    auto result = imageFileHandler->saveImageAs(info, images);
-    if (result.has_value()) {
-        return;
-    }
-    if (result.value().isSaved) {
-        notifyFileSavedSuccessfully(result.value().path);
-    } else {
-        notifySavingFileFailed(result.value().path);
-    }
-}
-
 void ImageFilesInteractor::saveImageAs(const SaveImageInfo &info) {
-    auto result = imageFileHandler->saveImageAs(info, images);
-    if (result.has_value()) {
-        return;
-    }
-    if (result.value().isSaved) {
-        notifyFileSavedSuccessfully(result.value().path);
-    } else {
-        notifySavingFileFailed(result.value().path);
+    std::optional<QString> path;
+    try {
+        auto pathPtr = mImageFileHandler->saveImageAs(info, mImages);
+        if (!path) {
+            return;
+        }
+        notifyFileSavedSuccessfully(path.value());
+    } catch (std::runtime_error &e) {
+        qDebug() << e.what();
+        notifySavingFileFailed(path.value_or(""));
     }
 }
 
@@ -181,54 +196,56 @@ bool ImageFilesInteractor::isFileInTempFolder(const QString &filePath) {
     return fileInfo.absoluteFilePath().startsWith(tempPath) && fileInfo.isFile();
 }
 
-bool ImageFilesInteractor::subscribe(IImageFilesInteractorListener *listener) {
-    if (listener == nullptr) {
-        return false;
-    }
-    if (listeners.contains(listener)) {
-        return false;
-    }
-    listeners.append(listener);
-    return true;
-}
-
-bool ImageFilesInteractor::unsubscribe(const IImageFilesInteractorListener *listener) {
-    if (listener == nullptr) {
-        return false;
-    }
-    return listeners.removeOne(listener);
-}
-
-void ImageFilesInteractor::cleanup() {
-    images = nullptr;
-}
-
-void ImageFilesInteractor::notifyImagesOpened(const ImagesPtr images) {
-    foreach (auto listener, listeners) {
+void ImageFilesInteractor::notifyImagesOpened(const ImageHolderPtr images) {
+    foreach (auto listener, mListeners) {
         listener->onImagesOpened(images);
     }
 }
 
+bool ImageFilesInteractor::subscribe(IImageFilesInteractorListener *listener) {
+    if (listener == nullptr) {
+        return false;
+    }
+    if (mListeners.contains(listener)) {
+        return false;
+    }
+    mListeners.append(listener);
+    return true;
+}
+
+bool ImageFilesInteractor::unsubscribe(IImageFilesInteractorListener *listener) {
+    if (listener == nullptr) {
+        return false;
+    }
+    return mListeners.removeOne(listener);
+}
+
+void ImageFilesInteractor::cleanup() {
+    mImages = nullptr;
+}
+
+
+
 void ImageFilesInteractor::notifyImagesClosed() {
-    foreach (auto listener, listeners) {
+    foreach (auto listener, mListeners) {
         listener->onImagesClosed();
     }
 }
 
 void ImageFilesInteractor::notifyImagesOpenFailed(const QString &error) {
-    foreach (auto listener, listeners) {
+    foreach (auto listener, mListeners) {
         listener->onImagesOpenFailed(error);
     }
 }
 
 void ImageFilesInteractor::notifySavingFileFailed(const QString &path) {
-    foreach (auto listener, listeners) {
+    foreach (auto listener, mListeners) {
         listener->onSavingFileFailed(path);
     }
 }
 
 void ImageFilesInteractor::notifyFileSavedSuccessfully(const QString &path) {
-    foreach (auto listener, listeners) {
+    foreach (auto listener, mListeners) {
         listener->onFileSavedSuccessfully(path);
     }
 }

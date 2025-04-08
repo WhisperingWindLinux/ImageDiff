@@ -3,9 +3,7 @@
 
 #include <qstring.h>
 #include <QList>
-
 #include <business/validation/interfaces/iimageextensionsinfoprovider.h>
-
 
 class ImageExtensionsInfoProvider : public IImageExtensionsInfoProvider
 {
@@ -16,9 +14,10 @@ public:
     QString getDeafaultSaveExtension(bool includeDot = false) override;
     QString createOpenFilter() override;
     QString createSaveFilter() override;
+
 private:
-    QList<QString> extensionsForOpen;
-    QString extensionForSave;
+    QList<QString> mExtensionsForOpen;
+    QString mExtensionForSave;
 };
 
 #endif // IMAGEEXTENSIONSINFOPROVIDER_H

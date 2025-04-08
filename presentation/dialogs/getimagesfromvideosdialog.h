@@ -11,22 +11,27 @@ class GetImagesFromVideosDialog : public QDialog {
     Q_OBJECT
 
 public:
-    GetImagesFromVideosDialog(QWidget *parent, const QString &videoFilePath1, const QString &videoFilePath2);
+    GetImagesFromVideosDialog(QWidget *parent,
+                              const QString &videoFilePath1,
+                              const QString &videoFilePath2
+                              );
 
-    QString getFirstScreenshotPath();
+    std::optional<QString> getFirstScreenshotPath();
 
-    QString getSecondScreenshotPath();
+    std::optional<QString> getSecondScreenshotPath();
 
     bool isCanceled();
+
+    void showError(const QString &errorMessage);
 
 private slots:
     void handleScreenshotTaken();
 
 private:
-    QString videoFilePath1;
-    QString videoFilePath2;
-    VideoPlayerWidget *player1;
-    VideoPlayerWidget *player2;
-    int totalScreenshotsTaken;
+    QString mVideoFilePath1;
+    QString mVideoFilePath2;
+    VideoPlayerWidget *mPlayer1;
+    VideoPlayerWidget *mPlayer2;
+    int mTotalScreenshotsTaken;
 };
 #endif // GETIMAGESFROMVIDEOSDIALOG_H

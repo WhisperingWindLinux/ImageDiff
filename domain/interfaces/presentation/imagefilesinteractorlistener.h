@@ -5,7 +5,7 @@
 
 class IImageFilesInteractorListener {
 public:
-    virtual void onImagesOpened(const ImagesPtr images) = 0;
+    virtual void onImagesOpened(const ImageHolderPtr images) = 0;
     virtual void onImagesOpenFailed(const QString &error) = 0;
     virtual void onImagesClosed() = 0;
     virtual void onSavingFileFailed(const QString &path) = 0;

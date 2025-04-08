@@ -20,8 +20,8 @@ public slots:
     void setToFitImageInView();
 
 private:
-    QGraphicsScene *scene;
-    QGraphicsPixmapItem *imageItem;
+    QGraphicsScene *mScene;
+    QGraphicsPixmapItem *mImageItem;
 
     void setCenterToViewRectCenter();
 };

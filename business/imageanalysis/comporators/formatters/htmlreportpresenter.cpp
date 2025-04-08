@@ -31,10 +31,10 @@ bool HtmlReportPresenter::createExtendedReportPage(const QString &folderPath,
     QImage firstOrigImage = firstOriginalImage.getImage();
     QImage secondOrigImage = secondOriginalImage.getImage();
 
-    QString firtsOrigImageName = firstOriginalImage.getBaseName() +
+    QString firtsOrigImageName = firstOriginalImage.getImageName() +
                                  provider->getDeafaultSaveExtension(true);
 
-    QString secondOrigImageName = secondOriginalImage.getBaseName() +
+    QString secondOrigImageName = secondOriginalImage.getImageName() +
                                   provider->getDeafaultSaveExtension(true);;
 
     // Save the two main images

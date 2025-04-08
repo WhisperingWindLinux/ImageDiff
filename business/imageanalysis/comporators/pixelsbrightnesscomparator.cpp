@@ -52,8 +52,8 @@ PixelsBrightnessComparisonResult PixelsBrightnessComparator::compareImages(const
     // Populate the result structure
     PixelsBrightnessComparisonResult result;
 
-    result.name1 = name1;
-    result.name2 = name2;
+    result.firstImageName = name1;
+    result.secondImageName = name2;
 
     result.totalPixels = totalPixels;
     result.sameColorCount = sameColorCount;
@@ -66,8 +66,8 @@ PixelsBrightnessComparisonResult PixelsBrightnessComparator::compareImages(const
     result.darkerPercent = (static_cast<double>(darkerCount) / totalPixels) * 100;
 
     // Store total brightness values in the result
-    result.totalBrightness1 = totalBrightness1;
-    result.totalBrightness2 = totalBrightness2;
+    result.firstImageTotalBrightness = totalBrightness1;
+    result.secondImageTotalBrightness = totalBrightness2;
 
     return result;
 }
@@ -99,9 +99,9 @@ ComparisonResultVariantPtr PixelsBrightnessComparator::compare(const ComparableI
                                                               )
 {
     auto result = compareImages(first.getImage(),
-                                first.getBaseName(),
+                                first.getImageName(),
                                 second.getImage(),
-                                second.getBaseName()
+                                second.getImageName()
                                 );
 
     QString html = PixelsBrightnessComparator::formatResultToHtml(result);
@@ -117,8 +117,8 @@ QString PixelsBrightnessComparator::formatResultToHtml(const PixelsBrightnessCom
     QString formattedBrighterCount = locale.toString(result.brighterCount);
     QString formattedDarkerCount = locale.toString(result.darkerCount);
 
-    QString formattedTotalBrightness1 = locale.toString(result.totalBrightness1);
-    QString formattedTotalBrightness2 = locale.toString(result.totalBrightness2);
+    QString formattedTotalBrightness1 = locale.toString(result.firstImageTotalBrightness);
+    QString formattedTotalBrightness2 = locale.toString(result.secondImageTotalBrightness);
 
     QString formattedSameColorPercent = MathHelper::formatPercentageValue(result.sameColorPercent);
     QString formattedBrighterPercent = MathHelper::formatPercentageValue(result.brighterPercent);
@@ -137,18 +137,18 @@ QString PixelsBrightnessComparator::formatResultToHtml(const PixelsBrightnessCom
     html += QString("<tr><td>Total pixels</td><td align=\"right\">%1</td><td align=\"right\">100%</td></tr>")
                 .arg(formattedTotalPixels);
     html += QString("<tr><td>Pixels with the same brightness in %1 and %2</td><td align=\"right\">%3</td><td align=\"right\">%4</td></tr>")
-                .arg(result.name1)
-                .arg(result.name2)
+                .arg(result.firstImageName)
+                .arg(result.secondImageName)
                 .arg(formattedTheSameCount)
                 .arg(formattedSameColorPercent);
     html += QString("<tr><td>Brighter pixels in %1 than in %2</td><td align=\"right\">%3</td><td align=\"right\">%4</td></tr>")
-                .arg(result.name1)
-                .arg(result.name2)
+                .arg(result.firstImageName)
+                .arg(result.secondImageName)
                 .arg(formattedBrighterCount)
                 .arg(formattedBrighterPercent);
     html += QString("<tr><td>Darker pixels in %1 than in %2</td><td align=\"right\">%3</td><td align=\"right\">%4</td></tr>")
-                .arg(result.name1)
-                .arg(result.name2)
+                .arg(result.firstImageName)
+                .arg(result.secondImageName)
                 .arg(formattedDarkerCount)
                 .arg(formattedDarkerPercent);
     html += "</table>";
@@ -159,15 +159,15 @@ QString PixelsBrightnessComparator::formatResultToHtml(const PixelsBrightnessCom
                 .arg("Parameter")
                 .arg("Value");
     html += QString("<tr><td>Overall brightness %1</td><td align=\"right\">%2</td></tr>")
-                .arg(result.name1)
+                .arg(result.firstImageName)
                 .arg(formattedTotalBrightness1);
     html += QString("<tr><td>Overall brightness %1</td><td align=\"right\">%2</td></tr>")
-                .arg(result.name2)
+                .arg(result.secondImageName)
                 .arg(formattedTotalBrightness2);
 
 
-    double dTotalBrightness1 = result.totalBrightness1;
-    double dTotalBrightness2 = result.totalBrightness2;
+    double dTotalBrightness1 = result.firstImageTotalBrightness;
+    double dTotalBrightness2 = result.secondImageTotalBrightness;
 
     auto beautifyPercentage = MathHelper::calcAndBeautifyPercentageValue(dTotalBrightness1,
                                                                         dTotalBrightness2,
@@ -179,11 +179,11 @@ QString PixelsBrightnessComparator::formatResultToHtml(const PixelsBrightnessCom
 
     if (dTotalBrightness1 > dTotalBrightness2) {
         html += QString("Image <b><font color=\"green\">%1</font></b> is %2 brighter")
-            .arg(result.name1)
+            .arg(result.firstImageName)
             .arg(beautifyPercentage.percentageResult);
     } else if (dTotalBrightness2 > dTotalBrightness1) {
         html += QString("Image <b><font color=\"green\">%1</font></b> is %2 brighter")
-            .arg(result.name2)
+            .arg(result.secondImageName)
             .arg(beautifyPercentage.percentageResult);
     } else {
         html += "Equally";

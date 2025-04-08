@@ -23,8 +23,9 @@ public:
     QString getFullName() const override;
 
 private:
-    RgbChannel channel;
-    bool isOutputImageColored;
+    RgbChannel mChannel;
+    bool mIsOutputImageColored;
+
     static QImage extractChannel(const QImage &image,
                                  bool isImageColored,
                                  RgbChannel channels

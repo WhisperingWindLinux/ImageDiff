@@ -2,6 +2,7 @@
 #define IMAGEPROCESSINGINTERACTORLISTENER_H
 
 #include <qpixmap.h>
+#include "domain/valueobjects/images.h"
 
 class IImageProcessingInteractorListener {
 public:
@@ -12,7 +13,7 @@ public:
                                           const QString &firstImagePath,
                                           const QString &secondImagePath) = 0;
 
-    virtual void onFilteredResultLoaded(const QPixmap &firstImage, const QPixmap &secondImage) = 0;
+    virtual void onFilteredResultLoaded(const ImageHolderPtr imageHolder) = 0;
     virtual void onShowImageInExternalViewer(const QPixmap &image, const QString &description) = 0;
     virtual void onImageProcessorFailed(const QString &error) = 0;
 

@@ -5,43 +5,38 @@
 
 
 struct LastDisplayedComparisonResult {
-
 public:
     void set(const QPixmap &image, const QString &description) {
-        this->image = image;
-        this->description = description;
+        this->mImage = image;
+        this->mDescription = description;
     }
 
     void clear() {
-        image = std::nullopt;
-        description = "";
+        mImage = std::nullopt;
+        mDescription = "";
     }
 
     bool hasLastDisplayedComparisonResult() {
-        return (image != std::nullopt);
+        return (mImage != std::nullopt);
     }
 
     QPixmap getImage() const {
-        if (!image.has_value()) {
+        if (!mImage.has_value()) {
             throw std::runtime_error("The application is in an inconsistent state. "
                                      "Please report the following information to the "
                                      "app developer: an empty QPixmap was requested in "
                                      "the function LastDisplayedComparisonResult::getImage.");
         }
-        return image.value();
+        return mImage.value();
     }
 
     QString getDescription() const {
-        return description;
+        return mDescription;
     }
 
 private:
-    std::optional<QPixmap> image;
-    QString description;
+    std::optional<QPixmap> mImage;
+    QString mDescription;
 };
-
-
-
-
 
 #endif // LASTDISPLAYEDCOMPARISONRESULT_H

@@ -60,15 +60,14 @@ public:
     QString getFilePath() const;
     QString getAnyValueAsString() const;
 
-    friend class PropertyTests;
 private:
-    Type propertyType;
-    QString propertyName;
-    QString propertyDescription;
-    double doubleValue;
-    QStringList alternativesValue;
-    QString filePathValue;
-    double max, min;
+    Type mPropertyType;
+    QString mPropertyName;
+    QString mPropertyDescription;
+    double mDoubleValue;
+    QStringList mAlternativesValue;
+    QString mFilePathValue;
+    double mMax, mMin;
     
     Property(const QString &propertyName,
              const QString &propertyDescription,

@@ -8,32 +8,33 @@
 
 class ImagesRepository;
 
-struct FileSaveResult {
-  FileSaveResult(bool isSaved, const QString &path): isSaved(isSaved), path(path) {}
-  const bool isSaved;
-  const QString path;
-};
-
-class ImageFilesHandler
-{
+class ImageFilesHandler {
 public:
     ImageFilesHandler() = default;
     ~ImageFilesHandler() = default;
 
-    // The openImages functions never returns nullptr; if an error occurs,
-    // a runtime_error with its description will be thrown.
-    ImagesPtr openImages();
-    ImagesPtr openImage();
-    ImagesPtr openImages(const QString &image1Path, const QString &image2Path);
-    ImagesPtr openImages(const QList<QUrl> &urls);
+    // In case the operation is canceled by the user, nullptr will be returned;
+    // this is not an error indicator {
+    ImageHolderPtr openImages();
+    ImageHolderPtr openImage();
+    ImageHolderPtr openImage(const QString &imagePath);
+    ImageHolderPtr openImages(const QList<QUrl> &urls);
+    ImageHolderPtr openImages(const QString &firstImagePath, const QString &secondImagePath);
+    // }
 
-    std::optional<FileSaveResult> saveImageAs(const SaveImageInfo &saveImageInfo, const ImagesPtr images);
-    std::optional<FileSaveResult> saveImageTemporary(const QPixmap &image);
+    // In case the operation is canceled by the user, std::nullopt will be returned;
+    // this is not an error indicator {
+    std::optional<QString> saveImageAs(const SaveImageInfo &saveImageInfo,
+                                       const ImageHolderPtr images
+                                       );
+    // }
+
+    QString saveImageAsTemporary(const QPixmap &image);
 
 private:
-    QPixmap openImage(const QString &imagePath);
+    QPixmap coreOpenImage(const QString &imagePath);
     bool validateFile(const QString &filePath);
-    void validateImages(ImagesPtr images);
+    void validateImages(ImageHolderPtr images);
 };
 
 #endif // IMAGEFILESHANDLER_H

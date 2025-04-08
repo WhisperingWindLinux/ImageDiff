@@ -14,19 +14,19 @@ PythonScripFilter::PythonScripFilter(const QString& pyScriptPath,
                                      const QString &hotkey,
                                      const QString &description,
                                      const QList<Property> &properties)
-    : shortName(shortName),
-    hotkey(hotkey),
-    description(description),
-    properties(properties),
-    pyScriptPath(pyScriptPath)
+    : mShortName(shortName),
+    mHotkey(hotkey),
+    mDescription(description),
+    mProperties(properties),
+    mPyScriptPath(pyScriptPath)
 {
     auto validationRules = ImageValidationRulesFactory::createImageExtensionsInfoProvider();
     QString ext = validationRules->getDeafaultSaveExtension(false);
-    defaultSaveImageExtention = ext.toUpper().toStdString();
+    mDefaultSaveImageExtention = ext.toUpper().toStdString();
 }
 
 QString PythonScripFilter::getShortName() const {
-    return shortName;
+    return mShortName;
 }
 
 QString PythonScripFilter::getFullName() const {
@@ -34,19 +34,19 @@ QString PythonScripFilter::getFullName() const {
 }
 
 QString PythonScripFilter::getHotkey() const {
-    return hotkey;
+    return mHotkey;
 }
 
 QString PythonScripFilter::getDescription() const {
-    return description;
+    return mDescription;
 }
 
 QList<Property> PythonScripFilter::getDefaultProperties() const {
-    return properties;
+    return mProperties;
 }
 
 void PythonScripFilter::setProperties(QList<Property> properties) {
-    this->properties = properties;
+    this->mProperties = properties;
 }
 
 QImage PythonScripFilter::filter(const QImage &image) {
@@ -56,7 +56,7 @@ QImage PythonScripFilter::filter(const QImage &image) {
 
     buffer1.open(QIODevice::WriteOnly);
 
-    if (!image.save(&buffer1, defaultSaveImageExtention.c_str())) {
+    if (!image.save(&buffer1, mDefaultSaveImageExtention.c_str())) {
         throw runtime_error("Failed to encode images to bytes array.");
     }
 
@@ -72,9 +72,9 @@ QImage PythonScripFilter::filter(const QImage &image) {
 
 
     QStringList params;
-    params << pyScriptPath;
+    params << mPyScriptPath;
 
-    foreach (auto property, properties) {
+    foreach (auto property, mProperties) {
         params << property.getAnyValueAsString();
     }
 
@@ -102,7 +102,7 @@ QImage PythonScripFilter::filter(const QImage &image) {
 
     QByteArray output = process.readAllStandardOutput();
     QImage resultImage;
-    if (!resultImage.loadFromData(output, defaultSaveImageExtention.c_str()) &&
+    if (!resultImage.loadFromData(output, mDefaultSaveImageExtention.c_str()) &&
         !resultImage.isNull()) {
         throw runtime_error("Error! The script returned '" +
                             process.readAllStandardError() + "'");

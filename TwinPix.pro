@@ -27,6 +27,7 @@ SOURCES += \
     business/imageanalysis/filters/rgbfilter.cpp \
     business/imageanalysis/imageprocessinginteractor.cpp \
     business/imageanalysis/imageprocessorsmanager.cpp \
+    business/utils/imagesinfo.cpp \
     business/validation/imageextensionsinfoprovider.cpp \
     business/validation/imagevalidationrules.cpp \
     business/imagefilesinteractors.cpp \
@@ -49,6 +50,7 @@ SOURCES += \
     domain/valueobjects/comparisonresultvariant.cpp \
     domain/valueobjects/images.cpp \
     domain/valueobjects/property.cpp \
+    domain/valueobjects/recentfilesrecord.cpp \
     main.cpp \
     presentation/colorpickercontroller.cpp \
     presentation/dialogs/aboutdialog.cpp \
@@ -134,6 +136,7 @@ HEADERS += \
     domain/valueobjects/pluginssettings.h \
     domain/valueobjects/property.h \
     domain/valueobjects/pyscriptinfo.h \
+    domain/valueobjects/recentfilesrecord.h \
     domain/valueobjects/savefileinfo.h \
     presentation/colorpickercontroller.h \
     presentation/dialogs/aboutdialog.h \

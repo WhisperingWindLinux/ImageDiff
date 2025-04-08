@@ -23,7 +23,7 @@ class ImageProcessingInteractor
 public:
     static QList<ImageProcessorInfo> getImageProcessorsInfo();
 
-    ImageProcessingInteractor(const ImagesPtr images,
+    ImageProcessingInteractor(const ImageHolderPtr images,
                               IPropcessorPropertiesDialogCallback *propertiesDialogCallback,
                               IProgressDialog *progressDialogCallback
                               );
@@ -41,18 +41,20 @@ public:
 
     void showLastComparisonImage();
 
-    void analyzeSelectedArea(ImagesPtr, std::optional<int> key);
+    void analyzeSelectedArea(ImageHolderPtr, std::optional<int> key);
+
+    QPixmap applyFilter(const QPixmap &pixmap, IFilterPtr filter);
 
 private:
-    IPropcessorPropertiesDialogCallback *propertiesDialogCallback;
-    IProgressDialog *progressDialogCallback;
-    QList<IImageProcessingInteractorListener*> listeners;
-    ImagesPtr originalImages;
-    ImagesPtr displayedImages;
-    LastDisplayedComparisonResult lastDisplayedComparisonResult;
+    IPropcessorPropertiesDialogCallback *mPropertiesDialogCallback;
+    IProgressDialog *mProgressDialogCallback;
+    QList<IImageProcessingInteractorListener*> mListeners;
+    ImageHolderPtr mOriginalImages;
+    ImageHolderPtr mDisplayedImages;
+    LastDisplayedComparisonResult mLastDisplayedComparisonResult;
 
     void coreCallImageProcessor(const QVariant &callerData);
-    void callComparator(IComparatorPtr comparator, ImagesPtr images);
+    void callComparator(IComparatorPtr comparator, ImageHolderPtr images);
     void callFilter(IFilterPtr filter);
     void handleProcessorPropertiesIfNeed(IImageProcessorPtr processor);
 
@@ -63,7 +65,7 @@ private:
                                       const QString &firstImagePath,
                                       const QString &secondImagePath);
 
-    void notifyFilteredResultLoaded(const QPixmap &firstImage, const QPixmap &secondImage);
+    void notifyFilteredResultLoaded(const ImageHolderPtr imageHolder);
     void notifyImageProcessorFailed(const QString &error);
     void notifyFastSwitchingToComparisonImageStatusChanged(bool isSwitchingAvailable);
     void clearLastComparisonImage();

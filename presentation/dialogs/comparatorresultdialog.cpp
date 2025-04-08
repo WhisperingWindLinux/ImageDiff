@@ -11,38 +11,38 @@ ComparatorResultDialog::ComparatorResultDialog(const QString &message,
                                                QWidget *parent
                                                )
     : QDialog(parent),
-    message(message),
-    firstFilePath(firstImageFilePath),
-    secondFilePath(secondImageFilePath),
-    comparatorFullName(comparatorFullName){
+    mMessage(message),
+    mFirstFilePath(firstImageFilePath),
+    mSecondFilePath(secondImageFilePath),
+    mComparatorFullName(comparatorFullName){
     setupUI();
 }
 
 void ComparatorResultDialog::setupUI() {
-    label = new QLabel(message, this);
-    closeButton = new QPushButton("Close", this);
-    saveButton = new QPushButton("Save", this);
-    label->setWordWrap(true);
+    mMessageLabel = new QLabel(mMessage, this);
+    mCloseButton = new QPushButton("Close", this);
+    mSaveButton = new QPushButton("Save", this);
+    mMessageLabel->setWordWrap(true);
 
     QVBoxLayout *vlayout = new QVBoxLayout(this);
-    vlayout->addWidget(label);
+    vlayout->addWidget(mMessageLabel);
     QHBoxLayout *hlayout = new QHBoxLayout(this);
     hlayout->addStretch();
-    hlayout->addWidget(saveButton);
+    hlayout->addWidget(mSaveButton);
     hlayout->addSpacing(10);
-    hlayout->addWidget(closeButton);
+    hlayout->addWidget(mCloseButton);
     vlayout->addItem(hlayout);
 
     setLayout(vlayout);
 
-    connect(closeButton, &QPushButton::clicked, this, &ComparatorResultDialog::close);
-    connect(saveButton, &QPushButton::clicked, this, &ComparatorResultDialog::onSaveClicked);
+    connect(mCloseButton, &QPushButton::clicked, this, &ComparatorResultDialog::close);
+    connect(mSaveButton, &QPushButton::clicked, this, &ComparatorResultDialog::onSaveClicked);
 
     setWindowTitle("Comparison Report");
 }
 
 void ComparatorResultDialog::onSaveClicked() {
-    QDir parentDir(QFileInfo(firstFilePath).absolutePath());
+    QDir parentDir(QFileInfo(mFirstFilePath).absolutePath());
     QString filePath = parentDir.absolutePath() + QDir::separator() + "report.html";
 
     FileDialogHandler services;
@@ -50,9 +50,9 @@ void ComparatorResultDialog::onSaveClicked() {
 
     if (savedPath) {
         bool isOk = HtmlReportPresenter::createSimpleReportPage(savedPath.value(),
-                                                                firstFilePath,
-                                                                secondFilePath,
-                                                                message);
+                                                                mFirstFilePath,
+                                                                mSecondFilePath,
+                                                                mMessage);
         if (!isOk) {
             QMessageBox msgBox;
             msgBox.setIcon(QMessageBox::Critical);

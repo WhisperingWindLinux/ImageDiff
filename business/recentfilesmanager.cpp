@@ -4,61 +4,78 @@
 const QString RecentFilesManager::SETTINGS_KEY = "recentFilePairs";
 
 // Constructor
-RecentFilesManager::RecentFilesManager(const QString &organization, const QString &application, int maxPairs)
-    : maxRecentPairs(maxPairs), settings(organization, application) {
+RecentFilesManager::RecentFilesManager(const QString &organization,
+                                       const QString &application,
+                                       int maxPairs
+                                       )
+    : mMaxRecentPairs(maxPairs),
+    mSettings(organization, application)
+{
     loadFromSettings(); // Load existing recent pairs from settings
 }
 
-void RecentFilesManager::addPair(const QString &file1, const QString &file2) {
-    QStringPair newPair(file1, file2);
-    recentPairs.removeAll(newPair); // Remove the pair if it already exists (to avoid duplicates)
-    recentPairs.prepend(newPair);
+void RecentFilesManager::addRecord(const QString &firstFilePath, const QString &secondFilePath) {
+    RecentFilesRecord newRecord(firstFilePath, secondFilePath);
+    mRecentFilesRecords.removeAll(newRecord); // Remove the pair if it already exists (to avoid duplicates)
+    mRecentFilesRecords.prepend(newRecord);
+    trimExcessPairs(); // Trim excess pairs if we exceed the maximum allowed size
+    saveToSettings();
+}
+
+void RecentFilesManager::addRecord(const QString &filePath) {
+    RecentFilesRecord newRecord{filePath};
+    mRecentFilesRecords.removeAll(newRecord); // Remove the pair if it already exists (to avoid duplicates)
+    mRecentFilesRecords.prepend(newRecord);
     trimExcessPairs(); // Trim excess pairs if we exceed the maximum allowed size
     saveToSettings();
 }
 
 void RecentFilesManager::clear() {
-    recentPairs.clear();
-    settings.remove(SETTINGS_KEY);
+    mRecentFilesRecords.clear();
+    mSettings.remove(SETTINGS_KEY);
 }
 
-QList<QStringPair> RecentFilesManager::getAllPairs() const {
-    return recentPairs;
+QList<RecentFilesRecord> RecentFilesManager::getAllRecords() const {
+    return mRecentFilesRecords;
 }
 
 // Save the list of recent file pairs to QSettings
 void RecentFilesManager::saveToSettings() {
-    QVariantList pairList;
-    QSet<QStringPair> uniquePairs;
+    QVariantList recordsList;
+    QSet<RecentFilesRecord> uniqueRecords;
 
-    foreach (const auto &pair, recentPairs) {
-        if (!uniquePairs.contains(pair)) {
-            uniquePairs.insert(pair);
-            QVariant variant1(pair.first);
-            QVariant variant2(pair.second);
-            pairList.append(variant1);
-            pairList.append(variant2);
+    foreach (const auto &record, mRecentFilesRecords) {
+        if (!uniqueRecords.contains(record)) {
+            uniqueRecords.insert(record);
+            QVariant variant1(record.getFirstPath());
+            QVariant variant2(record.getSecondPath());
+            recordsList.append(variant1);
+            recordsList.append(variant2);
         }
     }
-    settings.setValue(SETTINGS_KEY, pairList);
+    mSettings.setValue(SETTINGS_KEY, recordsList);
 }
 
 // Loads the list of recent file pairs from QSettings
 void RecentFilesManager::loadFromSettings() {
-    QVariantList pairList = settings.value(SETTINGS_KEY).toList();
-    recentPairs.clear();
+    QVariantList pairList = mSettings.value(SETTINGS_KEY).toList();
+    mRecentFilesRecords.clear();
 
-    // Convert QVariantList back into a QList<QPair<QString, QString>>
+    // Convert QVariantList back into RecentFilesRecord
     for (int i = 1; i <= pairList.size(); i=i+2) {
-        QString file1 = pairList[i-1].toString();
-        QString file2 = pairList[i].toString();
-        recentPairs.append(qMakePair(file1, file2));
+        QString firstPath = pairList[i-1].toString();
+        QString secondPath = pairList[i].toString();
+        if (secondPath.isEmpty()) {
+            mRecentFilesRecords.append(RecentFilesRecord{firstPath});
+        } else {
+            mRecentFilesRecords.append(RecentFilesRecord{firstPath, secondPath});
+        }
     }
 }
 
 // Removes excess file pairs if the list exceeds the maximum allowed size
 void RecentFilesManager::trimExcessPairs() {
-    while (recentPairs.size() > maxRecentPairs) {
-        recentPairs.removeLast(); // Remove the oldest entry (last in the list)
+    while (mRecentFilesRecords.size() > mMaxRecentPairs) {
+        mRecentFilesRecords.removeLast(); // Remove the oldest entry (last in the list)
     }
 }

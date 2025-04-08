@@ -18,18 +18,19 @@ public:
 
     // IRecentFilesManager interface
 
-    void addPair(const QString &file1, const QString &file2) override;
-    QList<QStringPair> getAllPairs() const override;
+    void addRecord(const QString &firstFilePath, const QString &secondFilePath) override;
+    void addRecord(const QString &filePath) override;
+    QList<RecentFilesRecord> getAllRecords() const override;
     void clear() override;
 
 private:
     static const QString SETTINGS_KEY;  // Key used to store recent files in QSettings
 
     // A list of recent file pairs, such as '/path/to/file1.png -> /path/to/file2.png'
-    QList<QStringPair> recentPairs;
+    QList<RecentFilesRecord> mRecentFilesRecords;
 
-    int maxRecentPairs;   // Maximum number of recent file pairs
-    QSettings settings;   // QSettings instance for persistent storage
+    int mMaxRecentPairs;   // Maximum number of recent file pairs
+    QSettings mSettings;   // QSettings instance for persistent storage
 
     void saveToSettings();
     void loadFromSettings();

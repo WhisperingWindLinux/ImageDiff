@@ -20,10 +20,8 @@ protected:
     void closeEvent(QCloseEvent *event) override;
 
 private:
-    ExternalGraphicsView *graphicsView;
-
-    QMenuBar *menuBar;
-    QStatusBar *statusBar;
+    ExternalGraphicsView *mGraphicsView;
+    QMenuBar *mMenuBar;
 
     void setupMenu();
     void saveWindowState();

@@ -24,12 +24,12 @@ public:
     QImage filter(const QImage &image) override;
 
 private:
-    QString shortName;
-    QString hotkey;
-    QString description;
-    QList<Property> properties;
-    QString pyScriptPath;
-    std::string defaultSaveImageExtention;
+    QString mShortName;
+    QString mHotkey;
+    QString mDescription;
+    QList<Property> mProperties;
+    QString mPyScriptPath;
+    std::string mDefaultSaveImageExtention;
 
     const QImage &prepareResult(const QImage &resultImage, const QImage &originalImage);
 };

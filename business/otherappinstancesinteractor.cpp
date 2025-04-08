@@ -1,69 +1,72 @@
 #include "otherappinstancesinteractor.h"
-#include "business/utils/imagesinfo.h"
-#include "domain/interfaces/presentation/iotherappinstancesinteractorcallback.h"
 
 #include <qcoreapplication.h>
 #include <qdir.h>
 #include <qprocess.h>
 
 #include <business/validation/imagevalidationrulesfactory.h>
+#include "business/utils/imagesinfo.h"
+#include "domain/interfaces/presentation/iotherappinstancesinteractorcallback.h"
+
 
 OtherAppInstancesInteractor::OtherAppInstancesInteractor(
                                                 OtherAppInstancesInteractorCallback *callback)
-    : callback(callback)
+    : mCallback(callback)
 {
 }
 
 OtherAppInstancesInteractor::~OtherAppInstancesInteractor() {
-    for (auto it = appInstances.begin(); it != appInstances.end(); ) {
+    for (auto it = mAppInstances.begin(); it != mAppInstances.end(); ) {
         (*it)->deleteLater();
     }
-    appInstances.clear();
+    mAppInstances.clear();
 }
 
 void OtherAppInstancesInteractor::cleanupProcesses() {
-    for (auto it = appInstances.begin(); it != appInstances.end(); ) {
+    for (auto it = mAppInstances.begin(); it != mAppInstances.end(); ) {
         QProcess* process = *it;
         if (process->state() == QProcess::NotRunning) {
             process->deleteLater();
-            it = appInstances.erase(it);
+            it = mAppInstances.erase(it);
         } else {
             ++it;
         }
     }
 }
 
-void OtherAppInstancesInteractor::openNewAppInstance(ImagesPtr images) {
+void OtherAppInstancesInteractor::openNewAppInstance(ImageHolderPtr images) {
 
     ImagesInfo info { images };
 
-    std::optional<QString> path1 = saveImageInTempDir(images->image1, info.getFirstImageBaseName());
-    std::optional<QString> path2;
+    std::optional<QString> firstImagePath = saveImageInTempDir(images->getFirstImage(),
+                                                               info.getFirstImageBaseName()
+                                                               );
+    std::optional<QString> secondImagePath;
 
-    if (!images->isTheSameImage()) {
-        path2 = saveImageInTempDir(images->image2, info.getSecondImageBaseName());
+    if (!images->isSingleImage()) {
+        secondImagePath = saveImageInTempDir(images->getSecondImage(), info.getSecondImageBaseName());
     }
 
-    if (path1 && (images->isTheSameImage() || path2)) {
-        openNewAppInstance(path1.value(), path2);
+    if (firstImagePath && (images->isSingleImage() || secondImagePath)) {
+        coreOpenNewAppInstance(firstImagePath.value(), secondImagePath);
         return;
     }
-    if (path1) {
-        QFile(path1.value()).remove();
+    if (firstImagePath) {
+        QFile(firstImagePath.value()).remove();
     }
-    if (path2) {
-        QFile(path2.value()).remove();
+    if (secondImagePath) {
+        QFile(secondImagePath.value()).remove();
     }
 }
 
-void OtherAppInstancesInteractor::openNewAppInstance(const QString &firstFilePath,
-                                                     const std::optional<QString> &secondFilePath
-                                                     )
+void OtherAppInstancesInteractor::coreOpenNewAppInstance(const QString &firstFilePath,
+                                                         const std::optional<QString> &secondFilePath
+                                                         )
 {
     cleanupProcesses();
 
     auto process = new QProcess();
-    appInstances.append(process);
+    mAppInstances.append(process);
 
     QString program = QCoreApplication::applicationFilePath();
     QStringList arguments;
@@ -73,9 +76,9 @@ void OtherAppInstancesInteractor::openNewAppInstance(const QString &firstFilePat
     }
 
     if (process->startDetached(program, arguments)) {
-        callback->onOtherAppInstanceOpened();
+        mCallback->onOtherAppInstanceOpened();
     } else {
-        callback->showError("Failed to start the new instance of TwinPix: " + process->errorString());
+        mCallback->showError("Failed to start the new instance of TwinPix: " + process->errorString());
     }
 }
 

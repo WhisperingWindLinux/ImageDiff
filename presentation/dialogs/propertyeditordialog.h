@@ -31,11 +31,11 @@ private slots:
     void onRun();
 
 private:
-    QList<Property> deafultProperties; // List of Property objects
-    QList<Property> updatedProperties; // List of Property objects
-    QList<QWidget*> editors;           // List of dynamically created editors for each property
+    QList<Property> mDeafultProperties; // List of Property objects
+    QList<Property> mUpdatedProperties; // List of Property objects
+    QList<QWidget*> mEditors;           // List of dynamically created editors for each property
 
-    QVBoxLayout *mainLayout;
+    QVBoxLayout *mMainLayout;
 };
 
 #endif // PROPERTYEDITORDIALOG_H

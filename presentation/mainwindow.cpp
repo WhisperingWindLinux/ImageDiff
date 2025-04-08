@@ -1,5 +1,4 @@
 #include "mainwindow.h"
-#include "business/recentfilesinteractor.h"
 
 #include <QLabel>
 #include <QSplitter>
@@ -34,11 +33,13 @@
 #include <data/storage/filedialoghandler.h>
 #include <business/imageanalysis/imageprocessinginteractor.h>
 #include <domain/interfaces/presentation/iotherappinstancesinteractorcallback.h>
+#include <business/otherappinstancesinteractor.h>
+#include <business/recentfilesinteractor.h>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent),
     ui(new Ui::MainWindow),
-    menuIsInSingleImageMode(false)
+    mMenuIsInSingleImageMode(false)
 {
     ui->setupUi(this);
 
@@ -50,18 +51,18 @@ MainWindow::MainWindow(QWidget *parent)
     showNormal();
     restoreMainWindowPosition();
 
-    colorPickerController = new ColorPickerController(this);
-    imageView = new ImageViewer(this, this);
-    imageFilesInteractor = new ImageFilesInteractor();
-    imageProcessorsMenuController = new ImageProcessorsMenuController(this);
-    recentFilesInteractor = new RecentFilesInteractor();
-    otherAppInstanceInteractor = new OtherAppInstancesInteractor(this);
-    imageProcessingInteractor = nullptr;
-    progressDialog = nullptr;
+    mColorPickerController = new ColorPickerController(this);
+    mImageView = new ImageViewer(this, this);
+    mImageFilesInteractor = new ImageFilesInteractor();
+    mImageProcessorsMenuController = new ImageProcessorsMenuController(this);
+    mRecentFilesInteractor = new RecentFilesInteractor();
+    mOtherAppInstanceInteractor = new OtherAppInstancesInteractor(this);
+    mImageProcessingInteractor = nullptr;
+    mProgressDialog = nullptr;
 
-    setCentralWidget(imageView);
+    setCentralWidget(mImageView);
 
-    imageFilesInteractor->subscribe(this);
+    mImageFilesInteractor->subscribe(this);
 
     buildImageProcessorsMenu();
     makeConnections();
@@ -90,7 +91,7 @@ void MainWindow::mousePressEvent(QMouseEvent *event) {
     if (filters) {
         contextMenu.addActions(filters->actions());
     }
-    if (!menuIsInSingleImageMode) {
+    if (!mMenuIsInSingleImageMode) {
         contextMenu.addSeparator();
         QMenu *comparators = ui->menuComparators;
         if (comparators) {
@@ -106,7 +107,7 @@ void MainWindow::buildImageProcessorsMenu() {
     auto imageProcessorsInfo = ImageProcessingInteractor::getImageProcessorsInfo();
     QMenu *comparatorsMenu = ui->menuComparators;
     QMenu *filtersMenu = ui->menuFilters;
-    imageProcessorsMenuController->buildFiltersAndComparatorsMenus(comparatorsMenu,
+    mImageProcessorsMenuController->buildFiltersAndComparatorsMenus(comparatorsMenu,
                                                                    filtersMenu,
                                                                    imageProcessorsInfo
                                                                    );
@@ -159,7 +160,7 @@ void MainWindow::enableImageProceesorsMenuItems(bool isEnabled) {
     ui->actionShowFirstImage->setDisabled(!isEnabled);
     ui->actionShowSecondImage->setDisabled(!isEnabled);
 
-    if (menuIsInSingleImageMode) {
+    if (mMenuIsInSingleImageMode) {
         ui->menuComparators->setDisabled(true);
         ui->menuImageAnalysis->setDisabled(true);
         ui->actionSwitchBetweenImages->setDisabled(true);
@@ -170,7 +171,7 @@ void MainWindow::enableImageProceesorsMenuItems(bool isEnabled) {
 }
 
 void MainWindow::updateRecentFilesMenu() {
-    QStringList recentFileMenuRecords = recentFilesInteractor->getRecentFilesMenuRecords();
+    QStringList recentFileMenuRecords = mRecentFilesInteractor->getRecentFilesMenuRecords();
 
     ui->menuRecentImages->clear();
 
@@ -197,12 +198,12 @@ void MainWindow::updateRecentFilesMenu() {
 /* Event handlers for application menu interactions { */
 
 void MainWindow::getImagesFromVideos() {
-    imageFilesInteractor->openImagesFromVideos();
+    mImageFilesInteractor->openImagesFromVideos();
 }
 
 void MainWindow::runAllComparators() {
-    if (imageProcessingInteractor != nullptr) {
-        imageProcessingInteractor->runAllComparators();
+    if (mImageProcessingInteractor != nullptr) {
+        mImageProcessingInteractor->runAllComparators();
     }
 }
 
@@ -214,28 +215,28 @@ void MainWindow::changePluginsSettings() {
 
 void MainWindow::rescanPluginDir() {
     buildImageProcessorsMenu();
-    enableImageProceesorsMenuItems(imageView->hasActiveSession());
+    enableImageProceesorsMenuItems(mImageView->hasActiveSession());
 }
 
 void MainWindow::clearOpenRecentsMenu() {
-    recentFilesInteractor->clear();
+    mRecentFilesInteractor->clear();
     updateRecentFilesMenu();
 }
 
 void MainWindow::imageZoomedToActualSize() {
-    imageView->setToActualSize();
+    mImageView->setToActualSize();
 }
 
 void MainWindow::imagFitInView() {
-    imageView->setToFitImageInView();
+    mImageView->setToFitImageInView();
 }
 
 void MainWindow::imageZoomIn() {
-    imageView->zoomIn();
+    mImageView->zoomIn();
 }
 
 void MainWindow::imageZoomOut() {
-    imageView->zoomOut();
+    mImageView->zoomOut();
 }
 
 void MainWindow::openRecentFile() {
@@ -247,15 +248,15 @@ void MainWindow::openRecentFile() {
     if (!data.isValid()) {
         return;
     }
-    imageFilesInteractor->openImagesFromRecentMenu(data.toString());
+    mImageFilesInteractor->openImagesFromRecentMenu(data.toString());
 }
 
 void MainWindow::openImages() {
-    imageFilesInteractor->openImagesViaOpenFilesDialog();
+    mImageFilesInteractor->openImagesViaOpenFilesDialog();
 }
 
 void MainWindow::openImage() {
-    imageFilesInteractor->openImageViaOpenFilesDialog();
+    mImageFilesInteractor->openImageViaOpenFilesDialog();
 }
 
 void MainWindow::closeImages() {
@@ -263,19 +264,19 @@ void MainWindow::closeImages() {
 }
 
 void MainWindow::switchBetweenImages() {
-    imageView->toggleImage();
+    mImageView->toggleImage();
 }
 
 void MainWindow::showFirstImage() {
-    imageView->showFirstImage();
+    mImageView->showFirstImage();
 }
 
 void MainWindow::showSecondImage() {
-    imageView->showSecondImage();
+    mImageView->showSecondImage();
 }
 
 void MainWindow::showComparisonImage() {
-    imageProcessingInteractor->showLastComparisonImage();
+    mImageProcessingInteractor->showLastComparisonImage();
 }
 
 void MainWindow::showImageAutoAnalysisSettings() {
@@ -284,11 +285,11 @@ void MainWindow::showImageAutoAnalysisSettings() {
 }
 
 void MainWindow::openImageFromClipboard() {
-    imageFilesInteractor->openImageFromClipboard();
+    mImageFilesInteractor->openImageFromClipboard();
 }
 
 void MainWindow::callImageProcessor() {
-    if (imageProcessingInteractor == nullptr) {
+    if (mImageProcessingInteractor == nullptr) {
         return;
     }
     QAction *action = qobject_cast<QAction*>(sender());
@@ -299,7 +300,7 @@ void MainWindow::callImageProcessor() {
     if (!data.isValid()) {
         return;
     }
-    imageProcessingInteractor->callImageProcessor(data.toString());
+    mImageProcessingInteractor->callImageProcessor(data.toString());
 }
 
 void MainWindow::callImageProcessorsHelp() {
@@ -309,13 +310,13 @@ void MainWindow::callImageProcessorsHelp() {
 }
 
 void MainWindow::saveImageAs() {
-    SaveImageInfo info = imageView->getImageShowedOnTheScreen();
-    imageFilesInteractor->saveImage(info);
+    SaveImageInfo info = mImageView->getImageShowedOnTheScreen();
+    mImageFilesInteractor->saveImageAs(info);
 }
 
 void MainWindow::saveVisibleAreaAs() {
-    SaveImageInfo info = imageView->getCurrentVisiableArea();
-    imageFilesInteractor->saveImage(info);
+    SaveImageInfo info = mImageView->getCurrentVisiableArea();
+    mImageFilesInteractor->saveImageAs(info);
 }
 
 void MainWindow::showAboutDialog() {
@@ -324,21 +325,21 @@ void MainWindow::showAboutDialog() {
 }
 
 void MainWindow::reloadImagesFromDisk() {
-    if (imageProcessingInteractor != nullptr) {
-        imageProcessingInteractor->restoreOriginalImages();
+    if (mImageProcessingInteractor != nullptr) {
+        mImageProcessingInteractor->restoreOriginalImages();
     }
 }
 
 void MainWindow::showDockedColorPicker() {
-    colorPickerController->openColorPickerDialog();
+    mColorPickerController->openColorPickerDialog();
 }
 
 void MainWindow::placeColorPickerOnRight() {
-    colorPickerController->placeColorPickerToRightSideOfMainWindow();
+    mColorPickerController->placeColorPickerToRightSideOfMainWindow();
 }
 
 void MainWindow::placeColorPickerOnLeft() {
-    colorPickerController->placeColorPickerToLeftSideOfMainWindow();
+    mColorPickerController->placeColorPickerToLeftSideOfMainWindow();
 }
 
 /* } =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
@@ -346,7 +347,7 @@ void MainWindow::placeColorPickerOnLeft() {
 /* Color Picker dialog { */
 
 void MainWindow::onColorUnderCursorTrackingStatusChanged(bool isActive) {
-    imageView->onColorUnderCursorTrackingStatusChanged(isActive);
+    mImageView->onColorUnderCursorTrackingStatusChanged(isActive);
 }
 
 /* } =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
@@ -390,7 +391,7 @@ void MainWindow::dropEvent(QDropEvent *event) {
 // IDropListener interface
 void MainWindow::onDrop(QList<QUrl> urls) {
     try {
-        imageFilesInteractor->openImagesFromDragAndDrop(urls);
+        mImageFilesInteractor->openImagesFromDragAndDrop(urls);
     } catch (std::runtime_error &e) {
         showError(e.what());
     }
@@ -402,8 +403,8 @@ void MainWindow::onDrop(QList<QUrl> urls) {
  * a specific area while holding the left mouse button, the comparator will run only for
  * the selected area. {   */
 
-void MainWindow::onSelectedAreaShouldBeAnalyzed(ImagesPtr images, std::optional<int> key) {
-    imageProcessingInteractor->analyzeSelectedArea(images, key);
+void MainWindow::onSelectedAreaShouldBeAnalyzed(ImageHolderPtr images, std::optional<int> key) {
+    mImageProcessingInteractor->analyzeSelectedArea(images, key);
 }
 
 /* } =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
@@ -413,8 +414,8 @@ void MainWindow::onSelectedAreaShouldBeAnalyzed(ImagesPtr images, std::optional<
  * for further analysis. Parts from both images are copied.
  *  {   */
 
-void MainWindow::onImagesCropped(ImagesPtr images) {
-    otherAppInstanceInteractor->openNewAppInstance(images);
+void MainWindow::onImagesCropped(ImageHolderPtr images) {
+    mOtherAppInstanceInteractor->openNewAppInstance(images);
 }
 
 void MainWindow::onOtherAppInstanceOpened() {
@@ -445,29 +446,35 @@ void MainWindow::onColorUnderCursorChanged(const ImagePixelColor &visibleImageRg
                                            const std::optional<ImagePixelColor> &hiddenImageRgbValue
                                            )
 {
-    colorPickerController->onColorUnderCursorChanged(visibleImageRgbValue, hiddenImageRgbValue);
+    mColorPickerController->onColorUnderCursorChanged(visibleImageRgbValue, hiddenImageRgbValue);
 }
 
 /* } =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
 /* Methods of the abstract class IImageFilesInteractorListener { */
 
-void MainWindow::onImagesOpened(const ImagesPtr images) {
-    if (imageProcessingInteractor != nullptr) {
-        imageProcessingInteractor->unsubscribe(this);
-        delete imageProcessingInteractor;
-        imageProcessingInteractor = nullptr;
+void MainWindow::onImagesOpened(const ImageHolderPtr images) {
+    if (mImageProcessingInteractor != nullptr) {
+        mImageProcessingInteractor->unsubscribe(this);
+        delete mImageProcessingInteractor;
+        mImageProcessingInteractor = nullptr;
 
     }
-    menuIsInSingleImageMode = images->isTheSameImage();
-    imageView->cleanUp();
-    imageProcessingInteractor = new ImageProcessingInteractor(images, this, this);
-    imageProcessingInteractor->subscribe(this);
-    imageView->displayImages(images);
-    colorPickerController->onImagesOpened();
+    mMenuIsInSingleImageMode = images->isSingleImage();
+    mImageView->cleanUp();
+    mImageProcessingInteractor = new ImageProcessingInteractor(images, this, this);
+    mImageProcessingInteractor->subscribe(this);
+    mImageView->displayImages(images);
+    mColorPickerController->onImagesOpened();
     enableImageProceesorsMenuItems(true);
-    if (!images->getIsTemporaryFiles()) {
-        recentFilesInteractor->addRecentFilesRecord(images->path1, images->path2);
+    if (!images->isMarkedTemporary()) {
+        if (images->isPairOfImages()) {
+            mRecentFilesInteractor->addRecentFilesRecord(images->getFirstImagePath(),
+                                                        images->getSecondImagePath()
+                                                        );
+        } else {
+            mRecentFilesInteractor->addRecentFilesRecord(images->getFirstImagePath());
+        }
     }
     updateRecentFilesMenu();
 }
@@ -481,21 +488,21 @@ void MainWindow::onImagesOpenFailed(const QString &error) {
 }
 
 void MainWindow::onImagesClosed() {
-    if (imageProcessingInteractor != nullptr) {
-        imageProcessingInteractor->unsubscribe(this);
-        delete imageProcessingInteractor;
-        imageProcessingInteractor = nullptr;
+    if (mImageProcessingInteractor != nullptr) {
+        mImageProcessingInteractor->unsubscribe(this);
+        delete mImageProcessingInteractor;
+        mImageProcessingInteractor = nullptr;
     }
-    menuIsInSingleImageMode = false;
-    imageFilesInteractor->cleanup();
-    colorPickerController->onImagesClosed();
-    imageView->cleanUp();
+    mMenuIsInSingleImageMode = false;
+    mImageFilesInteractor->cleanup();
+    mColorPickerController->onImagesClosed();
+    mImageView->cleanUp();
     enableImageProceesorsMenuItems(false);
     setWindowTitle("TwinPix");
 }
 
 void MainWindow::onSavingFileFailed(const QString &path) {
-    showError("Error: Unable to open  " + path + ".");
+    showError("Unable to save at path  " + path + ".");
 }
 
 void MainWindow::onFileSavedSuccessfully(const QString &path) {
@@ -507,7 +514,7 @@ void MainWindow::onFileSavedSuccessfully(const QString &path) {
 }
 
 void MainWindow::onComparisonResultLoaded(const QPixmap &image, const QString &description) {
-    imageView->showImageFromComparator(image, description);
+    mImageView->showImageFromComparator(image, description);
 }
 
 void MainWindow::onComparisonResultLoaded(const QString &html,
@@ -535,8 +542,8 @@ void MainWindow::onShowImageInExternalViewer(const QPixmap &image, const QString
     //}, Qt::QueuedConnection);
 }
 
-void MainWindow::onFilteredResultLoaded(const QPixmap &firstImage, const QPixmap &secondImage) {
-    imageView->replaceDisplayedImages(firstImage, secondImage);
+void MainWindow::onFilteredResultLoaded(const ImageHolderPtr imageHolder) {
+    mImageView->replaceDisplayedImages(imageHolder);
 }
 
 void MainWindow::onImageProcessorFailed(const QString &error) {
@@ -610,11 +617,11 @@ void MainWindow::onComparisonImageDisplayed(const QString &image1Name,
 /*  {   */
 
 void MainWindow::openImagesFromCommandLine(const QString &firstFilePath, const QString &secondFilePath) {
-    imageFilesInteractor->openImagesViaCommandLine(firstFilePath, secondFilePath);
+    mImageFilesInteractor->openImagesViaCommandLine(firstFilePath, secondFilePath);
 }
 
 void MainWindow::openImageFromCommandLine(const QString &filePath) {
-    imageFilesInteractor->openImagesViaCommandLine(filePath, filePath);
+    mImageFilesInteractor->openImageViaCommandLine(filePath);
 }
 
 /* } =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
@@ -623,42 +630,42 @@ void MainWindow::openImageFromCommandLine(const QString &filePath) {
 /* IProgressDialog interface {   */
 
 void MainWindow::showProgressDialog(const QString &caption, int totalSteps) {
-    if (progressDialog != nullptr) {
-        delete progressDialog;
+    if (mProgressDialog != nullptr) {
+        delete mProgressDialog;
     }
-    progressDialog = new QProgressDialog(this);
-    progressDialog->setWindowTitle(caption);
-    progressDialog->setRange(0, totalSteps);
-    progressDialog->setValue(0);
-    progressDialog->setCancelButtonText("Cancel");
-    progressDialog->setMinimumDuration(0);
-    progressDialog->setWindowModality(Qt::WindowModal);
-    progressDialog->setAutoClose(false);
+    mProgressDialog = new QProgressDialog(this);
+    mProgressDialog->setWindowTitle(caption);
+    mProgressDialog->setRange(0, totalSteps);
+    mProgressDialog->setValue(0);
+    mProgressDialog->setCancelButtonText("Cancel");
+    mProgressDialog->setMinimumDuration(0);
+    mProgressDialog->setWindowModality(Qt::WindowModal);
+    mProgressDialog->setAutoClose(false);
 }
 
 bool MainWindow::wasCanceled() {
-    if (progressDialog == nullptr) {
+    if (mProgressDialog == nullptr) {
         return true;
     }
-    bool canceled = progressDialog->wasCanceled();
+    bool canceled = mProgressDialog->wasCanceled();
     if (canceled) {
-        progressDialog->close();
-        delete progressDialog;
-        progressDialog = nullptr;
+        mProgressDialog->close();
+        delete mProgressDialog;
+        mProgressDialog = nullptr;
     }
     return canceled;
 }
 
 void MainWindow::onUpdateProgressValue(int value) {
-    if (progressDialog == nullptr) {
+    if (mProgressDialog == nullptr) {
         return;
     }
-    progressDialog->setValue(value);
+    mProgressDialog->setValue(value);
     QCoreApplication::processEvents();
-    if (value >= progressDialog->maximum()) {
-        progressDialog->close();
-        delete progressDialog;
-        progressDialog = nullptr;
+    if (value >= mProgressDialog->maximum()) {
+        mProgressDialog->close();
+        delete mProgressDialog;
+        mProgressDialog = nullptr;
     }
 }
 

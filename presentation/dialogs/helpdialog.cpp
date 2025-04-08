@@ -2,7 +2,7 @@
 
 
 HelpDialog::HelpDialog(const QList<ImageProcessorInfo> &algorithms, QWidget *parent)
-    : QDialog(parent), algorithms(algorithms) {
+    : QDialog(parent), mAlgorithms(algorithms) {
     // Set dialog properties
     setWindowTitle("Help");
     resize(1000, 600);
@@ -12,19 +12,19 @@ HelpDialog::HelpDialog(const QList<ImageProcessorInfo> &algorithms, QWidget *par
     instructionLabel->setWordWrap(true);
 
     // Create list widget for algorithms
-    listWidget = new QListWidget();
+    mListWidget = new QListWidget();
     for (const auto &algorithm : algorithms) {
-        listWidget->addItem(algorithm.name);
+        mListWidget->addItem(algorithm.name);
     }
 
     // Create text browser for algorithm details
-    infoBrowser = new QTextBrowser();
-    infoBrowser->setText("Select an algorithm to see details.");
+    mInfoBrowser = new QTextBrowser();
+    mInfoBrowser->setText("Select an algorithm to see details.");
 
     // Layout for algorithm details tab
     QHBoxLayout *mainLayout = new QHBoxLayout();
-    mainLayout->addWidget(listWidget, 1);
-    mainLayout->addWidget(infoBrowser, 2);
+    mainLayout->addWidget(mListWidget, 1);
+    mainLayout->addWidget(mInfoBrowser, 2);
 
     QWidget *algorithmTab = new QWidget();
     QVBoxLayout *algorithmTabLayout = new QVBoxLayout(algorithmTab);
@@ -32,7 +32,7 @@ HelpDialog::HelpDialog(const QList<ImageProcessorInfo> &algorithms, QWidget *par
     algorithmTabLayout->addLayout(mainLayout);
 
     // Create text browser for "Image Area Selection" tab
-    imageAreaSelectionBrowser = new QTextBrowser();
+    mImageAreaSelectionBrowser = new QTextBrowser();
     QString infoText = R"(
         <html>
         <head>
@@ -52,27 +52,27 @@ HelpDialog::HelpDialog(const QList<ImageProcessorInfo> &algorithms, QWidget *par
         </body>
         </html>
     )";
-    imageAreaSelectionBrowser->setHtml(infoText);
+    mImageAreaSelectionBrowser->setHtml(infoText);
 
     // Create tab widget
     QTabWidget *tabWidget = new QTabWidget();
     tabWidget->addTab(algorithmTab, "Algorithms");
-    tabWidget->addTab(imageAreaSelectionBrowser, "Image Area Selection");
+    tabWidget->addTab(mImageAreaSelectionBrowser, "Image Area Selection");
 
     // Main layout for the dialog
     QVBoxLayout *layout = new QVBoxLayout(this);
     layout->addWidget(tabWidget);
 
     // Connect signals and slots
-    connect(listWidget, &QListWidget::currentRowChanged, this, &HelpDialog::onAlgorithmSelected);
+    connect(mListWidget, &QListWidget::currentRowChanged, this, &HelpDialog::onAlgorithmSelected);
 }
 
 void HelpDialog::onAlgorithmSelected(int index) {
-    if (index >= 0 && index < algorithms.size()) {
-        const ImageProcessorInfo &selectedAlgorithm = algorithms.at(index);
+    if (index >= 0 && index < mAlgorithms.size()) {
+        const ImageProcessorInfo &selectedAlgorithm = mAlgorithms.at(index);
         QString html = HelpHtmlFormatter::formatImageProcessorInfo(selectedAlgorithm);
-        infoBrowser->setHtml(html);
+        mInfoBrowser->setHtml(html);
     } else {
-        infoBrowser->setText("Select an algorithm to see details.");
+        mInfoBrowser->setText("Select an algorithm to see details.");
     }
 }

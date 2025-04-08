@@ -63,9 +63,9 @@ ComparisonResultVariantPtr ColorsSaturationComporator::compare(const ComparableI
                                                               )
 {
     auto result = compareImages(first.getImage(),
-                                first.getBaseName(),
+                                first.getImageName(),
                                 second.getImage(),
-                                second.getBaseName()
+                                second.getImageName()
                                 );
 
     QString html = ColorsSaturationComporator::formatResultToHtml(result);
@@ -75,21 +75,21 @@ ComparisonResultVariantPtr ColorsSaturationComporator::compare(const ComparableI
 QString ColorsSaturationComporator::formatResultToHtml(const ColorsSaturationComparisonResult& result) {
     QString html;
 
-    auto raundedResult = MathHelper::roundAndCompare(result.avgSaturation1, result.avgSaturation2);
+    auto raundedResult = MathHelper::roundAndCompare(result.firstImageSaturation, result.secondImageSaturation);
 
     auto beautifyPercentage = MathHelper::calcAndBeautifyPercentageValue(raundedResult.value1,
                                                                          raundedResult.value2,
-                                                                         result.image1Name,
-                                                                         result.image2Name,
+                                                                         result.firstImageName,
+                                                                         result.secondImageName,
                                                                          "Equally"
                                                                          );
 
     html += QString("<h2 style=\"line-height: 2;\">%1</h2>").arg(getFullName());
     html += "<table border=\"1\" cellspacing=\"0\" cellpadding=\"5\">";
     html += QString("<tr><td>%1</td><td>%2</td></tr>")
-                .arg(result.image1Name, raundedResult.string1);
+                .arg(result.firstImageName, raundedResult.string1);
     html += QString("<tr><td>%1</td><td>%2</td></tr>")
-                .arg(result.image2Name, raundedResult.string2);
+                .arg(result.secondImageName, raundedResult.string2);
     if (beautifyPercentage.isEqually) {
         html += QString("<tr><td colspan=\"2\" align=\"center\">%1</td></tr>")
                     .arg(beautifyPercentage.resultDescription);

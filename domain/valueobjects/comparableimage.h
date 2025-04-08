@@ -4,21 +4,20 @@
 #include <qimage.h>
 
 class ComparableImage {
-
 public:
-    ComparableImage(const QImage &image, const QString &name);
-    ComparableImage(QImage &&image, QString &&name);
+    ComparableImage(const QImage &image, const QString &imageName);
+    ComparableImage(QImage &&image, QString &&imageName);
 
-    ComparableImage(const QPixmap &image, const QString &name);
+    ComparableImage(const QPixmap &image, const QString &imageName);
 
     QImage getImage() const;
 
-    QString getBaseName() const;
+    QString getImageName() const;
     QString getPath() const;
 
 private:
-    QImage image;
-    QString path;
+    QImage mImage;
+    QString mImageName;
 };
 
 #endif // COMPARABLEIMAGE_H

@@ -1,14 +1,13 @@
 name: Build and Package Qt Application
 
 on:
-  workflow_dispatch:
-  #push:
-    #branches:
-      #- develop
-  #pull_request:
-    #branches:
-      #- develop
-
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+      
 jobs:
   build:
     runs-on: self-hosted
@@ -19,20 +18,29 @@ jobs:
       - name: Set up environment
         run: |
           export SHELL=/bin/bash
-          
-      #- name: Install gtar
-        #run: brew install gnu-tar
-        
+          export PATH=${{ vars.QT_BIN_DIR_PATH }}:$PATH
+          echo "PATH is set to: $PATH"
+          which qmake
+
       - name: Build project
         run: |
-          mkdir build
-          cd build
-          qmake ../ImageDiff.pro
+          mkdir -p ${{ vars.BUILD_DIR }}
+          cd ${{ vars.BUILD_DIR }}
+          ${{ vars.QT_BIN_DIR_PATH }}/qmake ../TwinPix.pro
           make -j8
 
-      - name: Package application into tar.gz
+      - name: Deploy project
         run: |
-          cd build
-          tar -czvf ImageDiff-macOS-arm64.tar.gz ImageDiff.app
+          cd ${{ vars.BUILD_DIR }}
+          ${{ vars.QT_BIN_DIR_PATH }}/macdeployqt ${{ vars.BUILD_DIR }}/TwinPix.app
+          mkdir TwinPix-dmg
+          cp -R ${{ vars.BUILD_DIR }}/TwinPix.app TwinPix-dmg
+          cp ${{ vars.BUILD_DIR }}/../ReadMe.txt TwinPix-dmg/
+          ln -s /Applications TwinPix-dmg/Applications
+          hdiutil create -volname "TwinPix v0.11.0-alpha" -srcfolder TwinPix-dmg -ov -format UDZO TwinPix-macOS-arm64.dmg
 
-          mv ImageDiff-macOS-arm64.tar.gz ImageDiff.app ../
+      - name: Upload .dmg artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: TwinPix-DMG
+          path: ${{ vars.BUILD_DIR }}/TwinPix-macOS-arm64.dmg
