@@ -31,7 +31,7 @@ jobs:
 
       - name: Deploy project
         run: |
-          /Users/Shared/Developer/Qt/6.9.0/macos/bin/macdeployqt /Users/Shared/Developer/githab-actions/_work/TwinPix/TwinPix/build/Qt_6_9_0_for_macOS-Release/TwinPix.app
+          /Users/Shared/Developer/Qt/6.9.0/macos/bin/macdeployqt /Users/Shared/Developer/githab-actions/_work/TwinPix/TwinPix/build/TwinPix.app
 
       - name: Package application into tar.gz
         run: |
