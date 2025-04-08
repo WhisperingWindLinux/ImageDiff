@@ -2,7 +2,7 @@
 
 ### WARNING 
 
-This is a beta version of the application, and bugs and memory leaks are possible.
+This is a alpha version of the application, and bugs and memory leaks are possible.
 The application has so far been tested only on macOS Sonoma 14.1.2 (Apple Silicon M1 Mac), with a 1920x1080 monitor. Kit: Qt 6.9.0 for macOS. <br/>
 
 ### ABOUT
