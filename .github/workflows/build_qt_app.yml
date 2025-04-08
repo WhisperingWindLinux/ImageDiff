@@ -19,21 +19,19 @@ jobs:
         run: |
           export SHELL=/bin/bash
           export PATH=/Users/Shared/Developer/Qt/6.9.0/macos/bin:$PATH
-          
-      #- name: Install gtar
-        #run: brew install gnu-tar
-        
+          echo "PATH is set to: $PATH"
+          which qmake
+
       - name: Build project
         run: |
           mkdir build
           cd build
-          qmake ../TwinPix.pro
+          /Users/Shared/Developer/Qt/6.9.0/macos/bin/qmake ../TwinPix.pro
           make -j8
 
       - name: Deploy project
         run: |
-          qmake ../TwinPix.pro
-          make -j8
+          /Users/Shared/Developer/Qt/6.9.0/macos/bin/macdeployqt /Users/Shared/Developer/githab-actions/_work/TwinPix/TwinPix/build/Qt_6_9_0_for_macOS-Release/TwinPix.app
 
       - name: Package application into tar.gz
         run: |
