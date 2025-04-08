@@ -24,13 +24,14 @@ jobs:
 
       - name: Build project
         run: |
-          mkdir build
-          cd build
+          mkdir -p ${{ vars.BUILD_DIR }}
+          cd ${{ vars.BUILD_DIR }}
           ${{ vars.QT_BIN_DIR_PATH }}/qmake ../TwinPix.pro
           make -j8
 
       - name: Deploy project
         run: |
+          cd ${{ vars.BUILD_DIR }}
           ${{ vars.QT_BIN_DIR_PATH }}/macdeployqt ${{ vars.BUILD_DIR }}/TwinPix.app
           mkdir TwinPix-dmg
           cp -R ${{ vars.BUILD_DIR }}/TwinPix.app TwinPix-dmg
@@ -42,4 +43,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: TwinPix-DMG
-          path: ${{ vars.GITHUB_WORKSPACE }}/TwinPix/TwinPix/TwinPix-macOS-arm64.dmg
+          path: ${{ vars.BUILD_DIR }}/TwinPix-macOS-arm64.dmg
