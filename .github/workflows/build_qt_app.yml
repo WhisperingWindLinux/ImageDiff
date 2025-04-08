@@ -35,5 +35,4 @@ jobs:
 
       - name: Package application into tar.gz
         run: |
-          cd Qt_6_9_0_for_macOS-Release
           tar -czvf TwinPix-macOS-arm64.tar.gz TwinPix.app
