@@ -1,14 +1,13 @@
 name: Build and Package Qt Application
 
 on:
-  workflow_dispatch:
-  #push:
-    #branches:
-      #- develop
-  #pull_request:
-    #branches:
-      #- develop
-
+  push:
+    branches:
+      - ga-build
+  pull_request:
+    branches:
+      - ga-build
+      
 jobs:
   build:
     runs-on: self-hosted
@@ -27,12 +26,15 @@ jobs:
         run: |
           mkdir build
           cd build
-          qmake ../ImageDiff.pro
+          qmake ../TwinPix.pro
+          make -j8
+
+      - name: Deploy project
+        run: |
+          qmake ../TwinPix.pro
           make -j8
 
       - name: Package application into tar.gz
         run: |
-          cd build
-          tar -czvf ImageDiff-macOS-arm64.tar.gz ImageDiff.app
-
-          mv ImageDiff-macOS-arm64.tar.gz ImageDiff.app ../
+          cd Qt_6_9_0_for_macOS-Release
+          tar -czvf TwinPix-macOS-arm64.tar.gz TwinPix.app
