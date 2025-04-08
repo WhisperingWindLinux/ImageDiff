@@ -13,7 +13,7 @@ public:
     PluginsSettings getPluginSettings();
     bool rescanPluginsDir(/* out */ QString &error);
 private:
-    PluginsSettingsRepository *pluginSettingsRepository;
+    PluginsSettingsRepository *mPluginSettingsRepository;
 
     static bool isPluginDirPathValid(const QString &path);
     static bool isPythonPathValid(const QString &path);

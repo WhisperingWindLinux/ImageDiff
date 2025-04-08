@@ -4,7 +4,7 @@
 #include "pythonscriptfilter.h"
 
 ImageProcessorDeserializer::ImageProcessorDeserializer(const QList<PyScriptInfo> &pyScriptsInfo)
-    : pyScriptsInfo(pyScriptsInfo)
+    : mPyScriptsInfo(pyScriptsInfo)
 {
 }
 
@@ -12,7 +12,7 @@ QList<std::shared_ptr<IImageProcessor> > ImageProcessorDeserializer::deserialize
 {
     QList<std::shared_ptr<IImageProcessor>> processors;
 
-    foreach (auto pyScriptInfo, pyScriptsInfo) {
+    foreach (auto pyScriptInfo, mPyScriptsInfo) {
         QFile file(pyScriptInfo.jsonFilePath);
         if (!file.open(QIODevice::ReadOnly)) {
             qWarning() << "Failed to open file:" << file.fileName();

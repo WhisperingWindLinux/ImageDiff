@@ -30,21 +30,21 @@ private:
     RgbWidgets createPanel(bool isForRightPosition);  // Helper method to create a single panel
 
 private:
-    QLabel* firstFileNameLabel;
-    QFrame* firstColorSquare;       // The square that shows the color (first panel)
-    QLabel* firstRLabel;            // Label for R value (first panel)
-    QLabel* firstBLabel;            // Label for G value (first panel)
-    QLabel* firstGLabel;            // Label for B value (first panel)
+    QLabel* mFirstFileNameLabel;
+    QFrame* mFirstColorSquare;       // The square that shows the color (first panel)
+    QLabel* mFirstRLabel;            // Label for R value (first panel)
+    QLabel* mFirstBLabel;            // Label for G value (first panel)
+    QLabel* mFirstGLabel;            // Label for B value (first panel)
 
-    QLabel* secondFileNameLabel = nullptr;
-    QFrame* secondColorSquare = nullptr; // The square that shows the color (second panel)
-    QLabel* secondRLabel = nullptr;      // Label for R value (second panel)
-    QLabel* secondGLabel = nullptr;      // Label for G value (second panel)
-    QLabel* secondBLabel = nullptr;      // Label for B value (second panel)
+    QLabel* mSecondFileNameLabel = nullptr;
+    QFrame* mSecondColorSquare = nullptr; // The square that shows the color (second panel)
+    QLabel* mSecondRLabel = nullptr;      // Label for R value (second panel)
+    QLabel* mSecondGLabel = nullptr;      // Label for G value (second panel)
+    QLabel* mSecondBLabel = nullptr;      // Label for B value (second panel)
 
-    bool isTwoPanelMode;
+    bool mIsTwoPanelMode;
 
-    QLayout *panelMainLayout;
+    QLayout *mPanelMainLayout;
     
     void updateTopPanelOnly(const ImagePixelColor &firstPanelValue);
     void setLayout(bool isForRightPosition);

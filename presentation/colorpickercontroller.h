@@ -33,8 +33,8 @@ public:
                                    const std::optional<ImagePixelColor> &hiddenImageRgbValue) override;
 
 private:
-    MainWindow *mainWindow;
-    ColorPickerPanel *colorPicker;
+    MainWindow *mMainWindow;
+    ColorPickerPanel *mColorPicker;
 
     void createColorPicker();
 };

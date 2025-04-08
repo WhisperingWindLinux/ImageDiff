@@ -15,13 +15,15 @@ enum class SaveImageInfoType {
 
 struct SaveImageInfo {
     SaveImageInfo(SaveImageInfoType saveImageInfoType, const QPixmap &image) :
-        saveImageInfoType(saveImageInfoType), image(std::move(image)) {}
+        mSaveImageInfoType(saveImageInfoType), mImage(std::move(image)) {}
 
-    SaveImageInfo() : saveImageInfoType(SaveImageInfoType::None) {
+    SaveImageInfo() : mSaveImageInfoType(SaveImageInfoType::None) {
     }
 
-    const SaveImageInfoType saveImageInfoType;
-    const QPixmap image;
+    const SaveImageInfoType mSaveImageInfoType;
+    const QPixmap mImage;
 };
+
+typedef std::shared_ptr<QString> QStringPtr;
 
 #endif // SAVEFILEINFO_H

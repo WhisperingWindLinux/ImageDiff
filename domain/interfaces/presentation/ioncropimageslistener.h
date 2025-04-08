@@ -5,7 +5,7 @@
 
 class OnCropImageListener {
 public:
-    virtual void onImagesCropped(ImagesPtr images) = 0;
+    virtual void onImagesCropped(ImageHolderPtr images) = 0;
 };
 
 #endif // IONCROPIMAGESLISTENER_H

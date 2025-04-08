@@ -23,7 +23,7 @@ protected:
     void dropEvent(QGraphicsSceneDragDropEvent *event) override;
 
 private:
-    IDropListener *dropListener;
+    IDropListener *mDropListener;
 };
 
 #endif // GRAPHICSPIXMAPITEM_H

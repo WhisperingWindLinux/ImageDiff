@@ -25,7 +25,7 @@ public:
     ComparisonResultVariantPtr compare(const ComparableImage &first, const ComparableImage &second) override;
 
 private:
-    Result expectedResult;
+    Result mExpectedResult;
 };
 
 #endif // COLOREDDIFFERENCEINPIXELVALUESCOMPORATOR_H

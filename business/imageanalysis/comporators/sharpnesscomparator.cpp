@@ -71,9 +71,9 @@ std::shared_ptr<ComparisonResultVariant> SharpnessComparator::compare(const Comp
                                                                       )
 {
     auto result = compareImages(first.getImage(),
-                                first.getBaseName(),
+                                first.getImageName(),
                                 second.getImage(),
-                                second.getBaseName()
+                                second.getImageName()
                                 );
 
     QString html = SharpnessComparator::formatResultToHtml(result);
@@ -83,12 +83,12 @@ std::shared_ptr<ComparisonResultVariant> SharpnessComparator::compare(const Comp
 QString SharpnessComparator::formatResultToHtml(const SharpnessComparisonResult &result) {
     QString html;
 
-    auto raundedResult = MathHelper::roundAndCompare(result.sharpness1, result.sharpness2);
+    auto raundedResult = MathHelper::roundAndCompare(result.firstImageSharpness, result.secondImageSharpness);
 
     auto beautifyPecentage = MathHelper::calcAndBeautifyPercentageValue(raundedResult.value1,
                                                                         raundedResult.value2,
-                                                                        result.name1,
-                                                                        result.name2,
+                                                                        result.firstImageName,
+                                                                        result.secondImageName,
                                                                         "Equally"
                                                                         );
 
@@ -96,10 +96,10 @@ QString SharpnessComparator::formatResultToHtml(const SharpnessComparisonResult 
     html += QString("<h2 style=\"line-height: 2;\">%1</h2>").arg(getFullName());
     html += "<table border=\"1\" cellspacing=\"0\" cellpadding=\"5\">";
     html += QString("<tr><td>%1</td><td>%2</td></tr>")
-                .arg(result.name1)
+                .arg(result.firstImageName)
                 .arg(raundedResult.string1);
     html += QString("<tr><td>%1</td><td>%2</td></tr>")
-                .arg(result.name2)
+                .arg(result.secondImageName)
                 .arg(raundedResult.string2);
 
     if (beautifyPecentage.resultDescription == "Equal") {

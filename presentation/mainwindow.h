@@ -77,7 +77,7 @@ public:
     void openImagesFromCommandLine(const QString &firstFilePath, const QString &secondFilePath);
     void openImageFromCommandLine(const QString &filePath);
     void onColorUnderCursorTrackingStatusChanged(bool isActive);
-    void onSelectedAreaShouldBeAnalyzed(ImagesPtr images, std::optional<int> key);
+    void onSelectedAreaShouldBeAnalyzed(ImageHolderPtr images, std::optional<int> key);
 
     void onComparebleImageDisplayed(const QString &imageName);
     void onComparisonImageDisplayed(const QString &image1Name,
@@ -107,7 +107,7 @@ public:
 
     // IImageFilesInteractorListener interface
 
-    void onImagesOpened(const ImagesPtr images) override;
+    void onImagesOpened(const ImageHolderPtr images) override;
     void onImagesOpenFailed(const QString &error) override;
     void onImagesClosed() override;
     void onSavingFileFailed(const QString &path) override;
@@ -122,7 +122,7 @@ public:
                                   const QString &secondImagePath) override;
 
     void onShowImageInExternalViewer(const QPixmap &image, const QString &description) override;
-    void onFilteredResultLoaded(const QPixmap &firstImage, const QPixmap &secondImage) override;
+    void onFilteredResultLoaded(const ImageHolderPtr imageHolder) override;
     void onImageProcessorFailed(const QString &error) override;
     void onFastSwitchingToComparisonImageStatusChanged(bool isSwitchingAvailable) override;
 
@@ -132,7 +132,7 @@ public:
 
     // OnCropImageListener interface
 
-    void onImagesCropped(ImagesPtr images) override;
+    void onImagesCropped(ImageHolderPtr images) override;
 
     // OpenImagesInOtherAppInstanceInteractorCallback interface
 
@@ -149,15 +149,15 @@ protected:
 
 private:
     Ui::MainWindow *ui;
-    ImageViewer *imageView;
-    ImageFilesInteractor *imageFilesInteractor;
-    ImageProcessingInteractor *imageProcessingInteractor;
-    IColorPickerController *colorPickerController;
-    ImageProcessorsMenuController *imageProcessorsMenuController;
-    RecentFilesInteractor *recentFilesInteractor;
-    OtherAppInstancesInteractor *otherAppInstanceInteractor;
-    QProgressDialog *progressDialog;
-    bool menuIsInSingleImageMode;
+    ImageViewer *mImageView;
+    ImageFilesInteractor *mImageFilesInteractor;
+    ImageProcessingInteractor *mImageProcessingInteractor;
+    IColorPickerController *mColorPickerController;
+    ImageProcessorsMenuController *mImageProcessorsMenuController;
+    RecentFilesInteractor *mRecentFilesInteractor;
+    OtherAppInstancesInteractor *mOtherAppInstanceInteractor;
+    QProgressDialog *mProgressDialog;
+    bool mMenuIsInSingleImageMode;
 
     void buildImageProcessorsMenu();
     void makeConnections();

@@ -6,7 +6,7 @@
 PluginsSettingsDialog::PluginsSettingsDialog(QWidget *parent)
     : QDialog(parent) {
 
-    interactor = make_unique<PluginsSettingsInteractor>();
+    mInteractor = make_unique<PluginsSettingsInteractor>();
 
     setWindowTitle("Plugins Settings");
 
@@ -16,9 +16,9 @@ PluginsSettingsDialog::PluginsSettingsDialog(QWidget *parent)
     aboutLabel->setWordWrap(true);
 
     QLabel* pythonLabel = new QLabel("Python interpreter:");
-    pythonInterpreterEdit = new QLineEdit();
+    mPythonInterpreterEdit = new QLineEdit();
     QLabel* pluginsDirLabel = new QLabel("Plugins directory:");
-    pluginsDirectoryEdit = new QLineEdit();
+    mPluginsDirectoryEdit = new QLineEdit();
 
     QPushButton* okButton = new QPushButton("OK");
     QPushButton* cancelButton = new QPushButton("Cancel");
@@ -29,10 +29,10 @@ PluginsSettingsDialog::PluginsSettingsDialog(QWidget *parent)
     mainLayout->addWidget(aboutLabel);
     mainLayout->addSpacing(1);
     mainLayout->addWidget(pythonLabel);
-    mainLayout->addWidget(pythonInterpreterEdit);
+    mainLayout->addWidget(mPythonInterpreterEdit);
     mainLayout->addSpacing(1);
     mainLayout->addWidget(pluginsDirLabel);
-    mainLayout->addWidget(pluginsDirectoryEdit);
+    mainLayout->addWidget(mPluginsDirectoryEdit);
 
     QHBoxLayout* buttonLayout = new QHBoxLayout();
     buttonLayout->addStretch();
@@ -45,12 +45,12 @@ PluginsSettingsDialog::PluginsSettingsDialog(QWidget *parent)
 }
 
 void PluginsSettingsDialog::onOkClicked() {
-    auto pythonInterpreterPath = pythonInterpreterEdit->text();
-    auto pluginsDirectoryPath = pluginsDirectoryEdit->text();
+    auto pythonInterpreterPath = mPythonInterpreterEdit->text();
+    auto pluginsDirectoryPath = mPluginsDirectoryEdit->text();
 
     QString error;
     PluginsSettings pluginsSettings = { pythonInterpreterPath, pluginsDirectoryPath };
-    bool isOk = interactor->updatePluginSettings(pluginsSettings, error);
+    bool isOk = mInteractor->updatePluginSettings(pluginsSettings, error);
     if (!isOk) {
         showError(error);
     }
@@ -58,9 +58,9 @@ void PluginsSettingsDialog::onOkClicked() {
 }
 
 void PluginsSettingsDialog::loadCurrentSettings() {
-    PluginsSettings settings = interactor->getPluginSettings();
-    pythonInterpreterEdit->setText(settings.pythonInterpreterPath);
-    pluginsDirectoryEdit->setText(settings.pluginsDirectoryPath);
+    PluginsSettings settings = mInteractor->getPluginSettings();
+    mPythonInterpreterEdit->setText(settings.pythonInterpreterPath);
+    mPluginsDirectoryEdit->setText(settings.pluginsDirectoryPath);
 }
 
 void PluginsSettingsDialog::showError(const QString &errorMessage) {

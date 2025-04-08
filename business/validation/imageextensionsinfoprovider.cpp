@@ -3,21 +3,21 @@
 #include <qfileinfo.h>
 
 ImageExtensionsInfoProvider::ImageExtensionsInfoProvider() {
-    extensionsForOpen = { "png", "tga", "jpg", "jpeg", "bmp", "gif" };
-    extensionForSave = "png";
+    mExtensionsForOpen = { "png", "tga", "jpg", "jpeg", "bmp", "gif" };
+    mExtensionForSave = "png";
 }
 
 QString ImageExtensionsInfoProvider::getDeafaultSaveExtension(bool includeDot) {
     if (includeDot) {
-        return "." + extensionForSave;
+        return "." + mExtensionForSave;
     } else {
-        return extensionForSave;
+        return mExtensionForSave;
     }
 }
 
 QString ImageExtensionsInfoProvider::createOpenFilter() {
     QStringList formattedExtensions;
-    foreach (const QString &ext, extensionsForOpen) {
+    foreach (const QString &ext, mExtensionsForOpen) {
         formattedExtensions.append("*." + ext);
     }
     QString extensionsString = formattedExtensions.join(" ");

@@ -5,72 +5,80 @@
 
 // Needed for unit tests
 RecentFilesInteractor::RecentFilesInteractor(IRecentFilesManager *manager) {
-    recentFilesManager = manager;
+    mRecentFilesManager = manager;
 }
 
 
 RecentFilesInteractor::RecentFilesInteractor() {
-    recentFilesManager = new RecentFilesManager("com.whisperingwind", "TwinPix");
+    mRecentFilesManager = new RecentFilesManager("com.whisperingwind", "TwinPix");
 }
 
 RecentFilesInteractor::~RecentFilesInteractor() {
-    if (recentFilesManager != nullptr) {
-        delete recentFilesManager;
-        recentFilesManager = nullptr;
+    if (mRecentFilesManager != nullptr) {
+        delete mRecentFilesManager;
+        mRecentFilesManager = nullptr;
     }
 }
 
 
 // Open images from the recent files menu.
-// The menu item is formatted as "path to file 1 -> path to file 2".
-std::optional<QStringPair> RecentFilesInteractor::getRecentFilesPathsByRecentMenuRecord(
-                                                                    const QString& recentFileMenuRecord
-                                                                        )
+// The menu item is formatted as "path to file 1 -> path to file 2" or "path to file 1".
+std::optional<RecentFilesRecord> RecentFilesInteractor::getRecentFilesPathsByRecentMenuRecord(
+                                                                const QString& recentFileMenuRecord
+                                                                )
 {
-    auto pair = stringToPair(recentFileMenuRecord);
-    if (!pair) {
-        throw std::runtime_error("Error: Unable to load images!");
+    auto record = stringToRecord(recentFileMenuRecord);
+    if (!record) {
+        throw std::runtime_error("Unable to open image(s).");
     }
-    return pair;
+    return record;
 }
 
 QStringList RecentFilesInteractor::getRecentFilesMenuRecords() {
     QStringList result;
-    auto pairs = recentFilesManager->getAllPairs();
+    auto records = mRecentFilesManager->getAllRecords();
 
-    foreach (auto pair, pairs) {
-        auto record = pairToString(pair);
-        if (record.isEmpty()) {
+    foreach (auto record, records) {
+        auto recordAsString = recordToString(record);
+        if (!recordAsString) {
             continue;
         }
-        result.append(record);
+        result.append(recordAsString.value());
     }
-
     return result;
 }
 
-void RecentFilesInteractor::addRecentFilesRecord(const QString &file1, const QString &file2) {
-    recentFilesManager->addPair(file1, file2);
+void RecentFilesInteractor::addRecentFilesRecord(const QString &firstPath, const QString &secondPath) {
+    mRecentFilesManager->addRecord(firstPath, secondPath);
+}
+
+void RecentFilesInteractor::addRecentFilesRecord(const QString &firstPath) {
+    mRecentFilesManager->addRecord(firstPath);
 }
 
 void RecentFilesInteractor::clear() {
-    recentFilesManager->clear();
+    mRecentFilesManager->clear();
 }
 
-// Converts a QPair<QString, QString> to a formatted QString
-QString RecentFilesInteractor::pairToString(const QStringPair& pair) {
-    if (pair.first.isEmpty() || pair.second.isEmpty()) {
-        return QString();
+// Converts RecentFilesRecord to a formatted QString
+std::optional<QString> RecentFilesInteractor::recordToString(const RecentFilesRecord &record) {
+    if (record.getFirstPath().isEmpty()) {
+        return std::nullopt;
     }
-    if (pair.first == pair.second) {
-        return pair.first;
+    if (record.isPairPathsRecord() && record.getSecondPath().isEmpty()) {
+        return std::nullopt;
+    }
+    if (record.isPairPathsRecord()) {
+        return QString("%1 -> %2")
+            .arg(record.getFirstPath())
+            .arg(record.getSecondPath());
     } else {
-        return pair.first + " -> " + pair.second;
+        return record.getFirstPath();
     }
 }
 
-// Converts a formatted QString back to a QPair<QString, QString>
-std::optional<QStringPair> RecentFilesInteractor::stringToPair(const QString& str) {
+// Converts a formatted QString back to RecentFilesRecord
+std::optional<RecentFilesRecord> RecentFilesInteractor::stringToRecord(const QString& str) {
     if (str.isEmpty()) {
         return std::nullopt;
     }
@@ -78,14 +86,14 @@ std::optional<QStringPair> RecentFilesInteractor::stringToPair(const QString& st
     if (str.contains(splitter)) {
         return splitString(str, splitter);
     } else {
-        return QStringPair(str, str);
+        return RecentFilesRecord{str};
     }
 }
 
 // Helper method to split a string with a specific separator
-std::optional<QStringPair> RecentFilesInteractor::splitString(const QString& str,
-                                                              const QString& separator
-                                                              )
+std::optional<RecentFilesRecord> RecentFilesInteractor::splitString(const QString& str,
+                                                                    const QString& separator
+                                                                    )
 {
     int separatorIndex = str.indexOf(separator);
 
@@ -100,5 +108,5 @@ std::optional<QStringPair> RecentFilesInteractor::splitString(const QString& str
         return std::nullopt;
     }
 
-    return QStringPair(firstPart, secondPart);
+    return RecentFilesRecord{firstPart, secondPart};
 }

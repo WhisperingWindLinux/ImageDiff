@@ -9,12 +9,11 @@
 
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-// Structure to hold the comparison result
 struct ColorsSaturationComparisonResult {
-    QString image1Name;                   // Name of the first image
-    QString image2Name;                   // Name of the second image
-    double avgSaturation1;                // Average saturation of the first image
-    double avgSaturation2;                // Average saturation of the second image
+    QString firstImageName;
+    QString secondImageName;
+    double firstImageSaturation;       // Average saturation of the first image
+    double secondImageSaturation;      // Average saturation of the second image
 };
 
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-

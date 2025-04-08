@@ -21,25 +21,25 @@ ImageProcessorsManager *ImageProcessorsManager::instance() {
 }
 
 ImageProcessorsManager::ImageProcessorsManager() {
-    storage = new QSettings("com.WhisperingWind", "TwinPix");
+    mStorage = new QSettings("com.WhisperingWind", "TwinPix");
 }
 
 void ImageProcessorsManager::clear() {
-    processors.clear();
-    hotkeys.clear();
+    mProcessors.clear();
+    mHotkeys.clear();
 }
 
 void ImageProcessorsManager::addProcessor(shared_ptr<IImageProcessor> processor) {
     if (processor == nullptr) {
         return;
     }
-    if (hotkeys.contains(processor->getHotkey()) && !processor->getHotkey().isEmpty()) {
+    if (mHotkeys.contains(processor->getHotkey()) && !processor->getHotkey().isEmpty()) {
         QString errorMsg = QString("It is not possible to add ") +
                                    "two IImageProcessors with the same hotkey value.";
         throw runtime_error(errorMsg.toStdString());
     }
-    hotkeys.insert(processor->getHotkey());
-    processors.append(processor);
+    mHotkeys.insert(processor->getHotkey());
+    mProcessors.append(processor);
 
     if (processor->getType() != ImageProcessorType::Comparator) {
         return;
@@ -49,7 +49,7 @@ void ImageProcessorsManager::addProcessor(shared_ptr<IImageProcessor> processor)
         return;
     }
     QString shortName = processor->getShortName();
-    bool isEnabledInAutoanalysisToolbox = storage->value(shortName, true).toBool();
+    bool isEnabledInAutoanalysisToolbox = mStorage->value(shortName, true).toBool();
     std::static_pointer_cast<IComparator>(processor)->setEnabled(isEnabledInAutoanalysisToolbox);
 }
 
@@ -67,23 +67,23 @@ void ImageProcessorsManager::setEnabledInAutoanalysisToolbox(const QString &shor
         return;
     }
     comparator->setEnabled(isEnabled);
-    storage->setValue(shortName, isEnabled);
+    mStorage->setValue(shortName, isEnabled);
 }
 
 void ImageProcessorsManager::removeProcessor(QString name) {
-    for (auto it = processors.begin(); it != processors.end(); ++it) {
+    for (auto it = mProcessors.begin(); it != mProcessors.end(); ++it) {
         if ((*it)->getShortName() == name) {
-            if (hotkeys.contains((*it)->getHotkey())) {
-                hotkeys.remove((*it)->getHotkey());
+            if (mHotkeys.contains((*it)->getHotkey())) {
+                mHotkeys.remove((*it)->getHotkey());
             }
-            processors.erase(it);
+            mProcessors.erase(it);
             break;
         }
     }
 }
 
 shared_ptr<IImageProcessor> ImageProcessorsManager::findProcessorByShortName(const QString &name) {
-    for (auto it = processors.begin(); it != processors.end(); ++it) {
+    for (auto it = mProcessors.begin(); it != mProcessors.end(); ++it) {
         if ((*it)->getShortName() == name) {
             return *it;
         }
@@ -92,7 +92,7 @@ shared_ptr<IImageProcessor> ImageProcessorsManager::findProcessorByShortName(con
 }
 
 shared_ptr<IImageProcessor> ImageProcessorsManager::findProcessorByHotkey(const QChar &hotkey) {
-    for (auto it = processors.begin(); it != processors.end(); ++it) {
+    for (auto it = mProcessors.begin(); it != mProcessors.end(); ++it) {
         if ((*it)->getHotkey() == hotkey) {
             return *it;
         }
@@ -117,7 +117,7 @@ std::optional<ImageProcessorInfo> ImageProcessorsManager::getProcessorInfoByProc
 
 QList<ImageProcessorInfo> ImageProcessorsManager::getAllProcessorsInfo() {
     QList<ImageProcessorInfo> processorsInfo;
-    for (auto it = processors.begin(); it != processors.end(); ++it) {
+    for (auto it = mProcessors.begin(); it != mProcessors.end(); ++it) {
         ImageProcessorInfo processorInfo((*it)->getShortName(),
                                          (*it)->getFullName(),
                                          (*it)->getDescription(),
@@ -132,7 +132,7 @@ QList<ImageProcessorInfo> ImageProcessorsManager::getAllProcessorsInfo() {
 
 QList<shared_ptr<IComparator> > ImageProcessorsManager::getAllComparators() {
     QList<shared_ptr<IComparator>> comparators;
-    for (auto it = processors.begin(); it != processors.end(); ++it) {
+    for (auto it = mProcessors.begin(); it != mProcessors.end(); ++it) {
         if ((*it)->getType() == ImageProcessorType::Comparator) {
             comparators.append(dynamic_pointer_cast<IComparator>(*it));
         }

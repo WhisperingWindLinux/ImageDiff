@@ -7,16 +7,24 @@
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 struct ImageProximityToOriginResult {
-    ImageProximityToOriginResult(QString image1Name, QString image2Name,
-                                 qint64 totalDifference1, qint64 totalDifference2,
-                                 QString resultDescription)
-        : image1Name(std::move(image1Name)), image2Name(std::move(image2Name)),
-        totalDifference1(totalDifference1), totalDifference2(totalDifference2),
-        resultDescription(std::move(resultDescription)) {}
-    QString image1Name;
-    QString image2Name;
-    qint64 totalDifference1;
-    qint64 totalDifference2;
+    ImageProximityToOriginResult(QString firstImageName,
+                                 QString secondImageName,
+                                 qint64 totalDifference4FirstImage,
+                                 qint64 totalDifference4SecondImage,
+                                 QString resultDescription
+                                 )
+        : firstImageName(std::move(firstImageName)),
+        secondImageName(std::move(secondImageName)),
+        totalDifference4FirstImage(totalDifference4FirstImage),
+        totalDifference4SecondImage(totalDifference4SecondImage),
+        resultDescription(std::move(resultDescription))
+    {
+    }
+
+    QString firstImageName;
+    QString secondImageName;
+    qint64 totalDifference4FirstImage;
+    qint64 totalDifference4SecondImage;
     QString resultDescription;
 };
 
@@ -48,8 +56,8 @@ public:
     bool isPartOfAutoReportingToolbox() override;
 
 private:
-    QString pathToOriginalImage;
-    QImage originalImage;
+    QString mPathToOriginalImage;
+    QImage mOriginalImage;
 
     double calculateSharpness(const QImage &image);
 

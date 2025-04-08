@@ -18,34 +18,36 @@ ExternalImageViewerDialog::ExternalImageViewerDialog(const QPixmap &image, const
     setModal(true);
     setWindowTitle(description);
 
-    graphicsView = new ExternalGraphicsView(image);
+    mGraphicsView = new ExternalGraphicsView(image);
 
-    menuBar = new QMenuBar(this);
+    mMenuBar = new QMenuBar(this);
     setupMenu();
 
     QVBoxLayout *layout = new QVBoxLayout(this);
-    layout->setMenuBar(menuBar);
-    layout->addWidget(graphicsView);
+    layout->setMenuBar(mMenuBar);
+    layout->addWidget(mGraphicsView);
+    layout->setContentsMargins(0, 0, 0, 0);
+    layout->setSpacing(0);
     setLayout(layout);
 }
 
 void ExternalImageViewerDialog::showEvent(QShowEvent*) {
     restoreWindowState();
-    graphicsView->setToFitImageInView();
+    mGraphicsView->setToFitImageInView();
 }
 
 void ExternalImageViewerDialog::setupMenu() {
     // File menu
-    QMenu *fileMenu = menuBar->addMenu("File");
+    QMenu *fileMenu = mMenuBar->addMenu("File");
     QAction *closeAction = fileMenu->addAction("Close");
     connect(closeAction, &QAction::triggered, this, &ExternalImageViewerDialog::close);
 
     // View menu
-    QMenu *viewMenu = menuBar->addMenu("View");
+    QMenu *viewMenu = mMenuBar->addMenu("View");
 
     QAction *fitInViewAction = viewMenu->addAction("Fit In View");
     fitInViewAction->setShortcut(Qt::Key_F);
-    connect(fitInViewAction, &QAction::triggered, graphicsView, &ExternalGraphicsView::setToFitImageInView);
+    connect(fitInViewAction, &QAction::triggered, mGraphicsView, &ExternalGraphicsView::setToFitImageInView);
 
     QAction *zoomInAction = viewMenu->addAction("Zoom In");
 #ifdef Q_OS_MAC
@@ -53,7 +55,7 @@ void ExternalImageViewerDialog::setupMenu() {
 #else
     zoomInAction->setShortcut(QKeySequence::ZoomIn);
 #endif
-    connect(zoomInAction, &QAction::triggered, graphicsView, &ExternalGraphicsView::zoomIn);
+    connect(zoomInAction, &QAction::triggered, mGraphicsView, &ExternalGraphicsView::zoomIn);
 
     QAction *zoomOutAction = viewMenu->addAction("Zoom Out");
 #ifdef Q_OS_MAC
@@ -61,7 +63,7 @@ void ExternalImageViewerDialog::setupMenu() {
 #else
     zoomOutAction->setShortcut(QKeySequence::ZoomOut);
 #endif
-    connect(zoomOutAction, &QAction::triggered, graphicsView, &ExternalGraphicsView::zoomOut);
+    connect(zoomOutAction, &QAction::triggered, mGraphicsView, &ExternalGraphicsView::zoomOut);
 }
 
 void ExternalImageViewerDialog::keyPressEvent(QKeyEvent *event) {

@@ -9,24 +9,24 @@ class RecentFilesInteractor
 {
 public:   
     RecentFilesInteractor();
-    virtual ~RecentFilesInteractor();
-
     RecentFilesInteractor(IRecentFilesManager *manager); // Needed for unit tests
+    virtual ~RecentFilesInteractor();
     
-    std::optional<QStringPair> getRecentFilesPathsByRecentMenuRecord(const QString &recentFileMenuRecord);
+    std::optional<RecentFilesRecord> getRecentFilesPathsByRecentMenuRecord(const QString &recentFileMenuRecord);
 
     QStringList getRecentFilesMenuRecords();
 
-    void addRecentFilesRecord(const QString &file1, const QString &file2);
+    void addRecentFilesRecord(const QString &firstPath, const QString &secondPath);
+    void addRecentFilesRecord(const QString &firstPath);
 
     void clear();
 
 private:
-    IRecentFilesManager *recentFilesManager;
+    IRecentFilesManager *mRecentFilesManager;
 
-    QString pairToString(const QStringPair &pair);
-    std::optional<QStringPair> splitString(const QString &str, const QString &separator);
-    std::optional<QStringPair> stringToPair(const QString &str);
+    std::optional<QString> recordToString(const RecentFilesRecord &record);
+    std::optional<RecentFilesRecord> splitString(const QString &str, const QString &separator);
+    std::optional<RecentFilesRecord> stringToRecord(const QString &str);
 };
 
 #endif // RECENTFILESINTERACTOR_H

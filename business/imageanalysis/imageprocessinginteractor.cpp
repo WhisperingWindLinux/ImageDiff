@@ -23,23 +23,23 @@
 #include "runallcomparatorsinteractor.h"
 
 ImageProcessingInteractor::ImageProcessingInteractor(
-                                    const ImagesPtr images,
+                                    const ImageHolderPtr images,
                                     IPropcessorPropertiesDialogCallback *propertiesDialogCallback,
                                     IProgressDialog *progressDialogCallback
                                         )
-    : propertiesDialogCallback(propertiesDialogCallback),
-    progressDialogCallback(progressDialogCallback),
-    originalImages(images),
-    displayedImages(images)
+    : mPropertiesDialogCallback(propertiesDialogCallback),
+    mProgressDialogCallback(progressDialogCallback),
+    mOriginalImages(images),
+    mDisplayedImages(images)
 {
 }
 
 ImageProcessingInteractor::~ImageProcessingInteractor() {
-    listeners.clear();
-    originalImages = nullptr;
-    displayedImages = nullptr;
-    propertiesDialogCallback = nullptr;
-    progressDialogCallback = nullptr;
+    mListeners.clear();
+    mOriginalImages = nullptr;
+    mDisplayedImages = nullptr;
+    mPropertiesDialogCallback = nullptr;
+    mProgressDialogCallback = nullptr;
     clearLastComparisonImage();
 }
 
@@ -71,7 +71,7 @@ void ImageProcessingInteractor::coreCallImageProcessor(const QVariant &callerDat
     handleProcessorPropertiesIfNeed(processor);
 
     if (processor->getType() == ImageProcessorType::Comparator) {
-        callComparator(dynamic_pointer_cast<IComparator>(processor), displayedImages);
+        callComparator(dynamic_pointer_cast<IComparator>(processor), mDisplayedImages);
     } else if (processor->getType() == ImageProcessorType::Filter) {
         callFilter(dynamic_pointer_cast<IFilter>(processor));
     } else {
@@ -80,19 +80,19 @@ void ImageProcessingInteractor::coreCallImageProcessor(const QVariant &callerDat
 }
 
 void ImageProcessingInteractor::clearLastComparisonImage() {
-    lastDisplayedComparisonResult.clear();
+    mLastDisplayedComparisonResult.clear();
     notifyFastSwitchingToComparisonImageStatusChanged(false);
 }
 
 void ImageProcessingInteractor::setLastComparisonImage(const QPixmap &pixmap, const QString &description) {
-    lastDisplayedComparisonResult.set(pixmap, description);
+    mLastDisplayedComparisonResult.set(pixmap, description);
     notifyFastSwitchingToComparisonImageStatusChanged(true);
 }
 
 void ImageProcessingInteractor::showLastComparisonImage() {
-    if (lastDisplayedComparisonResult.hasLastDisplayedComparisonResult()) {
-        notifyComparisonResultLoaded(lastDisplayedComparisonResult.getImage(),
-                                     lastDisplayedComparisonResult.getDescription()
+    if (mLastDisplayedComparisonResult.hasLastDisplayedComparisonResult()) {
+        notifyComparisonResultLoaded(mLastDisplayedComparisonResult.getImage(),
+                                     mLastDisplayedComparisonResult.getDescription()
                                      );
     }
 }
@@ -100,7 +100,7 @@ void ImageProcessingInteractor::showLastComparisonImage() {
 // If the user holds down the Command (Ctrl) key along with the comparator hotkey and selects
 // a specific area while holding the left mouse button, the comparator will run only for
 // the selected area.
-void ImageProcessingInteractor::analyzeSelectedArea(ImagesPtr images, std::optional<int> key) {
+void ImageProcessingInteractor::analyzeSelectedArea(ImageHolderPtr images, std::optional<int> key) {
     if (!key) {
         return;
     }
@@ -120,12 +120,12 @@ void ImageProcessingInteractor::analyzeSelectedArea(ImagesPtr images, std::optio
 }
 
 void ImageProcessingInteractor::restoreOriginalImages() {
-    if (originalImages == nullptr) {
+    if (mOriginalImages == nullptr) {
         return;
     }
-    displayedImages = originalImages;
+    mDisplayedImages = mOriginalImages;
     clearLastComparisonImage();
-    notifyFilteredResultLoaded(displayedImages->image1, displayedImages->image2);
+    notifyFilteredResultLoaded(mDisplayedImages);
 }
 
 QList<ImageProcessorInfo> ImageProcessingInteractor::showImageProcessorsHelp() {
@@ -137,7 +137,7 @@ void ImageProcessingInteractor::handleProcessorPropertiesIfNeed(IImageProcessorP
     if (properties.empty()) {
         return;
     }
-    auto newProperties = propertiesDialogCallback->showImageProcessorPropertiesDialog(
+    auto newProperties = mPropertiesDialogCallback->showImageProcessorPropertiesDialog(
                                                                     processor->getShortName(),
                                                                     processor->getDescription(),
                                                                     properties
@@ -147,16 +147,16 @@ void ImageProcessingInteractor::handleProcessorPropertiesIfNeed(IImageProcessorP
     }
 }
 
-void ImageProcessingInteractor::callComparator(IComparatorPtr comparator, ImagesPtr images) {
-    if (images == nullptr) {
+void ImageProcessingInteractor::callComparator(IComparatorPtr comparator, ImageHolderPtr images) {
+    if (images == nullptr || images->isSingleImage()) {
         return;
     }
     ImagesInfo info { images };
 
-    auto firstImage = images->image1;
-    auto firstImagePath = images->path1;
-    auto secondImage = images->image2;
-    auto secondImagePath = images->path2;
+    auto firstImage = images->getFirstImage();
+    auto firstImagePath = images->getFirstImagePath();
+    auto secondImage = images->getSecondImage();
+    auto secondImagePath = images->getSecondImagePath();
     auto firstImageName = info.getFirstImageName();
     auto secondImageName = info.getSecondImageName();
 
@@ -169,14 +169,14 @@ void ImageProcessingInteractor::callComparator(IComparatorPtr comparator, Images
         throw std::runtime_error("Error: The comparator returns nothing.");
     }
 
-    if (result->type() == ComparisonResultVariantType::Image) {
-        QImage imageResult = result->imageResult();
+    if (result->getType() == ComparisonResultVariantType::Image) {
+        QImage imageResult = result->getImageResult();
         QPixmap pixmap = QPixmap::fromImage(imageResult);
         if (pixmap.isNull()) {
             throw std::runtime_error("Error: The comparator returns an empty result.");
         }
-        int originalWidth = originalImages->image1.width();
-        int originalHeight = originalImages->image1.height();
+        int originalWidth = mOriginalImages->getFirstImage().width();
+        int originalHeight = mOriginalImages->getSecondImage().height();
         int resultWidth = imageResult.width();
         int resultHeight = imageResult.height();
         if (originalWidth == resultWidth && originalHeight == resultHeight) {
@@ -186,8 +186,8 @@ void ImageProcessingInteractor::callComparator(IComparatorPtr comparator, Images
             notifyShowImageInExternalViewer(pixmap, comparator->getShortName());
         }
     }
-    else if (result->type() == ComparisonResultVariantType::String) {
-        QString stringResult = result->stringResult();
+    else if (result->getType() == ComparisonResultVariantType::String) {
+        QString stringResult = result->getStringResult();
         if (stringResult.isNull() || stringResult.isEmpty()) {
             throw std::runtime_error("Error: The comparator returns an empty result.");
         }
@@ -199,34 +199,39 @@ void ImageProcessingInteractor::callComparator(IComparatorPtr comparator, Images
     }
 }
 
+QPixmap ImageProcessingInteractor::applyFilter(const QPixmap &pixmap, IFilterPtr filter) {
+    QImage image = pixmap.toImage();
+    if (image.isNull()) {
+        throw std::runtime_error("An error occurred during the loading of one of the images");
+    }
+    QImage filteredImage = filter->filter(image);
+    if (filteredImage.isNull()) {
+        throw std::runtime_error("The filter returns an empty result.");
+    }
+    auto filteredPixmap = QPixmap::fromImage(filteredImage);
+    if (filteredPixmap.isNull()) {
+        throw std::runtime_error("The filter returns an empty result.");
+    }
+    return filteredPixmap;
+}
+
 void ImageProcessingInteractor::callFilter(IFilterPtr filter) {
-    if (displayedImages == nullptr) {
+    if (mDisplayedImages == nullptr) {
         return;
     }
-    auto firstImage = displayedImages->image1.toImage();
-    auto secondImage = displayedImages->image2.toImage();
-
-    if (firstImage.isNull() || secondImage.isNull()) {
-        throw std::runtime_error("Error: An error occurred during the loading of one of the images");
+    if (mDisplayedImages->isSingleImage()) {
+        QPixmap firstPixmap = applyFilter(mDisplayedImages->getFirstImage(), filter);
+        mDisplayedImages = std::make_shared<ImageHolder>(firstPixmap, mDisplayedImages->getFirstImagePath());
+    } else {
+        QPixmap firstPixmap = applyFilter(mDisplayedImages->getFirstImage(), filter);
+        QPixmap secondPixmap = applyFilter(mDisplayedImages->getSecondImage(), filter);
+        mDisplayedImages = std::make_shared<ImageHolder>(firstPixmap,
+                                                        mDisplayedImages->getFirstImagePath(),
+                                                        secondPixmap,
+                                                        mDisplayedImages->getSecondImagePath());
     }
-
-    QImage transformedImage1 = filter->filter(firstImage);
-    QImage transformedImage2 = filter->filter(secondImage);
-
-    if (transformedImage1.isNull() || transformedImage2.isNull()) {
-        throw std::runtime_error("Error: The filter returns an empty result.");
-    }
-
-    auto pixmap1 = QPixmap::fromImage(transformedImage1);
-    auto pixmap2 = QPixmap::fromImage(transformedImage2);
-
-    if (pixmap1.isNull() || pixmap2.isNull()) {
-        throw std::runtime_error("Error: The filter returns an empty result.");
-    }
-
-    displayedImages = std::make_shared<Images>(pixmap1, pixmap2, displayedImages->path1, displayedImages->path2);
     clearLastComparisonImage();
-    notifyFilteredResultLoaded(displayedImages->image1, displayedImages->image2);
+    notifyFilteredResultLoaded(mDisplayedImages);
 }
 
 QList<ImageProcessorInfo> ImageProcessingInteractor::getImageProcessorsInfo() {
@@ -288,10 +293,10 @@ QList<ImageProcessorInfo> ImageProcessingInteractor::getImageProcessorsInfo() {
 
 void ImageProcessingInteractor::runAllComparators() {
 
-    ImagesInfo info { displayedImages };
+    ImagesInfo info { mDisplayedImages };
 
-    auto image1 = displayedImages->image1;
-    auto image2 = displayedImages->image2;
+    auto image1 = mDisplayedImages->getFirstImage();
+    auto image2 = mDisplayedImages->getSecondImage();
     auto baseName1 = info.getFirstImageBaseName();
     auto baseName2 = info.getSecondImageBaseName();
     auto fullName1 = info.getFirstImageName();
@@ -305,7 +310,7 @@ void ImageProcessingInteractor::runAllComparators() {
     ComparableImage secondComparableImage {image2, fullName2};
 
     RunAllComparatorsInteractor runAllComparatorsInteractor {
-                                            progressDialogCallback,
+                                            mProgressDialogCallback,
                                             firstComparableImage,
                                             secondComparableImage,
                                             saveReportDirPath
@@ -318,12 +323,12 @@ bool ImageProcessingInteractor::subscribe(IImageProcessingInteractorListener *li
     if (listener == nullptr) {
         return false;
     }
-    if (listeners.contains(listener)) {
+    if (mListeners.contains(listener)) {
         return false;
     }
-    listeners.append(listener);
+    mListeners.append(listener);
     notifyFastSwitchingToComparisonImageStatusChanged(
-                        lastDisplayedComparisonResult.hasLastDisplayedComparisonResult()
+                        mLastDisplayedComparisonResult.hasLastDisplayedComparisonResult()
                                 );
     return true;
 }
@@ -333,26 +338,25 @@ bool ImageProcessingInteractor::unsubscribe(const IImageProcessingInteractorList
         return false;
     }
     notifyFastSwitchingToComparisonImageStatusChanged(false);
-    return listeners.removeOne(listener);
+    return mListeners.removeOne(listener);
 }
 
 void ImageProcessingInteractor::notifyComparisonResultLoaded(const QPixmap &image,
                                                              const QString &description
                                                              )
 {
-    foreach (auto listener, listeners) {
+    foreach (auto listener, mListeners) {
         listener->onComparisonResultLoaded(image, description);
     }
 }
 
-// TBD Refactoring
 void ImageProcessingInteractor::notifyComparisonResultLoaded(const QString &html,
                                                              const QString &comporatorFullName,
                                                              const QString &firstImagePath,
                                                              const QString &secondImagePath
                                                             )
 {
-    foreach (auto listener, listeners) {
+    foreach (auto listener, mListeners) {
         listener->onComparisonResultLoaded(html,
                                            comporatorFullName,
                                            firstImagePath,
@@ -365,28 +369,25 @@ void ImageProcessingInteractor::notifyShowImageInExternalViewer(const QPixmap &i
                                                                 const QString &description
                                                                 )
 {
-    foreach (auto listener, listeners) {
+    foreach (auto listener, mListeners) {
         listener->onShowImageInExternalViewer(image, description);
     }
 }
 
-void ImageProcessingInteractor::notifyFilteredResultLoaded(const QPixmap &firstImage,
-                                                           const QPixmap &secondImage
-                                                           )
-{
-    foreach (auto listener, listeners) {
-        listener->onFilteredResultLoaded(firstImage, secondImage);
+void ImageProcessingInteractor::notifyFilteredResultLoaded(const ImageHolderPtr imageHolder) {
+    foreach (auto listener, mListeners) {
+        listener->onFilteredResultLoaded(imageHolder);
     }
 }
 
 void ImageProcessingInteractor::notifyImageProcessorFailed(const QString &error) {
-    foreach (auto listener, listeners) {
+    foreach (auto listener, mListeners) {
         listener->onImageProcessorFailed(error);
     }
 }
 
 void ImageProcessingInteractor::notifyFastSwitchingToComparisonImageStatusChanged(bool isSwitchingAvailable) {
-    foreach (auto listener, listeners) {
+    foreach (auto listener, mListeners) {
         listener->onFastSwitchingToComparisonImageStatusChanged(isSwitchingAvailable);
     }
 }

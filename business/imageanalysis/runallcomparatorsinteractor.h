@@ -19,10 +19,10 @@ public:
 
     void run();
 private:
-    IProgressDialog *callback;
-    ComparableImage firstImage;
-    ComparableImage secondImage;
-    QString reportDirPath;
+    IProgressDialog *mCallback;
+    ComparableImage mFirstImage;
+    ComparableImage mSecondImage;
+    QString mReportDirPath;
 
     QList<AutocomparisonReportEntry> executeAllComparators();
     void generateReports(QList<AutocomparisonReportEntry> &entries);

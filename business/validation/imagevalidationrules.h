@@ -6,19 +6,22 @@
 #include <business/validation/interfaces/iimagevalidationrules.h>
 
 // Since we will be comparing the images pixel by pixel, we need to ensure
-// that they have the same characteristics (color depth, format, etc.).
+// that they have the same characteristics
 
 class ImageValidationRules : public IImageValidationRules
 {
 public:
-    ImageValidationRules(const ImagesPtr images);
+    ImageValidationRules(const ImageHolderPtr images);
     virtual ~ImageValidationRules();
 
-    // If all checks pass, return nullopt
+    // If all checks pass, return std::nullopt
     std::optional<QString> isValid() override;
 
 private:
-    ImagesPtr images;
+    ImageHolderPtr mImages;
+
+    std::optional<QString> isSingleImageValid();
+    std::optional<QString> isTwoImagesValid();
 
     bool isImageColorSpaceRgb(const QPixmap &pixmap);
     bool isImage8Bit(const QPixmap &pixmap);

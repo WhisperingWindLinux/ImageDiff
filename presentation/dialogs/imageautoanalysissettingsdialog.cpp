@@ -7,7 +7,7 @@ ImageAutoAnalysisSettingsDialog::ImageAutoAnalysisSettingsDialog(QWidget* parent
     : QDialog(parent) {
     setWindowTitle("Auto-Analysis Settings");
 
-    m_interactor = new AutoAnalysisSettingsInteractor();
+    mInteractor = new AutoAnalysisSettingsInteractor();
 
     // Main layout
     QVBoxLayout* mainLayout = new QVBoxLayout(this);
@@ -18,16 +18,16 @@ ImageAutoAnalysisSettingsDialog::ImageAutoAnalysisSettingsDialog(QWidget* parent
     mainLayout->addWidget(descriptionLabel);
 
     // Create layout for checkboxes
-    m_checkBoxLayout = new QVBoxLayout();
-    mainLayout->addLayout(m_checkBoxLayout);
+    mCheckBoxLayout = new QVBoxLayout();
+    mainLayout->addLayout(mCheckBoxLayout);
 
     // Dynamically create checkboxes from the interactor's comparators
-    auto comparators = m_interactor->getComparators();
+    auto comparators = mInteractor->getComparators();
     foreach (auto comparator, comparators) {
         QCheckBox* checkBox = new QCheckBox(comparator->getFullName(), this);
         checkBox->setChecked(comparator->isEnabled());
-        m_checkBoxes.append(checkBox);
-        m_checkBoxLayout->addWidget(checkBox);
+        mCheckBoxes.append(checkBox);
+        mCheckBoxLayout->addWidget(checkBox);
     }
 
     // Add Save and Cancel buttons
@@ -45,11 +45,11 @@ ImageAutoAnalysisSettingsDialog::ImageAutoAnalysisSettingsDialog(QWidget* parent
 
 void ImageAutoAnalysisSettingsDialog::onSaveClicked() {
     // Save the state of each checkbox to the associated comparator
-    auto comparators = m_interactor->getComparators();
-    for (int i = 0; i < m_checkBoxes.size(); ++i) {
-        bool isEnabled = m_checkBoxes[i]->isChecked();
+    auto comparators = mInteractor->getComparators();
+    for (int i = 0; i < mCheckBoxes.size(); ++i) {
+        bool isEnabled = mCheckBoxes[i]->isChecked();
         comparators[i]->setEnabled(isEnabled);
-        m_interactor->saveComparatorState(comparators[i]->getShortName(), isEnabled);
+        mInteractor->saveComparatorState(comparators[i]->getShortName(), isEnabled);
     }
     accept(); // Close the dialog
 }

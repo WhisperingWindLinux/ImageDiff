@@ -17,49 +17,49 @@ PythonScriptComparator::PythonScriptComparator(const QString &pyScriptPath,
                                                const QString &fullName,
                                                bool isPartOfAutoReportingToolbox
                                                 )
-    : shortName(shortName),
-    hotkey(hotkey),
-    description(description),
-    properties(properties),
-    fullName(fullName),
-    m_isPartOfAutoReportingToolbox(isPartOfAutoReportingToolbox),
-    pyScriptPath(pyScriptPath)
+    : mShortName(shortName),
+    mHotkey(hotkey),
+    mDescription(description),
+    mProperties(properties),
+    mFullName(fullName),
+    misPartOfAutoReportingToolbox(isPartOfAutoReportingToolbox),
+    mPyScriptPath(pyScriptPath)
 {
     auto validationRules = ImageValidationRulesFactory::createImageExtensionsInfoProvider();
     QString ext = validationRules->getDeafaultSaveExtension(false);
-    defaultSaveImageExtention = ext.toUpper().toStdString();
+    mDefaultSaveImageExtention = ext.toUpper().toStdString();
 }
 
 QString PythonScriptComparator::getShortName() const {
-    return shortName;
+    return mShortName;
 }
 
 QString PythonScriptComparator::getHotkey() const {
-    return hotkey;
+    return mHotkey;
 }
 
 QString PythonScriptComparator::getDescription() const {
-    return description;
+    return mDescription;
 }
 
 QList<Property> PythonScriptComparator::getDefaultProperties() const {
-    return properties;
+    return mProperties;
 }
 
 void PythonScriptComparator::setProperties(QList<Property> properties) {
-    this->properties = properties;
+    this->mProperties = properties;
 }
 
 QString PythonScriptComparator::getFullName() const {
-    return fullName;
+    return mFullName;
 }
 
 bool PythonScriptComparator::isPartOfAutoReportingToolbox() {
-    return m_isPartOfAutoReportingToolbox;
+    return misPartOfAutoReportingToolbox;
 }
 
 optional<QString> PythonScriptComparator::validateText(QString &text) {
-    QString validatedText = text.mid(0, qMin(charsInReportMax, text.size()));
+    QString validatedText = text.mid(0, qMin(mCharsInReportMax, text.size()));
     foreach (auto ch, validatedText) {
         if (!ch.isPrint()) {
             return nullopt;
@@ -82,8 +82,8 @@ shared_ptr<ComparisonResultVariant> PythonScriptComparator::compare(const Compar
     buffer1.open(QIODevice::WriteOnly);
     buffer2.open(QIODevice::WriteOnly);
 
-    if (!first.getImage().save(&buffer1, defaultSaveImageExtention.c_str()) ||
-        !second.getImage().save(&buffer2, defaultSaveImageExtention.c_str())) {
+    if (!first.getImage().save(&buffer1, mDefaultSaveImageExtention.c_str()) ||
+        !second.getImage().save(&buffer2, mDefaultSaveImageExtention.c_str())) {
         throw runtime_error("Failed to encode images to bytes array.");
     }
 
@@ -93,9 +93,9 @@ shared_ptr<ComparisonResultVariant> PythonScriptComparator::compare(const Compar
     }
 
     QStringList params;
-    params << pyScriptPath << first.getPath() << second.getPath();
+    params << mPyScriptPath << first.getPath() << second.getPath();
 
-    foreach (auto property, properties) {
+    foreach (auto property, mProperties) {
         params << property.getAnyValueAsString();
     }
 
@@ -131,7 +131,7 @@ shared_ptr<ComparisonResultVariant> PythonScriptComparator::compare(const Compar
 
     QByteArray output = process.readAllStandardOutput();
     QImage resultImage;
-    if (resultImage.loadFromData(output, defaultSaveImageExtention.c_str()) &&
+    if (resultImage.loadFromData(output, mDefaultSaveImageExtention.c_str()) &&
         !resultImage.isNull()) {
         return make_shared<ComparisonResultVariant>(resultImage);
     }

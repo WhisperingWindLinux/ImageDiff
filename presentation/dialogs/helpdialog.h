@@ -23,10 +23,10 @@ private slots:
     void onAlgorithmSelected(int index);
 
 private:
-    QList<ImageProcessorInfo> algorithms;
-    QListWidget *listWidget;
-    QTextBrowser *infoBrowser;
-    QTextBrowser *imageAreaSelectionBrowser; // For the second tab
+    QList<ImageProcessorInfo> mAlgorithms;
+    QListWidget *mListWidget;
+    QTextBrowser *mInfoBrowser;
+    QTextBrowser *mImageAreaSelectionBrowser; // For the second tab
 
 };
 

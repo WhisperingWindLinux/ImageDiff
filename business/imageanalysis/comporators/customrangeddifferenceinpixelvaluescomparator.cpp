@@ -14,8 +14,8 @@
 
 
 CustomRangedDifferenceInPixelValuesComparator::CustomRangedDifferenceInPixelValuesComparator() {
-    startOfRange = 1;
-    endOfRange = 255;
+    mStartOfRange = 1;
+    mEndOfRange = 255;
 }
 
 void CustomRangedDifferenceInPixelValuesComparator::setProperties(QList<Property> properties) {
@@ -24,20 +24,20 @@ void CustomRangedDifferenceInPixelValuesComparator::setProperties(QList<Property
         error = error.arg(getShortName());
         throw std::runtime_error(error.toStdString());
     }
-    startOfRange = properties[0].getValue();
-    endOfRange = properties[1].getValue();
+    mStartOfRange = properties[0].getValue();
+    mEndOfRange = properties[1].getValue();
 }
 
 QList<Property> CustomRangedDifferenceInPixelValuesComparator::getDefaultProperties() const {
-    auto prop1 = Property::createIntProperty("Start of the range", "Start of the custom range.", startOfRange, 0, 255);
-    auto prop2 = Property::createIntProperty("End of the range", "End of the custom range.", endOfRange, 0, 255);
+    auto prop1 = Property::createIntProperty("Start of the range", "Start of the custom range.", mStartOfRange, 0, 255);
+    auto prop2 = Property::createIntProperty("End of the range", "End of the custom range.", mEndOfRange, 0, 255);
 
     return { prop1, prop2, };
 }
 
 void CustomRangedDifferenceInPixelValuesComparator::reset() {
-    startOfRange = 1;
-    endOfRange = 255;
+    mStartOfRange = 1;
+    mEndOfRange = 255;
 }
 
 bool CustomRangedDifferenceInPixelValuesComparator::isPartOfAutoReportingToolbox() {
@@ -72,7 +72,7 @@ ComparisonResultVariantPtr CustomRangedDifferenceInPixelValuesComparator::compar
                                                                         const ComparableImage &second
                                                                       )
 {
-    if (startOfRange > endOfRange) {
+    if (mStartOfRange > mEndOfRange) {
         throw std::runtime_error("The start of the range cannot be greater than its end.");
     }
 
@@ -80,8 +80,8 @@ ComparisonResultVariantPtr CustomRangedDifferenceInPixelValuesComparator::compar
 
     QImage result = helper.generateDifferenceImageByCustomRage(first.getImage(),
                                                                second.getImage(),
-                                                               startOfRange,
-                                                               endOfRange
+                                                               mStartOfRange,
+                                                               mEndOfRange
                                                                );
     return std::make_shared<ComparisonResultVariant>(result);
 }

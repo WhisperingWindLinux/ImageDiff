@@ -8,23 +8,22 @@
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 struct PixelsBrightnessComparisonResult {
+    QString firstImageName;
+    QString secondImageName;
 
-    QString name1;            // The name of the first image
-    QString name2;            // The name of the second image
+    int totalPixels;                // Total number of pixels
 
-    int totalPixels;          // Total number of pixels
+    int sameColorCount;             // Number of pixels with the same color
+    double sameColorPercent;        // Percentage of pixels with the same color
 
-    int sameColorCount;       // Number of pixels with the same color
-    double sameColorPercent;  // Percentage of pixels with the same color
+    int brighterCount;              // Number of pixels brighter in the first image
+    double brighterPercent;         // Percentage of brighter pixels
 
-    int brighterCount;        // Number of pixels brighter in the first image
-    double brighterPercent;   // Percentage of brighter pixels
+    int darkerCount;                // Number of pixels darker in the first image
+    double darkerPercent;           // Percentage of darker pixels
 
-    int darkerCount;          // Number of pixels darker in the first image
-    double darkerPercent;     // Percentage of darker pixels
-
-    int totalBrightness1;
-    int totalBrightness2;
+    int firstImageTotalBrightness;
+    int secondImageTotalBrightness;
 };
 
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-

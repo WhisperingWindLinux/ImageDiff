@@ -1,76 +1,34 @@
-#ifndef FILEUTILS_H
-#define FILEUTILS_H
+#ifndef IMAGES_INFO
+#define IMAGES_INFO
 
 #include <QtCore/qdir.h>
 #include <domain/valueobjects/images.h>
 #include <qfileinfo.h>
 #include <qstring.h>
 
-
 class ImagesInfo {
 public:
-    ImagesInfo(const ImagesPtr images) {
-        if (images == nullptr) {
-            return;
-        }
+    ImagesInfo(const ImageHolderPtr images);
+    ~ImagesInfo() = default;
 
-        QFileInfo firstImageInfo { images->path1 };
-        QFileInfo secondImageInfo { images->path2 };
-
-        firstImagePath = firstImageInfo.absoluteFilePath();
-        secondImagePath = secondImageInfo.absoluteFilePath();
-
-        firstImageName = firstImageInfo.fileName();
-        secondImageName = secondImageInfo.fileName();
-        firstImageBaseName = firstImageInfo.baseName();
-        secondImageBaseName = secondImageInfo.baseName();
-        firstImageDir = firstImageInfo.dir().absolutePath();
-        secondImageDir = secondImageInfo.dir().absolutePath();
-    };
-
-
-    const QString& getFirstImagePath() const {
-        return firstImagePath;
-    }
-
-    const QString& getSecondImagePath() const {
-        return secondImagePath;
-    }
-
-    const QString& getFirstImageName() const {
-        return firstImageName;
-    }
-
-    const QString& getSecondImageName() const {
-        return secondImageName;
-    }
-
-    const QString& getFirstImageBaseName() const {
-        return firstImageBaseName;
-    }
-
-    const QString& getSecondImageBaseName() const {
-        return secondImageBaseName;
-    }
-
-    const QString& getFirstImageDir() const {
-        return firstImageDir;
-    }
-
-    const QString& getSecondImageDir() const {
-        return secondImageDir;
-    }
+    QString getFirstImagePath() const;
+    QString getSecondImagePath() const;
+    QString getFirstImageName() const;
+    QString getSecondImageName() const;
+    QString getFirstImageBaseName() const;
+    QString getSecondImageBaseName() const;
+    QString getFirstImageDir() const;
+    QString getSecondImageDir() const;
 
 private:
-    QString firstImagePath;
-    QString secondImagePath;
-    QString firstImageName;
-    QString secondImageName;
-    QString firstImageBaseName;
-    QString secondImageBaseName;
-    QString firstImageDir;
-    QString secondImageDir;
+    QString mFirstImagePath;
+    QString mSecondImagePath;
+    QString mFirstImageName;
+    QString mSecondImageName;
+    QString mFirstImageBaseName;
+    QString mSecondImageBaseName;
+    QString mFirstImageDir;
+    QString mSecondImageDir;
 };
 
-
-#endif // FILEUTILS_H
+#endif // IMAGES_INFO

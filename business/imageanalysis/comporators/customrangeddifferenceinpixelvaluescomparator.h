@@ -23,7 +23,7 @@ public:
     bool isPartOfAutoReportingToolbox() override;
 
 private:
-    int startOfRange, endOfRange;
+    int mStartOfRange, mEndOfRange;
 };
 
 #endif // CUSTOMRANGEDDIFFERENCEINPIXELVALUESCOMPARATOR_H
