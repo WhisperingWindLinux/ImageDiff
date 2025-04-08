@@ -37,3 +37,9 @@ jobs:
           cp ${{ vars.BUILD_DIR }}/../ReadMe.txt TwinPix-dmg/
           ln -s /Applications TwinPix-dmg/Applications
           hdiutil create -volname "TwinPix (beta)" -srcfolder TwinPix-dmg -ov -format UDZO TwinPix-macOS-arm64.dmg
+
+      - name: Upload .dmg artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: TwinPix-DMG
+          path: ${{ vars.BUILD_DIR }}/TwinPix-macOS-arm64.dmg
