@@ -64,7 +64,7 @@ QImage AppleIconMaker::filter(const QImage &image) {
     for (const IconSize &icon : iconSizes) {
         QImage resizedImage = image.scaled(icon.size,
                                            icon.size,
-                                           Qt::KeepAspectRatioByExpanding,
+                                           Qt::IgnoreAspectRatio,
                                            Qt::SmoothTransformation
                                            );
         QString outputFilePath = QDir(targetPath).filePath(icon.filename);

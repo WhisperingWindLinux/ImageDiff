@@ -275,13 +275,16 @@ QList<ImageProcessorInfo> ImageProcessingInteractor::getImageProcessorsInfo() {
     auto greenChannelFilter = make_shared<GreenChannelFilter>();
     auto blueChannelFilter = make_shared<BlueChannelFilter>();
     auto grayscaleFilter = make_shared<GrayscaleFilter>();
-    auto appleIconMaker = make_shared<AppleIconMaker>();
-
+    #ifdef ADD_MISC
+        auto appleIconMaker = make_shared<AppleIconMaker>();
+    #endif
     processorsManager->addProcessor(redChannelFilter);
     processorsManager->addProcessor(greenChannelFilter);
     processorsManager->addProcessor(blueChannelFilter);
     processorsManager->addProcessor(grayscaleFilter);
-    processorsManager->addProcessor(appleIconMaker);
+    #ifdef ADD_MISC
+        processorsManager->addProcessor(appleIconMaker);
+    #endif
 
     // add plugins (comparators and filters)
 
